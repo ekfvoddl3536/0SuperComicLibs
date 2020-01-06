@@ -60,18 +60,6 @@ namespace SuperComicLib.LowLevel
             return (UnsafeCastClass<T>)dm.CreateDelegate(typeof(UnsafeCastClass<T>));
         }
 
-        public static UnsafeUnboxStruct<T> CreateUnbox<T>(Type owner) where T : struct
-        {
-            DynamicMethod dm = new DynamicMethod($"__func_Unbox ({nameof(NativeClass)}) ({owner.ToString()})", typeof(T), new[] { typeof(object) }, owner);
-            ILGenerator gen = dm.GetILGenerator();
-
-            gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Unbox, typeof(T));
-            gen.Emit(OpCodes.Ret);
-
-            return (UnsafeUnboxStruct<T>)dm.CreateDelegate(typeof(UnsafeUnboxStruct<T>));
-        }
-
         public static UnsafeReadPointerStruct<T> CreateReadPointer<T>(Type owner) where T : struct
         {
             DynamicMethod dm = new DynamicMethod($"__func_ReadPointer ({nameof(NativeClass)}) ({owner.ToString()})", typeof(T), new[] { typeof(void).MakePointerType() }, owner);

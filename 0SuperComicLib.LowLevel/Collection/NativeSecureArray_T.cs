@@ -65,7 +65,7 @@ namespace SuperComicLib.Collection
             return vs;
         }
 
-        public void CopyArray(NativeSecureArray<T> dest)
+        public void CopyTo(NativeSecureArray<T> dest)
         {
             if (dest == null)
                 throw new ArgumentNullException();
