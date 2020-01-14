@@ -41,7 +41,7 @@ namespace SuperComicLib.LowLevel
             g.Emit(OpCodes.Stloc_0);
             g.Emit(OpCodes.Ldarg_1);
             g.Emit(OpCodes.Ldloc_0);
-            g.Emit(IntPtr.Size == sizeof(int) ? OpCodes.Conv_I4 : OpCodes.Conv_I8);
+            g.Emit(OpCodes.Conv_U); // unsigned native int
             g.Emit(OpCodes.Call, typeof(Action<IntPtr>).GetMethod(nameof(Action.Invoke)));
             g.Emit(OpCodes.Ret);
 
