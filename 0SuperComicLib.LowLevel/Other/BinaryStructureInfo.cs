@@ -123,6 +123,14 @@ namespace SuperComicLib.LowLevel
                 return rp.Invoke(ptr + idx);
         }
 
+        public ref T Ref<T>(int idx) where T : unmanaged
+        {
+            if (idx < 0 || datas.Length <= idx)
+                throw new ArgumentOutOfRangeException(nameof(idx));
+            fixed (byte* ptr = datas)
+                return ref *(T*)(ptr + idx);
+        }
+
         public T Cast<T>(int idx) where T : class
         {
             if (idx < 0 || datas.Length <= idx)
