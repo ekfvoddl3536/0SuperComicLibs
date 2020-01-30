@@ -8,7 +8,7 @@
 * Get address of the object
 * Get address of the object (pinned)
 * Convert class reference pointer value to original type
-* Copy memory datas from one object type to another public struct type  
+* Copy memory datas from one object type to another **public struct type[1]**  
   (Only if the field layout is the same or the objects are the same size will the copy be successful)  
   
  
