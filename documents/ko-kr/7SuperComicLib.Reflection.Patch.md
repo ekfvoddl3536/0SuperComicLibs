@@ -5,15 +5,15 @@
     1. Postfix
     1. Replace
     1. ILOnly
-1. 흐름의 약식 표현  
-1. Generic 메소드를 패치하는 법  
-    * Prefix  
-    * Postfix  
-    * Replace  
+1. 로딩 순서와 실행 순서  
+    1. 속성 우선순위
+    1. 실행 흐름의 약식 표현
 1. ref 반환 메소드를 패치하는 법  
-    * Prefix  
-    * Postfix  
+    * Prefix & Postfix
     * Replace  
+    
+    
+    
     
 # 메소드 패치에 대해
 ## Prefix
@@ -71,25 +71,15 @@ static void MyPatch_1(ref int a)
 ## Postfix
 원래 함수가 실행된 이후, 실행됩니다.  
 
-반환은 bool도 허용되지만, 기본적으로 반환 값을 계산하지 않기 때문에 void 반환이 더 유리합니다.  
-매개 변수는 Prefix 와 같은 규칙을 따릅니다.
+반환은 bool도 허용되지만, 기본적으로 반환 값을 계산하지 않기 때문에 void 반환이 더 유리합니다.    
+매개 변수는 Prefix 와 같은 규칙을 따릅니다.  
 
-### 올바른 예
+### 표현
 ```csharp
-// 추가로 Prefix 예제를 참고 하세요
-
-// 원래 함수
-static int Original(int a, int b)
-{
-    return a + b - 200;
-}
-
-// 패치 함수
-static void MyPatch(ref int @out, ref int a, ref int b)
+static void MyPatch(ref int @out, int a, ref int b)
 {
     @out = a + b;
-    a = b;
-    b = 10;
+    b = a - 20;
 }
 ```
 
@@ -105,8 +95,6 @@ static void MyPatch(ref int @out, ref int a, ref int b)
 // 원래 함수
 class MyClass1
 {
-    public int myField;
-    
     int Original(int a, int b)
     {
         return a + b;
@@ -115,7 +103,7 @@ class MyClass1
 
 // 패치 함수
 ...
-static int MyPatch_0(MyClass1 @this, int a, int b)
+static int MyPatch(MyClass1 @this, int a, int b)
 {
     return a % b;
 }
@@ -125,7 +113,7 @@ static int MyPatch_0(MyClass1 @this, int a, int b)
 ## ILOnly
 **이 방법은 Prefix, Postfix, Replace와 함께 사용되어야 합니다.**  
 
-패치 함수는 다음중 하나와 같은 시그니처를 사용해야합니다.
+패치 함수는 다음중 하나와 같은 시그니처를 사용해야합니다.  
 ```csharp
 void (ILGenerator, **MethodBase**, int, bool, bool)
 void (ILGenerator, MethodInfo, int, bool, bool)
@@ -137,17 +125,9 @@ bool (ILGenerator, MethodInfo, int, bool, bool)
 bool (ILGenerator, ConstructorInfo, int, bool, bool)
 ```
 
-### 올바른 예  
+### 표현
 ```csharp
-class MyClass1
-{
-    static int Original(int a, int b)
-    {
-        return a + b;
-    }
-}
-
-// Prefix OR Postfix OR 
+// Prefix OR Postfix OR Replace
 static bool ABCD(ILGenerator il, MethodBase methodinfo_or_constructorinfo, int argFixupOffset, bool hasReturn, bool hasReturnBuffer)
 {
     ...
@@ -156,3 +136,91 @@ static bool ABCD(ILGenerator il, MethodBase methodinfo_or_constructorinfo, int a
     // il.Emit(OpCodes.Ret);
 }
 ```
+
+
+
+
+
+
+
+
+# 로딩 순서와 실행 순서
+## 속성 우선순위
+기본적으로 속성을 겹쳐서 사용하는것은 권장하지 않습니다.  
+
+| 속성 이름 | 순위 |
+| :---: | :---: |
+| Prepare | 1 |
+| TargetMethod | 2 |
+| RegisterPatchMethod | 3 |
+| PatchFinalize | 4 |
+
+
+
+## 실행 흐름의 약식 표현
+```csharp
+public static ...(...,) {
+    // call prefixes
+    T result = default;
+    bool runOriginalMethod = prefixes.Do(...,);
+    
+    // call original
+    if (runOriginalMethod)
+        result = original_method.Do(...,);
+    
+    // call postfixes
+    postfixes.Do(...,);
+}
+```
+
+
+
+
+
+# ref 반환 메소드를 패치하는 법  
+## Prefix & Postfix
+`ref T` 는 `T&`로 재해석될 수 있고, `T&`는 `void*`로 재해석될 수 있습니다.  
+또, `void*`는 주소를 담고 있으므로, `T&`를 주소를 표현하는 `native int`로도 바꿀 수 있습니다.  
+그리고, `native int`는 `IntPtr`를 의미합니다.  
+
+따라서 다음과 같이 Prefix & Postfix 메서드를 정의해야 합니다.  
+```csharp
+class MyClass10
+{
+    private int myField;
+    
+    public ref int Ref() => ref myField;
+}
+
+static void PRE_OR_POST(ref IntPtr @out, ...)
+{
+    ...
+}
+```
+
+**경고**  
+ref 반환을 수정하는 것은 굉장히 위험한 작업입니다.  
+따라서, 가급적 패치하는 것을 자제해야합니다.  
+
+fixed (...)는 메소드가 끝나면, 고정을 해제하기 때문에 안전하지 않습니다.  
+대신, GCHandle 과 함께 Pinned 모드로 사용하는 것이 더 안전합니다.
+
+## Replace 
+ref 반환이 있을때 가장 간단한 방법을 제공합니다.  
+원래 함수와 동일한 매개 변수 형식을 정의하고, 반환을 정의하면 됩니다.  
+
+다음과 같습니다.  
+```csharp
+class MyClass10
+{
+    private int myField;
+    
+    public ref int Ref() => ref myField;
+}
+
+static ref int REPLACE_(MyClass10 @this)
+{
+    ...
+}
+```
+
