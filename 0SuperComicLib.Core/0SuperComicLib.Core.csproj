@@ -58,7 +58,6 @@
     <Compile Include="Public\Numerics\Types.cs" />
     <Compile Include="Public\Numerics\WORD.cs" />
     <Compile Include="Public\Reflection\VInt.cs" />
-    <Compile Include="Public\Enumerable\ReverseIterator.cs" />
     <Compile Include="__global\ArrayExtension.cs" />
     <Compile Include="Public\Numerics\BitMask.cs" />
     <Compile Include="__global\ClsArray.cs" />
@@ -66,7 +65,6 @@
     <Compile Include="Public\HashedString.cs" />
     <Compile Include="Public\Reflection\PinnedObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Public\Enumerable\Iterator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
