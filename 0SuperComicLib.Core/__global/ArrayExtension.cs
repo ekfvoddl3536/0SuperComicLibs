@@ -1,9 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public unsafe delegate void IteratorLoopHandler<T>(SuperComicLib.Iterator<T> _iterator) where T : unmanaged;
-public unsafe delegate void ReverseIteratorLoopHandler<T>(SuperComicLib.ReverseIterator<T> _iterator) where T : unmanaged;
 /// <summary>
 /// 비관리형식 배열을 포인터로 읽습니다
 /// </summary>
@@ -276,39 +274,11 @@ public static class ArrayExtension
         return result.ToArray();
     }
 
-    public static unsafe void Begin_S<T>(this T[] _arr, IteratorLoopHandler<T> handler) where T : unmanaged
-    {
-        if (handler == null)
-            return;
-        fixed (T* ptr = _arr)
-            handler.Invoke(new SuperComicLib.Iterator<T>(ptr, _arr.Length));
-    }
-
-    public static unsafe void Begin<T>(this T[] _arr, IteratorLoopHandler<T> handler) where T : unmanaged
-    {
-        fixed (T* ptr = _arr)
-            handler.Invoke(new SuperComicLib.Iterator<T>(ptr, _arr.Length));
-    }
-
     public static unsafe void Begin<T>(this T[] _arr, ArrayPtrLoopHandler<T> handler) where T : unmanaged
     {
         fixed (T* ptr = _arr)
             for (int x = 0, max = _arr.Length; x < max;)
                 x += handler.Invoke(ptr, ref ptr[x], x, max);
-    }
-
-    public static unsafe void RBegin_S<T>(this T[] _arr, ReverseIteratorLoopHandler<T> handler) where T : unmanaged
-    {
-        if (handler == null)
-            return;
-        fixed (T* ptr = _arr)
-            handler.Invoke(new SuperComicLib.ReverseIterator<T>(ptr, _arr.Length));
-    }
-
-    public static unsafe void RBegin<T>(this T[] _arr, ReverseIteratorLoopHandler<T> handler) where T : unmanaged
-    {
-        fixed (T* ptr = _arr)
-            handler.Invoke(new SuperComicLib.ReverseIterator<T>(ptr, _arr.Length));
     }
 
     public static unsafe void RBegin<T>(this T[] _arr, ArrayPtrLoopHandler<T> handler) where T : unmanaged
