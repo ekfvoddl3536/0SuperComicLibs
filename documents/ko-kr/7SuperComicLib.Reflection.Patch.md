@@ -198,7 +198,7 @@ static void ABCD(ILGenerator il, MethodBase methodinfo_or_constructorinfo, int a
 static void MY_PRE(...)
 {
     // load first parameter
-    il.Emit(OpCodes.Ldarg, argFixupOffset);
+    il.Emit(OpCodes.Ldarg, (ushort)argFixupOffset);
 }
 ```
 
@@ -232,17 +232,23 @@ static void NAME()
 
 
 ```csharp
-public static METHOD_0000(...,) {
+public static int METHOD_0000(...,) {
     // call prefixes
-    T result = default;
-    bool runOriginalMethod = prefixes.Do(...,);
+    int result = default;
+    
+    prefix0.Do(...,);
+    bool runOriginalMethod = prefix1.Do(ref result, ...,);
+    runOriginalMethod = prefix2.Do(ref result, ...,);
     
     // call original
     if (runOriginalMethod)
         result = original_method.Do(...,);
     
     // call postfixes
-    postfixes.Do(...,);
+    postfix0.Do(ref result, ...,);
+    postfix1.Do(...,);
+    
+    return result;
 }
 ```
 
