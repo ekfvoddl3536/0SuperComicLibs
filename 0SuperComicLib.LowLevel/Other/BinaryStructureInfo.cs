@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security;
 using System.Security.Permissions;
 
 namespace SuperComicLib.LowLevel
@@ -7,6 +8,8 @@ namespace SuperComicLib.LowLevel
     public sealed unsafe class BinaryStructureInfo : IDisposable
     {
         private byte[] datas;
+        private IntPtr m_this;
+        private IntPtr m_blank;
 
         public BinaryStructureInfo(byte[] memory)
         {
@@ -16,7 +19,7 @@ namespace SuperComicLib.LowLevel
                 throw new InvalidOperationException(nameof(memory));
             fixed (byte* ptr = memory)
             {
-                This = (IntPtr)ptr;
+                m_this = (IntPtr)ptr;
 
                 datas = new byte[memory.Length - IntPtr.Size * 2]; // 필드를 제외한 2개의 포인터 공간 제거
                 int len = datas.Length;
@@ -34,7 +37,7 @@ namespace SuperComicLib.LowLevel
                     }
                     if (len == NativeClass.IA32_PTR_SIZE)
                         *(uint*)dst = *(uint*)src;
-                    Blank = *(IntPtr*)src;
+                    m_blank = *(IntPtr*)src;
                 }
             }
             
@@ -42,9 +45,9 @@ namespace SuperComicLib.LowLevel
 
         public int Length => datas.Length;
 
-        public IntPtr This { get; }
+        public IntPtr This => m_this;
 
-        public IntPtr Blank { get; }
+        public IntPtr Blank => m_blank;
 
         public byte[] ToArray(bool fieldOnly = false)
         {
@@ -114,13 +117,14 @@ namespace SuperComicLib.LowLevel
                 NativeClass.Internal_memcpyff(ptr, 0, ptr2, *(uint*)&idx, (uint)bytes.Length);
         }
 
+        [SecurityCritical]
         public T Read<T>(int idx) where T : struct
         {
             if (idx < 0 || datas.Length <= idx)
                 throw new ArgumentOutOfRangeException(nameof(idx));
-            UnsafeReadPointerStruct<T> rp = NativeClass.CreateReadPointer<T>(typeof(BinaryStructureInfo));
+            NativeStruct<T> rp = NativeStruct<T>.Instance;
             fixed (byte* ptr = datas)
-                return rp.Invoke(ptr + idx);
+                return rp.Read(ptr + idx);
         }
 
         public ref T Ref<T>(int idx) where T : unmanaged
@@ -131,13 +135,14 @@ namespace SuperComicLib.LowLevel
                 return ref *(T*)(ptr + idx);
         }
 
+        [SecurityCritical]
         public T Cast<T>(int idx) where T : class
         {
             if (idx < 0 || datas.Length <= idx)
                 throw new ArgumentOutOfRangeException(nameof(idx));
-            UnsafeCastClass<T> cc = NativeClass.CreateCastClass<T>(typeof(BinaryStructureInfo));
+            NativeClass<T> cc = NativeClass<T>.Instance;
             fixed (byte* ptr = datas)
-                return cc.Invoke(ptr + idx);
+                return cc.Cast(ptr + idx);
         }
 
         public void Write<T>(T value, int idx) where T : struct
@@ -160,6 +165,11 @@ namespace SuperComicLib.LowLevel
                 NativeClass.Memcpy(src, 0U, dst, *(uint*)&idx, (uint)vs.Length);
         }
 
-        public void Dispose() => datas = null;
+        public void Dispose()
+        {
+            datas = null;
+            m_this = IntPtr.Zero;
+            m_blank = IntPtr.Zero;
+        }
     }
 }

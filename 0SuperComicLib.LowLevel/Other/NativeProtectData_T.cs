@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace SuperComicLib.LowLevel
 {
@@ -12,10 +13,11 @@ namespace SuperComicLib.LowLevel
 
         public NativeProtectData(T value)
         {
+            if (Environment.OSVersion.Platform >= PlatformID.Unix)
+                throw new InvalidOperationException();
+
             _dwsize = (IntPtr)sizeof(T);
-            _lpaddr = (T*)VirtualAlloc(null, _dwsize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-            if (_lpaddr == null)
-                throw new InsufficientMemoryException();
+            _lpaddr = (T*)Marshal.AllocHGlobal(_dwsize);
             *_lpaddr = value;
             VirtualProtect(_lpaddr, _dwsize, PAGE_NOACCESS, out _);
         }
@@ -47,9 +49,9 @@ namespace SuperComicLib.LowLevel
         public void Dispose()
         {
             VirtualProtect(_lpaddr, _dwsize, PAGE_READWRITE, out _);
-            VirtualFree(_lpaddr, _dwsize, MEM_RELEASE);
-            _lpaddr = null;
             _dwsize = IntPtr.Zero;
+            Marshal.FreeHGlobal(new IntPtr(_lpaddr));
+            _lpaddr = null;
         }
     }
 }

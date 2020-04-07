@@ -12,20 +12,22 @@ namespace SuperComicLib.Collection
     [StructLayout(LayoutKind.Sequential)]
     public sealed unsafe class NativeSecureArray<T> : IDisposable, IEnumerable<T> where T : unmanaged
     {
+        private static readonly IntPtr _typesize = (IntPtr)sizeof(T);
         private T* _lpaddr;
         private IntPtr _dwsize;
-        private IntPtr _typesize;
 
+        #region 생성자
         public NativeSecureArray(int length)
         {
-            if (length <= 0)
+            // Length is 0 or negative.
+            // windows only
+            if (length <= 0 || Environment.OSVersion.Platform >= PlatformID.Unix)
                 throw new InvalidOperationException();
-            _typesize = (IntPtr)sizeof(T);
+
             _dwsize = new IntPtr(_typesize.ToInt32() * length);
-            _lpaddr = (T*)VirtualAlloc(null, _dwsize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-            if (_lpaddr == null)
-                throw new InsufficientMemoryException();
-            VirtualLock(_lpaddr, _dwsize);
+            
+            _lpaddr = (T*)Marshal.AllocHGlobal(_dwsize);
+
             VirtualProtect(_lpaddr, _dwsize, PAGE_NOACCESS, out _);
         }
 
@@ -33,28 +35,32 @@ namespace SuperComicLib.Collection
         {
             if (source == null)
                 throw new ArgumentNullException();
-            _typesize = (IntPtr)sizeof(T);
+
             _dwsize = new IntPtr(_typesize.ToInt32() * source.Length);
+            
             if (_dwsize == IntPtr.Zero)
                 throw new InvalidOperationException();
-            _lpaddr = (T*)VirtualAlloc(null, _dwsize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-            if (_lpaddr == null)
-                throw new InsufficientMemoryException();
-            VirtualLock(_lpaddr, _dwsize);
+
+            _lpaddr = (T*)Marshal.AllocHGlobal(_dwsize);
+
             for (int x = source.Length - 1; x >= 0; x--)
                 _lpaddr[x] = source[x];
+
             VirtualProtect(_lpaddr, _dwsize, PAGE_NOACCESS, out _);
         }
+        #endregion
 
+        #region 반복기
         public IEnumerator<T> GetEnumerator()
         {
             for (int x = 0, len = Length; x < len; x++)
                 yield return this[x];
             yield break;
         }
-
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        #endregion
 
+        #region 함수
         public T[] ToArray()
         {
             T[] vs = new T[Length];
@@ -96,19 +102,22 @@ namespace SuperComicLib.Collection
                 VirtualProtect(ptr, _typesize, PAGE_NOACCESS, out _);
             }
         }
+        #endregion
 
+        #region 소멸자
         ~NativeSecureArray() => Dispose();
 
         public void Dispose()
         {
             VirtualProtect(_lpaddr, _dwsize, PAGE_READWRITE, out _);
             VirtualUnlock(_lpaddr, _dwsize);
-            VirtualFree(_lpaddr, _dwsize, MEM_RELEASE);
-            _lpaddr = null;
             _dwsize = IntPtr.Zero;
-            _typesize = IntPtr.Zero;
+
+            Marshal.FreeHGlobal(new IntPtr(_lpaddr));
+            _lpaddr = null;
 
             GC.SuppressFinalize(this);
         }
+        #endregion
     }
 }

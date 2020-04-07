@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace SuperComicLib.LowLevel
 {
@@ -14,36 +15,29 @@ namespace SuperComicLib.LowLevel
             MEM_RELEASE = 0x8000;
 
         private void* _lpaddr;
-        private IntPtr _dwsize;
+        private IntPtr _size;
 
-        public NativeHeapMgr(int bytes)
-        {
-            if (bytes <= 0)
-                throw new InvalidOperationException();
-            _dwsize = new IntPtr(bytes);
-            _lpaddr = VirtualAlloc(null, _dwsize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-            if (_lpaddr == null)
-                throw new InsufficientMemoryException();
-        }
+        public NativeHeapMgr(int bytes) : this((long)bytes) { }
 
         public NativeHeapMgr(long bytes)
         {
-            if (bytes <= 0)
+            if (bytes <= 0 || Environment.OSVersion.Platform >= PlatformID.Unix)
                 throw new InvalidOperationException();
-            _dwsize = new IntPtr(bytes);
-            _lpaddr = VirtualAlloc(null, _dwsize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-            if (_lpaddr == null)
-                throw new InsufficientMemoryException();
+
+            _size = new IntPtr(bytes);
+            _lpaddr = (void*)Marshal.AllocHGlobal(_size);
         }
 
         #region 속성
-        public int Size => _dwsize.ToInt32();
+        public int Size => _size.ToInt32();
 
-        public long LongSize => _dwsize.ToInt64();
+        public long LongSize => _size.ToInt64();
         #endregion
 
         #region 구조체 읽기/쓰기
         public T ReadValue<T>(int offset) where T : unmanaged => *(T*)this[offset];
+
+        public ref T RefValue<T>(int offset) where T : unmanaged => ref *(T*)this[offset];
 
         public void WriteValue<T>(int offset, T value) where T : unmanaged => *(T*)this[offset] = value;
         #endregion
@@ -51,7 +45,7 @@ namespace SuperComicLib.LowLevel
         #region 주소 읽기/쓰기
         public T ReadAddrs<T>(int offset) where T : class => 
             NativeClass.CreateCastClass<T>(typeof(NativeHeapMgr)).Invoke((*(IntPtr*)this[offset]).ToPointer());
-
+        
         public void WriteAddrs(int offset, object value) => 
             NativeClass.PinnedAddr(value, ptr => *(IntPtr*)this[offset] = ptr);
         #endregion
@@ -96,7 +90,7 @@ namespace SuperComicLib.LowLevel
 
         public T* AsPointer<T>() where T : unmanaged => (T*)_lpaddr;
 
-        public T* AsPointer<T>(int offset) where T : unmanaged => (T*)((byte*)_lpaddr + offset);
+        public T* AsPointer<T>(int offset) where T : unmanaged => (T*)this[offset];
 
         public IntPtr ToIntPtr() => (IntPtr)_lpaddr;
         #endregion
@@ -106,9 +100,11 @@ namespace SuperComicLib.LowLevel
 
         public void Dispose()
         {
-            VirtualFree(_lpaddr, _dwsize, MEM_RELEASE);
+            _size = IntPtr.Zero;
+
+            Marshal.FreeHGlobal(new IntPtr(_lpaddr));
             _lpaddr = null;
-            _dwsize = IntPtr.Zero;
+
             GC.SuppressFinalize(this);
         }
         #endregion
@@ -116,13 +112,13 @@ namespace SuperComicLib.LowLevel
         #region 보안
         public ProtectedSecureHeapResult Protect()
         {
-            VirtualProtect(_lpaddr, _dwsize, PAGE_NOACCESS, out _);
+            VirtualProtect(_lpaddr, _size, PAGE_NOACCESS, out _);
             return new ProtectedSecureHeapResult(this);
         }
 
         public ReadonlyNoSecureHeapResult Readonly()
         {
-            VirtualProtect(_lpaddr, _dwsize, PAGE_READONLY, out _);
+            VirtualProtect(_lpaddr, _size, PAGE_READONLY, out _);
             return new ReadonlyNoSecureHeapResult(this);
         }
         #endregion
@@ -137,7 +133,7 @@ namespace SuperComicLib.LowLevel
 
             public void Unprotect()
             {
-                VirtualProtect(mgr._lpaddr, mgr._dwsize, PAGE_READWRITE, out _);
+                VirtualProtect(mgr._lpaddr, mgr._size, PAGE_READWRITE, out _);
                 mgr = null;
             }
         }
@@ -150,7 +146,7 @@ namespace SuperComicLib.LowLevel
 
             public void Release()
             {
-                VirtualProtect(mgr._lpaddr, mgr._dwsize, PAGE_READWRITE, out _);
+                VirtualProtect(mgr._lpaddr, mgr._size, PAGE_READWRITE, out _);
                 mgr = null;
             }
         }
