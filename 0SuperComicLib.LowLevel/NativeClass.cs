@@ -32,6 +32,7 @@ namespace SuperComicLib.LowLevel
             return (UnsafeMemoryCopyBlock)dm.CreateDelegate(typeof(UnsafeMemoryCopyBlock));
         }
 
+#pragma warning disable IDE0071
         public static UnsafePinnedObjectAsIntPtr CreatePinnedPtr(Type owner)
         {
             DynamicMethod dm = new DynamicMethod($"__func_PinnedPtr ({nameof(NativeClass)}) ({owner.ToString()})", typeof(void), new[] { typeof(object), typeof(Action<IntPtr>) }, owner);
@@ -72,6 +73,7 @@ namespace SuperComicLib.LowLevel
 
             return (UnsafeReadPointerStruct<T>)dm.CreateDelegate(typeof(UnsafeReadPointerStruct<T>));
         }
+#pragma warning restore
 
         public static To Convert<From, To>(ref From fm)
             where From : unmanaged
@@ -91,7 +93,7 @@ namespace SuperComicLib.LowLevel
                 return *(To*)ptr;
         }
 
-        public static To Convert_cs<From, To>(From fm) where From : unmanaged where To : unmanaged
+        public static To Convert_s<From, To>(From fm) where From : unmanaged where To : unmanaged
             => Convert_s<From, To>(ref fm);
 
         public static IntPtr GetAddr(object obj)
@@ -359,6 +361,190 @@ namespace SuperComicLib.LowLevel
             Internal_memcpyff(src, srcOffset, dst, dstOffset, count);
         }
 
+        public static int CompareTo<T>(ref T left, ref T right) where T : struct => MemCompareTo(ref left, ref right);
+
+        public static int CompareTo<T>(T left, T right) where T : struct => MemCompareTo(ref left, ref right);
+
+        public static int CompareTo_Signed<T>(ref T left, ref T right) where T : struct => MemCompareTo(ref left, ref right);
+
+        public static int CompareTo_Signed<T>(T left, T right) where T : struct => MemCompareTo_Signed(ref left, ref right);
+
+        public static int MemoryCompareAuto<T>(ref T left, ref T right) =>
+            left != null 
+            ? 
+                right != null 
+                ? MemCompareTo(ref left, ref right) 
+                : -1 
+            : 0;
+
+        public static int MemoryCompareAuto<T>(T left, T right) =>
+           left != null
+           ?
+               right != null
+               ? MemCompareTo(ref left, ref right)
+               : -1
+           : 0;
+
+        public static int ReferenceCompare<T>(T left, T right)
+        {
+            if (left != null)
+            {
+                if (right != null)
+                {
+                    TypedReference pleft = __makeref(left);
+                    TypedReference pright = __makeref(right);
+
+                    IntPtr thisleft = **(IntPtr**)&pleft;
+                    IntPtr thisright = **(IntPtr**)&pright;
+
+                    return
+                        IntPtr.Size == AMD64_PTR_SIZE
+                        ? thisleft.ToInt64().CompareTo(thisright.ToInt64())
+                        : thisleft.ToInt32().CompareTo(thisright.ToInt32());
+                }
+                // left = null, right = not null
+                return 1;
+            }
+            return
+                right != null
+                ? -1 
+                : 0;
+        }
+
+        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+        internal static int MemCompareTo<T>(ref T left, ref T right)
+        {
+            uint size = *((uint*)typeof(T).TypeHandle.Value + X86BF_PTR_SIZE);
+            uint ptrsize = PointerSize;
+
+            if (size > ptrsize << 1)
+            {
+                byte[] left_mem = new byte[size];
+                byte[] right_mem = new byte[size];
+
+                pinnedptr.Invoke(left, new CopyMemoryHelper(left_mem, size).Work);
+                pinnedptr.Invoke(right, new CopyMemoryHelper(right_mem, size).Work);
+
+                fixed (byte* pleft = left_mem)
+                fixed (byte* pright = right_mem)
+                {
+                    uint offset = size - (ptrsize << 1);
+
+                    return Internal_CompareTo(pleft + offset, pright + offset, offset);
+                }
+            }
+
+            return 0;
+        }
+
+        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+        internal static int MemCompareTo_Signed<T>(ref T left, ref T right)
+        {
+            uint size = *((uint*)typeof(T).TypeHandle.Value + X86BF_PTR_SIZE);
+            uint ptrsize = PointerSize;
+
+            if (size > ptrsize << 1)
+            {
+                byte[] left_mem = new byte[size];
+                byte[] right_mem = new byte[size];
+
+                pinnedptr.Invoke(left, new CopyMemoryHelper(left_mem, size).Work);
+                pinnedptr.Invoke(right, new CopyMemoryHelper(right_mem, size).Work);
+
+                fixed (byte* pleft = left_mem)
+                fixed (byte* pright = right_mem)
+                {
+                    uint offset = size - ptrsize - 1;
+
+                    return Internal_CompareTo_Signed(pleft + offset, pright + offset, size - (ptrsize << 1));
+                }
+            }
+
+            return 0;
+        }
+
+        internal static int Internal_CompareTo(byte* pleft, byte* pright, uint count)
+        {
+            ulong* upleft = (ulong*)pleft;
+            ulong* upright = (ulong*)pright;
+            while (count >= AMD64_PTR_SIZE)
+            {
+                if (*upleft != *upright)
+                    return (*upleft).CompareTo(*upright);
+                upleft--;
+                upright--;
+                count -= AMD64_PTR_SIZE;
+            }
+
+            byte* ableft = (byte*)upleft;
+            byte* abright = (byte*)upright;
+            if (count >= IA32_PTR_SIZE)
+            {
+                if (*(uint*)ableft != *(uint*)abright)
+                    return (*(uint*)ableft).CompareTo(*(uint*)abright);
+
+                count -= IA32_PTR_SIZE;
+
+                ableft -= IA32_PTR_SIZE;
+                abright -= IA32_PTR_SIZE;
+            }
+            if (count >= IA16_PTR_SIZE)
+            {
+                if (*(ushort*)ableft != *(ushort*)abright)
+                    return *(ushort*)ableft - *(ushort*)abright;
+
+                count -= IA16_PTR_SIZE;
+
+                ableft -= IA16_PTR_SIZE;
+                abright -= IA16_PTR_SIZE;
+            }
+            return 
+                count >= X86BF_PTR_SIZE && *ableft != *abright
+                ? *ableft - *abright
+                : 0;
+        }
+
+        internal static int Internal_CompareTo_Signed(byte* pleft, byte* pright, uint count)
+        {
+            long* upleft = (long*)pleft;
+            long* upright = (long*)pright;
+            while (count >= AMD64_PTR_SIZE)
+            {
+                if (*upleft != *upright)
+                    return (*upleft).CompareTo(*upright);
+                upleft--;
+                upright--;
+                count -= AMD64_PTR_SIZE;
+            }
+
+            sbyte* ableft = (sbyte*)upleft;
+            sbyte* abright = (sbyte*)upright;
+            if (count >= IA32_PTR_SIZE)
+            {
+                if (*(int*)ableft != *(int*)abright)
+                    return *(int*)ableft - *(int*)abright;
+
+                count -= IA32_PTR_SIZE;
+
+                ableft -= IA32_PTR_SIZE;
+                abright -= IA32_PTR_SIZE;
+            }
+            if (count >= IA16_PTR_SIZE)
+            {
+                if (*(short*)ableft != *(short*)abright)
+                    return *(short*)ableft - *(short*)abright;
+
+                count -= IA16_PTR_SIZE;
+
+                ableft -= IA16_PTR_SIZE;
+                abright -= IA16_PTR_SIZE;
+            }
+            return
+                count >= X86BF_PTR_SIZE && *ableft != *abright
+                ? *ableft - *abright
+                : 0;
+        }
+
         internal static void Internal_memcpyff(byte* src, uint srcOffset, byte* dst, uint dstOffset, uint count)
         {
             ulong* usrc = (ulong*)(src + srcOffset);
@@ -391,44 +577,6 @@ namespace SuperComicLib.LowLevel
             }
             if (count == X86BF_PTR_SIZE)
                 *dst = *src;
-        }
-
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-        public static int CompareTo<T>(ref T left, ref T right) where T : struct
-        {
-            uint size = *((uint*)typeof(T).TypeHandle.Value + X86BF_PTR_SIZE);
-
-            if (size > PointerSize * 2)
-            {
-                byte[] left_mem = new byte[size];
-                byte[] right_mem = new byte[size];
-
-                pinnedptr.Invoke(left, new CopyMemoryHelper(left_mem, size).Work);
-                pinnedptr.Invoke(right, new CopyMemoryHelper(right_mem, size).Work);
-
-                fixed (byte* pleft = left_mem)
-                fixed (byte* pright = right_mem)
-                {
-                    uint ptrsize = PointerSize;
-                    uint offset = size - ptrsize - 1;
-
-                    byte* fixPleft = pleft + offset;
-                    byte* fixPright = pright + offset;
-
-                    do
-                    {
-                        if (*fixPleft != *fixPright)
-                            return *fixPleft - *fixPright;
-                        
-                        fixPleft--;
-                        fixPright--;
-
-                        offset--;
-                    } while (offset >= ptrsize);
-                }
-            }
-
-            return 0;
         }
 
         private readonly struct CopyMemoryHelper
