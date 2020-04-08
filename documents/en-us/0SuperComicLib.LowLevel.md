@@ -44,6 +44,7 @@ Cast the reference pointer value to `T`.
 | :------: | :------: | :------: | :------ |
 | Cast | `T` | `void*` | Cast to `T` |
 | Default | `T` | `void*` | call `Cast<T>` |
+| get_Instance | `NativeClass<T>` |  | static method |
 
 ## `NativeStruct<T>` sealed class
 Read the data from the memory address to which the pointer value points, and convert it to `T`.  
@@ -54,6 +55,7 @@ Read the data from the memory address to which the pointer value points, and con
 | :------: | :------: | :------: | :------ |
 | Read | `T` | `void*` | read value |
 | Default | `T` | `void*` | call `Read<T>` |
+| get_Instance | `NativeStruct<T>` |  | static method |
 
 
   
@@ -68,7 +70,8 @@ The modified data must be imported into the `ToArray` function and rewritten in 
 | :-: | :-: | :- | :- |
 | Constructor |  | `byte[]` |  |
 | get_Length | `int` |  | get the lenght of an internal byte array |
-| get_This | `IntPtr` |  | get this pointer address |
+| get_TypeHandle | `IntPtr` |  | |
+| get_Syncblock | `IntPtr` |  | |
 | get_Blank | `IntPtr` |  |  |
 | get_Item | `byte&` | `int` | *Indexer* |
 | ToArray | `byte[]` | `bool = false` |  |
