@@ -16,20 +16,6 @@ namespace SuperComicLib.Runtime
         public override bool LessOrEquals(T left, T right) => left.CompareTo(right) <= 0;
     }
 
-    internal sealed class GenericEqualsOnlyComparer<T> : FastComparer<T>
-        where T : IEquatable<T>
-    {
-        public override bool EqualsAB(T left, T right) => left.Equals(right);
-
-        public override bool Greater(T left, T right) => false;
-
-        public override bool GreatOrEquals(T left, T right) => EqualsAB(left, right);
-
-        public override bool Lesser(T left, T right) => false;
-
-        public override bool LessOrEquals(T left, T right) => EqualsAB(left, right);
-    }
-
     internal sealed class NullableUniversalComparer<T> : FastComparer<T?>
         where T : struct, IComparable<T>
     {

@@ -42,15 +42,13 @@ namespace SuperComicLib.Runtime
                 }
             else if (typeof(IComparable<T>).IsAssignableFrom(t))
                 return (FastComparer<T>)typeof(GenericUniversalComparer<>).MakeGenericType(t).GetConstructor(Type.EmptyTypes).Invoke(null);
-            else if (typeof(IEquatable<T>).IsAssignableFrom(t))
-                return (FastComparer<T>)typeof(GenericEqualsOnlyComparer<>).MakeGenericType(t).GetConstructor(Type.EmptyTypes).Invoke(null);
             else if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 Type u = t.GetGenericArguments()[0];
-                if (typeof(IComparable<>).MakeGenericType(u).IsAssignableFrom(u))
-                    return (FastComparer<T>)typeof(GenericUniversalComparer<>).MakeGenericType(u).GetConstructor(Type.EmptyTypes).Invoke(null);
-                else if (typeof(IEquatable<T>).IsAssignableFrom(t))
-                    return (FastComparer<T>)typeof(GenericEqualsOnlyComparer<>).MakeGenericType(u).GetConstructor(Type.EmptyTypes).Invoke(null);
+                return 
+                    typeof(IComparable<>).MakeGenericType(u).IsAssignableFrom(u)
+                    ? (FastComparer<T>)typeof(NullableUniversalComparer<>).MakeGenericType(u).GetConstructor(Type.EmptyTypes).Invoke(null)
+                    : (FastComparer<T>)typeof(NullableNativeComparer<>).MakeGenericType(u).GetConstructor(Type.EmptyTypes).Invoke(null);
             }
             else if (t.IsEnum)
             {
@@ -75,7 +73,7 @@ namespace SuperComicLib.Runtime
             else if (t.IsValueType)
                 return (FastComparer<T>)typeof(NativeComp<>).MakeGenericType(t).GetConstructor(Type.EmptyTypes).Invoke(null);
 
-            return (FastComparer<T>)typeof(ObjectUniversalComparer<>).MakeGenericType(t).GetConstructor(Type.EmptyTypes).Invoke(null);
+            return (FastComparer<T>)typeof(ObjectNativeComparer<>).MakeGenericType(t).GetConstructor(Type.EmptyTypes).Invoke(null);
         }
 
         public abstract bool Greater(T left, T right);
