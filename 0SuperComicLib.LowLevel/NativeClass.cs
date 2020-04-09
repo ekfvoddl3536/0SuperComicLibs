@@ -12,7 +12,7 @@ namespace SuperComicLib.LowLevel
         public const int IA32_PTR_SIZE = IA16_PTR_SIZE << 1;
         public const int AMD64_PTR_SIZE = IA32_PTR_SIZE << 1;
 
-        private static readonly UnsafePinnedObjectAsIntPtr pinnedptr = CreatePinnedPtr(typeof(NativeClass));
+        private static readonly UnsafePinnedAsIntPtr<object> pinnedptr = CreatePinnedPtr<object>(typeof(NativeClass));
         private static readonly UnsafeMemoryCopyBlock memcpblk = CreateMemcpblk();
 
         public static readonly uint PointerSize = (uint)UIntPtr.Size;
@@ -33,12 +33,14 @@ namespace SuperComicLib.LowLevel
         }
 
 #pragma warning disable IDE0071
-        public static UnsafePinnedObjectAsIntPtr CreatePinnedPtr(Type owner)
+        public static UnsafePinnedAsIntPtr<T> CreatePinnedPtr<T>(Type owner)
         {
-            DynamicMethod dm = new DynamicMethod($"__func_PinnedPtr ({nameof(NativeClass)}) ({owner.ToString()})", typeof(void), new[] { typeof(object), typeof(Action<IntPtr>) }, owner);
+            Type argType = typeof(T);
+
+            DynamicMethod dm = new DynamicMethod($"__func_PinnedPtr ({nameof(NativeClass)}) ({owner.ToString()})", typeof(void), new[] { argType, typeof(Action<IntPtr>) }, owner);
             ILGenerator g = dm.GetILGenerator();
 
-            g.DeclareLocal(typeof(object), true);
+            g.DeclareLocal(argType, true);
             g.Emit(OpCodes.Ldarg_0);
             g.Emit(OpCodes.Stloc_0);
             g.Emit(OpCodes.Ldarg_1);
@@ -47,7 +49,7 @@ namespace SuperComicLib.LowLevel
             g.Emit(OpCodes.Call, typeof(Action<IntPtr>).GetMethod(nameof(Action.Invoke)));
             g.Emit(OpCodes.Ret);
 
-            return (UnsafePinnedObjectAsIntPtr)dm.CreateDelegate(typeof(UnsafePinnedObjectAsIntPtr));
+            return (UnsafePinnedAsIntPtr<T>)dm.CreateDelegate(typeof(UnsafePinnedAsIntPtr<T>));
         }
 
         public static UnsafeCastClass<T> CreateCastClass<T>(Type owner) where T : class
@@ -74,6 +76,15 @@ namespace SuperComicLib.LowLevel
             return (UnsafeReadPointerStruct<T>)dm.CreateDelegate(typeof(UnsafeReadPointerStruct<T>));
         }
 #pragma warning restore
+
+        public static uint SizeOf<T>() => Internal_SizeOf(typeof(T));
+
+        public static uint SizeOf(Type type) => Internal_SizeOf(type ?? throw new ArgumentNullException(nameof(type)));
+
+        public static PubMethodTable GetMethodTable(Type type) =>
+            type == null 
+            ? default 
+            : *(PubMethodTable*)type.TypeHandle.Value;
 
         public static To Convert<From, To>(ref From fm)
             where From : unmanaged
@@ -578,6 +589,8 @@ namespace SuperComicLib.LowLevel
             if (count == X86BF_PTR_SIZE)
                 *dst = *src;
         }
+
+        internal static uint Internal_SizeOf(Type type) => ((uint*)type.TypeHandle.Value)[1];
 
         private readonly struct CopyMemoryHelper
         {
