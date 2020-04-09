@@ -8,25 +8,25 @@ namespace SuperComicLib.LowLevel
     public sealed unsafe class BinaryStructureInfo : IDisposable
     {
         private byte[] datas;
-        private IntPtr m_this;
+        private IntPtr m_typehnd;
         private IntPtr m_blank;
 
         public BinaryStructureInfo(byte[] memory)
         {
             if (memory == null)
                 throw new ArgumentNullException(nameof(memory));
-            if (memory.Length < IntPtr.Size * 3) // this 포인터 + 필드 시작 (정렬됨) + 엔드 포인터(?) intptr * 3
+            if (memory.Length < IntPtr.Size * 3)
                 throw new InvalidOperationException(nameof(memory));
             fixed (byte* ptr = memory)
             {
-                m_this = (IntPtr)ptr;
+                m_typehnd = (IntPtr)ptr;
 
                 datas = new byte[memory.Length - IntPtr.Size * 2]; // 필드를 제외한 2개의 포인터 공간 제거
                 int len = datas.Length;
 
                 fixed (byte* bdptr = datas)
                 {
-                    ulong* src = (ulong*)(ptr + IntPtr.Size); // this 다음부터
+                    ulong* src = (ulong*)(ptr + IntPtr.Size);
                     ulong* dst = (ulong*)bdptr;
                     while (len >= NativeClass.AMD64_PTR_SIZE)
                     {
@@ -45,9 +45,13 @@ namespace SuperComicLib.LowLevel
 
         public int Length => datas.Length;
 
-        public IntPtr This => m_this;
+        public IntPtr Syncblock => (IntPtr)((byte*)m_typehnd - IntPtr.Size);
+
+        public IntPtr TypeHandle => m_typehnd;
 
         public IntPtr Blank => m_blank;
+
+        public PubMethodTable MethodTable => **(PubMethodTable**)m_typehnd;
 
         public byte[] ToArray(bool fieldOnly = false)
         {
@@ -69,7 +73,7 @@ namespace SuperComicLib.LowLevel
             fixed (byte* ptr = vs)
             fixed (byte* bdptr = datas)
             {
-                *(IntPtr*)ptr = This;
+                *(IntPtr*)ptr = m_typehnd;
                 ulong* src = (ulong*)bdptr;
                 ulong* dst = (ulong*)(ptr + IntPtr.Size);
                 while (len >= NativeClass.AMD64_PTR_SIZE)
@@ -168,7 +172,7 @@ namespace SuperComicLib.LowLevel
         public void Dispose()
         {
             datas = null;
-            m_this = IntPtr.Zero;
+            m_typehnd = IntPtr.Zero;
             m_blank = IntPtr.Zero;
         }
     }

@@ -136,6 +136,7 @@
     <Compile Include="NativeClass.cs" />
     <Compile Include="Base\PointerMethods.cs" />
     <Compile Include="Base\NativeStruct.cs" />
+    <Compile Include="Other\PubMethodTable.cs" />
     <Compile Include="Types\PubTypedRefany.cs" />
     <Compile Include="Types\Types.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
