@@ -39,7 +39,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WIN64</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -50,7 +50,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;WIN64</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -63,7 +63,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WIN32</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -74,7 +74,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;WIN32</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -94,6 +94,7 @@
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28net40%29|x64'">
     <OutputPath>bin\x64\Release %28net40%29\</OutputPath>
@@ -105,6 +106,7 @@
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28net40%29|x86'">
     <OutputPath>bin\x86\Release %28net40%29\</OutputPath>
@@ -116,6 +118,7 @@
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -126,17 +129,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Base\NativeClass.cs" />
-    <Compile Include="Collection\NativeSecureArray_T.cs" />
-    <Compile Include="Other\Extensions.cs" />
-    <Compile Include="Other\NativeProtectData_T.cs" />
-    <Compile Include="Other\NativeHeapMgr.cs" />
-    <Compile Include="NativeMethod\NativeMehods0.cs" />
-    <Compile Include="Other\BinaryStructureInfo.cs" />
+    <Compile Include="Base\NativeClass_T.cs" />
+    <Compile Include="Utils\NativeSecureArray_T.cs" />
+    <Compile Include="Types\Extension\Extensions.cs" />
+    <Compile Include="Types\UnsafeCLIMemoryData.cs" />
+    <Compile Include="Utils\NativeProtectData_T.cs" />
+    <Compile Include="Utils\NativeHeapMgr.cs" />
+    <Compile Include="Types\NativeMethod\NativeMehods0.cs" />
+    <Compile Include="Utils\BinaryStructureInfo.cs" />
     <Compile Include="NativeClass.cs" />
-    <Compile Include="Base\PointerMethods.cs" />
-    <Compile Include="Base\NativeStruct.cs" />
-    <Compile Include="Other\PubMethodTable.cs" />
+    <Compile Include="Base\PointerMethods_T.cs" />
+    <Compile Include="Base\NativeStruct_T.cs" />
+    <Compile Include="Types\Extension\NET35IntPtrExtension.cs" />
+    <Compile Include="Types\PubMethodTable.cs" />
     <Compile Include="Types\PubTypedRefany.cs" />
     <Compile Include="Types\Types.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -144,5 +149,6 @@
   <ItemGroup>
     <None Include="0SuperComicLib.LowLevel.nuspec" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

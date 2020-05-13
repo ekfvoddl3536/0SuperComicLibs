@@ -2,7 +2,9 @@
 
 namespace SuperComicLib.LowLevel
 {
-    public delegate void UnsafePinnedAsIntPtr<T>(T target, Action<IntPtr> callback);
+    public delegate void UnsafePinnedAction(object value, Action<IntPtr> cb);
+
+    public unsafe delegate T UnsafeDupAction<T>(ref T value);
 
     public unsafe delegate T UnsafeCastClass<T>(void* ptr) where T : class;
 

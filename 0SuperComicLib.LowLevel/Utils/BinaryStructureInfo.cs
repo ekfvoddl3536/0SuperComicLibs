@@ -9,57 +9,32 @@ namespace SuperComicLib.LowLevel
     {
         private byte[] datas;
         private IntPtr m_typehnd;
-        private IntPtr m_blank;
+        private bool disposedValue;
 
-        public BinaryStructureInfo(byte[] memory)
+        public BinaryStructureInfo(UnsafeCLIMemoryData memdata)
         {
-            if (memory == null)
-                throw new ArgumentNullException(nameof(memory));
-            if (memory.Length < IntPtr.Size * 3)
-                throw new InvalidOperationException(nameof(memory));
-            fixed (byte* ptr = memory)
-            {
-                m_typehnd = (IntPtr)ptr;
+            if (memdata.IsEmpty)
+                throw new ArgumentNullException(nameof(memdata));
 
-                datas = new byte[memory.Length - IntPtr.Size * 2]; // 필드를 제외한 2개의 포인터 공간 제거
-                int len = datas.Length;
-
-                fixed (byte* bdptr = datas)
-                {
-                    ulong* src = (ulong*)(ptr + IntPtr.Size);
-                    ulong* dst = (ulong*)bdptr;
-                    while (len >= NativeClass.AMD64_PTR_SIZE)
-                    {
-                        *dst = *src;
-                        src++;
-                        dst++;
-                        len -= NativeClass.AMD64_PTR_SIZE;
-                    }
-                    if (len == NativeClass.IA32_PTR_SIZE)
-                        *(uint*)dst = *(uint*)src;
-                    m_blank = *(IntPtr*)src;
-                }
-            }
-            
+            m_typehnd = memdata.typehnd;
+            datas = memdata.memory;
         }
 
         public int Length => datas.Length;
 
-        public IntPtr Syncblock => (IntPtr)((byte*)m_typehnd - IntPtr.Size);
+        public IntPtr Syncblock => *(IntPtr*)((byte*)m_typehnd - IntPtr.Size);
 
         public IntPtr TypeHandle => m_typehnd;
 
-        public IntPtr Blank => m_blank;
-
         public PubMethodTable MethodTable => **(PubMethodTable**)m_typehnd;
 
-        public byte[] ToArray(bool fieldOnly = false)
+        public byte[] ToArray(bool fieldOnly = true)
         {
             if (fieldOnly)
             {
                 int size = datas.Length;
                 byte[] vs = new byte[size];
-                Buffer.BlockCopy(datas, 0, vs, 0, size);
+                Array.Copy(datas, 0, vs, 0, size);
                 return vs;
             }
             return ToArrayAll();
@@ -67,25 +42,14 @@ namespace SuperComicLib.LowLevel
 
         private byte[] ToArrayAll()
         {
-            byte[] vs = new byte[datas.Length + IntPtr.Size * 2];
+            byte[] vs = new byte[datas.Length + IntPtr.Size];
             int len = datas.Length;
 
             fixed (byte* ptr = vs)
             fixed (byte* bdptr = datas)
             {
                 *(IntPtr*)ptr = m_typehnd;
-                ulong* src = (ulong*)bdptr;
-                ulong* dst = (ulong*)(ptr + IntPtr.Size);
-                while (len >= NativeClass.AMD64_PTR_SIZE)
-                {
-                    *dst = *src;
-                    src++;
-                    dst++;
-                    len -= NativeClass.AMD64_PTR_SIZE;
-                }
-                if (len == NativeClass.IA32_PTR_SIZE)
-                    *(uint*)dst = *(uint*)src;
-                *(IntPtr*)dst = Blank;
+                NativeClass.Internal_memcpyff(bdptr, 0, ptr + IntPtr.Size, 0, (uint)len);
             }
 
             return vs;
@@ -106,7 +70,7 @@ namespace SuperComicLib.LowLevel
             byte[] nres = new byte[count];
             fixed (byte* ptr = datas)
             fixed (byte* dst = nres)
-                NativeClass.Internal_memcpyff(ptr, 0U, dst, *(uint*)&idx, *(uint*)&count);
+                NativeClass.Internal_memcpyff(ptr, 0U, dst, (uint)idx, (uint)count);
             return nres;
         }
 
@@ -118,7 +82,7 @@ namespace SuperComicLib.LowLevel
                 throw new ArgumentOutOfRangeException(nameof(idx));
             fixed (byte* ptr = bytes)
             fixed (byte* ptr2 = datas)
-                NativeClass.Internal_memcpyff(ptr, 0, ptr2, *(uint*)&idx, (uint)bytes.Length);
+                NativeClass.Internal_memcpyff(ptr, 0, ptr2, (uint)idx, (uint)bytes.Length);
         }
 
         [SecurityCritical]
@@ -153,10 +117,11 @@ namespace SuperComicLib.LowLevel
         {
             if (idx < 0 || datas.Length <= idx)
                 throw new ArgumentOutOfRangeException(nameof(idx));
+
             byte[] vs = NativeClass.ReadMemory_s(ref value);
             fixed (byte* src = vs)
             fixed (byte* dst = datas)
-                NativeClass.Memcpy(src, 0U, dst, *(uint*)&idx, (uint)vs.Length);
+                NativeClass.Internal_memcpblk(src, dst + idx, (uint)vs.Length);
         }
 
         public void Write<T>(ref T rvalue, int idx) where T : struct
@@ -166,14 +131,28 @@ namespace SuperComicLib.LowLevel
             byte[] vs = NativeClass.ReadMemory_s(ref rvalue);
             fixed (byte* src = vs)
             fixed (byte* dst = datas)
-                NativeClass.Memcpy(src, 0U, dst, *(uint*)&idx, (uint)vs.Length);
+                NativeClass.Internal_memcpblk(src, dst + idx, (uint)vs.Length);
+        }
+
+        public void WriteRefval(object value, int idx)
+        {
+            if (idx < 0 || datas.Length <= idx)
+                throw new ArgumentOutOfRangeException(nameof(idx));
+
+            TypedReference tr = __makeref(value);
+            fixed (byte* dst = datas)
+                *(IntPtr*)(dst + idx) = **(IntPtr**)&tr;
         }
 
         public void Dispose()
         {
+            if (disposedValue)
+                return;
+
             datas = null;
             m_typehnd = IntPtr.Zero;
-            m_blank = IntPtr.Zero;
+
+            disposedValue = true;
         }
     }
 }

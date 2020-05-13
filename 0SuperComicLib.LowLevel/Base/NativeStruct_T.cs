@@ -14,12 +14,6 @@ namespace SuperComicLib.LowLevel
         public T Read(void* ptr) => read.Invoke(ptr);
 
         public override T Default(void* ptr) => Read(ptr);
-
-        public override void Pinned(T obj, Action<IntPtr> cb)
-        {
-            if (cb != null)
-                pinned.Invoke(obj, cb);
-        }
         #endregion
 
         #region static members
