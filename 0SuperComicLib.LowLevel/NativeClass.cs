@@ -7,11 +7,14 @@ namespace SuperComicLib.LowLevel
 {
     public unsafe static class NativeClass
     {
+        #region const
         public const int X86BF_PTR_SIZE = 1;
         public const int IA16_PTR_SIZE = X86BF_PTR_SIZE << 1;
         public const int IA32_PTR_SIZE = IA16_PTR_SIZE << 1;
         public const int AMD64_PTR_SIZE = IA32_PTR_SIZE << 1;
+        #endregion
 
+        #region field
         private static readonly UnsafePinnedAction pinned = CreatePinnedAction(typeof(NativeClass));
         private static readonly UnsafeMemoryCopyBlock memcpblk = CreateMemcpblk();
 
@@ -24,7 +27,9 @@ namespace SuperComicLib.LowLevel
 #else
             IntPtr.Size == sizeof(long);
 #endif
+        #endregion
 
+        #region IL
         private static UnsafeMemoryCopyBlock CreateMemcpblk()
         {
             Type vp = typeof(void).MakePointerType();
@@ -98,6 +103,7 @@ namespace SuperComicLib.LowLevel
             return (UnsafeReadPointerStruct<T>)dm.CreateDelegate(typeof(UnsafeReadPointerStruct<T>));
         }
 #pragma warning restore
+        #endregion
 
         public static uint SizeOf<T>() => Internal_SizeOf(typeof(T));
 
@@ -415,19 +421,19 @@ namespace SuperComicLib.LowLevel
             Internal_memcpyff(src, srcOffset, dst, dstOffset, count);
         }
 
-        public static int CompareTo<T>(ref T left, ref T right) where T : struct => MemCompareTo(ref left, ref right);
+        public static int CompareTo<T>(ref T left, ref T right) where T : struct => Internal_MemCompareTo_Un_S(ref left, ref right);
 
-        public static int CompareTo<T>(T left, T right) where T : struct => MemCompareTo(ref left, ref right);
+        public static int CompareTo<T>(T left, T right) where T : struct => Internal_MemCompareTo_Un_S(ref left, ref right);
 
-        public static int CompareTo_Signed<T>(ref T left, ref T right) where T : struct => MemCompareTo(ref left, ref right);
+        public static int CompareTo_Signed<T>(ref T left, ref T right) where T : struct => Internal_MemCompareTo(ref left, ref right);
 
-        public static int CompareTo_Signed<T>(T left, T right) where T : struct => MemCompareTo_Signed(ref left, ref right);
+        public static int CompareTo_Signed<T>(T left, T right) where T : struct => Internal_MemCompareTo(ref left, ref right);
 
         public static int MemoryCompareAuto<T>(ref T left, ref T right) =>
             left != null 
             ? 
                 right != null 
-                ? MemCompareTo(ref left, ref right) 
+                ? Internal_MemCompareTo_Un_S(ref left, ref right) 
                 : -1 
             : 0;
 
@@ -435,11 +441,11 @@ namespace SuperComicLib.LowLevel
            left != null
            ?
                right != null
-               ? MemCompareTo(ref left, ref right)
+               ? Internal_MemCompareTo_Un_S(ref left, ref right)
                : -1
            : 0;
 
-        public static int ReferenceCompare<T>(T left, T right)
+        public static int ReferenceCompare(object left, object right)
         {
             if (left != null)
             {
@@ -456,7 +462,7 @@ namespace SuperComicLib.LowLevel
                         ? typehnd_left.ToInt64().CompareTo(typehnd_right.ToInt64())
                         : typehnd_left.ToInt32().CompareTo(typehnd_right.ToInt32());
                 }
-                // left = null, right = not null
+                // left = not null, right = null
                 return 1;
             }
             return
@@ -465,8 +471,69 @@ namespace SuperComicLib.LowLevel
                 : 0;
         }
 
+        public static void ZeroMem<T>(ref T obj)
+        {
+            if (obj == null)
+                throw new ArgumentNullException(nameof(obj));
+
+            Type t = obj.GetType();
+            uint size = *((uint*)t.TypeHandle.Value + X86BF_PTR_SIZE) - (PointerSize << 1);
+
+            TypedReference tr = __makeref(obj);
+            if (t.IsValueType)
+                Internal_Zeromem(*(byte**)&tr, 0, size);
+            else
+                Internal_Zeromem(**(byte***)&tr, 0, size);
+        }
+
+        public static void ZeroMem<T>(ref T obj, int startOffset)
+        {
+            if (obj == null)
+                throw new ArgumentNullException(nameof(obj));
+
+            Type t = obj.GetType();
+            uint size = *((uint*)t.TypeHandle.Value + X86BF_PTR_SIZE) - (PointerSize << 1);
+            if (startOffset >= size)
+                throw new ArgumentOutOfRangeException(nameof(startOffset));
+
+            TypedReference tr = __makeref(obj);
+            if (t.IsValueType)
+                Internal_Zeromem(*(byte**)&tr, (uint)startOffset, size);
+            else
+                Internal_Zeromem(**(byte***)&tr, (uint)startOffset, size);
+        }
+
+        #region internal
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-        internal static int MemCompareTo<T>(ref T left, ref T right)
+        internal static int Internal_MemCompareTo_Un_S<T>(ref T left, ref T right)
+        {
+            int isize = *((int*)typeof(T).TypeHandle.Value + X86BF_PTR_SIZE) - (IntPtr.Size << 1);
+
+            if (isize > 0)
+            {
+                uint size = (uint)isize;
+
+                byte[] left_mem = new byte[isize];
+                byte[] right_mem = new byte[isize];
+
+                TypedReference left_tr = __makeref(left);
+                TypedReference right_tr = __makeref(right);
+
+                fixed (byte* pleft = left_mem)
+                fixed (byte* pright = right_mem)
+                {
+                    memcpblk.Invoke(*(void**)&left_tr, pleft, size);
+                    memcpblk.Invoke(*(void**)&right_tr, pright, size);
+
+                    return Internal_CompareTo_Un_S(pleft, pright, size);
+                }
+            }
+
+            return 0;
+        }
+
+        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+        internal static int Internal_MemCompareTo<T>(ref T left, ref T right)
         {
             int isize = *((int*)typeof(T).TypeHandle.Value + X86BF_PTR_SIZE) - (IntPtr.Size << 1);
 
@@ -493,35 +560,7 @@ namespace SuperComicLib.LowLevel
             return 0;
         }
 
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-        internal static int MemCompareTo_Signed<T>(ref T left, ref T right)
-        {
-            int isize = *((int*)typeof(T).TypeHandle.Value + X86BF_PTR_SIZE) - (IntPtr.Size << 1);
-
-            if (isize > 0)
-            {
-                uint size = (uint)isize;
-
-                byte[] left_mem = new byte[isize];
-                byte[] right_mem = new byte[isize];
-
-                TypedReference left_tr = __makeref(left);
-                TypedReference right_tr = __makeref(right);
-
-                fixed (byte* pleft = left_mem)
-                fixed (byte* pright = right_mem)
-                {
-                    memcpblk.Invoke(*(void**)&left_tr, pleft, size);
-                    memcpblk.Invoke(*(void**)&right_tr, pright, size);
-
-                    return Internal_CompareTo_Signed(pleft, pright, size);
-                }
-            }
-
-            return 0;
-        }
-
-        internal static int Internal_CompareTo(byte* pleft, byte* pright, uint count)
+        internal static int Internal_CompareTo_Un_S(byte* pleft, byte* pright, uint count)
         {
             ulong* upleft = (ulong*)pleft;
             ulong* upright = (ulong*)pright;
@@ -562,7 +601,7 @@ namespace SuperComicLib.LowLevel
                 : 0;
         }
 
-        internal static int Internal_CompareTo_Signed(byte* pleft, byte* pright, uint count)
+        internal static int Internal_CompareTo(byte* pleft, byte* pright, uint count)
         {
             long* upleft = (long*)pleft;
             long* upright = (long*)pright;
@@ -664,5 +703,33 @@ namespace SuperComicLib.LowLevel
             else
                 memcpblk.Invoke(psrc, **(byte***)pdst + IntPtr.Size + begin, size);
         }
+
+        internal static void Internal_Zeromem(byte* pval, uint begin, uint size)
+        {
+            ulong* pUL = (ulong*)(pval + begin);
+            while (size >= AMD64_PTR_SIZE)
+            {
+                *pUL = 0;
+                pUL--;
+                size -= AMD64_PTR_SIZE;
+            }
+
+            byte* ploc = (byte*)pUL;
+            if (size >= IA32_PTR_SIZE)
+            {
+                *(uint*)ploc = 0;
+                ploc += IA32_PTR_SIZE;
+                size -= IA32_PTR_SIZE;
+            }
+            if (size >= IA16_PTR_SIZE)
+            {
+                *(ushort*)ploc = 0;
+                ploc += IA16_PTR_SIZE;
+                size -= IA16_PTR_SIZE;
+            }
+            if (size >= X86BF_PTR_SIZE)
+                *ploc = 0;
+        }
+        #endregion
     }
 }

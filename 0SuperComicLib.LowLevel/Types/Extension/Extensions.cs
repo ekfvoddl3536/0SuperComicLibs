@@ -24,7 +24,7 @@
 
         public static T GetValue_s<T>(this byte[] bytes) where T : unmanaged
         {
-            if (sizeof(T) != bytes.Length)
+            if (sizeof(T) > bytes.Length)
                 return default;
             fixed (byte* ptr = bytes)
                 return *(T*)ptr;
@@ -32,8 +32,9 @@
 
         public static T GetValue_s<T>(this byte[] bytes, int idx) where T : unmanaged
         {
-            if (sizeof(T) + idx != bytes.Length)
+            if (sizeof(T) + idx > bytes.Length)
                 return default;
+
             fixed (byte* ptr = bytes)
                 return *(T*)(ptr + idx);
         }
