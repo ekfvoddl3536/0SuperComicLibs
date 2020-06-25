@@ -100,12 +100,15 @@ namespace SuperComicLib.LowLevel
 
         public void Dispose()
         {
-            _size = IntPtr.Zero;
+            if (_lpaddr != null)
+            {
+                _size = IntPtr.Zero;
 
-            Marshal.FreeHGlobal(new IntPtr(_lpaddr));
-            _lpaddr = null;
+                Marshal.FreeHGlobal(new IntPtr(_lpaddr));
+                _lpaddr = null;
 
-            GC.SuppressFinalize(this);
+                GC.SuppressFinalize(this);
+            }
         }
         #endregion
 

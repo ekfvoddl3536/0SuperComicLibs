@@ -109,14 +109,17 @@ namespace SuperComicLib.Collection
 
         public void Dispose()
         {
-            VirtualProtect(_lpaddr, _dwsize, PAGE_READWRITE, out _);
-            VirtualUnlock(_lpaddr, _dwsize);
-            _dwsize = IntPtr.Zero;
+            if (_lpaddr != null)
+            {
+                VirtualProtect(_lpaddr, _dwsize, PAGE_READWRITE, out _);
+                VirtualUnlock(_lpaddr, _dwsize);
+                _dwsize = IntPtr.Zero;
 
-            Marshal.FreeHGlobal(new IntPtr(_lpaddr));
-            _lpaddr = null;
+                Marshal.FreeHGlobal(new IntPtr(_lpaddr));
+                _lpaddr = null;
 
-            GC.SuppressFinalize(this);
+                GC.SuppressFinalize(this);
+            }
         }
         #endregion
     }

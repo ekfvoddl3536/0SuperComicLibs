@@ -6,7 +6,8 @@ namespace SuperComicLib.LowLevel
     using static NativeHeapMgr;
     using static NativeMehods0;
 
-    public sealed unsafe class NativeProtectData<T> : IDisposable where T : unmanaged
+    public sealed unsafe class NativeProtectData<T> : IDisposable 
+        where T : unmanaged
     {
         private T* _lpaddr;
         private IntPtr _dwsize;
@@ -48,10 +49,13 @@ namespace SuperComicLib.LowLevel
 
         public void Dispose()
         {
-            VirtualProtect(_lpaddr, _dwsize, PAGE_READWRITE, out _);
-            _dwsize = IntPtr.Zero;
-            Marshal.FreeHGlobal(new IntPtr(_lpaddr));
-            _lpaddr = null;
+            if (_lpaddr != null)
+            {
+                VirtualProtect(_lpaddr, _dwsize, PAGE_READWRITE, out _);
+                _dwsize = IntPtr.Zero;
+                Marshal.FreeHGlobal(new IntPtr(_lpaddr));
+                _lpaddr = null;
+            }
         }
     }
 }

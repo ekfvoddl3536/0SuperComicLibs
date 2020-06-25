@@ -9,7 +9,6 @@ namespace SuperComicLib.LowLevel
     {
         private byte[] datas;
         private IntPtr m_typehnd;
-        private bool disposedValue;
 
         public BinaryStructureInfo(UnsafeCLIMemoryData memdata)
         {
@@ -146,13 +145,11 @@ namespace SuperComicLib.LowLevel
 
         public void Dispose()
         {
-            if (disposedValue)
-                return;
-
-            datas = null;
-            m_typehnd = IntPtr.Zero;
-
-            disposedValue = true;
+            if (datas != null)
+            {
+                datas = null;
+                m_typehnd = IntPtr.Zero;
+            }
         }
     }
 }

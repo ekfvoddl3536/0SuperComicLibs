@@ -279,7 +279,7 @@ namespace SuperComicLib.LowLevel
         }
 
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-        public static byte[] ReadMemory_s<T>(ref T obj) where T : new()
+        public static byte[] ReadMemory_s<T>(ref T obj)
         {
             if (obj == null)
                 throw new ArgumentNullException(nameof(obj));
@@ -309,17 +309,10 @@ namespace SuperComicLib.LowLevel
                 return BitConverter.GetBytes(f2);
             else if (obj is decimal f3)
             {
-                int[] vs = decimal.GetBits(f3);
                 byte[] res = new byte[sizeof(decimal)];
                 fixed (byte* temp = res)
-                fixed (int* src = vs)
-                {
-                    int* dst = (int*)temp;
-                    dst[0] = src[0];
-                    dst[1] = src[1];
-                    dst[2] = src[2];
-                    dst[3] = src[3];
-                }
+                    *(decimal*)temp = f3;
+
                 return res;
             }
             else if (obj is string str)
@@ -481,26 +474,9 @@ namespace SuperComicLib.LowLevel
 
             TypedReference tr = __makeref(obj);
             if (t.IsValueType)
-                Internal_Zeromem(*(byte**)&tr, 0, size);
+                Internal_Zeromem(*(byte**)&tr, size);
             else
-                Internal_Zeromem(**(byte***)&tr, 0, size);
-        }
-
-        public static void ZeroMem<T>(ref T obj, int startOffset)
-        {
-            if (obj == null)
-                throw new ArgumentNullException(nameof(obj));
-
-            Type t = obj.GetType();
-            uint size = *((uint*)t.TypeHandle.Value + X86BF_PTR_SIZE) - (PointerSize << 1);
-            if (startOffset >= size)
-                throw new ArgumentOutOfRangeException(nameof(startOffset));
-
-            TypedReference tr = __makeref(obj);
-            if (t.IsValueType)
-                Internal_Zeromem(*(byte**)&tr, (uint)startOffset, size);
-            else
-                Internal_Zeromem(**(byte***)&tr, (uint)startOffset, size);
+                Internal_Zeromem(**(byte***)&tr + IntPtr.Size, size);
         }
 
         #region internal
@@ -704,9 +680,9 @@ namespace SuperComicLib.LowLevel
                 memcpblk.Invoke(psrc, **(byte***)pdst + IntPtr.Size + begin, size);
         }
 
-        internal static void Internal_Zeromem(byte* pval, uint begin, uint size)
+        internal static void Internal_Zeromem(byte* pval, uint size)
         {
-            ulong* pUL = (ulong*)(pval + begin);
+            ulong* pUL = (ulong*)pval;
             while (size >= AMD64_PTR_SIZE)
             {
                 *pUL = 0;
