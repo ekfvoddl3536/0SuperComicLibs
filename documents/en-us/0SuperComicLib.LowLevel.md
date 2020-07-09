@@ -3,25 +3,50 @@
 * Access the object's source memory
   1. Modify readonly fields
   2. Get or modify the value of non-public fields
-  3. Get or modify the this pointer value (this is only an example)
 * Memory data copy
 * Get address of the object
 * Get address of the object (pinned)
 * Convert class reference pointer value to original type
+* Convert struct pointer value to original type
+* Memory value comparison
+* Force assignment or duplication of classes to fixed addresses
 * Copy memory datas from one object type to another **public struct type[1]**  
-  (Only if the field layout is the same or the objects are the same size will the copy be successful)  
-  
  
-| EndsWith | Meaning | Note |
-| :------: | :------: | :------ |
-| _s | Safe | this function is safe |
-| _c | Const | can use constant value as arguments |
-| _cs | Const + Safe | |
-| Addrss | Addresses  | get the addresses of the array elements |
-| Memcpyff | | not using cpblk command |
-  
   
 `[1]  Type accessible from external library, regardless of which field is non-public`    
+
+| Name | Return | Parameters | Note |
+| :------: | :------: | :------ | :------ |
+| SizeOf | `uint` | `<T>` | Calculate the total size of `T` |
+| SizeOf | `uint` | `Type` | Calculate the total size |
+| SizeOf_s | `uint` | `Type` | Calculate the field size |
+| GetMethodTable | `PubMethodTable` | `Type` |  |
+| Convert | `To` | `<From, To> : unmanaged`, `ref From` |  |
+| Convert | `To` | `<From, To> : unmanaged`, `From` | |
+| RefMemory | | `<T>`, `ref T`, `UnsafePointerAction<byte>` | Get the field address |
+| ReadMemory | `byte[]` | `ref T` | Read all field data |
+| ReadMemory | `byte[]` | `ref T`, `uint` | Read field data from specified offset to end |
+| ReadMemory | `byte[]` | `ref T`, `uint`, `uint` | Read field data as much as `count` from the specified offset |
+| ReadMemoryEx| `UnsafeCLIMemoryData` | `ref T` | Read all field data including method table |
+| ReadMemory_s | `byte[]` | `ref T` | Safer way to read the basic type and `string` type |
+| WriteMemory | | `<T>`, `ref T`, `byte[]` | Write new data |
+| WriteMemory | | `<T>`, `ref T`, `byte[]`, `int` | Write new data from the specified offset |
+| Memcpy | | `IntPtr`, `int`, `IntPtr`, `int`, `int` | Copy memory |
+| Memcpy | | `void*`, `int`, `void*`, `int`, `int` |  |
+| Memcpyff | | `byte*`, `int`, `byte*`, `int`, `int` | Copy memory in a non-standard way |
+| CompareTo | `int` | `<T> : struct`, `ref T`, `ref T` | Compare two values (unsigned) |
+| CompareTo | `int` | `<T> : struct`, `T`, `T` |  |
+| CompareTo_Signed | `int` | `<T> : struct`, `ref T`, `ref T` | Compare two values (signed) |
+| CompareTo_Signed | `int` | `<T> : struct`, `T`, `T` |  |
+| MemoryCompareAuto | `int` | `<T>`, `ref T`, `ref T` | Perform memory comparison for any types |
+| MemoryCompareAuto | `int` | `<T>`, `T`, `T` | |
+| ReferenceCompare| `int` | `object`, `object` | Compare reference address value |
+| ZeroMem | | `<T>`, `ref T` | Set all field values to 0 |
+| Duplicate | `NativeInstance<T>` | `<T> : class`, `T` | Duplicate reference type (unsafe, pinned address) |
+| InitObj| `NativeInstance<T>` | `<T> : class` | Create reference type (unsafe, pinned address) |
+| GetAddress | `IntPtr` | `object` | Read address |
+| PinnedAddress | | `object`, `Action<IntPtr>` | Read address (pinned) |
+
 ## `PointerMethods<T>` abstract class
 this class defines the default behavior.    
 ### Derived
@@ -30,7 +55,7 @@ this class defines the default behavior.
   
 ### Methods  
 | Name | Return | Parameters | Note |
-| :------: | :------: | :------: | :------ |
+| :------: | :------: | :------ | :------ |
 | Default | `T` | `void*` |  |
 | GetAddr | `IntPtr` | `ref T` | Get address of the object |
 | GetPinnedPtr |  | `ref T`, `Action<IntPtr>` | Get address of the object (pinned) |
@@ -41,7 +66,7 @@ Cast the reference pointer value to `T`.
 
 ### Methods
 | Name | Return | Parameters | Note |
-| :------: | :------: | :------: | :------ |
+| :------: | :------: | :------ | :------ |
 | Cast | `T` | `void*` | Cast to `T` |
 | Default | `T` | `void*` | call `Cast<T>` |
 | get_Instance | `NativeClass<T>` |  | static method |
@@ -52,7 +77,7 @@ Read the data from the memory address to which the pointer value points, and con
 
 ### Methods
 | Name | Return | Parameters | Note |
-| :------: | :------: | :------: | :------ |
+| :------: | :------: | :------ | :------ |
 | Read | `T` | `void*` | read value |
 | Default | `T` | `void*` | call `Read<T>` |
 | get_Instance | `NativeStruct<T>` |  | static method |
