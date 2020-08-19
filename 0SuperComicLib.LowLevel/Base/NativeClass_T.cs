@@ -1,4 +1,5 @@
-﻿using System.Security;
+﻿using System;
+using System.Security;
 
 namespace SuperComicLib.LowLevel
 {
@@ -13,6 +14,15 @@ namespace SuperComicLib.LowLevel
         public T Cast(void* ptr) => cast.Invoke(ptr);
 
         public override T Default(void* ptr) => Cast(ptr);
+
+        public override void RefMemory(ref T obj, UnsafePointerAction cb)
+        {
+#if DEBUG
+            System.Diagnostics.Debug.Assert(obj != null);
+#endif
+            TypedReference tr = __makeref(obj);
+            cb.Invoke(**(byte***)&tr + NativeClass.PtrSize_i);
+        }
         #endregion
 
         #region static members

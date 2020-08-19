@@ -1,0 +1,52 @@
+﻿
+
+<2020. 02 .01 OpCode 패턴 분석결과>
+
+   short 점프 OpCode를 long 점프 코드로 바꿀 때
+   Hash (Dictionary와 같은)를 사용하지 않고 바꿀 수 있는 방법을 찾음
+   
+   (추측) 가정:
+                   모든 short jump opcode는 long jump opcode와
+                   의미있는 차이를 두고 있을 것이다.
+
+   분석:
+           leave_s	            0xDE
+            beq_s	            0x2E
+           bge_s	            0x2F
+           bge_un_s	            0x34
+           bgt_s	            0x30
+           bgt_un_s	            0x35
+           ble_s	            0x31
+           ble_un_s	            0x36
+           blt_s	            0x32
+           blt_un_s	            0x37
+           bne_un_s	            0x33
+           br_s	                0x2B
+           brfalse_s	        0x2C
+           brtrue_s	            0x2D
+
+   정렬:
+           (short)                  (long)              (diff.)
+           br_s	            0x2B    br          0x38    13
+           brfalse_s        0x2C    brfalse     0x39    13
+           brtrue_s         0x2D    brtrue      0x3A    13
+           beq_s            0x2E    beq         0x3B    13
+           bge_s            0x2F    bge         0x3C    13
+           bgt_s            0x30    bgt         0x3D    13
+           ble_s            0x31    ble         0x3E    13
+           blt_s            0x32    blt         0x3F    13
+           bne_un_s         0x33    bne_un      0x40    13
+           bge_un_s         0x34    bge_un      0x41    13
+           bgt_un_s         0x35    bgt_un      0x42    13
+           ble_un_s         0x36    ble_un      0x43    13
+           blt_un_s	        0x37    blt_un      0x44    13
+           leave_s	        0xDE    leave       0xDD    -1
+
+   결론:
+           대부분의 Short Jump OpCode는 Long Jump OpCode와
+           (long jump) - (short jump) = 13 (0xD)
+           만큼의 차이를 보임
+
+            x == 0xDE (leave_s) : x--; (0xDD = leave)
+           
+            x >= 0x2B (br_s) && x <= 0x37 (blt_un_s) : x += 13 (0xD)

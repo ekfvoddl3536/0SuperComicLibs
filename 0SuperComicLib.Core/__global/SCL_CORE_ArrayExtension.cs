@@ -300,11 +300,54 @@ public static class SCL_CORE_ArrayExtension
             action.Invoke(_arr1[i], _arr2[i]);
     }
 
-    public static string ToString<T>(this IEnumerable<T> _arr, Func<T, string> converter = null, string value = " ")
+    public static string ToString<T>(this T[] _arr, Func<T, string> converter = null, string value = " ")
     {
         if (converter == null)
-            converter = cur => cur.ToString();
-        string v = _arr.Aggregate(string.Empty, (p, c) => $"{p}{(p.Length != 0 ? value : string.Empty)}{converter.Invoke(c)}");
+            converter = DefToString;
+
+        string v = converter.Invoke(_arr[0]);
+        for (int x = 1, max = _arr.Length; x < max; x++)
+            v += value + converter.Invoke(_arr[x]);
+
+        // string v = _arr.Aggregate(string.Empty, (p, c) => $"{p}{(p.Length != 0 ? value : string.Empty)}{converter.Invoke(c)}");
         return v;
+    }
+
+    private static string DefToString<T>(T obj) => obj.ToString();
+
+    /// <summary>
+    /// 배열의 요소를 앞으로 당깁니다
+    /// </summary>
+    public static void Pull<T>(this T[] _arr, int begin)
+    {
+        if (begin <= 0)
+            return;
+
+        int max = _arr.Length;
+        int x = max - begin;
+        int n = 0;
+        while (n < x)
+            _arr[n++] = _arr[begin++];
+
+        while (n < max)
+            _arr[n++] = default;
+    }
+
+    /// <summary>
+    /// 배열의 요소를 뒤로 밀어냅니다
+    /// </summary>
+    public static void Push<T>(this T[] _arr, int begin)
+    {
+        if (begin <= 0)
+            return;
+
+        int max = _arr.Length;
+        int x = max - begin;
+        int n = max - 1;
+        while (n >= x)
+            _arr[n--] = _arr[begin--];
+
+        while (n >= 0)
+            _arr[n--] = default;
     }
 }

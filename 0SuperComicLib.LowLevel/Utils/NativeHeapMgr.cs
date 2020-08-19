@@ -3,17 +3,10 @@ using System.Runtime.InteropServices;
 
 namespace SuperComicLib.LowLevel
 {
+    using static Constants;
     using static NativeMehods0;
     public sealed unsafe class NativeHeapMgr : IDisposable
     {
-        internal const uint
-            PAGE_NOACCESS = 0x01,
-            PAGE_READONLY = 0x02,
-            PAGE_READWRITE = 0x04,
-            MEM_RESERVE = 0x2000,
-            MEM_COMMIT = 0x1000,
-            MEM_RELEASE = 0x8000;
-
         private void* _lpaddr;
         private IntPtr _size;
 
@@ -44,10 +37,13 @@ namespace SuperComicLib.LowLevel
 
         #region 주소 읽기/쓰기
         public T ReadAddrs<T>(int offset) where T : class => 
-            NativeClass.CreateCastClass<T>(typeof(NativeHeapMgr)).Invoke((*(IntPtr*)this[offset]).ToPointer());
+            NativeClass<T>.Instance.Cast(this[offset]);
         
-        public void WriteAddrs(int offset, object value) => 
-            NativeClass.PinnedAddr(value, ptr => *(IntPtr*)this[offset] = ptr);
+        public void WriteAddrs(int offset, object value)
+        {
+            TypedReference tr = __makeref(value);
+            *(IntPtr*)this[offset] = **(IntPtr**)&tr;
+        }
         #endregion
 
         #region 로우레벨
@@ -113,26 +109,26 @@ namespace SuperComicLib.LowLevel
         #endregion
 
         #region 보안
-        public ProtectedSecureHeapResult Protect()
+        public ProtectedHeapResult Protect()
         {
             VirtualProtect(_lpaddr, _size, PAGE_NOACCESS, out _);
-            return new ProtectedSecureHeapResult(this);
+            return new ProtectedHeapResult(this);
         }
 
-        public ReadonlyNoSecureHeapResult Readonly()
+        public ReadonlyHeapResult Readonly()
         {
             VirtualProtect(_lpaddr, _size, PAGE_READONLY, out _);
-            return new ReadonlyNoSecureHeapResult(this);
+            return new ReadonlyHeapResult(this);
         }
         #endregion
 
         #region 확장
 #pragma warning disable
-        public struct ProtectedSecureHeapResult
+        public struct ProtectedHeapResult
         {
             private NativeHeapMgr mgr;
 
-            internal ProtectedSecureHeapResult(NativeHeapMgr mgr) => this.mgr = mgr;
+            internal ProtectedHeapResult(NativeHeapMgr mgr) => this.mgr = mgr;
 
             public void Unprotect()
             {
@@ -141,11 +137,11 @@ namespace SuperComicLib.LowLevel
             }
         }
 
-        public struct ReadonlyNoSecureHeapResult
+        public struct ReadonlyHeapResult
         {
             private NativeHeapMgr mgr;
 
-            internal ReadonlyNoSecureHeapResult(NativeHeapMgr mgr) => this.mgr = mgr;
+            internal ReadonlyHeapResult(NativeHeapMgr mgr) => this.mgr = mgr;
 
             public void Release()
             {

@@ -21,42 +21,23 @@ namespace SuperComicLib.LowLevel
 
         public int Length => datas.Length;
 
-        public IntPtr Syncblock => *(IntPtr*)((byte*)m_typehnd - IntPtr.Size);
+        public IntPtr Syncblock => *(IntPtr*)((byte*)m_typehnd - NativeClass.PtrSize_i);
 
         public IntPtr TypeHandle => m_typehnd;
 
         public PubMethodTable MethodTable => **(PubMethodTable**)m_typehnd;
 
-        public byte[] ToArray(bool fieldOnly = true)
+        public byte[] ToArray()
         {
-            if (fieldOnly)
-            {
-                int size = datas.Length;
-                byte[] vs = new byte[size];
-                Array.Copy(datas, 0, vs, 0, size);
-                return vs;
-            }
-            return ToArrayAll();
-        }
-
-        private byte[] ToArrayAll()
-        {
-            byte[] vs = new byte[datas.Length + IntPtr.Size];
-            int len = datas.Length;
-
-            fixed (byte* ptr = vs)
-            fixed (byte* bdptr = datas)
-            {
-                *(IntPtr*)ptr = m_typehnd;
-                NativeClass.Internal_memcpyff(bdptr, 0, ptr + IntPtr.Size, 0, (uint)len);
-            }
-
+            int size = datas.Length;
+            byte[] vs = new byte[size];
+            Array.Copy(datas, 0, vs, 0, size);
             return vs;
         }
 
         public ref byte this[int idx] => ref datas[idx];
 
-        public void FixedPointer(UnsafePointerAction<byte> action)
+        public void Pinned(UnsafePointerAction action)
         {
             fixed (byte* ptr = datas)
                 action.Invoke(ptr);

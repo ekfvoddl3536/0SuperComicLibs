@@ -2,13 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using SuperComicLib.LowLevel;
 
-namespace SuperComicLib.Collection
+namespace SuperComicLib.LowLevel
 {
+    using static Constants;
     using static NativeMehods0;
-    using static NativeHeapMgr;
-
     [StructLayout(LayoutKind.Sequential)]
     public sealed unsafe class NativeSecureArray<T> : IDisposable, IEnumerable<T> where T : unmanaged
     {

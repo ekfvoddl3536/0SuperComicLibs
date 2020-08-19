@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SuperComicLib.Core</RootNamespace>
     <AssemblyName>0SuperComicLib.Core</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,6 +33,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28net40%29|AnyCPU'">
     <OutputPath>bin\Release %28net40%29\</OutputPath>
@@ -42,6 +45,43 @@
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28net40%29|x64'">
+    <OutputPath>bin\x64\Release %28net40%29\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -52,19 +92,40 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Public\Text\StringStream.cs" />
+    <Compile Include="Public\Numerics\bits\Amd64Bits.cs" />
+    <Compile Include="Public\Numerics\bits\Bits.cs" />
+    <Compile Include="Public\Numerics\bits\factory\BitsFactory.cs" />
+    <Compile Include="Public\Numerics\bits\factory\IRuntimeBitArray.cs" />
+    <Compile Include="Public\Numerics\bits\UnsafeBits.cs" />
+    <Compile Include="Public\Numerics\bits\X86Bits.cs" />
+    <Compile Include="Public\Tasks\TaskExtension.cs" />
+    <Compile Include="Public\__global__\Range.cs" />
+    <Compile Include="Public\__global__\Whitespace.cs" />
+    <Compile Include="Public\__global__\Bool2Int.cs" />
+    <Compile Include="Public\__global__\CMath.cs" />
+    <Compile Include="Public\__global__\CTypes.cs" />
+    <Compile Include="Public\IO\NopEncoding.cs" />
+    <Compile Include="Public\IO\NopStream.cs" />
+    <Compile Include="Public\IO\NopStreamWriter.cs" />
+    <Compile Include="Public\__global__\extension\ListExtension.cs" />
     <Compile Include="Public\Numerics\BYTE.cs" />
     <Compile Include="Public\Numerics\DWORD.cs" />
     <Compile Include="Public\Numerics\QWORD.cs" />
     <Compile Include="Public\Numerics\Types.cs" />
     <Compile Include="Public\Numerics\WORD.cs" />
+    <Compile Include="__global\SCL_CORE_BooleanExtension.cs" />
+    <Compile Include="__global\SCL_CORE_IntPtrExtension.cs" />
+    <Compile Include="__global\SCL_CORE_ObjectExtension.cs" />
     <Compile Include="Public\Reflection\VInt.cs" />
-    <Compile Include="__global\ArrayExtension.cs" />
+    <Compile Include="__global\SCL_CORE_ArrayExtension.cs" />
     <Compile Include="Public\Numerics\BitMask.cs" />
-    <Compile Include="__global\ClsArray.cs" />
-    <Compile Include="Public\StringExtension.cs" />
-    <Compile Include="Public\HashedString.cs" />
-    <Compile Include="Public\Reflection\PinnedObject.cs" />
+    <Compile Include="Public\__global__\ClsArray.cs" />
+    <Compile Include="Public\__global__\extension\StringExtension.cs" />
+    <Compile Include="Public\__global__\HashedString.cs" />
+    <Compile Include="Public\Reflection\ObjectRef.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Public\Text\BOMEncoding.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

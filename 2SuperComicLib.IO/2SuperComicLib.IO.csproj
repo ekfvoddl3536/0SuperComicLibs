@@ -44,8 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Base\FastReader.cs" />
-    <Compile Include="Base\FastWriter.cs" />
+    <Compile Include="extensions\StreamReaderExtension.cs" />
+    <Compile Include="src\FastReader.cs" />
+    <Compile Include="src\FastWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

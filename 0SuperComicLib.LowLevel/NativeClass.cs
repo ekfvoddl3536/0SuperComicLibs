@@ -15,17 +15,17 @@ namespace SuperComicLib.LowLevel
         #endregion
 
         #region field
-        private static readonly UnsafePinnedAction pinned = CreatePinnedAction(typeof(NativeClass));
         private static readonly UnsafeMemoryCopyBlock memcpblk = CreateMemcpblk();
 
-        public static readonly uint PointerSize = (uint)UIntPtr.Size;
+        public static readonly int PtrSize_i = IntPtr.Size;
+        public static readonly uint PtrSize_u = (uint)PtrSize_i;
         public static readonly bool Is64BitBCL =
 #if WIN32
             false;
 #elif WIN64
             true;
 #else
-            IntPtr.Size == sizeof(long);
+            PtrSize_i == sizeof(long);
 #endif
         #endregion
 
@@ -49,27 +49,30 @@ namespace SuperComicLib.LowLevel
         }
 
 #pragma warning disable IDE0071
-        public static UnsafePinnedAction CreatePinnedAction(Type owner)
-        {
-            Type t1 = typeof(object), t2 = typeof(Action<IntPtr>);
-            DynamicMethod dm = new DynamicMethod(
-                $"__func_PinnedAction ({nameof(NativeClass)}) ({owner.ToString()})",
-                typeof(void),
-                new[] { t1, t2 },
-                owner);
-            ILGenerator gen = dm.GetILGenerator();
-
-            gen.DeclareLocal(t1, true);
-            gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Stloc_0);
-            gen.Emit(OpCodes.Ldarg_1);
-            gen.Emit(OpCodes.Ldloc_0);
-            gen.Emit(OpCodes.Conv_U);
-            gen.Emit(OpCodes.Call, t2.GetMethod(nameof(Action.Invoke)));
-            gen.Emit(OpCodes.Ret);
-
-            return (UnsafePinnedAction)dm.CreateDelegate(typeof(UnsafePinnedAction));
-        }
+        // 2020-07-09 Comment:
+        //  ====== no longer used ======
+        // 
+        // public static UnsafePinnedAction CreatePinnedAction(Type owner)
+        // {
+        //     Type t1 = typeof(object), t2 = typeof(Action<IntPtr>);
+        //     DynamicMethod dm = new DynamicMethod(
+        //         $"__func_PinnedAction ({nameof(NativeClass)}) ({owner.ToString()})",
+        //         typeof(void),
+        //         new[] { t1, t2 },
+        //         owner);
+        //     ILGenerator gen = dm.GetILGenerator();
+        // 
+        //     gen.DeclareLocal(t1, true);
+        //     gen.Emit(OpCodes.Ldarg_0);
+        //     gen.Emit(OpCodes.Stloc_0);
+        //     gen.Emit(OpCodes.Ldarg_1);
+        //     gen.Emit(OpCodes.Ldloc_0);
+        //     gen.Emit(OpCodes.Conv_U);
+        //     gen.Emit(OpCodes.Call, t2.GetMethod(nameof(Action.Invoke)));
+        //     gen.Emit(OpCodes.Ret);
+        // 
+        //     return (UnsafePinnedAction)dm.CreateDelegate(typeof(UnsafePinnedAction));
+        // }
 
         public static UnsafeCastClass<T> CreateCastClass<T>(Type owner) where T : class
         {
@@ -115,7 +118,7 @@ namespace SuperComicLib.LowLevel
         public static uint SizeOf_s(Type type) =>
             type == null
             ? 0
-            : Internal_SizeOf(type) - (PointerSize << 1);
+            : Internal_SizeOf(type) - (PtrSize_u << 1);
 
         public static PubMethodTable GetMethodTable(Type type) =>
             type == null 
@@ -130,64 +133,11 @@ namespace SuperComicLib.LowLevel
                 return *(To*)ptr;
         }
 
-        public static To Convert_s<From, To>(ref From fm)
-            where From : unmanaged
-            where To : unmanaged
-        {
-            if (sizeof(From) >= sizeof(To))
-                return default;
-            fixed (From* ptr = &fm)
-                return *(To*)ptr;
-        }
-
-        public static To Convert_s<From, To>(From fm) where From : unmanaged where To : unmanaged
-            => Convert_s<From, To>(ref fm);
-
-        public static void PinnedAddr(object obj, Action<IntPtr> callback)
-        {
-            if (obj == null)
-                throw new ArgumentNullException(nameof(obj));
-            if (callback == null)
-                throw new ArgumentNullException(nameof(callback));
-
-            pinned.Invoke(obj, callback);
-        }
-
-        public static void PinnedAddr<T>(ref T obj, Action<IntPtr> callback)
-        {
-            if (obj == null)
-                throw new ArgumentNullException(nameof(obj));
-            if (callback == null)
-                throw new ArgumentNullException(nameof(callback));
-
-            pinned.Invoke(obj, callback);
-        }
-
-        public static void PinnedAddr<T>(ref T[] array, Action<IntPtr> callback)
-        {
-            if (array == null)
-                throw new ArgumentNullException(nameof(array));
-            if (callback == null)
-                throw new ArgumentNullException(nameof(callback));
-            if (array.Length == 0)
-                throw new InvalidOperationException(nameof(array));
-
-            pinned.Invoke(array[0], callback);
-        }
-
-        public static void PinnedAddrss<T>(ref T[] array, Action<IntPtr> callback)
-        {
-            if (array == null)
-                throw new ArgumentNullException(nameof(array));
-            if (callback == null)
-                throw new ArgumentNullException(nameof(callback));
-
-            for (int x = 0, max = array.Length; x < max; x++)
-                pinned.Invoke(array[x], callback);
-        }
+        public static To Convert<From, To>(From fm) where From : unmanaged where To : unmanaged
+            => *(To*)&fm;
 
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-        public static void RefMemory<T>(ref T obj, UnsafePointerAction<byte> cb)
+        public static void RefMemory<T>(ref T obj, UnsafePointerAction cb)
         {
             if (obj == null)
                 throw new ArgumentNullException(nameof(obj));
@@ -202,7 +152,7 @@ namespace SuperComicLib.LowLevel
             else
             {
                 TypedReference tr = __makeref(obj);
-                cb.Invoke((byte*)(**(IntPtr**)&tr).Add());
+                cb.Invoke(**(byte***)&tr + PtrSize_i);
             }
         }
 
@@ -212,7 +162,7 @@ namespace SuperComicLib.LowLevel
                 throw new ArgumentNullException(nameof(obj));
 
             Type t = obj.GetType();
-            uint size = *((uint*)t.TypeHandle.Value + X86BF_PTR_SIZE) - (PointerSize << 1);
+            uint size = *((uint*)t.TypeHandle.Value + X86BF_PTR_SIZE) - (PtrSize_u << 1);
 
             byte[] res = new byte[size];
 
@@ -229,7 +179,7 @@ namespace SuperComicLib.LowLevel
                 throw new ArgumentNullException(nameof(obj));
 
             Type t = obj.GetType();
-            uint size = *((uint*)t.TypeHandle.Value + X86BF_PTR_SIZE) - (PointerSize << 1);
+            uint size = *((uint*)t.TypeHandle.Value + X86BF_PTR_SIZE) - (PtrSize_u << 1);
             if (size < count)
                 throw new ArgumentOutOfRangeException(nameof(count));
 
@@ -248,7 +198,7 @@ namespace SuperComicLib.LowLevel
                 throw new ArgumentNullException(nameof(obj));
 
             Type t = obj.GetType();
-            uint size = *((uint*)t.TypeHandle.Value + X86BF_PTR_SIZE) - (PointerSize << 1);
+            uint size = *((uint*)t.TypeHandle.Value + X86BF_PTR_SIZE) - (PtrSize_u << 1);
             if (size < begin + count)
                 throw new ArgumentOutOfRangeException($"{nameof(begin)} AND {nameof(count)}");
 
@@ -347,7 +297,7 @@ namespace SuperComicLib.LowLevel
                 throw new ArgumentNullException(nameof(dest));
 
             Type t = dest.GetType();
-            int size = *((int*)t.TypeHandle.Value + X86BF_PTR_SIZE) - (IntPtr.Size << 1);
+            int size = *((int*)t.TypeHandle.Value + X86BF_PTR_SIZE) - (PtrSize_i << 1);
             if (src.Length > size)
                 throw new InvalidOperationException(nameof(src));
 
@@ -365,7 +315,7 @@ namespace SuperComicLib.LowLevel
                 throw new ArgumentNullException(nameof(dest));
 
             Type t = dest.GetType();
-            int size = *((int*)t.TypeHandle.Value + X86BF_PTR_SIZE) - (IntPtr.Size << 1);
+            int size = *((int*)t.TypeHandle.Value + X86BF_PTR_SIZE) - (PtrSize_i << 1);
             if (src.Length + dest_startOffset > size)
                 throw new InvalidOperationException(nameof(src));
 
@@ -427,7 +377,9 @@ namespace SuperComicLib.LowLevel
             ? 
                 right != null 
                 ? Internal_MemCompareTo_Un_S(ref left, ref right) 
-                : -1 
+                : 1 
+            : right != null
+            ? -1
             : 0;
 
         public static int MemoryCompareAuto<T>(T left, T right) =>
@@ -435,7 +387,9 @@ namespace SuperComicLib.LowLevel
            ?
                right != null
                ? Internal_MemCompareTo_Un_S(ref left, ref right)
-               : -1
+               : 1
+           : right != null
+           ? -1
            : 0;
 
         public static int ReferenceCompare(object left, object right)
@@ -470,20 +424,115 @@ namespace SuperComicLib.LowLevel
                 throw new ArgumentNullException(nameof(obj));
 
             Type t = obj.GetType();
-            uint size = *((uint*)t.TypeHandle.Value + X86BF_PTR_SIZE) - (PointerSize << 1);
+            uint size = *((uint*)t.TypeHandle.Value + X86BF_PTR_SIZE) - (PtrSize_u << 1);
 
             TypedReference tr = __makeref(obj);
             if (t.IsValueType)
                 Internal_Zeromem(*(byte**)&tr, size);
             else
-                Internal_Zeromem(**(byte***)&tr + IntPtr.Size, size);
+                Internal_Zeromem(**(byte***)&tr + PtrSize_i, size);
+        }
+
+        public static NativeInstance<T> Duplicate<T>(T obj) where T : class
+        {
+            if (obj == null)
+                return default;
+
+            // obj.GetType()는 오버사이즈 될 수도 있습니다
+            IntPtr typehnd = typeof(T).TypeHandle.Value;
+            int size = *((int*)typehnd + X86BF_PTR_SIZE);
+            int ptrsize = PtrSize_i;
+            byte* ptr = (byte*)Marshal.AllocHGlobal(size + ptrsize);
+            *(IntPtr*)(ptr + ptrsize) = typehnd;
+
+            TypedReference tr = __makeref(obj);
+            memcpblk.Invoke(**(byte***)&tr + ptrsize, ptr + (ptrsize << 1), (uint)(size - ptrsize));
+
+            return new NativeInstance<T>(ptr);
+        }
+
+        public static NativeInstance<T> InitObj<T>() where T : class
+        {
+            IntPtr typehnd = typeof(T).GetType().TypeHandle.Value;
+            int ptrsize = PtrSize_i;
+            byte* ptr = (byte*)Marshal.AllocHGlobal(*((int*)typehnd + X86BF_PTR_SIZE) + ptrsize);
+            *(IntPtr*)(ptr + ptrsize) = typehnd;
+
+            return new NativeInstance<T>(ptr);
+        }
+
+        public static NativeInstance<T> InitObj<T>(int size) where T : class
+        {
+            if (size < 0)
+                throw new InvalidOperationException();
+
+            IntPtr typehnd = typeof(T).GetType().TypeHandle.Value;
+            int ptrsize = PtrSize_i;
+            byte* ptr = (byte*)Marshal.AllocHGlobal(*((int*)typehnd + X86BF_PTR_SIZE) + ptrsize + size);
+            *(IntPtr*)(ptr + ptrsize) = typehnd;
+
+            return new NativeInstance<T>(ptr);
+        }
+
+        public static IntPtr GetAddress(object obj)
+        {
+            if (obj == null)
+                return IntPtr.Zero;
+
+            TypedReference tr = __makeref(obj);
+            return **(IntPtr**)&tr;
+        }
+
+        public static void PinnedAddress(object obj, Action<IntPtr> callback)
+        {
+            if (obj == null || callback == null)
+                return;
+
+            TypedReference tr = __makeref(obj);
+            callback.Invoke(**(IntPtr**)&tr);
+        }
+
+        public static void PinnedAddress<T>(ref T obj, Action<IntPtr> callback)
+        {
+            if (obj == null || callback == null)
+                return;
+
+            TypedReference tr = __makeref(obj);
+            callback.Invoke(**(IntPtr**)&tr);
+        }
+
+        public static void Copy<TIn, TOut>(ref TIn src, ref TOut dest)
+        {
+            if (src == null || dest == null)
+                return;
+
+            Type src_t = typeof(TIn);
+            Type dst_t = typeof(TOut);
+
+            uint size = ((uint*)src_t.TypeHandle.Value)[1];
+            if (size != ((uint*)dst_t.TypeHandle.Value)[1])
+                return;
+
+            TypedReference trsrc = __makeref(src);
+            TypedReference trdst = __makeref(dest);
+
+            // memcpblk.Invoke(
+            //     src_t.IsValueType ? *(void**)&trsrc : (**(byte***)&trsrc + PtrSize_i),
+            //     dst_t.IsValueType ? *(void**)&trdst : (**(byte***)&trdst + PtrSize_i),
+            //     size - (PtrSize_u << 1));
+            Internal_memcpyff(
+                src_t.IsValueType ? *(byte**)&trsrc : (**(byte***)&trsrc + PtrSize_i),
+                0,
+                dst_t.IsValueType ? *(byte**)&trdst : (**(byte***)&trdst + PtrSize_i),
+                0,
+                size - (PtrSize_u << 1));
         }
 
         #region internal
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         internal static int Internal_MemCompareTo_Un_S<T>(ref T left, ref T right)
         {
-            int isize = *((int*)typeof(T).TypeHandle.Value + X86BF_PTR_SIZE) - (IntPtr.Size << 1);
+            int isize = *((int*)typeof(T).TypeHandle.Value + X86BF_PTR_SIZE) - (PtrSize_i << 1);
 
             if (isize > 0)
             {
@@ -511,7 +560,7 @@ namespace SuperComicLib.LowLevel
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         internal static int Internal_MemCompareTo<T>(ref T left, ref T right)
         {
-            int isize = *((int*)typeof(T).TypeHandle.Value + X86BF_PTR_SIZE) - (IntPtr.Size << 1);
+            int isize = *((int*)typeof(T).TypeHandle.Value + X86BF_PTR_SIZE) - (PtrSize_i << 1);
 
             if (isize > 0)
             {
@@ -579,43 +628,12 @@ namespace SuperComicLib.LowLevel
 
         internal static int Internal_CompareTo(byte* pleft, byte* pright, uint count)
         {
-            long* upleft = (long*)pleft;
-            long* upright = (long*)pright;
-            while (count >= AMD64_PTR_SIZE)
-            {
-                if (*upleft != *upright)
-                    return (*upleft).CompareTo(*upright);
-                upleft--;
-                upright--;
-                count -= AMD64_PTR_SIZE;
-            }
-
-            sbyte* ableft = (sbyte*)upleft;
-            sbyte* abright = (sbyte*)upright;
-            if (count >= IA32_PTR_SIZE)
-            {
-                if (*(int*)ableft != *(int*)abright)
-                    return *(int*)ableft - *(int*)abright;
-
-                count -= IA32_PTR_SIZE;
-
-                ableft -= IA32_PTR_SIZE;
-                abright -= IA32_PTR_SIZE;
-            }
-            if (count >= IA16_PTR_SIZE)
-            {
-                if (*(short*)ableft != *(short*)abright)
-                    return *(short*)ableft - *(short*)abright;
-
-                count -= IA16_PTR_SIZE;
-
-                ableft -= IA16_PTR_SIZE;
-                abright -= IA16_PTR_SIZE;
-            }
-            return
-                count >= X86BF_PTR_SIZE && *ableft != *abright
-                ? *ableft - *abright
-                : 0;
+            count--;
+            sbyte* uplf = (sbyte*)pleft + count, uprt = (sbyte*)pright + count;
+            return 
+                *uplf != *uprt 
+                ? *uplf - *uprt 
+                : Internal_CompareTo_Un_S(pleft, pright, count);
         }
 
         internal static void Internal_memcpblk(void* src, void* dst, uint count) => memcpblk.Invoke(src, dst, count);
@@ -661,7 +679,7 @@ namespace SuperComicLib.LowLevel
             if (t.IsValueType)
                 memcpblk.Invoke(*(void**)psrc, pdst, size);
             else
-                memcpblk.Invoke(**(byte***)psrc + IntPtr.Size, pdst, size);
+                memcpblk.Invoke(**(byte***)psrc + PtrSize_i, pdst, size);
         }
 
         internal static void Internal_ReadMem(Type t, void* psrc, void* pdst, uint begin, uint size)
@@ -669,7 +687,7 @@ namespace SuperComicLib.LowLevel
             if (t.IsValueType)
                 memcpblk.Invoke(*(byte**)psrc + begin, pdst, size);
             else
-                memcpblk.Invoke(**(byte***)psrc + IntPtr.Size + begin, pdst, size);
+                memcpblk.Invoke(**(byte***)psrc + PtrSize_i + begin, pdst, size);
         }
 
         internal static void Internal_WriteMem(Type t, void* psrc, void* pdst, uint begin, uint size)
@@ -677,7 +695,7 @@ namespace SuperComicLib.LowLevel
             if (t.IsValueType)
                 memcpblk.Invoke(psrc, *(byte**)pdst + begin, size);
             else
-                memcpblk.Invoke(psrc, **(byte***)pdst + IntPtr.Size + begin, size);
+                memcpblk.Invoke(psrc, **(byte***)pdst + PtrSize_i + begin, size);
         }
 
         internal static void Internal_Zeromem(byte* pval, uint size)

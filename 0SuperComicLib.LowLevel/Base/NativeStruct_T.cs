@@ -14,6 +14,12 @@ namespace SuperComicLib.LowLevel
         public T Read(void* ptr) => read.Invoke(ptr);
 
         public override T Default(void* ptr) => Read(ptr);
+
+        public override void RefMemory(ref T obj, UnsafePointerAction cb)
+        {
+            TypedReference tr = __makeref(obj);
+            cb.Invoke(*(byte**)&tr);
+        }
         #endregion
 
         #region static members

@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FC8591C1-764C-4B21-B83E-DFEF05FACD61}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SuperComicLib.XPatch</RootNamespace>
+    <AssemblyName>9SuperComicLib.XPatch</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Patch\Internal\PatchInfo.cs" />
+    <Compile Include="Patch\Internal\PatchManager.cs" />
+    <Compile Include="Patch\Internal\ReplaceMethodInfo.cs" />
+    <Compile Include="Patch\Public\ExMethodInfo.cs" />
+    <Compile Include="Patch\Public\ILOnlyPatchMethod.cs" />
+    <Compile Include="Patch\Public\MethodPatch.cs" />
+    <Compile Include="Patch\Public\PublicPatchInfo.cs" />
+    <Compile Include="Patch\Public\Types.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Runtime\DynamicMethodExtension.cs" />
+    <Compile Include="Runtime\ILBranchableAttribute.cs" />
+    <Compile Include="Runtime\RuntimeBranchCompile.cs" />
+    <Compile Include="__global__\Internal\Helper.cs" />
+    <Compile Include="__global__\Internal\NativeMethods.cs" />
+    <Compile Include="__global__\Internal\Utils.cs" />
+    <Compile Include="__global__\Internal_2\MethodBaseExtension.cs" />
+    <Compile Include="__global__\Internal_2\NativeThisPointer.cs" />
+    <Compile Include="__global__\Public\ExceptionBlockInfo.cs" />
+    <Compile Include="__global__\Public\ILBuffer.cs" />
+    <Compile Include="__global__\Public\ILMethodBody.cs" />
+    <Compile Include="__global__\Public\MethodBodyEditor.cs" />
+    <Compile Include="__global__\Public\MethodBodyReader.cs" />
+    <Compile Include="__global__\Public\PublicLabel.cs" />
+    <Compile Include="__global__\Public\RTDynamicMethodInfo.cs" />
+    <Compile Include="__global__\Public\Types.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LICENSE.txt" />
+    <Content Include="__NOTE__.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\0SuperComicLib.Core\0SuperComicLib.Core.csproj">
+      <Project>{1674b047-ca4c-44a1-9d39-211e38c800dc}</Project>
+      <Name>0SuperComicLib.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\7SuperComicLib.Reflection\7SuperComicLib.Reflection.csproj">
+      <Project>{79c44ec8-246d-4827-aa48-1a9bb58b32ff}</Project>
+      <Name>7SuperComicLib.Reflection</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

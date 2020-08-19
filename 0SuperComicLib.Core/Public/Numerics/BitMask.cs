@@ -144,8 +144,23 @@ namespace SuperComicLib
         public bool value_b7;
         #endregion
 
+        #region constructors
         public BitMask(long value) : this() => value_i64 = value;
         public BitMask(ulong value) : this() => value_u64 = value;
+        public BitMask(double value) : this() => value_f64 = value;
+
+        public BitMask(int value) : this() => value_i32_0 = value;
+        public BitMask(uint value) : this() => value_u32_0 = value;
+        public BitMask(float value) : this() => value_f32_0 = value;
+
+        public BitMask(short value) : this() => value_i16_0 = value;
+        public BitMask(ushort value) : this() => value_u16_0 = value;
+        public BitMask(char value) : this() => value_c0 = value;
+
+        public BitMask(sbyte value) : this() => value_i8_0 = value;
+        public BitMask(byte value) : this() => value_u8_0 = value;
+        public BitMask(bool value) : this() => value_b0 = value;
+        #endregion
 
         public override bool Equals(object obj) => obj is BitMask mask ? mask.value_u64 == value_u64 : false;
         public override int GetHashCode() => value_u64.GetHashCode();

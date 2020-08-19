@@ -130,6 +130,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base\NativeClass_T.cs" />
+    <Compile Include="Types\NativeFixedObject.cs" />
+    <Compile Include="Types\NativeInstance_T.cs" />
     <Compile Include="Utils\NativeSecureArray_T.cs" />
     <Compile Include="Types\Extension\Extensions.cs" />
     <Compile Include="Types\UnsafeCLIMemoryData.cs" />
@@ -142,7 +144,6 @@
     <Compile Include="Base\NativeStruct_T.cs" />
     <Compile Include="Types\Extension\NET35IntPtrExtension.cs" />
     <Compile Include="Types\PubMethodTable.cs" />
-    <Compile Include="Types\PubTypedRefany.cs" />
     <Compile Include="Types\Types.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

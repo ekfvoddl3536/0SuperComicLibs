@@ -3,9 +3,8 @@ using System.Runtime.InteropServices;
 
 namespace SuperComicLib.LowLevel
 {
-    using static NativeHeapMgr;
+    using static Constants;
     using static NativeMehods0;
-
     public sealed unsafe class NativeProtectData<T> : IDisposable 
         where T : unmanaged
     {

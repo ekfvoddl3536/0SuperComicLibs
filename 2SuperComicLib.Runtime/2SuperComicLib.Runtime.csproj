@@ -41,13 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="util\FnCHAR.cs" />
+    <Compile Include="util\FsInt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="__global\EnumComp.cs" />
-    <Compile Include="__global\FastComparer.cs" />
-    <Compile Include="__global\IFastComparerEx.cs" />
-    <Compile Include="__global\NativeComp.cs" />
-    <Compile Include="__global\NumericsComp.cs" />
-    <Compile Include="__global\UniversalComp.cs" />
+    <Compile Include="__global\comparer\EnumComp.cs" />
+    <Compile Include="__global\comparer\FastComparer.cs" />
+    <Compile Include="__global\comparer\IFastComparerEx.cs" />
+    <Compile Include="__global\comparer\NativeComp.cs" />
+    <Compile Include="__global\comparer\NumericsComp.cs" />
+    <Compile Include="__global\comparer\UniversalComp.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\0SuperComicLib.LowLevel\0SuperComicLib.LowLevel.csproj">

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SuperComicLib.Reflection</RootNamespace>
     <AssemblyName>7SuperComicLib.Reflection</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -44,38 +44,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Runtime\ILBranchableAttribute.cs" />
-    <Compile Include="Runtime\RuntimeBranchCompile.cs" />
-    <Compile Include="__global__\Internal\Utils.cs" />
-    <Compile Include="__global__\Public\ExceptionBlockInfo.cs" />
-    <Compile Include="__global__\Public\ILBuffer.cs" />
-    <Compile Include="__global__\Public\MethodBodyEditor.cs" />
-    <Compile Include="__global__\Internal_2\MethodBaseExtension.cs" />
-    <Compile Include="__global__\Internal\NativeMethods.cs" />
-    <Compile Include="Patch\Internal\ReplaceMethodInfo.cs" />
-    <Compile Include="Patch\Public\ILOnlyPatchMethod.cs" />
-    <Compile Include="Patch\Internal\PatchInfo.cs" />
-    <Compile Include="Patch\Internal\PatchManager.cs" />
-    <Compile Include="Patch\Public\ExMethodInfo.cs" />
-    <Compile Include="__global__\Internal\Helper.cs" />
-    <Compile Include="Patch\Public\MethodPatch.cs" />
-    <Compile Include="Patch\Public\PublicPatchInfo.cs" />
-    <Compile Include="Patch\Public\Types.cs" />
-    <Compile Include="__global__\Internal_2\NativeThisPointer.cs" />
-    <Compile Include="__global__\Internal_2\TypeExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="__global__\Public\MethodBodyReader.cs" />
-    <Compile Include="__global__\Public\PublicLabel.cs" />
-    <Compile Include="__global__\Public\Types.cs" />
+    <Compile Include="extension\ILGeneratorExtension.cs" />
+    <Compile Include="extension\MethodInfoExtension.cs" />
+    <Compile Include="extension\TypeExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\0SuperComicLib.Core\0SuperComicLib.Core.csproj">
       <Project>{1674b047-ca4c-44a1-9d39-211e38c800dc}</Project>
       <Name>0SuperComicLib.Core</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="__NOTE__.txt" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

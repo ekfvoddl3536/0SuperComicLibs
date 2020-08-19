@@ -8,5 +8,8 @@ namespace SuperComicLib.LowLevel
 
         [SecurityCritical]
         public abstract T Default(void* ptr);
+
+        [SecurityCritical]
+        public abstract void RefMemory(ref T obj, UnsafePointerAction cb);
     }
 }
