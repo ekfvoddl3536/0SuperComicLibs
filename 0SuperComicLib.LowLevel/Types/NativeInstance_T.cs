@@ -15,14 +15,18 @@ namespace SuperComicLib.LowLevel
 
         public T Value => inst.Cast(m_ptr + NativeClass.PtrSize_i);
 
-        public byte* Pointer => m_ptr;
+        public byte* UnsafePointer => m_ptr;
+
+        public byte* AsPointer() => m_ptr + (NativeClass.PtrSize_i << 1);
+
+        public byte* AsPointer(int field_offset) => AsPointer() + field_offset;
 
         public void Dispose()
         {
             T value = Value;
             if (value is IDisposable d)
                 d.Dispose();
-
+            
             Marshal.FreeHGlobal((IntPtr)m_ptr);
             m_ptr = null;
         }
