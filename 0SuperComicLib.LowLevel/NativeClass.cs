@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Permissions;
 
 namespace SuperComicLib.LowLevel
@@ -48,36 +49,10 @@ namespace SuperComicLib.LowLevel
             return (UnsafeMemoryCopyBlock)dm.CreateDelegate(typeof(UnsafeMemoryCopyBlock));
         }
 
-#pragma warning disable IDE0071
-        // 2020-07-09 Comment:
-        //  ====== no longer used ======
-        // 
-        // public static UnsafePinnedAction CreatePinnedAction(Type owner)
-        // {
-        //     Type t1 = typeof(object), t2 = typeof(Action<IntPtr>);
-        //     DynamicMethod dm = new DynamicMethod(
-        //         $"__func_PinnedAction ({nameof(NativeClass)}) ({owner.ToString()})",
-        //         typeof(void),
-        //         new[] { t1, t2 },
-        //         owner);
-        //     ILGenerator gen = dm.GetILGenerator();
-        // 
-        //     gen.DeclareLocal(t1, true);
-        //     gen.Emit(OpCodes.Ldarg_0);
-        //     gen.Emit(OpCodes.Stloc_0);
-        //     gen.Emit(OpCodes.Ldarg_1);
-        //     gen.Emit(OpCodes.Ldloc_0);
-        //     gen.Emit(OpCodes.Conv_U);
-        //     gen.Emit(OpCodes.Call, t2.GetMethod(nameof(Action.Invoke)));
-        //     gen.Emit(OpCodes.Ret);
-        // 
-        //     return (UnsafePinnedAction)dm.CreateDelegate(typeof(UnsafePinnedAction));
-        // }
-
         public static UnsafeCastClass<T> CreateCastClass<T>(Type owner) where T : class
         {
             DynamicMethod dm = new DynamicMethod(
-                $"__func_CastClass ({nameof(NativeClass)}) ({owner.ToString()})", 
+                $"__func_CastClass ({nameof(NativeClass)}) ({owner})", 
                 typeof(T), 
                 new[] { typeof(void).MakePointerType() }, 
                 owner);
@@ -93,7 +68,7 @@ namespace SuperComicLib.LowLevel
         public static UnsafeReadPointerStruct<T> CreateReadPointer<T>(Type owner) where T : struct
         {
             DynamicMethod dm = new DynamicMethod(
-                $"__func_ReadPointer ({nameof(NativeClass)}) ({owner.ToString()})",
+                $"__func_ReadPointer ({nameof(NativeClass)}) ({owner})",
                 typeof(T),
                 new[] { typeof(void).MakePointerType() }, 
                 owner);
@@ -108,18 +83,22 @@ namespace SuperComicLib.LowLevel
 #pragma warning restore
         #endregion
 
+        [SecurityCritical]
         public static uint SizeOf<T>() => Internal_SizeOf(typeof(T));
 
+        [SecurityCritical]
         public static uint SizeOf(Type type) =>
             type == null 
             ? 0 
             : Internal_SizeOf(type);
 
+        [SecurityCritical]
         public static uint SizeOf_s(Type type) =>
             type == null
             ? 0
             : Internal_SizeOf(type) - (PtrSize_u << 1);
 
+        [SecurityCritical]
         public static PubMethodTable GetMethodTable(Type type) =>
             type == null 
             ? default 
@@ -136,7 +115,7 @@ namespace SuperComicLib.LowLevel
         public static To Convert<From, To>(From fm) where From : unmanaged where To : unmanaged
             => *(To*)&fm;
 
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+        [SecurityCritical]
         public static void RefMemory<T>(ref T obj, UnsafePointerAction cb)
         {
             if (obj == null)
@@ -144,18 +123,14 @@ namespace SuperComicLib.LowLevel
             if (cb == null)
                 throw new ArgumentNullException(nameof(cb));
 
-            if (typeof(T).IsValueType)
-            {
-                TypedReference tr = __makeref(obj);
-                cb.Invoke(*(byte**)&tr);
-            }
-            else
-            {
-                TypedReference tr = __makeref(obj);
-                cb.Invoke(**(byte***)&tr + PtrSize_i);
-            }
+            TypedReference tr = __makeref(obj);
+            cb.Invoke(
+                typeof(T).IsValueType
+                ? *(byte**)&tr
+                : (**(byte***)&tr + PtrSize_i));
         }
 
+        [SecurityCritical]
         public static byte[] ReadMemory<T>(ref T obj)
         {
             if (obj == null)
@@ -173,6 +148,7 @@ namespace SuperComicLib.LowLevel
             return res;
         }
 
+        [SecurityCritical]
         public static byte[] ReadMemory<T>(ref T obj, uint count)
         {
             if (obj == null)
@@ -192,6 +168,7 @@ namespace SuperComicLib.LowLevel
             return res;
         }
 
+        [SecurityCritical]
         public static byte[] ReadMemory<T>(ref T obj, uint begin, uint count)
         {
             if (obj == null)
@@ -211,6 +188,7 @@ namespace SuperComicLib.LowLevel
             return res;
         }
 
+        [SecurityCritical]
         public static UnsafeCLIMemoryData ReadMemoryEx<T>(ref T obj)
         {
             if (obj == null)
@@ -228,7 +206,7 @@ namespace SuperComicLib.LowLevel
             return new UnsafeCLIMemoryData(t.TypeHandle.Value, res);
         }
 
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+        [SecurityCritical]
         public static byte[] ReadMemory_s<T>(ref T obj)
         {
             if (obj == null)
@@ -288,7 +266,7 @@ namespace SuperComicLib.LowLevel
             }
         }
 
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+        [SecurityCritical]
         public static void WriteMemory<T>(ref T dest, byte[] src)
         {
             if (src == null)
@@ -306,7 +284,7 @@ namespace SuperComicLib.LowLevel
                 Internal_WriteMem(t, psrc, &tr, 0, (uint)size);
         }
 
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+        [SecurityCritical]
         public static void WriteMemory<T>(ref T dest, byte[] src, int dest_startOffset)
         {
             if (src == null)
@@ -324,6 +302,7 @@ namespace SuperComicLib.LowLevel
                 Internal_WriteMem(t, psrc, &tr, (uint)dest_startOffset, (uint)size);
         }
 
+        [SecurityCritical]
         public static void Memcpy(IntPtr srcPtr, int srcOffset, IntPtr dstPtr, int dstOffset, int count)
         {
             if (srcOffset < 0)
@@ -340,6 +319,7 @@ namespace SuperComicLib.LowLevel
             memcpblk.Invoke((byte*)srcPtr + srcOffset, (byte*)dstPtr + dstOffset, (uint)count);
         }
 
+        [SecurityCritical]
         public static void Memcpy(void* src, uint srcOffset, void* dest, uint dstOffset, uint count)
         {
             if (src == null)
@@ -352,6 +332,7 @@ namespace SuperComicLib.LowLevel
             memcpblk.Invoke((byte*)src + srcOffset, (byte*)dest + dstOffset, count);
         }
 
+        [SecurityCritical]
         public static void Memcpyff(byte* src, uint srcOffset, byte* dst, uint dstOffset, uint count)
         {
             if (src == null)
@@ -364,14 +345,19 @@ namespace SuperComicLib.LowLevel
             Internal_memcpyff(src, srcOffset, dst, dstOffset, count);
         }
 
+        [SecurityCritical]
         public static int CompareTo<T>(ref T left, ref T right) where T : struct => Internal_MemCompareTo_Un_S(ref left, ref right);
 
+        [SecurityCritical]
         public static int CompareTo<T>(T left, T right) where T : struct => Internal_MemCompareTo_Un_S(ref left, ref right);
 
+        [SecurityCritical]
         public static int CompareTo_Signed<T>(ref T left, ref T right) where T : struct => Internal_MemCompareTo(ref left, ref right);
 
+        [SecurityCritical]
         public static int CompareTo_Signed<T>(T left, T right) where T : struct => Internal_MemCompareTo(ref left, ref right);
 
+        [SecurityCritical]
         public static int MemoryCompareAuto<T>(ref T left, ref T right) =>
             left != null 
             ? 
@@ -382,6 +368,7 @@ namespace SuperComicLib.LowLevel
             ? -1
             : 0;
 
+        [SecurityCritical]
         public static int MemoryCompareAuto<T>(T left, T right) =>
            left != null
            ?
@@ -392,6 +379,7 @@ namespace SuperComicLib.LowLevel
            ? -1
            : 0;
 
+        [SecurityCritical]
         public static int ReferenceCompare(object left, object right)
         {
             if (left != null)
@@ -418,6 +406,7 @@ namespace SuperComicLib.LowLevel
                 : 0;
         }
 
+        [SecurityCritical]
         public static void ZeroMem<T>(ref T obj)
         {
             if (obj == null)
@@ -433,6 +422,7 @@ namespace SuperComicLib.LowLevel
                 Internal_Zeromem(**(byte***)&tr + PtrSize_i, size);
         }
 
+        [SecurityCritical]
         public static NativeInstance<T> Duplicate<T>(T obj) where T : class
         {
             if (obj == null)
@@ -451,9 +441,10 @@ namespace SuperComicLib.LowLevel
             return new NativeInstance<T>(ptr);
         }
 
+        [SecurityCritical]
         public static NativeInstance<T> InitObj<T>() where T : class
         {
-            IntPtr typehnd = typeof(T).GetType().TypeHandle.Value;
+            IntPtr typehnd = typeof(T).TypeHandle.Value;
             int ptrsize = PtrSize_i;
             byte* ptr = (byte*)Marshal.AllocHGlobal(*((int*)typehnd + X86BF_PTR_SIZE) + ptrsize);
             *(IntPtr*)(ptr + ptrsize) = typehnd;
@@ -461,12 +452,13 @@ namespace SuperComicLib.LowLevel
             return new NativeInstance<T>(ptr);
         }
 
+        [SecurityCritical]
         public static NativeInstance<T> InitObj<T>(int size) where T : class
         {
             if (size < 0)
                 throw new InvalidOperationException();
 
-            IntPtr typehnd = typeof(T).GetType().TypeHandle.Value;
+            IntPtr typehnd = typeof(T).TypeHandle.Value;
             int ptrsize = PtrSize_i;
             byte* ptr = (byte*)Marshal.AllocHGlobal(*((int*)typehnd + X86BF_PTR_SIZE) + ptrsize + size);
             *(IntPtr*)(ptr + ptrsize) = typehnd;
@@ -474,6 +466,7 @@ namespace SuperComicLib.LowLevel
             return new NativeInstance<T>(ptr);
         }
 
+        [SecurityCritical]
         public static IntPtr GetAddress(object obj)
         {
             if (obj == null)
@@ -483,6 +476,7 @@ namespace SuperComicLib.LowLevel
             return **(IntPtr**)&tr;
         }
 
+        [SecurityCritical]
         public static void PinnedAddress(object obj, Action<IntPtr> callback)
         {
             if (obj == null || callback == null)
@@ -492,6 +486,7 @@ namespace SuperComicLib.LowLevel
             callback.Invoke(**(IntPtr**)&tr);
         }
 
+        [SecurityCritical]
         public static void PinnedAddress<T>(ref T obj, Action<IntPtr> callback)
         {
             if (obj == null || callback == null)
@@ -501,6 +496,7 @@ namespace SuperComicLib.LowLevel
             callback.Invoke(**(IntPtr**)&tr);
         }
 
+        [SecurityCritical]
         public static void Copy<TIn, TOut>(ref TIn src, ref TOut dest)
         {
             if (src == null || dest == null)
@@ -526,6 +522,38 @@ namespace SuperComicLib.LowLevel
                 dst_t.IsValueType ? *(byte**)&trdst : (**(byte***)&trdst + PtrSize_i),
                 0,
                 size - (PtrSize_u << 1));
+        }
+
+        [SecurityCritical]
+        public static int HashCode<T>(ref T value)
+        {
+            if (value == null)
+                return -1;
+
+            Type t = typeof(T);
+            uint size = *((uint*)t.TypeHandle.Value + X86BF_PTR_SIZE) - (PtrSize_u << 1);
+            if (size < 0)
+                return -1;
+
+            TypedReference tr = __makeref(value);
+            int* ptr =
+                t.IsValueType
+                ? *(int**)&tr
+                : (**(int***)&tr + PtrSize_i);
+
+            int result = 1;
+            int x = 0;
+            for (; size >= 4; x++, size -= 4)
+                result = 31 * result + ptr[x];
+
+            byte* last = (byte*)(ptr + x);
+            if (size >= 2)
+                result = 31 * result + *(ushort*)(last += 2);
+
+            return
+                size == 1
+                ? 31 * result + *last 
+                : result;
         }
 
         #region internal
