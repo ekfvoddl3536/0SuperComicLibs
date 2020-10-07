@@ -14,7 +14,7 @@ namespace SuperComicLib.Collections
             this.arr = arr;
             this.start = start;
             this.end = end;
-            idx = end;
+            idx = end - 1;
         }
 
         public bool IsAlive => idx >= start;
@@ -23,7 +23,7 @@ namespace SuperComicLib.Collections
             get => arr[idx];
             set => arr[idx] = value;
         }
-        public int Count => start - end;
+        public int Count => end - start;
 
         public void Add() => idx--;
 
@@ -37,13 +37,9 @@ namespace SuperComicLib.Collections
             GC.SuppressFinalize(this);
         }
 
-        public bool LazyAdd()
-        {
-            idx--;
-            return idx >= start;
-        }
+        public bool LazyAdd() => --idx >= start;
 
-        public void Reset() => idx = end;
+        public void Reset() => idx = end - 1;
 
         public T[] ToArray() => arr;
     }

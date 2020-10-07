@@ -37,7 +37,7 @@ namespace SuperComicLib.Collections
             return
                 st < max && x < max
                 ? new RangeArray<T>(array, st, x)
-                : new RangeArray<T>(array, 0, max - 1); // index compare
+                : new RangeArray<T>(array, 0, max);
         }
 
         public static void Replace<T>(this T[] array, int idx, int cnt, T replace)

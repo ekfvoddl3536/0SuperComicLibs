@@ -17,6 +17,14 @@ namespace SuperComicLib.CodeDesigner
             tokenTypes = new TokenType[size];
         }
 
+        internal StrKeywordTable() { }
+
+        public int Count
+        {
+            get => idx;
+            internal set => idx = value;
+        }
+
         public void Add(string value, TokenType tokenType)
         {
 #if DEBUG

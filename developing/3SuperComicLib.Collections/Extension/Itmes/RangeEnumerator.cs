@@ -32,11 +32,7 @@ namespace SuperComicLib.Collections
             GC.SuppressFinalize(this);
         }
 
-        public bool MoveNext()
-        {
-            idx++;
-            return idx <= end;
-        }
+        public bool MoveNext() => ++idx < end;
 
         public void Reset() => idx = start;
     }

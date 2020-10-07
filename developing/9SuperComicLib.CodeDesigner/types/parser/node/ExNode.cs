@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 
 namespace SuperComicLib.CodeDesigner
 {
@@ -40,7 +41,18 @@ namespace SuperComicLib.CodeDesigner
                 }
         }
 
-        public Token GetToken() => null;
+        public Token GetToken() => Token.Empty;
+
+        public INodeEnumerator GetEnumerator() => new Enumerator(this);
+
+        public int DeepCount(int limit, int find)
+        {
+            for (int x = 0; x < m_count && find < limit; x++)
+                if (m_items[x].ChildCount > 0)
+                    find = m_items[x].DeepCount(limit, find + 1);
+
+            return find;
+        }
 
         public void Dispose()
         {
@@ -56,5 +68,71 @@ namespace SuperComicLib.CodeDesigner
             }
             GC.SuppressFinalize(this);
         }
+
+#if DEBUG
+        public override string ToString() => $"{nameof(ExNode)}: {ChildCount}";
+#endif
+
+        #region block
+        internal sealed class Enumerator : INodeEnumerator
+        {
+            public ExNode target;
+            public int index;
+
+            public Enumerator(ExNode target)
+            {
+                this.target = target;
+                index = target.ChildCount;
+            }
+
+            public INode Current => target[index];
+            object IEnumerator.Current => Current;
+
+            public INode Peek() =>
+                index > 0
+                ? target[index - 1]
+                : null;
+
+            public INode Peek(int idx)
+            {
+                int n;
+                return 
+                    // ldloc.0대신 dup 을 사용하기 위함
+                    (n = index - idx) > 0
+                    ? target[n]
+                    : null;
+            }
+
+            public int TokenCount
+            {
+                get
+                {
+                    int cnt = 0;
+                    int idx = index;
+                    while (--idx >= 0)
+                        if (target[idx].ChildCount == 0)
+                            cnt++;
+
+                    return cnt;
+                }
+            }
+            public int Count => target.m_count;
+            public int Index => index;
+
+            public bool MoveNext() => --index >= 0;
+
+            public void Reset() => index = target.ChildCount;
+
+            public int DeepCount(int limit) => target.DeepCount(limit, 1);
+
+            public void Dispose()
+            {
+                target = null;
+                index = 0;
+
+                GC.SuppressFinalize(this);
+            }
+        }
+        #endregion
     }
 }

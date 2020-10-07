@@ -8,9 +8,12 @@ namespace SuperComicLib.Collections
         void Add(T item);
     }
 
-    public interface IIndexable
+    public interface IHashCodeUpdater<T>
     {
-        int Position { get; set;}
+        T Item { get; }
+        int GetOldHashCode();
+        int GetNewHashCode();
+        void Apply();
     }
 
     public interface IEnumerablePair<T1, T2> : IDisposable
@@ -32,10 +35,11 @@ namespace SuperComicLib.Collections
         int Count { get; }
     }
 
-    public interface IArrayStream<T> : IIndexable, IDisposable
+    public interface IArrayStream<T> : IDisposable
     {
         bool EndOfStream { get; }
         int Length { get; }
+        int Position { get; set; }
         T Read();
         IArrayStream<T> Read(int count);
         T Peek();
@@ -46,7 +50,7 @@ namespace SuperComicLib.Collections
         bool CanRead(int count);
     }
 
-    public interface IRangeRefArray<T> : IEnumerable<T>, IEnumerableSlim<T>
+    public interface IRangeRefArray<T> : IEnumerable<T>, IIterable<T>
     {
         int Length { get; }
         T this[int index] { get; set; }
@@ -54,13 +58,13 @@ namespace SuperComicLib.Collections
         IRangeRefArray<T> Slice(int begin, int count);
     }
 
-    public interface IEnumerableSlim<T>
+    public interface IIterable<T>
     {
         IForwardIterator<T> Begin();
         IForwardIterator<T> RBegin();
     }
 
-    public interface ILongHashedList<T> : IDisposable, IEnumerable<T>, IEnumerableSlim<T>
+    public interface ILongHashedList<T> : IDisposable, IEnumerable<T>, IIterable<T>
     {
         int Count { get; }
         int Capacity { get; }
@@ -77,7 +81,7 @@ namespace SuperComicLib.Collections
         void Clear();
     }
 
-    public interface IMap<T> : IDisposable, IEnumerable<KeyValuePair<int, T>>, IEnumerableSlim<T>
+    public interface IMap<T> : IDisposable, IEnumerable<KeyValuePair<int, T>>, IIterable<T>
     {
         int Count { get; }
         int Capacity { get; }
@@ -122,5 +126,12 @@ namespace SuperComicLib.Collections
         bool IsDisposed { get; }
 
         void Observe(object target);
+
+        void Update();
+    }
+
+    public interface ICountObserver : IUniObserver
+    {
+        int Count { get; }
     }
 }

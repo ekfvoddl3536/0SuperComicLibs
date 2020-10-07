@@ -17,7 +17,7 @@ namespace SuperComicLib.Collections
             idx = start;
         }
 
-        public bool IsAlive => idx <= end;
+        public bool IsAlive => idx < end;
         public T Value
         {
             get => arr[idx];
@@ -37,11 +37,7 @@ namespace SuperComicLib.Collections
             GC.SuppressFinalize(this);
         }
 
-        public bool LazyAdd()
-        {
-            idx++;
-            return idx <= end;
-        }
+        public bool LazyAdd() => ++idx < end;
 
         public void Reset() => idx = start;
 

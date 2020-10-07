@@ -26,6 +26,10 @@ namespace SuperComicLib.CodeDesigner
 
         public Token GetToken() => m_token;
 
+        public INodeEnumerator GetEnumerator() => null;
+
+        public int DeepCount(int limit, int find) => find;
+
         public void Dispose()
         {
             m_token = null;
@@ -33,5 +37,9 @@ namespace SuperComicLib.CodeDesigner
 
             GC.SuppressFinalize(this);
         }
+
+#if DEBUG
+        public override string ToString() => m_token.ToString();
+#endif
     }
 }

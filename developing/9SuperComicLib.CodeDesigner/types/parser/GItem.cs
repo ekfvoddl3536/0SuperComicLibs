@@ -1,14 +1,15 @@
 ﻿using System;
+
 namespace SuperComicLib.CodeDesigner
 {
-    public class GItem : IEquatable<GItem>
+    public sealed class GItem : IEquatable<GItem>
     {
         public readonly int produce;
         public readonly ExpressInt express;
 
         public GItem(int produce, ExpressInt express)
         {
-            this.produce = produce;
+            this.produce = produce | ExpressInt.nonterminal_flag;
             this.express = express;
         }
 
@@ -18,7 +19,7 @@ namespace SuperComicLib.CodeDesigner
 
 #if DEBUG
         public override string ToString() =>
-            $"{produce} -> {express}";
+            $"{Grammar.bag[produce]} -> {express}";
 #endif
     }
 }

@@ -104,13 +104,10 @@ namespace SuperComicLib.Collections
             return result;
         }
 
-        public IEnumerable<T> ToArrayFast()
-        {
-            if (IsDisconnected)
-                throw new InvalidOperationException();
-
-            return new Enumerator(this);
-        }
+        public IEnumerable<T> ToArrayFast() =>
+            IsDisconnected 
+            ? throw new InvalidOperationException() 
+            : new Enumerator(this);
 
         private struct Enumerator : IEnumerable<T>, IEnumerator<T>
         {

@@ -3,10 +3,10 @@ using System.Collections;
 
 namespace SuperComicLib.Collections
 {
-    internal readonly struct CountObserver : IUniObserver
+    internal sealed class CountObserver : ICountObserver
     {
-        private readonly ICollection collection;
-        private readonly int prev_cnt;
+        private ICollection collection;
+        private int prev_cnt;
 
         public CountObserver(ICollection collection)
         {
@@ -19,15 +19,21 @@ namespace SuperComicLib.Collections
         public bool IsAdded => prev_cnt < collection.Count;
         public bool IsRemoved => prev_cnt > collection.Count;
         public bool IsDisposed => false;
+        public int Count => collection.Count;
 
         public void Observe(object target)
         {
 #if DEBUG
             if (target == null)
                 throw new ArgumentNullException(nameof(target));
-
-            throw new NotSupportedException();
 #endif
+            if (target is ICollection col)
+            {
+                collection = col;
+                prev_cnt = col.Count;
+            }
         }
+
+        public void Update() => prev_cnt = collection.Count;
     }
 }

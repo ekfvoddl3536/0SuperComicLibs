@@ -1,11 +1,16 @@
-﻿using System;
+﻿#pragma warning disable IDE0044 // 읽기 전용 한정자 추가
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using SuperComicLib.Numerics;
 
 namespace SuperComicLib.Collections
 {
-    public class LinkedHashSet<T> : ISet<T>, IEnumerable<T>, IEnumerableSlim<T>
+#if DEBUG
+    [System.Diagnostics.DebuggerTypeProxy(typeof(LinkedHashSetView<>))]
+    [System.Diagnostics.DebuggerDisplay("Count = {m_count}")]
+#endif
+    public class LinkedHashSet<T> : ISet<T>, IEnumerable<T>, IIterable<T>
     {
         protected const int bitmask = 0x7FFF_FFFF;
         protected const int maxlen = 0x7FEF_FFFF;
@@ -59,13 +64,19 @@ namespace SuperComicLib.Collections
 
         public LinkedNode<T> Last => m_head?.m_prev;
 
-        public bool IsReadOnly { get; }
+        public bool IsReadOnly => false;
+
+        public IEqualityComparer<T> Comparer
+        {
+            get => m_comparer;
+            set => m_comparer = value ?? throw new ArgumentNullException(nameof(value));
+        }
         #endregion
 
         #region methods
         public bool Contains(T item)
         {
-            int hc = m_comparer.GetHashCode(item) & bitmask;
+            int hc = item.GetHashCode() & bitmask;
             for (int x = buckets[hc % buckets.Length] - 1; x >= 0; x = slots[x].next)
                 if (slots[x].hashCode == hc && m_comparer.Equals(slots[x].node.m_value, item))
                     return true;
@@ -75,7 +86,7 @@ namespace SuperComicLib.Collections
 
         public bool Add(T item)
         {
-            int hc = m_comparer.GetHashCode(item) & bitmask;
+            int hc = item.GetHashCode() & bitmask;
             int bucket = hc % buckets.Length;
             for (int x = buckets[bucket] - 1; x >= 0; x = slots[x].next)
                 if (slots[x].hashCode == hc && m_comparer.Equals(slots[x].node.m_value, item))
@@ -130,7 +141,7 @@ namespace SuperComicLib.Collections
 
         public bool Remove(T item)
         {
-            int hc = m_comparer.GetHashCode(item) & bitmask;
+            int hc = item.GetHashCode() & bitmask;
             int bucket = hc % buckets.Length;
             int last = -1;
             for (int x = buckets[bucket] - 1; x >= 0; last = x, x = slots[x].next)
@@ -338,25 +349,32 @@ namespace SuperComicLib.Collections
             if (other == null)
                 throw new ArgumentNullException(nameof(other));
 
-            if (other is ICollection<T> col)
-            {
-                if (col.Count != m_count)
-                    return false;
-
-                foreach (T item in other)
-                    if (!Contains(item))
-                        return false;
-
-                return true;
-            }
+            if (other is ICollection<T> col && m_count != col.Count)
+                return false;
 
             int notfound = m_count;
 
+            IEnumerator<T> me = GetEnumerator();
             IEnumerator<T> e1 = other.GetEnumerator();
-            while (e1.MoveNext() && Contains(e1.Current))
-                notfound--;
+
+        loop:
+            if (me.MoveNext())
+            {
+                if (e1.MoveNext() && m_comparer.Equals(me.Current, e1.Current))
+                    notfound--;
+
+                goto loop;
+            }
+            else if (e1.MoveNext())
+            {
+                e1.Dispose();
+                me.Dispose();
+
+                return false;
+            }
 
             e1.Dispose();
+            me.Dispose();
             return notfound == 0;
         }
 
@@ -408,7 +426,7 @@ namespace SuperComicLib.Collections
             int x;
             foreach (T item in other)
             {
-                int hc = m_comparer.GetHashCode(item) & bitmask;
+                int hc = item.GetHashCode() & bitmask;
                 for (x = buckets[hc % buckets.Length] - 1; x >= 0; x = slots[x].next)
                     if (slots[x].hashCode == hc && m_comparer.Equals(slots[x].node.m_value, item))
                     {
@@ -530,7 +548,6 @@ namespace SuperComicLib.Collections
                 value = default;
             }
         }
-
 
 #pragma warning disable
         protected struct Iterator : IForwardIterator<T>

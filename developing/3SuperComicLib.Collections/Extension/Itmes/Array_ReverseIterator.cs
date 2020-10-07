@@ -2,7 +2,7 @@
 
 namespace SuperComicLib.Collections
 {
-    internal sealed class Array_ReverseIterator<T> : IForwardIterator<T>, IIndexable
+    internal sealed class Array_ReverseIterator<T> : IForwardIterator<T>
     {
         private T[] src;
         private int max; // fast
@@ -23,12 +23,6 @@ namespace SuperComicLib.Collections
         {
             get => src[idx];
             set => src[idx] = value;
-        }
-
-        public int Position
-        {
-            get => idx;
-            set => idx = value;
         }
 
         public void Add() => idx--;

@@ -4,18 +4,24 @@ using SuperComicLib.Collections;
 namespace SuperComicLib.CodeDesigner
 {
     // A B C
-    public readonly struct ExpressInt : IEquatable<ExpressInt>, IEnumerableSlim<int>
+    public readonly struct ExpressInt : IEquatable<ExpressInt>, IIterable<int>
     {
         #region constants
-        public const int epsilon = -1;
         public const int nonterminal_flag = 0x4000_0000;
-        public const int start_symbol = 0x3F00_0000;
-        // public const int end_symbol = start_symbol | int.MinValue; // 0xBF00_0000
+        public const int nonterminal_bitmask = nonterminal_flag - 1;
+        public const int end_symbol = 0x2000_0000;
+        // public const int epsilon = 0x3F00_0000;
+        #endregion
+
+        #region static
+        private static readonly char[] space = { ' ' };
         #endregion
 
         private readonly int[] vars;
 
         #region constructor
+        public ExpressInt(int newitem) => vars = new int[1] { newitem };
+
         public ExpressInt(int[] items) => vars = items;
 
         public ExpressInt(TokenType[] items)
@@ -29,21 +35,21 @@ namespace SuperComicLib.CodeDesigner
             vars = vs;
         }
 
-        public ExpressInt(string str, IExpressMap em)
+        public ExpressInt(string str, ISymbolMap em) : this(new GString(str), em) { }
+
+        public ExpressInt(GString str, ISymbolMap em)
         {
-            string[] datas = str.Trim().Split(' ');
-            int x = datas.Length;
+            int x = str.GetGroupCount();
 
             int[] vs = new int[x];
-            while (--x >= 0)
-            {
-                str = datas[x].Trim();
-                vs[x] =
-                    em.Terminal(str, out TokenType result)
-                    ? (int)result    // awalys positive
-                    : em.Nonterminal(str); // always negative
-            }
 
+            for (int k = 0; str.MoveNext();)
+                vs[k++] =
+                    em.Terminal(str.Current, out TokenType result)
+                    ? (int)result
+                    : em.NonTerminal(str.Current);
+
+            str.Dispose();
             vars = vs;
         }
         #endregion
@@ -53,27 +59,21 @@ namespace SuperComicLib.CodeDesigner
 
         public int this[int index] => vars[index];
 
-        public bool IsInvalid => vars == null;
-
-        public bool IsEpsilon => vars.Length == 1 && vars[0] == epsilon;
-
         public bool Equals(ExpressInt other)
         {
             int[] me = vars;
             int[] ot = other.vars;
 
             int x = me.Length;
-            if (x == ot.Length)
-            {
-                while (--x >= 0)
-                    if (me[x] != ot[x])
-                        return false;
-            }
+            if (x != ot.Length)
+                return false;
+
+            while (--x >= 0)
+                if (me[x] != ot[x])
+                    return false;
 
             return true;
         }
-
-        public bool Equals(string str) => Equals(new ExpressInt(str, EnumTM.Default));
 
         public bool Contains(int other)
         {
@@ -109,8 +109,6 @@ namespace SuperComicLib.CodeDesigner
             return false;
         }
 
-        public bool Contains(string str) => Contains(new ExpressInt(str, EnumTM.Default));
-
         public int[] ToArray()
         {
             int[] src = vars;
@@ -135,34 +133,36 @@ namespace SuperComicLib.CodeDesigner
             false;
 #endif
 
-        public override int GetHashCode() => vars.GetHashCode();
+        public override int GetHashCode() => Arrays.HashCodeFast(vars);
 
-        public override string ToString() => vars.ToString(null, " ");
+        public override string ToString()
+#if DEBUG
+        {
+            int[] vs = vars;
+            int now = vs[0];
+            string result = 
+                now.IsTerminal() 
+                ? ((TokenType)now).ToString() 
+                : Grammar.bag[now];
 
-        #region compare
-        public static bool operator ==(ExpressInt left, ExpressInt right) => left.vars == right.vars;
-        public static bool operator !=(ExpressInt left, ExpressInt right) => left.vars != right.vars;
+            int x = 1;
+            int m = vs.Length;
 
-        public static bool operator ==(ExpressInt left, TokenType right) => left.vars[0] == (int)right;
-        public static bool operator !=(ExpressInt left, TokenType right) => left.vars[0] != (int)right;
+            for (; x < m; x++)
+            {
+                now = vs[x];
+                result += " " + 
+                    (now.IsTerminal()
+                    ? ((TokenType)now).ToString()
+                    : Grammar.bag[now]);
+            }
 
-        public static bool operator ==(TokenType left, ExpressInt right) => (int)left == right.vars[0];
-        public static bool operator !=(TokenType left, ExpressInt right) => (int)left == right.vars[0];
 
-        public static bool operator ==(ExpressInt left, int right) => left.vars[0] == right;
-        public static bool operator !=(ExpressInt left, int right) => left.vars[0] != right;
-
-        public static bool operator ==(int left, ExpressInt right) => left == right.vars[0];
-        public static bool operator !=(int left, ExpressInt right) => left == right.vars[0];
-        #endregion
-        #endregion
-
-        #region implicit
-        public static implicit operator ExpressInt(string str) => new ExpressInt(str, EnumTM.Default);
-        public static implicit operator ExpressInt(TokenType[] items) => new ExpressInt(items);
-
-        public static implicit operator int[](ExpressInt inst) => inst.vars;
-        public static implicit operator int(ExpressInt inst) => inst.vars[0];
-        #endregion
+            return result;
+        }
+#else
+            => string.Empty;
+#endif
     }
+    #endregion
 }

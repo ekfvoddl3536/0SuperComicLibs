@@ -2,18 +2,18 @@
 {
     public static unsafe class FnCHAR
     {
-        public static bool StartsWith(char* src, int len, string value)
+        public static bool Equals(char* src, int len, string value)
         {
-            int x = value.Length;
-            len = x < len ? x : len;
-            if (len < 1)
+            if (value.Length != len)
                 return false;
-
-            for (x = 0; x < len; x++)
-                if (src[x] != value[x])
+       
+            while (--len >= 0)
+                if (src[len] != value[len])
                     return false;
 
             return true;
         }
+
+        public static bool IsNewLine(char value) => value == '\r' || value == '\n';
     }
 }

@@ -6,13 +6,9 @@
 
         id,
         type,
-
-        comp_Equal,         // ==
-        comp_NotEqual,      // !=
-        comp_Lesser,        // <
-        comp_LessOrEqual,   // <=
-        comp_Greater,       // >
-        comp_GreatOrEqual,  // >=
+        // nested_type,
+        // type_pointer,
+        type_array,
 
         assign,
         plus_assign,
@@ -20,20 +16,15 @@
         mult_assign,
         div_assign,
         mod_assign,
-        logic_or_assign,
-        logic_xor_assign,
-        logic_and_assign,
+        or_assign,
+        xor_assign,
+        and_assign,
         lshift_assign,
         rshift_assign,
 
         // 후위 증감/가감 연산자
         plusplus_assign,
         minusminus_assign,
-
-        unary_logic_not,
-        unary_bitwise,
-        // unary_plusplus,
-        // unary_minusminus,
 
         lbracket,
         rbracket,
@@ -42,28 +33,45 @@
         lparen,
         rparen,
 
+        comp_Equal,         // ==
+        comp_NotEqual,      // !=
+        comp_Lesser,        // <
+        comp_LessOrEqual,   // <=
+        comp_Greater,       // >
+        comp_GreatOrEqual,  // >=
+
+        unary_bitnot,
+        unary_bitwise,
+        // unary_plusplus,
+        // unary_minusminus,
+
         plus,
         minus,
         divide,
         modular,
         multiple,
-        logic_or,
-        logic_xor,
-        logic_and,
+        bit_or,
+        bit_xor,
+        bit_and,
         bit_lshift,
         bit_rshift,
+
+        logic_AND,
+        logic_OR,
 
         comma,
         colon,
         period,
         semi_colon,
+        // atsign,
 
         _if,
         _else,
         _for,
         _foreach,
-        // _while,
-        // _do,
+        // _loop,
+        _while,
+        _do,
         _break,
         _continue,
         _goto,
@@ -73,18 +81,11 @@
 
         access_limiter, // public protected private ....
 
-        // -1 ~ 8               => ldc.i4.<x>
-        // -128 ~ -2, 9 ~ 127   => ldc.i4.s <x>
-        // other                => ldc.i4 <x>
         literal_bool,
 
-        // literal_int_i,
-        // literal_int_i2,
         literal_int_4,
         literal_int_8,
 
-        // literal_int_u,
-        // literal_int_u2,
         // literal_int_u4, // parse uint -> cast to int
         // literal_int_u8, // parse ulong -> cast to long
 
@@ -99,7 +100,15 @@
         base_kw,
         default_kw,
 
-        casting,
+        const_kw,
+        as_kw,
+        is_kw,
+
+        d__include_kw = byte.MaxValue + 1,
+        d__from_kw,
+
+        c__class_kw,
+        c__final_kw,
 
         EOL = short.MaxValue, // End Of Line
     }

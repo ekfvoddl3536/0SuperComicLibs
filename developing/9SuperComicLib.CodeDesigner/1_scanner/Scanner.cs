@@ -1,8 +1,7 @@
 ﻿#pragma warning disable IDE0046 // if 문을 삼항연산으로 바꾸는거
-using SuperComicLib.Collections;
+using SuperComicLib.IO;
 using SuperComicLib.Text;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -10,22 +9,24 @@ namespace SuperComicLib.CodeDesigner
 {
     public class Scanner : IDisposable
     {
-        protected IExceptionHandler handler;
-        protected RegexPatternPair patterns;
-        protected StrKeywordTable ck_table;
-        protected StrKeywordTable sym_table;
+        protected internal IExceptionHandler handler;
+        protected internal ITypeMap typeMap;
+        protected internal StrKeywordTable ck_table;
+        protected internal StrKeywordTable sym_table;
 
-        public Scanner(IExceptionHandler handler)
+        public Scanner(IExceptionHandler handler, ITypeMap typeMap)
         {
             this.handler = handler ?? ExceptionHandlerFactory.Default;
-            // patterns = LoadDefaultRegexPatterns();
+            this.typeMap = typeMap ?? TypeTable.Instance;
+
             ck_table = LoadDefaultCharKeywordTable();
             sym_table = LoadDefaultSymbolTable();
         }
-        public Scanner() : this(null) { }
 
-        #region debugging
-        public IEnumerable<Token> FromFile(string path, Encoding enc)
+        public Scanner() : this(null, null) { }
+
+        #region method
+        public ITokenEnumerator FromFile(string path, Encoding enc)
         {
             if (enc == null)
                 throw new ArgumentException(nameof(enc));
@@ -37,16 +38,16 @@ namespace SuperComicLib.CodeDesigner
             return Internal_FromStream(File.OpenRead(path), enc, false);
         }
 
-        public IEnumerable<Token> FromText(string text) => 
+        public ITokenEnumerator FromText(string text) => 
             string.IsNullOrWhiteSpace(text)
             ? throw new ArgumentException("invalid", nameof(text))
             : Internal_FromStream(new StringStream(text, Encoding.Default), Encoding.Default, false);
 
-        public IEnumerable<Token> FromStream(Stream stream) => FromStream(stream, Encoding.Default, true);
+        public ITokenEnumerator FromStream(Stream stream) => FromStream(stream, Encoding.Default, true);
 
-        public IEnumerable<Token> FromStream(Stream stream, Encoding enc) => FromStream(stream, enc, true);
+        public ITokenEnumerator FromStream(Stream stream, Encoding enc) => FromStream(stream, enc, true);
 
-        public IEnumerable<Token> FromStream(Stream stream, Encoding enc, bool leaveOpen)
+        public ITokenEnumerator FromStream(Stream stream, Encoding enc, bool leaveOpen)
         {
             if (enc == null)
                 throw new ArgumentNullException(nameof(enc));
@@ -58,75 +59,75 @@ namespace SuperComicLib.CodeDesigner
             return Internal_FromStream(stream, enc, leaveOpen);
         }
 
-        private IEnumerable<Token> Internal_FromStream(Stream stream, Encoding enc, bool leaveOpen) =>
+        public ITokenEnumerator FromStream(PreProcessor pre_processor, Stream stream, Encoding enc, bool leaveOpen)
+        {
+            if (pre_processor == null)
+                throw new ArgumentNullException(nameof(pre_processor));
+            if (enc == null)
+                throw new ArgumentNullException(nameof(enc));
+
+            return new ScanActionEnumerator(
+                pre_processor.Convert(stream, enc, leaveOpen),
+                sym_table.Pair,
+                ck_table.Pair,
+                handler,
+                typeMap);
+        }
+
+        private ITokenEnumerator Internal_FromStream(Stream stream, Encoding enc, bool leaveOpen) =>
             new ScanActionEnumerator(
-                new StreamReader(stream, enc, true, 1024, leaveOpen),
+                new CStreamReader(stream, enc, true, 1024, leaveOpen),
                 sym_table.Pair, 
                 ck_table.Pair,
-                handler);
+                handler,
+                typeMap);
 
-        // private IEnumerable<Token> Internal_FromStream(Stream stream, Encoding enc, bool leaveOpen)
-        // {
-        //     List<Token> tokens = new List<Token>();
-        //     StreamReader reader = new StreamReader(stream, enc, true, 1024, leaveOpen);
-        // 
-        //     int line = 0;
-        // 
-        // loop:
-        //     string now = reader.MoveNext(ref line);
-        //     if (now != null)
-        //     {
-        //         OnReadLine(now, line, tokens);
-        // 
-        //         // End Of Line
-        //         tokens.Add(new Token(string.Empty, TokenType.EOL, line, now.Length));
-        //         goto loop;
-        //     }
-        // 
-        //     reader.Close();
-        //     return tokens.ToArray();
-        // }
         #endregion
 
-        // protected virtual void OnReadLine(string now, int line, List<Token> tokens)
-        // {
-        //     
-        // }
-
+        #region keywords & symbols
         protected virtual StrKeywordTable LoadDefaultCharKeywordTable() =>
-            new StrKeywordTable(16)
+            new StrKeywordTable(24)
             {
+                { "this", TokenType.this_kw },
+                // { "base", TokenType.base_kw },
+
+                { "const", TokenType.const_kw },
+
+                { "true", TokenType.literal_bool },
+                { "false", TokenType.literal_bool },
+
                 { "ret", TokenType._return },
                 { "new", TokenType._new },
                 { "default", TokenType.default_kw },
-                { "true", TokenType.literal_bool },
-                { "false", TokenType.literal_bool },
+
                 { "if", TokenType._if },
                 { "else", TokenType._else },
-                { "foreach", TokenType._foreach },
                 { "for", TokenType._for },
+                { "foreach", TokenType._foreach },
+                { "while", TokenType._while },
+                { "do", TokenType._do },
+
                 { "goto", TokenType._goto },
                 { "fixed", TokenType._fixed },
+                { "continue", TokenType._continue },
+                { "break", TokenType._break },
+
                 { "ref", TokenType.ref_kw },
-                { "in", TokenType.in_kw }
+                { "in", TokenType.in_kw },
+
+                // { "public", TokenType.access_limiter },
+                // { "protected", TokenType.access_limiter },
+                // { "private", TokenType.access_limiter },
+
+                { "as", TokenType.as_kw },
+                { "is", TokenType.is_kw },
+
+                { "using", TokenType.d__include_kw },
+                { "from", TokenType.d__from_kw }
             };
 
-        // protected virtual RegexPatternPair LoadDefaultRegexPatterns() =>
-        //     new RegexPatternPair(10)
-        //     {
-        //         { ScanRegexPatterns.refOrIn_pattern, DefaultScanAction.RefOrInKwToken },
-        //         { ScanRegexPatterns.this_pattern, DefaultScanAction.ThisKwToken },
-        //         { ScanRegexPatterns.typeidentity_pattern, DefaultScanAction.TypeIdentityToken },
-        //         // { ScanRegexPatterns.type_pattern, DefaultScanAction.TypeToken },
-        //         { ScanRegexPatterns.identity_pattern, DefaultScanAction.IdentityToken },
-        //         { ScanRegexPatterns.floating_pattern, DefaultScanAction.RealPointToken },
-        //         { ScanRegexPatterns.integer_pattern, DefaultScanAction.IntegerToken },
-        //         { ScanRegexPatterns.string_pattern, DefaultScanAction.StringToken },
-        //         { ScanRegexPatterns.casting_pattern, DefaultScanAction.CastingToken }
-        //     };
-
         protected virtual StrKeywordTable LoadDefaultSymbolTable() =>
-            new StrKeywordTable(40)
+            new StrKeywordTable(48)
             {
                 { "[", TokenType.lbracket_Sq },
                 { "]", TokenType.rbracket_Sq },
@@ -143,20 +144,29 @@ namespace SuperComicLib.CodeDesigner
                 { "%=", TokenType.mod_assign },
                 { "+=", TokenType.plus_assign },
                 { "-=", TokenType.minus_assign },
-                { "|=", TokenType.logic_or_assign },
-                { "^=", TokenType.logic_xor_assign },
-                { "&=", TokenType.logic_and_assign },
+                { "|=", TokenType.or_assign },
+                { "^=", TokenType.xor_assign },
+                { "&=", TokenType.and_assign },
 
                 { "*", TokenType.multiple },
                 { "/", TokenType.divide },
                 { "%", TokenType.modular },
                 { "+", TokenType.plus },
                 { "-", TokenType.minus },
-                { "&", TokenType.logic_and },
-                { "^", TokenType.logic_xor },
-                { "|", TokenType.logic_or },
+                { "&", TokenType.bit_and },
+                { "^", TokenType.bit_xor },
+                { "|", TokenType.bit_or },
                 { "<<", TokenType.bit_lshift },
                 { ">>", TokenType.bit_rshift },
+
+                { "&&", TokenType.logic_AND },
+                { "||", TokenType.logic_OR },
+
+                { "~", TokenType.unary_bitwise },
+                { "!", TokenType.unary_bitnot },
+
+                { "++", TokenType.plusplus_assign },
+                { "--", TokenType.minusminus_assign },
 
                 { "==", TokenType.comp_Equal },
                 { "!=", TokenType.comp_NotEqual },
@@ -172,16 +182,23 @@ namespace SuperComicLib.CodeDesigner
                 { ":", TokenType.colon },
                 { ";", TokenType.semi_colon }
             };
+        #endregion
 
+        #region serialize & deserialize
+        protected internal virtual void OnSerialize(BinaryWriter writer) { }
+        protected internal virtual void OnDeserialize(BinaryReader reader) { }
+        #endregion
+        
         #region IDisposable Support
         protected virtual void Dispose(bool disposing)
         {
             if (handler != null)
             {
                 handler = null;
+                typeMap = null;
 
-                patterns.Dispose();
-                patterns = null;
+                sym_table.Dispose();
+                sym_table = null;
 
                 ck_table.Dispose();
                 ck_table = null;

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using SuperComicLib.LowLevel;
+using SuperComicLib.Reflection;
 
 namespace SuperComicLib.XPatch
 {
-    internal static class Utils
+    internal static unsafe class Utils
     {
         internal static bool Range(ushort value, int min, int max) => value >= min && value <= max;
-
-        // internal static Action ToDelegate(MethodInfo meth) => (Action)Delegate.CreateDelegate(typeof(Action), meth);
 
         internal static ILBuffer FindILBuffer(IReadOnlyList<ILBuffer> buffers, int offset)
         {
@@ -19,7 +19,6 @@ namespace SuperComicLib.XPatch
             if (offset < 0 || offset > buffers[lastIdx].offset)
                 throw new ArgumentOutOfRangeException(nameof(offset));
 #endif
-
             int min = 0, max = lastIdx;
             while (min <= max)
             {
@@ -35,66 +34,77 @@ namespace SuperComicLib.XPatch
                     min = mid + 1;
             }
 #if DEBUG
-            foreach (ILBuffer buf in buffers)
+            IEnumerator<ILBuffer> iter = buffers.GetEnumerator();
+            while (iter.MoveNext())
+            {
+                ILBuffer buf = iter.Current;
                 if (buf.offset == offset)
                 {
                     Console.WriteLine("[WARN] 'm_buffers' is not sorted!");
                     System.Diagnostics.Debug.WriteLine("Not Sorted!!");
+
+                    iter.Dispose();
                     return buf;
                 }
-            throw new Exception("Missing ILBuffer!");
-#else
-            return null;
+            }
+
+            iter.Dispose();
+            System.Diagnostics.Debug.Fail("Missing ILBuffer");
 #endif
+            return null;
         }
 
         public static string IL2String(IReadOnlyList<ILBuffer> buffers)
         {
             StringBuilder strb = new StringBuilder(1024);
-            foreach (ILBuffer il in buffers)
+
+            IEnumerator<ILBuffer> iter = buffers.GetEnumerator();
+            while (iter.MoveNext())
             {
-                OpCode code = il.opCode;
+                ILBuffer il = iter.Current;
+
+                OpCode code = il.code;
                 strb.Append($"IL_{il.offset:X4}: {code}");
                 switch (code.OperandType)
                 {
                     case OperandType.InlineBrTarget:
                     case OperandType.ShortInlineBrTarget:
-                        strb.Append($" IL_{FindILBuffer(buffers, (int)il.operand).offset.ToString("X4")}");
+                        strb.Append($" IL_{FindILBuffer(buffers, NativeClass.ReadMemoryValue_unsafe<int>(il.operand, 0)).offset:X4}");
                         break;
 
                     case OperandType.InlineField:
-                        {
-                            FieldInfo info = (FieldInfo)il.operand;
-                            strb.Append($" {info.FieldType.Name.ToLower()} {info.DeclaringType.Name}::{info.Name}");
-                        }
-                        break;
+                    {
+                        FieldInfo info = (FieldInfo)il.operand;
+                        strb.Append($" {info.FieldType.Name.ToLower()} {info.DeclaringType.Name}::{info.Name}");
+                    }
+                    break;
 
                     case OperandType.InlineMethod:
+                    {
+                        if (il.operand is MethodInfo temp)
                         {
-                            if (il.operand is MethodInfo temp)
-                            {
-                                if (temp.IsStatic == false)
-                                    strb.Append($" instance");
-                                strb.Append($" {temp.ReturnType.Name.ToLower()} {temp.DeclaringType.Name}::{temp.Name}()");
-                            }
-                            else
-                            {
-                                ConstructorInfo info = (ConstructorInfo)il.operand;
-                                if (info.IsStatic == false)
-                                    strb.Append($" instance");
-                                strb.Append($" void {info.DeclaringType.Name}::.ctor()");
-                            }
+                            if (temp.IsStatic == false)
+                                strb.Append($" instance");
+                            strb.Append($" {temp.ReturnType.Name.ToLower()} {temp.DeclaringType.Name}::{temp.Name}()");
                         }
-                        break;
+                        else
+                        {
+                            ConstructorInfo info = (ConstructorInfo)il.operand;
+                            if (info.IsStatic == false)
+                                strb.Append($" instance");
+                            strb.Append($" void {info.DeclaringType.Name}::.ctor()");
+                        }
+                    }
+                    break;
 
                     case OperandType.InlineSig:
-                        {
-                            if (il.operand is SignatureHelper temp)
-                                strb.Append($" {temp.ToString()}");
-                            else
-                                strb.Append($" meta_{((int)il.operand).ToString("X4")}");
-                        }
-                        break;
+                    {
+                        if (il.operand is SignatureHelper temp)
+                            strb.Append($" {temp}");
+                        else
+                            strb.Append($" meta_{(int)il.operand:X4}");
+                    }
+                    break;
 
                     case OperandType.InlineString:
                         strb.Append($" \"{(string)il.operand}\"");
@@ -105,13 +115,13 @@ namespace SuperComicLib.XPatch
                         break;
 
                     case OperandType.InlineTok:
-                        {
-                            if (il.operand is Type temp)
-                                strb.Append($" {temp.FullName}");
-                            else
-                                strb.Append($" 0x{((int)il.operand).ToString("X4")}");
-                        }
-                        break;
+                    {
+                        if (il.operand is Type temp)
+                            strb.Append($" {temp.FullName}");
+                        else
+                            strb.Append($" 0x{(int)il.operand:X4}");
+                    }
+                    break;
 
                     case OperandType.InlineType:
                         strb.Append($" {((Type)il.operand).FullName}");
@@ -124,7 +134,7 @@ namespace SuperComicLib.XPatch
                     case OperandType.ShortInlineI:
                     case OperandType.ShortInlineR:
                     case OperandType.ShortInlineVar:
-                        strb.Append($" {il.operand.ToString()}");
+                        strb.Append($" {il.operand}");
                         break;
 
                     default:
@@ -132,6 +142,8 @@ namespace SuperComicLib.XPatch
                 }
                 strb.AppendLine();
             }
+            iter.Dispose();
+
             return strb.ToString();
         }
     }

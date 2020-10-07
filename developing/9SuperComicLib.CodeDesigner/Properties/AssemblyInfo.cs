@@ -34,3 +34,8 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+
+[assembly: InternalsVisibleTo("9SuperComicLib.CodeDesigner.IO")]
+[assembly: InternalsVisibleTo("9SuperComicLib.CodeDesigner.Analyzer")]
+[assembly: InternalsVisibleTo("9SuperComicLib.CodeDesigner.Editor")]
+[assembly: InternalsVisibleTo("9SuperComicLib.CodeDesigner.Test")]

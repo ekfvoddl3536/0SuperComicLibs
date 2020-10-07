@@ -32,7 +32,14 @@ namespace SuperComicLib.XPatch
             }
         }
 
-        public virtual bool GenerateCode(ILGenerator il, MethodBase original, ParameterInfo[] parameters, int offset, bool hasReturn, bool hasArgBuffer)
+        public virtual bool GenerateCode(
+            ILGenerator il,
+            MethodBase original,
+            ParameterInfo[] parameters,
+            int offset,
+            bool hasReturn,
+            bool hasArgBuffer,
+            bool isValuetype)
         {
             int idx = 0;
             int len = toNames.Length;
@@ -50,7 +57,8 @@ namespace SuperComicLib.XPatch
                         // static 메소드의 첫번째 인수는 @this 일 수 없습니다
                         throw new InvalidOperationException("The first parameter of the static method cannot be @this");
 
-                    if (toTypes[idx].IsByRef)
+                    // bool refinst = original.DeclaringType.IsValueType;
+                    if (isValuetype == false && toTypes[idx].IsByRef)
                         il.Emit(OpCodes.Ldarga_S, (byte)0);
                     else
                         il.Emit(OpCodes.Ldarg_0);
@@ -67,8 +75,10 @@ namespace SuperComicLib.XPatch
                             ? now.Remove(0, 5) == t.Name 
                             : now == t.Name;
                     });
+
                     if (param == null)
                         continue;
+
                     if (toTypes[idx].IsByRef)
                         il.Emit_Ldarga(param.Position + offset);
                     else
@@ -85,32 +95,20 @@ namespace SuperComicLib.XPatch
         }
 
         #region IDisposable Support
-        private bool disposedValue = false; // 중복 호출을 검색하려면
-
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (patching != null)
             {
                 ClsArray.DeleteAll(ref toNames);
-                patching = null;
+                ClsArray.DeleteAll(ref toTypes);
 
-                disposedValue = true;
+                patching = null;
             }
         }
 
-        // TODO: 위의 Dispose(bool disposing)에 관리되지 않는 리소스를 해제하는 코드가 포함되어 있는 경우에만 종료자를 재정의합니다.
-        ~ExMethodInfo()
-        {
-            // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
-            Dispose(false);
-        }
-
-        // 삭제 가능한 패턴을 올바르게 구현하기 위해 추가된 코드입니다.
         public void Dispose()
         {
-            // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
             Dispose(true);
-            // TODO: 위의 종료자가 재정의된 경우 다음 코드 줄의 주석 처리를 제거합니다.
             GC.SuppressFinalize(this);
         }
         #endregion

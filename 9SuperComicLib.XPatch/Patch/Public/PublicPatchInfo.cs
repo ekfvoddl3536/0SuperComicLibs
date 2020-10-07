@@ -38,8 +38,11 @@ namespace SuperComicLib.XPatch
 
         public void Dispose()
         {
-            instance.Dispose();
-            instance = null;
+            if (instance != null)
+            {
+                instance.Dispose();
+                instance = null;
+            }
         }
 
         public override bool Equals(object obj) => false;

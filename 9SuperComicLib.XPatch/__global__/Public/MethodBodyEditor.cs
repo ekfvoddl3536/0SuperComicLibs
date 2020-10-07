@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using SuperComicLib.Reflection;
 
 namespace SuperComicLib.XPatch
 {
@@ -82,17 +83,25 @@ namespace SuperComicLib.XPatch
             ForEach(il, buf => ModifyDefault(il, buf, final_code, ref retlabel, ref need_defineRetLabel, hasReturn, argFixOffset));
 
 #if DEBUG
-            string after = IL2String(final_code);
+            try
+            {
+                string after = IL2String(final_code);
 
-            Console.WriteLine(" === Before ===");
-            Console.WriteLine(before);
-            Console.WriteLine(Environment.NewLine);
+                Console.WriteLine(" === Before ===");
+                Console.WriteLine(before);
+                Console.WriteLine(Environment.NewLine);
 
-            Console.WriteLine(" === After ===");
-            Console.WriteLine(after);
-            Console.WriteLine(Environment.NewLine);
-
-            System.Diagnostics.Debug.WriteLine("Break!");
+                Console.WriteLine(" === After ===");
+                Console.WriteLine(after);
+                Console.WriteLine(Environment.NewLine);
+            }
+#pragma warning disable
+            catch (Exception exc)
+            {
+                System.Diagnostics.Debug.WriteLine(exc.ToString());
+                System.Diagnostics.Debugger.Break();
+            }
+#pragma warning restore
 #endif
 
             // step 3: emit IL code
@@ -104,12 +113,12 @@ namespace SuperComicLib.XPatch
         protected virtual void ModifyDefault(ILGenerator il, ILBuffer current, List<ILBuffer> final_code, ref Label retlabel, ref bool need_defineRetLabel, bool hasReturn, int argFixOffset)
         {
             // ret -> jump
-            ref OpCode code = ref current.opCode;
+            OpCode code = current.code;
             if (code == OpCodes.Ret)
             {
                 if (hasReturn)
                 {
-                    code = OpCodes.Stloc_0;
+                    current.code = OpCodes.Stloc_0;
                     final_code.Add(current);
                 }
 
@@ -123,7 +132,7 @@ namespace SuperComicLib.XPatch
                 // use label
                 final_code.Add(new ILBuffer
                 {
-                    opCode = OpCodes.Br,
+                    code = OpCodes.Br,
                     operand = retlabel
                 });
             }
@@ -193,24 +202,25 @@ namespace SuperComicLib.XPatch
                 v = 0xDD;
 
             if (v != qcode.Value)
-                current.opCode = ILBuffer.Find(v);
+                current.code = OpCodeConverter.GetCode(v.unsigned);
         }
 
         protected void ForEach(ILGenerator il, Action<ILBuffer> action)
         {
-            for (int x = 0, max = m_buffers.Count - 1; x < max; x++)
+            IReadOnlyList<ILBuffer> buffers = m_buffers;
+            for (int x = 0, max = buffers.Count - 1; x < max; x++)
             {
-                ILBuffer buf = m_buffers[x];
-                switch (buf.opCode.OperandType)
+                ILBuffer buf = buffers[x];
+                switch (buf.code.OperandType)
                 {
                     case OperandType.ShortInlineBrTarget:
                     case OperandType.InlineBrTarget:
-                        FindILBuffer(m_buffers, (int)buf.operand).label = il.DefineLabel();
+                        FindILBuffer(buffers, (int)buf.operand).label = new PublicLabel(il.DefineLabel());
                         break;
 
                     case OperandType.InlineSwitch:
                         foreach (int i in (int[])buf.operand)
-                            FindILBuffer(m_buffers, i).label = il.DefineLabel();
+                            FindILBuffer(buffers, i).label = new PublicLabel(il.DefineLabel());
                         break;
 
                     default:
@@ -228,7 +238,7 @@ namespace SuperComicLib.XPatch
         {
             foreach (ILBuffer current in codes)
             {
-                OpCode code = current.opCode;
+                OpCode code = current.code;
                 PublicLabel label = current.label;
                 ExceptionBlockInfo eb = current.blockInfo;
 
@@ -352,7 +362,7 @@ namespace SuperComicLib.XPatch
                         return;
                     default:
 #if DEBUG
-                        System.Diagnostics.Debug.WriteLine($"[ERROR] {btype.ToString()}");
+                        System.Diagnostics.Debug.WriteLine($"[ERROR] {btype}");
 #endif
                         return;
                 }
@@ -360,34 +370,16 @@ namespace SuperComicLib.XPatch
         #endregion
 
         #region IDisposable Support
-        private bool disposedValue = false; // 중복 호출을 검색하려면
-
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
-            {
-                m_buffers = null;
-
-                exceptions = null;
-                localVars = null;
-
-                disposedValue = true;
-            }
+            m_buffers = null;
+            exceptions = null;
+            localVars = null;
         }
 
-        // TODO: 위의 Dispose(bool disposing)에 관리되지 않는 리소스를 해제하는 코드가 포함되어 있는 경우에만 종료자를 재정의합니다.
-        ~MethodBodyEditor()
-        {
-            // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
-            Dispose(false);
-        }
-
-        // 삭제 가능한 패턴을 올바르게 구현하기 위해 추가된 코드입니다.
         public void Dispose()
         {
-            // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
             Dispose(true);
-            // TODO: 위의 종료자가 재정의된 경우 다음 코드 줄의 주석 처리를 제거합니다.
             GC.SuppressFinalize(this);
         }
         #endregion

@@ -8,53 +8,43 @@ namespace SuperComicLib.CodeDesigner
 {
     public sealed class CachedGrammar : IDisposable
     {
-        private Grammar value;
+        internal Grammar m_value;
         private Map<HashSet<int>> first;
         private Map<HashSet<int>> follow;
 
-        public CachedGrammar(Grammar grammar) => value = grammar;
+        public CachedGrammar(Grammar grammar) => m_value = grammar;
 
         #region property
-        public Grammar Value => value;
-
         public Map<HashSet<int>> FirstSet => first;
 
         public Map<HashSet<int>> FollowSet => follow;
+
+        public Grammar Source => m_value;
         #endregion
 
         #region methods
         public void Caching()
         {
-            Map<Range> map = value.GetNonTerminals();
-            int cnt = map.Count;
+            Grammar g = m_value;
+
+            Range[] map = g.m_nonterminals;
+            int cnt = map.Length;
 
             ref Map<HashSet<int>> first = ref this.first;
             ref Map<HashSet<int>> follow = ref this.follow;
 
             first = new Map<HashSet<int>>(cnt);
             follow = new Map<HashSet<int>>(cnt);
-            follow.Add(ExpressInt.start_symbol, new HashSet<int>());
+            follow.Add(ExpressInt.end_symbol, new HashSet<int>());
 
-            IEnumerator<KeyValuePair<int, Range>> e = map.GetEnumerator();
-            GItem[] vs = value.GetGItems();
-
-            while (e.MoveNext())
+            for (int x = 0; x < cnt; x++)
             {
-                KeyValuePair<int, Range> temp = e.Current;
-                int nonterminal = temp.Key;
-                Range rng = temp.Value;
+                Range rng = map[x];
 
-                HashSet<int> set = new HashSet<int>();
-                GHelper.FirstAll(set, vs, map, rng, nonterminal);
-                first.Add(nonterminal, set);
-
-                set = new HashSet<int>();
-                GHelper.FollowAll(set, vs, map, rng, nonterminal);
-                follow.Add(nonterminal, set);
+                int idx = x.ToNonterminal();
+                first.Add(idx, GHelper.FIRST(g, rng));
+                follow.Add(idx, GHelper.FOLLOW(g, rng));
             }
-
-            first.Add(ExpressInt.start_symbol, first.Get(value.startNonterminal));
-            e.Dispose();
         }
 
         public void ParallelCaching(int maxThreads)
@@ -65,18 +55,17 @@ namespace SuperComicLib.CodeDesigner
                 return;
             }
 
-            Map<Range> map = value.GetNonTerminals();
-            int cnt = map.Count;
+            Grammar grammar = m_value;
+
+            Range[] map = grammar.m_nonterminals;
+            int cnt = map.Length;
 
             ref Map<HashSet<int>> first = ref this.first;
             ref Map<HashSet<int>> follow = ref this.follow;
 
             first = new Map<HashSet<int>>(cnt);
             follow = new Map<HashSet<int>>(cnt);
-            follow.Add(ExpressInt.start_symbol, new HashSet<int>());
-
-            IEnumerator<KeyValuePair<int, Range>> e = map.GetEnumerator();
-            GItem[] vs = value.GetGItems();
+            follow.Add(ExpressInt.end_symbol, new HashSet<int>());
 
             Semaphore limit = new Semaphore(++maxThreads, maxThreads);
             AutoResetEvent are = new AutoResetEvent(true);
@@ -84,20 +73,18 @@ namespace SuperComicLib.CodeDesigner
             // set
             Package.first = first;
             Package.follow = follow;
-            Package.map = map;
-            Package.vs = vs;
+            Package.grammar = grammar;
             Package.limit = limit;
             Package.are = are;
 
             Task[] tasks = new Task[cnt];
             int x = cnt;
-            while (e.MoveNext())
+            for (int z = 0; z < cnt; z++)
             {
                 limit.WaitOne();
-                tasks[--x] = Task.Factory.StartNew(ThreadWorkCaching, new Package(e.Current));
+                tasks[--x] = Task.Factory.StartNew(ThreadWorkCaching, new Package(z.ToNonterminal(), map[z]));
                 limit.Release();
             }
-            e.Dispose();
 
             while (--cnt >= 0)
             {
@@ -109,13 +96,12 @@ namespace SuperComicLib.CodeDesigner
                 t = null;
             }
 
-            first.Add(ExpressInt.start_symbol, first.Get(value.startNonterminal));
+            // first.Add(ExpressInt.end_symbol, first.Get(m_value.startIdx));
 
             // clean-up
             Package.first = null;
             Package.follow = null;
-            Package.map = null;
-            Package.vs = null;
+            Package.grammar = null;
             Package.limit = null;
             Package.are = null;
 
@@ -123,41 +109,60 @@ namespace SuperComicLib.CodeDesigner
             are.Dispose();
         }
 
-        public HashSet<int> GetFirst(ExpressInt express, int index)
+        public CHashSet<int> GetFirst(ExpressInt express, int index)
         {
-            HashSet<int> result = new HashSet<int>();
-            GetFirst(result, express, index);
+            CHashSet<int> result = new CHashSet<int>();
+            if (index < express.Length)
+                GetFirst(result, express, index);
+
             return result;
         }
 
-        public void GetFirst(HashSet<int> set, ExpressInt expr, int idx)
+        internal void GetFirst(CHashSet<int> set, ExpressInt expr, int idx)
         {
-            do
-            {
-                if (idx >= expr.Length)
-                    return;
+            int temp = expr[idx];
+            if (temp.IsTerminal())
+                set.Add(temp);
+            else
+                set.UnionWith(first.Get(temp));
+        }
 
-                int temp = expr[idx];
-                if (temp == ExpressInt.epsilon)
-                    continue;
-                else if (temp.IsTerminal())
-                    set.Add(temp);
-                else // if (value.GetNonTerminals().Contains(temp))
-                    set.AddRange(first.Get(temp));
-            }
-            while (++idx != expr.Length);
+        public CHashSet<int> GetFollow(ExpressInt express, int index)
+        {
+            CHashSet<int> result = new CHashSet<int>();
+            if (index < express.Length)
+                GetFollow(result, express, index);
+
+            return result;
+        }
+
+        internal void GetFollow(CHashSet<int> set, ExpressInt expr, int idx)
+        {
+            int temp = expr[idx];
+            if (temp.IsTerminal())
+                set.Add(temp);
+            else
+                set.UnionWith(follow.Get(temp));
+
+            set.Add(ExpressInt.end_symbol);
         }
 
         public void Dispose()
         {
-            value.Dispose();
-            value = null;
+            if (m_value != null)
+            {
+                m_value.Dispose();
+                m_value = null;
+            }
 
-            first.Dispose();
-            first = null;
+            if (first != null)
+            {
+                first.Dispose();
+                first = null;
 
-            follow.Dispose();
-            follow = null;
+                follow.Dispose();
+                follow = null;
+            }
 
             GC.SuppressFinalize(this);
         }
@@ -168,18 +173,17 @@ namespace SuperComicLib.CodeDesigner
         {
             public static Map<HashSet<int>> first;
             public static Map<HashSet<int>> follow;
-            public static Map<Range> map;
-            public static GItem[] vs;
+            public static Grammar grammar;
             public static Semaphore limit;
             public static AutoResetEvent are;
 
             public readonly int nonterminal;
             public readonly Range rng;
 
-            public Package(KeyValuePair<int, Range> kv)
+            public Package(int nonterminal, Range rng)
             {
-                nonterminal = kv.Key;
-                rng = kv.Value;
+                this.nonterminal = nonterminal;
+                this.rng = rng;
             }
         }
 
@@ -189,23 +193,21 @@ namespace SuperComicLib.CodeDesigner
             Semaphore limit = Package.limit;
             limit.WaitOne();
 
-            Map<Range> map = Package.map;
-            GItem[] vs = Package.vs;
+            Grammar grammar = Package.grammar;
 
-            int nonterminal = package.nonterminal;
             Range rng = package.rng;
 
-            HashSet<int> set = new HashSet<int>();
-            GHelper.FirstAll(set, vs, map, rng, nonterminal);
-
-            HashSet<int> set2 = new HashSet<int>();
-            GHelper.FollowAll(set2, vs, map, rng, nonterminal);
+            HashSet<int> set = GHelper.FIRST(grammar, rng);
+            HashSet<int> set2 = GHelper.FOLLOW(grammar, rng);
 
             // sync block
             Package.are.WaitOne();
+
             // body
+            int nonterminal = package.nonterminal;
             Package.first.Add(nonterminal, set);
             Package.follow.Add(nonterminal, set2);
+
             // exit
             Package.are.Set();
 

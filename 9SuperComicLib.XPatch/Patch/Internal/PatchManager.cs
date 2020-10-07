@@ -56,11 +56,19 @@ namespace SuperComicLib.XPatch
                 List<DynamicMethod> rets = new List<DynamicMethod>();
                 foreach (PatchInfo p in patchinfos.Values)
                     rets.Add(p.DoPatch());
+
                 return rets;
             }
 #pragma warning disable
-            catch
+#if DEBUG
+            catch (Exception exc)
             {
+                System.Diagnostics.Debug.WriteLine(exc.ToString());
+                System.Diagnostics.Debugger.Break();
+#else
+            catch 
+            {
+#endif
                 return null;
             }
 #pragma warning restore
@@ -68,10 +76,15 @@ namespace SuperComicLib.XPatch
 
         public void Dispose()
         {
-            foreach (PatchInfo p in patchinfos.Values)
-                p.Dispose();
-            patchinfos.Clear();
-            patchinfos = null;
+            if (patchinfos != null)
+            {
+                foreach (PatchInfo p in patchinfos.Values)
+                    p.Dispose();
+
+                patchinfos.Clear();
+                patchinfos = null;
+            }
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 namespace SuperComicLib.Collections
 {
+#if DEBUG
+    [System.Diagnostics.DebuggerTypeProxy(typeof(LongHashedListView<>))]
+    [System.Diagnostics.DebuggerDisplay("Count = {m_count}")]
+#endif
     public unsafe class LongHashedList<T> : ILongHashedList<T>
     {
         protected const long bitmask = 0x7FFF_FFFF_FFFF_FFFF;
@@ -37,7 +41,7 @@ namespace SuperComicLib.Collections
                     Add(val.GetHashCode(), val);
         }
 
-        public LongHashedList(IEnumerableSlim<T> collection) : this(default_capacity)
+        public LongHashedList(IIterable<T> collection) : this(default_capacity)
         {
             if (collection == null)
                 return;

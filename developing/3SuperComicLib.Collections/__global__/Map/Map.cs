@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 namespace SuperComicLib.Collections
 {
+#if DEBUG
+    [System.Diagnostics.DebuggerTypeProxy(typeof(MapView<>))]
+    [System.Diagnostics.DebuggerDisplay("Count = {m_count}")]
+#endif
     public class Map<T> : IMap<T>
     {
         protected const int bitmask = 0x7FFF_FFFF;
@@ -24,8 +28,13 @@ namespace SuperComicLib.Collections
                 throw new ArgumentOutOfRangeException(nameof(capacity));
 
             m_freeList = -1;
-
-            IncreaseCapacity(capacity);
+            if (capacity == 0)
+            {
+                buckets = Array.Empty<int>();
+                slots = Array.Empty<Slot>();
+            }
+            else
+                IncreaseCapacity(capacity);
         }
 
         public Map(KeyValuePair<int, T>[] items)
@@ -35,8 +44,14 @@ namespace SuperComicLib.Collections
 
             m_freeList = -1;
 
-            int max = items.Length;
-            IncreaseCapacity(max);
+            int max;
+            if ((max = items.Length) == 0)
+            {
+                buckets = Array.Empty<int>();
+                slots = Array.Empty<Slot>();
+            }
+            else
+                IncreaseCapacity(max);
 
             for (int x = 0; x < max; x++)
             {
@@ -55,7 +70,7 @@ namespace SuperComicLib.Collections
                     Add(val.GetHashCode(), val);
         }
 
-        public Map(IEnumerableSlim<T> collection) : this(default_capacity)
+        public Map(IIterable<T> collection) : this(default_capacity)
         {
             if (collection == null)
                 return;
@@ -71,9 +86,20 @@ namespace SuperComicLib.Collections
         #region property
         public int Count => m_count;
         public int Capacity => buckets.Length;
+
+        public T this[int hashcode] => Get(hashcode);
         #endregion
 
         #region methods
+        public bool SetEquals(IEnumerable<KeyValuePair<int, T>> other)
+        {
+            foreach (KeyValuePair<int, T> kv in other)
+                if (!Contains(kv.Key))
+                    return false;
+
+            return true;
+        }
+
         public bool Contains(int hashcode)
         {
             hashcode &= bitmask;
@@ -198,6 +224,35 @@ namespace SuperComicLib.Collections
             m_freeList = -1;
 
             m_version = 0;
+        }
+
+        public KeyValuePair<int, T>[] ToArray()
+        {
+            int x = m_lastIndex;
+            KeyValuePair<int, T>[] result = new KeyValuePair<int, T>[x];
+
+            Slot[] slots = this.slots;
+            while (--x >= 0)
+                if (slots[x].hashCode >= 0)
+                {
+                    Slot item = slots[x];
+                    result[x] = new KeyValuePair<int, T>(item.hashCode, item.value);
+                }
+
+            return result;
+        }
+
+        public T[] ToValueArray()
+        {
+            int x = m_lastIndex;
+            T[] result = new T[x];
+
+            Slot[] slots = this.slots;
+            while (--x >= 0)
+                if (slots[x].hashCode >= 0)
+                    result[x] = slots[x].value;
+
+            return result;
         }
         #endregion
 

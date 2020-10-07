@@ -23,7 +23,7 @@ namespace SuperComicLib.Collections
 
         public bool MoveNext() => ++idx < max;
 
-        public void Reset() => idx = 0;
+        public void Reset() => idx = -1;
 
         public void Dispose()
         {

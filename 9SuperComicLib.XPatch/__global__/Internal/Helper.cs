@@ -78,12 +78,13 @@ namespace SuperComicLib.XPatch
             int offset,
             bool hasReturn)
         {
-            using (MethodBodyReader reader = new MethodBodyReader(meth))
-            {
-                using (MethodBodyEditor editor = reader.GetEditor())
-                    editor.WriteIL(il, offset, hasReturn);
-                // dispose editor
-            }   // dispose reader
+            MethodBodyReader reader = new MethodBodyReader(meth);
+            MethodBodyEditor editor = reader.GetEditor();
+
+            editor.WriteIL(il, offset, hasReturn);
+
+            reader.Dispose();
+            editor.Dispose();
         }
     }
 }

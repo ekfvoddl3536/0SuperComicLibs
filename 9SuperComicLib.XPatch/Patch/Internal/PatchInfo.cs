@@ -28,11 +28,12 @@ namespace SuperComicLib.XPatch
             bool hasReturn = retType != CTypes.VOID_T;
 
             bool hasRetBuf;
+            bool isvalue;
             int offset;
             if (method.IsStatic == false)
             {
                 Type temp = method.DeclaringType;
-                if (temp.IsStruct())
+                if (isvalue = temp.IsStruct())
                     argTypes.Add(temp.MakeByRefType());
                 else
                     argTypes.Add(temp);
@@ -55,7 +56,7 @@ namespace SuperComicLib.XPatch
             else // static, 정적 메서드는 return buffer가 없다, 참고: NativeThisPointer.cs
             {
                 offset = 0;
-                hasRetBuf = false;
+                isvalue = hasRetBuf = false;
             }
 
             argTypes.AddRange(Array.ConvertAll(parameters, t => t.ParameterType));
@@ -99,14 +100,16 @@ namespace SuperComicLib.XPatch
 
             #region prefix
             // Prefix 메서드들 코드 생성
-            foreach (ExMethodInfo prefix in prefixes)
-                if (prefix.GenerateCode(il, method, parameters, offset, hasReturn, hasRetBuf))
+            IEnumerator<ExMethodInfo> iter = prefixes.GetEnumerator();
+            while (iter.MoveNext())
+                if (iter.Current.GenerateCode(il, method, parameters, offset, hasReturn, hasRetBuf, isvalue))
                 {
                     if (callOriginal == null)
                         callOriginal = il.DeclareLocal(CTypes.BOOL_T);
 
                     il.Emit_Stloc(callOriginal.LocalIndex);
                 }
+            iter.Dispose();
             #endregion
 
             #region 본 함수, ======= if (callOriginal)
@@ -123,7 +126,7 @@ namespace SuperComicLib.XPatch
                     Helper.OriginalMethodBodyEmit(il, method, offset, hasReturn);
                 else
                     // 만약 replace가 null이 아니면 replace를 실행
-                    replace.GenerateCode(il, method, parameters, offset, hasReturn, hasRetBuf);
+                    replace.GenerateCode(il, method, parameters, offset, hasReturn, hasRetBuf, isvalue);
 
                 // 리턴이 있는경우, 리턴값을 저장
                 if (hasReturn)
@@ -138,7 +141,7 @@ namespace SuperComicLib.XPatch
                 if (replace == null)
                     Helper.OriginalMethodBodyEmit(il, method, offset, hasReturn);
                 else
-                    replace.GenerateCode(il, method, parameters, offset, hasReturn, hasRetBuf);
+                    replace.GenerateCode(il, method, parameters, offset, hasReturn, hasRetBuf, isvalue);
 
                 if (hasReturn)
                     il.Emit(OpCodes.Stloc_0);
@@ -147,8 +150,10 @@ namespace SuperComicLib.XPatch
 
             #region postfix, ======= else
             // Postfix 메서드들 코드 생성
-            foreach (ExMethodInfo postfix in postfixes)
-                postfix.GenerateCode(il, method, parameters, offset, hasReturn, hasRetBuf);
+            iter = postfixes.GetEnumerator();
+            while (iter.MoveNext())
+                iter.Current.GenerateCode(il, method, parameters, offset, hasReturn, hasRetBuf, isvalue);
+            iter.Dispose();
             #endregion
 
             #region 끝
@@ -173,11 +178,18 @@ namespace SuperComicLib.XPatch
 
         public void Dispose()
         {
-            ClsArray.DisposeAll(ref prefixes);
-            ClsArray.DisposeAll(ref postfixes);
-            if (replace != null)
-                replace.Dispose();
-            method = null;
+            if (method != null)
+            {
+                ClsArray.DisposeAll(ref prefixes);
+                ClsArray.DisposeAll(ref postfixes);
+                
+                if (replace != null)
+                    replace.Dispose();
+
+                method = null;
+                replace = null;
+            }
+            GC.SuppressFinalize(this);
         }
     }
 }
