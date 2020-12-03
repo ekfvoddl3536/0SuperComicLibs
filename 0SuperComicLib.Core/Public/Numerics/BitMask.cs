@@ -162,7 +162,7 @@ namespace SuperComicLib
         public BitMask(bool value) : this() => value_b0 = value;
         #endregion
 
-        public override bool Equals(object obj) => obj is BitMask mask ? mask.value_u64 == value_u64 : false;
+        public override bool Equals(object obj) => obj is BitMask mask && mask.value_u64 == value_u64;
         public override int GetHashCode() => value_u64.GetHashCode();
         public override string ToString() => value_u64.ToString();
         public string ToString(string format) => value_u64.ToString(format);

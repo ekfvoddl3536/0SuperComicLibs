@@ -175,7 +175,7 @@ namespace SuperComicLib.Reflection
             : new Exception("current property must be declared as a 'ref return type' by <TargetFieldAttribute> (e.g.: 'ref int Name { get; }')");
 
         private static Exception GETMOREINFO() =>
-            new Exception("set refMode to treu using the 'TargetField(string, bool)' or 'TargetField(bool)' constructor");
+            new Exception("set refMode to try using the 'TargetField(string, bool)' or 'TargetField(bool)' constructor");
 
         private static OnlyMI CONV_OMI(MethodInfo mi) => new OnlyMI(mi);
 

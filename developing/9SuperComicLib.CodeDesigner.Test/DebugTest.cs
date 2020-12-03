@@ -18,16 +18,16 @@ namespace SuperComicLib.CodeDesigner
                     .DefineDynamicModule("DebugModule_0")
                     .DefineType(class_name, TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Abstract);
 
-            var temp = new ILCodeGenerator(
-                null,
-                tb,
-                new CHashSet<HashedString>(),
-                new HashedString("debugClass"),
-                ExceptionHandlerFactory.TDebug,
-                TypeTable.Current);
-
-            temp.Generate(node);
-            temp.Dispose();
+            // var temp = new ILCodeGenerator(
+            //     null,
+            //     tb,
+            //     new CHashSet<HashedString>(),
+            //     new HashedString("debugClass"),
+            //     ExceptionHandlerFactory.TDebug,
+            //     TypeTable.Current);
+            // 
+            // temp.Generate(node);
+            // temp.Dispose();
 
             return tb.CreateType();
         }

@@ -101,7 +101,7 @@ namespace SuperComicLib.LowLevel
             byte[] vs = NativeClass.ReadMemory_s(ref value);
             fixed (byte* src = vs)
             fixed (byte* dst = datas)
-                NativeClass.Internal_memcpblk(src, dst + idx, (uint)vs.Length);
+                NativeClass.memcpblk.Invoke(src, dst + idx, (uint)vs.Length);
         }
 
         public void Write<T>(ref T rvalue, int idx) where T : struct
@@ -111,7 +111,7 @@ namespace SuperComicLib.LowLevel
             byte[] vs = NativeClass.ReadMemory_s(ref rvalue);
             fixed (byte* src = vs)
             fixed (byte* dst = datas)
-                NativeClass.Internal_memcpblk(src, dst + idx, (uint)vs.Length);
+                NativeClass.memcpblk.Invoke(src, dst + idx, (uint)vs.Length);
         }
 
         public void WriteRefval(object value, int idx)

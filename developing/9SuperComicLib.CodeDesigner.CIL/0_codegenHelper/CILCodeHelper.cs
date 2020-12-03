@@ -27,26 +27,30 @@ namespace SuperComicLib.CodeDesigner
         public static void LdAddress(CILCode buffer)
         {
             int temp;
-            if ((temp = buffer.code) == 0xFE_09) // Ldarg
-                buffer.code = 0xFE_0A;
-            else if (temp == 0x0E) // Ldarg_S
-                buffer.code = 0x0F;
+            // Ldarg Ldarg_S Ldloc Ldloc_S Ldfld Ldsfld
+            if ((temp = buffer.code) == 0xFE_09 ||
+                temp == 0x0E ||
+                temp == 0xFE_0C ||
+                temp == 0x11 ||
+                temp == 0x7B ||
+                temp == 0x7E)
+            {
+                buffer.code++;
+            }
             else if (temp >= 0x02 && temp <= 0x05) // Ldarg_0 ~ Ldarg_3
             {
                 buffer.code = 0x0F;
-                buffer.index = temp - 2;
+                buffer.state = temp - 2;
             }
-            else if (temp == 0xFE_0C) // Ldloc
-                buffer.code = 0xFE_0D;
-            else if (temp == 0x11) // Ldloc_S
-                buffer.code = 0x12;
             else if (temp >= 0x06 && temp <= 0x09) // Ldloc_0 ~ Ldloc_3
             {
                 buffer.code = 0x12;
-                buffer.index = temp - 6;
+                buffer.state = temp - 6;
             }
             else if (temp == 0xA3) // Ldelem (struct)
+            {
                 buffer.code = 0x8F;
+            }
             else if (temp >= 0x90 && temp <= 0x99)
             {
                 buffer.code = 0x8F;
@@ -56,18 +60,14 @@ namespace SuperComicLib.CodeDesigner
 
         public static void LdRef(ListStack<CILCode> list, ref int locals)
         {
-            CILCode buffer = list.Peek();
-
             int temp;
-            if ((temp = buffer.code) == 0x7B) // Ldfld
-                buffer.code = 0x7C;
-            else if (temp == 0x7E || temp == 0x28 || temp == 0x6F) // Ldsfld Call Callvirt
+            if ((temp = list.Peek().code) == 0x28 || temp == 0x6F) // Call Callvirt
             {
                 temp = CILCode.IDX_TEMPLOCAL | locals++;
 
-                list.Push(new CILCode(temp, CILCode.CODE_LOCAL));
-                list.Push(new CILCode(temp, OpCodes.Stloc));
-                list.Push(new CILCode(temp, OpCodes.Ldloca));
+                list.Push(new CILCode(CILCode.CODE_LOCAL, temp));
+                list.Push(new CILCode(OpCodes.Stloc, temp));
+                list.Push(new CILCode(OpCodes.Ldloca, temp));
                 // buffer.code = 0x7F;
             }
         }

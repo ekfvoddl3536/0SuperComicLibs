@@ -370,7 +370,7 @@ namespace SuperComicLib.CodeDesigner.IO
 
             Serialize(writer, loader.m_parser, true);
 
-            byte[] buffer = Encoding.UTF8.GetBytes(loader.path);
+            byte[] buffer = Encoding.UTF8.GetBytes(loader.m_path);
             writer.Write(buffer.Length);
             writer.Write(buffer);
         }
@@ -385,7 +385,7 @@ namespace SuperComicLib.CodeDesigner.IO
                 result.m_preprocessor = DeserializePP(reader);
 
             result.m_parser = DeserializeLALR(reader, null, handler);
-            result.path = Encoding.UTF8.GetString(reader.ReadBytes(reader.ReadInt32()));
+            result.m_path = Encoding.UTF8.GetString(reader.ReadBytes(reader.ReadInt32()));
 
             return result;
         }

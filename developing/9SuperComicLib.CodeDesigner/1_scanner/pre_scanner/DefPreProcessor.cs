@@ -10,18 +10,20 @@ namespace SuperComicLib.CodeDesigner
     public class DefPreProcessor : PreProcessor
     {
         protected const int
-            STATE_IF_OPEN = 1,
-            STATE_IF_CLOSED = 2,
-            STATE_COMMENT = 0x80;
+            STATE_IF_OPEN = 0x10,
+            STATE_IF_CLOSED = 0x11,
+            STATE_COMMENT = 0x8000;
 
-        protected Conditional conditional;
+        protected IBuildAttribute buildAttrb;
         protected int current_comment;
         protected int before_comment;
         protected Stack<int> states;
 
-        public DefPreProcessor(Conditional conditional)
+        public DefPreProcessor() : this(null) { }
+
+        public DefPreProcessor(IBuildAttribute buildAttrb)
         {
-            this.conditional = conditional;
+            this.buildAttrb = buildAttrb ?? NopBuildAttrb.Instance;
             states = new Stack<int>();
         }
 
@@ -67,10 +69,11 @@ namespace SuperComicLib.CodeDesigner
             return state == 0;
         }
 
+        #region 나중에 쓸 예정
         protected virtual void OnParseCompilerCommand(int state, string command, CStreamReader input, StreamWriter output)
         {
             int idx = command.IndexOf(' ');
-            if (idx >= 0) // found
+            if (idx >= 0) // has Argument
                 OnCmdWithArg(state, command.Substring(0, idx).Trim(), command.Substring(idx + 1).Trim(), input, output);
             // endif는 인수가 없다
             else if (command == "endif")
@@ -84,23 +87,27 @@ namespace SuperComicLib.CodeDesigner
 
         protected virtual void OnCmdWithArg(int state, string command, string argument, CStreamReader input, StreamWriter output)
         {
-            if (command == "define")
-                conditional.AddDefine(argument);
-            else if (command == "if")
-            {
-                if (state <= STATE_IF_OPEN)
-                    states.Push(
-                        conditional.IsTrue(argument)
-                        ? STATE_IF_OPEN
-                        : STATE_IF_CLOSED);
-            }
-            else if (command == "elif" && state == STATE_IF_CLOSED)
-                if (conditional.IsTrue(argument))
-                {
-                    states.Pop();
-                    states.Push(STATE_IF_OPEN);
-                }
+            if (command == "apidoc")
+                buildAttrb.AddImplement(argument);
+
+            // if (command == "define")
+            //     conditional.AddDefine(argument);
+            // else if (command == "if")
+            // {
+            //     if (state <= STATE_IF_OPEN)
+            //         states.Push(
+            //             conditional.IsTrue(argument)
+            //             ? STATE_IF_OPEN
+            //             : STATE_IF_CLOSED);
+            // }
+            // else if (command == "elif" && state == STATE_IF_CLOSED)
+            //     if (conditional.IsTrue(argument))
+            //     {
+            //         states.Pop();
+            //         states.Push(STATE_IF_OPEN);
+            //     }
         }
+        #endregion
 
         protected virtual void OnNormalAction(string current, CStreamReader input, StreamWriter output)
         {
@@ -147,14 +154,13 @@ namespace SuperComicLib.CodeDesigner
 
         protected override void Dispose(bool disposing)
         {
-            conditional.Dispose();
-            conditional = null;
+            if (buildAttrb != null)
+            {
+                buildAttrb = null;
 
-            current_comment = 0;
-            before_comment = 0;
-
-            states.Clear();
-            states = null;
+                states.Clear();
+                states = null;
+            }
         }
     }
 }

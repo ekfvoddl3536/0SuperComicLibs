@@ -13,7 +13,7 @@ namespace SuperComicLib.Text
         #region 생성자
         public StringStream() : this(4096, Encoding.UTF8) { }
 
-        public StringStream(int capacity) : this(capacity, Encoding.UTF8) { }
+        public StringStream(int capacity) : this(capacity, Encoding.Default) { }
 
         public StringStream(int capacity, Encoding encoding)
         {
@@ -21,7 +21,7 @@ namespace SuperComicLib.Text
             buffer = new byte[capacity];
         }
 
-        public StringStream(string text) : this(text, Encoding.UTF8) { }
+        public StringStream(string text) : this(text, Encoding.Default) { }
 
         public StringStream(string text, Encoding encoding)
         {
@@ -32,12 +32,12 @@ namespace SuperComicLib.Text
         public StreamReader Out() => 
             buffer == null 
             ? throw new ObjectDisposedException(nameof(StringStream))
-            : new StreamReader(this, encoding);
+            : new StreamReader(this, encoding, true, 1024, true);
 
         public StreamWriter In() =>
             buffer == null
             ? throw new ObjectDisposedException(nameof(StringStream))
-            : new StreamWriter(this, encoding);
+            : new StreamWriter(this, encoding, 1024, true);
         #endregion
 
         #region 속성
@@ -133,10 +133,10 @@ namespace SuperComicLib.Text
             if (src == null)
                 StreamIsClosed();
 
-            ref int pos = ref this.pos;
+            int pos = this.pos;
             int n = pos + count;
             if (n > src.Length)
-                throw new ArgumentOutOfRangeException(nameof(count), "overflow");
+                IncreaseCapacity();
 
             if (count <= 8)
             {
@@ -147,7 +147,19 @@ namespace SuperComicLib.Text
             else
                 Buffer.BlockCopy(buffer, offset, src, pos, count);
 
-            pos = n;
+            this.pos = n;
+        }
+
+        private void IncreaseCapacity()
+        {
+            int newsize = buffer.Length << 1;
+            if (newsize >= 0x7EFF_FFFF)
+                throw new InsufficientMemoryException();
+
+            byte[] newbuffer = new byte[newsize];
+            Buffer.BlockCopy(buffer, 0, newbuffer, 0, buffer.Length);
+
+            buffer = newbuffer;
         }
 
         protected override void Dispose(bool disposing)

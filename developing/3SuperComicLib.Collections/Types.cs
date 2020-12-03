@@ -97,20 +97,18 @@ namespace SuperComicLib.Collections
         IEnumerable<T> Values { get; }
     }
 
-    public interface IIndexBag<T>
+    public interface IStack<T> : IDisposable, IEnumerable<T>
     {
         int Count { get; }
         int Capacity { get; }
 
-        int this[T item] { get; }
-
-        bool Contains(T item);
-        int Find(T item);
-        int AddOrGet(T item);
-        bool Remove(T item);
         void Clear();
-        T[] ToArray();
-        bool TryAdd(T item, out int index);
+
+        void Push(T item);
+
+        T Pop();
+
+        T Peek();
     }
 
     public interface IUniObserver

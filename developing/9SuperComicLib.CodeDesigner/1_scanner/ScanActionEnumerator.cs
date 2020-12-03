@@ -18,6 +18,7 @@ namespace SuperComicLib.CodeDesigner
         private Token current;
         private int line;
         private int row;
+        private int sample_row;
         private IExceptionHandler handler;
         private ITypeMap typeMap;
 
@@ -35,7 +36,7 @@ namespace SuperComicLib.CodeDesigner
             this.typeMap = typeMap;
 
             line = 1;
-            row = 1;
+            sample_row = row = 1;
         }
 
         #region interface
@@ -58,16 +59,17 @@ namespace SuperComicLib.CodeDesigner
 
             if (sr.EndOfLine()) // newline
             {
-                if (row == 1)
+                if (row == sample_row)
                 {
                     line++;
+                    sample_row = row = 1;
                     goto loop;
                 }
 
                 current = new Token(Environment.NewLine, TokenType.EOL, line, row);
 
+                sample_row = row = 1;
                 line++;
-                row = 1;
 
                 return true;
                 // goto loop;
@@ -77,6 +79,7 @@ namespace SuperComicLib.CodeDesigner
             if (char.IsWhiteSpace(read)) // not-allowed
             {
                 row++;
+                sample_row++;
                 goto loop;
             }
 
@@ -426,7 +429,8 @@ namespace SuperComicLib.CodeDesigner
             }
             else if (typeMap.Contains(text))
             {
-                ParseType(text);
+                // ParseType(text);
+                current = new Token(text, TokenType.type, line, row);
                 goto ex2;
             }
 
@@ -447,42 +451,42 @@ namespace SuperComicLib.CodeDesigner
             row += readed;
         }
 
-        private bool ParseType(string text)
-        {
-            CStreamReader sr = this.sr;
-
-            if (sr.Peek() == '[' && sr.Peek(1) == ']')
-            {
-                StringBuilder sbLR = new StringBuilder();
-                sbLR.Append("[]");
-
-                int idx = 2;
-
-            loop2:
-                if (sr.Peek(idx) == '[')
-                    if (sr.Peek(idx + 1) == ']')
-                    {
-                        idx += 2;
-                        sbLR.Append("[]");
-                        goto loop2;
-                    }
-                    else
-                    {
-                        handler.Fail(FMSG.F1);
-                        return true; // 강제 반환
-                    }
-
-                sr.Move(idx);
-
-                current = new Token(text, TokenType.type_array, line, row, idx / 2);
-                row += idx;
-
-                return true;
-            }
-            
-            current = new Token(text, TokenType.type, line, row);
-            return false;
-        }
+        // private bool ParseType(string text)
+        // {
+        //     CStreamReader sr = this.sr;
+        // 
+        //     if (sr.Peek() == '[' && sr.Peek(1) == ']')
+        //     {
+        //         StringBuilder sbLR = new StringBuilder();
+        //         sbLR.Append("[]");
+        // 
+        //         int idx = 2;
+        // 
+        //     loop2:
+        //         if (sr.Peek(idx) == '[')
+        //             if (sr.Peek(idx + 1) == ']')
+        //             {
+        //                 idx += 2;
+        //                 sbLR.Append("[]");
+        //                 goto loop2;
+        //             }
+        //             else
+        //             {
+        //                 handler.Fail(FMSG.F1);
+        //                 return true; // 강제 반환
+        //             }
+        // 
+        //         sr.Move(idx);
+        // 
+        //         current = new Token(text, TokenType.type_array, line, row, idx / 2);
+        //         row += idx;
+        // 
+        //         return true;
+        //     }
+        //     
+        //     current = new Token(text, TokenType.type, line, row);
+        //     return false;
+        // }
 
         private int LexIdentity(char read, out string result)
         {

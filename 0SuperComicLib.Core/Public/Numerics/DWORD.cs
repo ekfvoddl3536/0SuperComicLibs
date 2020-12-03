@@ -52,16 +52,9 @@ namespace SuperComicLib
             ? Equals(r2)
             : obj is uint r3
             ? Equals(r3)
-            : obj is float r4
-            ? Equals(r4)
-            : false;
+            : obj is float r4 && Equals(r4);
 
-        public int Count()
-        {
-            int c = signed - ((signed >> 1) & 0x5555_5555);
-            c = (c & 0x3333_3333) + ((c >> 2) & 0x3333_3333);
-            return (((c + (c >> 4)) & 0x0F0F_0F0F) * 0x0101_0101) >> 24;
-        }
+        public int Count() => signed.POPCNT();
 
         public DWORD OR(DWORD other) => this | other;
         public DWORD AND(DWORD other) => this & other;

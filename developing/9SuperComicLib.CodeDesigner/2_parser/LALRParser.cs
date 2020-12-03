@@ -75,6 +75,13 @@ namespace SuperComicLib.CodeDesigner
                 if (!atb[tempstack.Peek()].TryGet(current, out TableItem ctb))
                 {
 #if DEBUG
+                    var debug_state = tempstack.Peek();
+                    var debug_table = atb[debug_state];
+
+                    foreach (var key in debug_table.Keys)
+                        System.Diagnostics.Debug.WriteLine(((TokenType)key).ToString());
+
+                    var debug_item = iterator.Current;
                     System.Diagnostics.Debugger.Break();
 #endif
                     OnParsingError(tempstack, iterator, current);
@@ -106,8 +113,7 @@ namespace SuperComicLib.CodeDesigner
                         tempnodes.Push(node);
                     }
                     else
-                        while (--len >= 0)
-                            tempstack.Pop();
+                        tempstack.Pop();
 
                     tempstack.Push(gtb[tempstack.Peek()].Get(item.produce));
                 }
@@ -312,7 +318,6 @@ namespace SuperComicLib.CodeDesigner
                                     TokenType debug_tok = (TokenType)e2.Current;
 #endif
                                     m_handler.Fail($"SHIFT-REDUCE CONFILCT -> state: {x}");
-
                                 }
                                 else
                                     ctb.Add(e2.Current, reduce);

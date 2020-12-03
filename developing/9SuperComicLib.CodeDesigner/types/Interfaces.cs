@@ -4,6 +4,11 @@ using System.Collections.Generic;
 namespace SuperComicLib.CodeDesigner
 {
     #region public
+    public interface IBuildAttribute
+    {
+        void AddImplement(string uri);
+    }
+
     public interface IExceptionHandler
     {
         int FailCount { get; }
@@ -33,15 +38,22 @@ namespace SuperComicLib.CodeDesigner
         void EndParseGrammar();
     }
 
+    public interface ITypeDesc
+    {
+        Type NormalType { get; }
+
+        Type GenericType(params Type[] types);
+    }
+
     public interface ITypeMap
     {
         void Add<T>(string name);
         void Add(string name, Type value);
 
-        bool TryGet(string name, out Type result);
-        Type Get(string name);
+        bool TryGet(string name, out ITypeDesc result);
+        ITypeDesc Get(string name);
 
-        IEnumerable<Type> ToArray();
+        IEnumerable<ITypeDesc> ToArray();
 
         bool Contains(string name);
 
@@ -55,11 +67,11 @@ namespace SuperComicLib.CodeDesigner
         int Count { get; }
         int Index { get; }
 
+        INode Parent { get; }
+
         INode Peek();
 
         INode Peek(int idx);
-
-        int DeepCount(int limit);
     }
 
     public interface INode : IDisposable
@@ -83,8 +95,6 @@ namespace SuperComicLib.CodeDesigner
         INodeEnumerator GetEnumerator();
 
         void Add(INode node);
-
-        int DeepCount(int limit, int find);
     }
 
     public interface ITokenEnumerator : IEnumerator<Token>

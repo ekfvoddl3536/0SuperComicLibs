@@ -45,19 +45,13 @@ namespace SuperComicLib.CodeDesigner
 
         public INodeEnumerator GetEnumerator() => new Enumerator(this);
 
-        public int DeepCount(int limit, int find)
-        {
-            for (int x = 0; x < m_count && find < limit; x++)
-                if (m_items[x].ChildCount > 0)
-                    find = m_items[x].DeepCount(limit, find + 1);
-
-            return find;
-        }
-
         public void Dispose()
         {
             if (m_items != null)
             {
+#if DEBUG
+                System.Diagnostics.Debug.WriteLine($"call {nameof(ExNode)}.{nameof(Dispose)}() -> {ToString()}");
+#endif
                 int x = m_count;
                 while (--x >= 0)
                     m_items[x].Dispose();
@@ -85,13 +79,14 @@ namespace SuperComicLib.CodeDesigner
                 index = target.ChildCount;
             }
 
+            public INode Parent => target.Parent;
             public INode Current => target[index];
             object IEnumerator.Current => Current;
 
             public INode Peek() =>
                 index > 0
                 ? target[index - 1]
-                : null;
+                : EmptyNode.Instance;
 
             public INode Peek(int idx)
             {
@@ -100,7 +95,7 @@ namespace SuperComicLib.CodeDesigner
                     // ldloc.0대신 dup 을 사용하기 위함
                     (n = index - idx) > 0
                     ? target[n]
-                    : null;
+                    : EmptyNode.Instance;
             }
 
             public int TokenCount
@@ -122,8 +117,6 @@ namespace SuperComicLib.CodeDesigner
             public bool MoveNext() => --index >= 0;
 
             public void Reset() => index = target.ChildCount;
-
-            public int DeepCount(int limit) => target.DeepCount(limit, 1);
 
             public void Dispose()
             {

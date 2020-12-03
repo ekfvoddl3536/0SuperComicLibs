@@ -13,54 +13,51 @@ namespace SuperComicLib.CodeDesigner
 
         public object operand;
         public int code;
-        public int index;
+        public int state;
 
         #region constructors
-        public CILCode(OpCode code, object operand)
-        {
-            this.code = code.Value & 0xFFFF;
-            this.operand = operand;
-        }
-
-        public CILCode(int index, OpCode code)
-        {
-            this.code = code.Value & 0xFFFF;
-            this.index = index;
-        }
-
         public CILCode(int code, object operand)
         {
             this.code = code;
             this.operand = operand;
         }
 
-        public CILCode(int index, int code)
+        public CILCode(int code, int state)
         {
             this.code = code;
-            this.index = index;
+            this.state = state;
         }
 
-        public  CILCode(OpCode code, object operand, int index)
-        {
-            this.code = code.Value & 0xFFFF;
-            this.operand = operand;
-            this.index = index;
-        }
-
-        public CILCode(int code, object operand, int index)
+        public CILCode(int code, int state, object operand)
         {
             this.code = code;
+            this.state = state;
             this.operand = operand;
-            this.index = index;
+        }
+
+        public CILCode(OpCode code, object operand) : this((int)(uint)code.Value, operand)
+        {
+        }
+
+        public CILCode(OpCode code, int state) : this((int)(uint)code.Value, state)
+        {
+        }
+
+        public  CILCode(OpCode code, int state, object operand) : this((int)(uint)code.Value, state, operand)
+        {
         }
         #endregion
 
-        public bool IsCustomCode => code > 0xFFFF;
+        public bool IsCustomCode => (uint)code > 0xFFFF;
 
-        public OpCode GetCode() => OpCodeConverter.GetCode(code);
+        public OpCode Value => OpCodeConverter.GetCode(code);
 
-        public void LabelToIndex(Label label) => index = *(int*)&label;
+        public void LabelToIndex(Label label) => state = *(int*)&label;
 
-        public Label IndexToLabel() => new PublicLabel(index);
+        public Label IndexToLabel()
+        {
+            long value = 0x1_0000_0000 | (uint)state;
+            return *(Label*)&value;
+        }
     }
 }

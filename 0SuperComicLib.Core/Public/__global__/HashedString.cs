@@ -32,7 +32,7 @@ namespace SuperComicLib
         public static implicit operator HashedString(string op) => op == null ? Empty : new HashedString(op);
         public static implicit operator long(HashedString str) => str.Value;
 
-        public override bool Equals(object obj) => obj == null ? false : Equals(new HashedString(obj.ToString()));
+        public override bool Equals(object obj) => obj != null && Equals(new HashedString(obj.ToString()));
         public override int GetHashCode() => hash;
         public override string ToString() => Value.ToString("X");
         public bool Equals(HashedString other) => Value == other.Value;

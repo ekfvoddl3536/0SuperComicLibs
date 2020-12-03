@@ -28,8 +28,6 @@ namespace SuperComicLib.CodeDesigner
 
         public INodeEnumerator GetEnumerator() => null;
 
-        public int DeepCount(int limit, int find) => find;
-
         public void Dispose()
         {
             m_token = null;

@@ -13,6 +13,18 @@ namespace SuperComicLib.LowLevel
         [SecurityCritical]
         public T Read(void* ptr) => read.Invoke(ptr);
 
+        public override TRet Read<TRet>(ref T inst, int offset)
+        {
+            TypedReference tr = __makeref(inst);
+            return *(TRet*)(*(byte**)&tr + offset);
+        }
+
+        public override void Set<TSet>(ref T inst, TSet value, int offset)
+        {
+            TypedReference tr = __makeref(inst);
+            *(TSet*)(*(byte**)&tr + offset) = value;
+        }
+
         public override T Default(void* ptr) => Read(ptr);
 
         public override void RefMemory(ref T obj, UnsafePointerAction cb)
@@ -25,15 +37,7 @@ namespace SuperComicLib.LowLevel
         #region static members
         private static NativeStruct<T> m_instance;
 
-        public static NativeStruct<T> Instance
-        {
-            get
-            {
-                if (m_instance == null)
-                    m_instance = new NativeStruct<T>();
-                return m_instance;
-            }
-        }
+        public static NativeStruct<T> Instance => m_instance ?? (m_instance = new NativeStruct<T>());
         #endregion
     }
 }

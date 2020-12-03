@@ -52,9 +52,7 @@ namespace SuperComicLib
             ? Equals(r2)
             : obj is ulong r3
             ? Equals(r3)
-            : obj is double r4
-            ? Equals(r4)
-            : false;
+            : obj is double r4 && Equals(r4);
 
         public static implicit operator long(QWORD value) => value.signed;
         public static implicit operator ulong(QWORD value) => value.unsigned;

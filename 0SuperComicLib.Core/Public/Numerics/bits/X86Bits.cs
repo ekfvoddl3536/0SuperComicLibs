@@ -35,6 +35,12 @@ namespace SuperComicLib.Numerics
             m_arr = new uint[temp];
             m_length = temp;
         }
+
+        public X86Bits(uint[] array, int arrayCount)
+        {
+            m_arr = array;
+            m_length = arrayCount;
+        }
         #endregion
 
         #region default methods

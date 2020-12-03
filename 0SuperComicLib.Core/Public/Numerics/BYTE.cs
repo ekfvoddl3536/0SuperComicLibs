@@ -39,18 +39,11 @@ namespace SuperComicLib
             ? Equals(r1)
             : obj is byte r2
             ? Equals(r2)
-            : obj is sbyte r3
-            ? Equals(r3)
-            : false;
+            : obj is sbyte r3 && Equals(r3);
 
         public override string ToString() => unsigned.ToString("X");
         public override int GetHashCode() => base.GetHashCode();
-        public int Count()
-        {
-            int c = signed - ((signed >> 1) & 0x55);
-            c = ((c >> 2) & 0x33) + (c & 0x33);
-            return ((c >> 4) + c) & 0x0F;
-        }
+        public int Count() => unsigned.POPCNT_S();
 
         public BYTE OR(BYTE other) => this | other;
         public BYTE AND(BYTE other) => this & other;

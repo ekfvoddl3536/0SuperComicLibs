@@ -17,9 +17,9 @@ namespace SuperComicLib.CodeDesigner
                 
                 { "==", comp_Equal },
                 { "!=", comp_NotEqual },
-                { "<",  comp_Lesser },
+                { "<",  lbracket_angl },
                 { "<=", comp_LessOrEqual },
-                { ">",  comp_Greater },
+                { ">",  rbracket_angl },
                 { ">=", comp_GreatOrEqual },
                 { "=",  assign },
                 { "+=", plus_assign },
@@ -103,7 +103,7 @@ namespace SuperComicLib.CodeDesigner
                 { "using", d__include_kw },
                 { "from", d__from_kw },
 
-                { "eol", EOL }
+                { "eol", EOL },
             };
     }
 }

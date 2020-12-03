@@ -22,13 +22,13 @@ namespace SuperComicLib.CodeDesigner
 
         public bool MoveNext()
         {
+            ITokenEnumerator source = this.source;
             if (peeked)
             {
-                Token prev1 = current;
+                Token tempCurrent = source.Current;
+                OnMODCurrent(prev, current, ref tempCurrent);
 
-                current = source.Current;
-                OnMODCurrent(prev, prev1, ref current);
-
+                current = tempCurrent;
                 peeked = false;
 
                 return true;
@@ -40,20 +40,15 @@ namespace SuperComicLib.CodeDesigner
             loop:
             prev = current;
             current = source.Current;
-            if (OnPreParse(current))
+            if (OnPreParse(current) && source.MoveNext())
             {
-                if (!source.MoveNext())
-                    return false;
-
                 peeked = true;
                 if (OnPeeked(prev, current, source.Current))
                     goto loop;
             }
 
-            return OnMoveNext();
+            return true;
         }
-
-        protected virtual bool OnMoveNext() => true;
 
         protected virtual bool OnPeeked(Token previous, Token current, Token peek) => false;
 

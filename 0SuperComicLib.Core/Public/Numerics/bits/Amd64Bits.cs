@@ -35,6 +35,12 @@ namespace SuperComicLib.Numerics
             m_arr = new ulong[temp];
             m_length = temp;
         }
+
+        public Amd64Bits(ulong[] array, int arrayCount)
+        {
+            m_arr = array;
+            m_length = arrayCount;
+        }
         #endregion
 
         #region overrides

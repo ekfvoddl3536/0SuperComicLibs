@@ -38,7 +38,8 @@ namespace SuperComicLib.CodeDesigner
             FastEquals(other) &&
             other.text == text &&
             other.line == line &&
-            other.row == row;
+            other.row == row &&
+            other.state == state;
 
         public bool FastEquals(Token other) =>
             other != null &&

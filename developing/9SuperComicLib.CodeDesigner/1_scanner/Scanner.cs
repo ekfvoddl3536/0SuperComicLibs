@@ -123,7 +123,7 @@ namespace SuperComicLib.CodeDesigner
                 { "is", TokenType.is_kw },
 
                 { "using", TokenType.d__include_kw },
-                { "from", TokenType.d__from_kw }
+                { "from", TokenType.d__from_kw },
             };
 
         protected virtual StrKeywordTable LoadDefaultSymbolTable() =>
@@ -172,8 +172,8 @@ namespace SuperComicLib.CodeDesigner
                 { "!=", TokenType.comp_NotEqual },
                 { ">=", TokenType.comp_GreatOrEqual },
                 { "<=", TokenType.comp_LessOrEqual },
-                { "<", TokenType.comp_Lesser },
-                { ">", TokenType.comp_Greater },
+                { "<", TokenType.lbracket_angl },
+                { ">", TokenType.rbracket_angl },
 
                 { "=", TokenType.assign },
 

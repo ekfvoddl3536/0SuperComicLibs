@@ -96,7 +96,7 @@ namespace SuperComicLib.DataObject
             foreach (FieldInfo fd in fields)
             {
                 string str = sr.MoveNext();
-                if (str != null)
+                if (str != null && str[0] != '!')
                 {
                     string[] iv = str.Split(split_char_2, 2);
                     if (iv.Length == 2)
@@ -115,12 +115,14 @@ namespace SuperComicLib.DataObject
             while (sr.EndOfStream == false)
             {
                 string str = sr.MoveNext();
-                if (str != null)
+                if (str != null && str[0] != '!')
                     SetValue(sr, str, values);
             }
 
-            foreach (FieldInfo fd in fields)
+            int x = fields.Length;
+            while (--x >= 0)
             {
+                FieldInfo fd = fields[x];
                 if (values.TryGetValue(fd.GetCustomAttribute<MarkAsNameAttribute>()?.opt_name ?? fd.Name, out object v))
                     fd.SetValue(null, v);
             }
@@ -139,7 +141,7 @@ namespace SuperComicLib.DataObject
                     values[type_and_name[1].Trim()] = ParseValue(sr, type_and_name[0].Trim(), sp1[1].Trim());
 #if DEBUG
                 else
-                    System.Diagnostics.Debug.Fail("invalid ->");
+                    System.Diagnostics.Debug.Fail("invalid -> " + str);
 #endif
             }
         }
@@ -183,6 +185,7 @@ namespace SuperComicLib.DataObject
             temp += value;
             goto loop;
         }
+
         private static void SaveString(StreamWriter wr, string pre, string value)
         {
             if (value.Contains(Environment.NewLine))
@@ -215,10 +218,38 @@ namespace SuperComicLib.DataObject
 
         private static void Write(StreamWriter wr, FieldInfo fd)
         {
+            string name = 
+                fd.GetCustomAttribute<MarkAsNameAttribute>() is MarkAsNameAttribute attrb 
+                ? attrb.opt_name 
+                : fd.Name;
+
+            if (fd.GetCustomAttribute<SetDescAttribute>() is SetDescAttribute desc)
+            {
+                string[] list = desc.opt_desc;
+                int len;
+                if (list != null && (len = list.Length) > 0)
+                {
+                    string c;
+                    for (int x = 0; x < len; x++)
+                        if (string.IsNullOrWhiteSpace(c = list[x]))
+                            wr.WriteLine('!');
+                        else
+                        {
+                            wr.Write("! ");
+                            wr.WriteLine(c);
+                        }
+                }
+                else
+                {
+                    wr.WriteLine("! ========== exception ==========");
+                    wr.WriteLine("! can't write description");
+                }
+            }
+
             if (fd.FieldType.FullName == lstr)
-                SaveString(wr, $"{L2S(fd.FieldType.FullName)} {fd.GetCustomAttribute<MarkAsNameAttribute>()?.opt_name ?? fd.Name} = ", (string)fd.GetValue(null));
+                SaveString(wr, $"{L2S(fd.FieldType.FullName)} {name} = ", (string)fd.GetValue(null));
             else
-                wr.WriteLine($"{L2S(fd.FieldType.FullName)} {fd.GetCustomAttribute<MarkAsNameAttribute>()?.opt_name ?? fd.Name} = {fd.GetValue(null)}");
+                wr.WriteLine($"{L2S(fd.FieldType.FullName)} {name} = {fd.GetValue(null)}");
         }
 
         private static string L2S(string lname) =>

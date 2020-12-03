@@ -18,11 +18,11 @@ namespace SuperComicLib.CodeDesigner
 
             public bool Contains(string name) => false;
 
-            public Type Get(string name) => null;
+            public ITypeDesc Get(string name) => null;
 
-            public IEnumerable<Type> ToArray() => Array.Empty<Type>();
+            public IEnumerable<ITypeDesc> ToArray() => Array.Empty<ITypeDesc>();
 
-            public bool TryGet(string name, out Type result)
+            public bool TryGet(string name, out ITypeDesc result)
             {
                 result = null;
                 return false;

@@ -13,11 +13,12 @@ namespace SuperComicLib.Numerics
 
         public UnsafeBits(uint* ptr, int length)
         {
+#if DEBUG
             if (ptr == null)
                 throw new ArgumentNullException(nameof(ptr));
             if (length == 0)
                 throw new ArgumentOutOfRangeException(nameof(length));
-
+#endif
             m_ptr = ptr;
             m_length = length;
         }

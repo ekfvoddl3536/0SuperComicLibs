@@ -40,7 +40,7 @@ namespace SuperComicLib.CodeDesigner
         };
 
         public static ITypeMap Instance = new ConcurrentTypeMap();
-        public static event ITypeMapChangedHandler ChangedEvent;
+        public static event Action<object, TypeMapChangedArgs> OnChanged;
 
         public static void InitDefault() => InitDefault(Instance);
 
@@ -62,9 +62,9 @@ namespace SuperComicLib.CodeDesigner
 
         public static bool Contains(string name) => Instance.Contains(name);
 
-        public static bool TryGet(string name, out Type result) => Instance.TryGet(name, out result);
+        public static bool TryGet(string name, out ITypeDesc result) => Instance.TryGet(name, out result);
 
-        public static IEnumerable<Type> ToArray() => Instance.ToArray();
+        public static IEnumerable<ITypeDesc> ToArray() => Instance.ToArray();
 
         public static ITypeMap Current => Instance;
 
@@ -78,8 +78,8 @@ namespace SuperComicLib.CodeDesigner
 
             Instance = newinst ?? throw new ArgumentNullException(nameof(newinst));
 
-            ITypeMapChangedArgs args = new ITypeMapChangedArgs(old, newinst);
-            ChangedEvent.Invoke(sender, args);
+            TypeMapChangedArgs args = new TypeMapChangedArgs(old, newinst);
+            OnChanged.Invoke(sender, args);
 
             if (args.AutoDisposing)
                 if (old is IDisposable v1)

@@ -24,11 +24,7 @@ namespace SuperComicLib.Reflection
         public override bool Equals(object obj) => false;
         public override int GetHashCode() => m_offset.GetHashCode();
 
-        public static bool operator ==(PublicLabel left, PublicLabel right) =>
-            left.m_offset == right.m_offset &&
-            left.valid == right.valid;
-        public static bool operator !=(PublicLabel left, PublicLabel right) =>
-            left.m_offset != right.m_offset ||
-            left.valid != right.valid;
+        public static bool operator ==(PublicLabel left, PublicLabel right) => left.m_offset == right.m_offset;
+        public static bool operator !=(PublicLabel left, PublicLabel right) => left.m_offset != right.m_offset;
     }
 }

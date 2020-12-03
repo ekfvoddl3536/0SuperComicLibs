@@ -35,10 +35,10 @@
 
         comp_Equal,         // ==
         comp_NotEqual,      // !=
-        comp_Lesser,        // <
         comp_LessOrEqual,   // <=
-        comp_Greater,       // >
         comp_GreatOrEqual,  // >=
+        lbracket_angl,        // <
+        rbracket_angl,       // >
 
         unary_bitnot,
         unary_bitwise,
@@ -104,7 +104,7 @@
         as_kw,
         is_kw,
 
-        d__include_kw = byte.MaxValue + 1,
+        d__include_kw = 0x100,
         d__from_kw,
 
         c__class_kw,

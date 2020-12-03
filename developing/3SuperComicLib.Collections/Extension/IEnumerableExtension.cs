@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SuperComicLib.Collections
 {
-    public static partial class IEnumerableExtension
+    public static class IEnumerableExtension
     {
         public static IEnumerable<T> FastSelect<T>(this IEnumerable<T> collection, T item, IEqualityComparer<T> comparer) =>
             new Selector<T>(item, collection.GetEnumerator(), comparer);
@@ -14,10 +14,9 @@ namespace SuperComicLib.Collections
         public static IEnumerable<T> FastClone<T>(this IEnumerable<T> collection, Func<T, T> callback) =>
             new ElementCloner<T>(collection.GetEnumerator(), callback);
 
-
-        public static bool ContainsAll<T>(this IEnumerable<T> set, IEnumerable<T> items)
+        public static bool ContainsAll<T>(this IEnumerable<T> collection, IEnumerable<T> items)
         {
-            IEnumerator<T> src = set.GetEnumerator();
+            IEnumerator<T> src = collection.GetEnumerator();
             IEnumerator<T> other = items.GetEnumerator();
 
             IEqualityComparer<T> comparer = EqualityComparer<T>.Default;
@@ -36,5 +35,8 @@ namespace SuperComicLib.Collections
 
             return true;
         }
+
+        public static IEnumerable<T> Limit<T>(this IEnumerable<T> collection, int limit) =>
+            new LimitEnumerable<T>(collection, limit);
     }
 }

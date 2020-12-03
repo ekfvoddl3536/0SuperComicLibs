@@ -18,4 +18,12 @@ namespace SuperComicLib.DataObject
 
         public MarkAsNameAttribute(string opt_name) => this.opt_name = opt_name ?? throw new ArgumentNullException(nameof(opt_name));
     }
+
+    [AttributeUsage(AttributeTargets.Field)]
+    public sealed class SetDescAttribute : Attribute
+    {
+        internal readonly string[] opt_desc;
+
+        public SetDescAttribute(params string[] description_lines) => opt_desc = description_lines;
+    }
 }
