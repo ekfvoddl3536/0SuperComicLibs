@@ -9,6 +9,7 @@ namespace SuperComicLib.Threading
         private AutoResetEvent[] ares;
         private Action[] actions;
         private ConcurrentStack<int> indexes;
+        private volatile int count;
         private volatile int runningThreads;
 
         public ParallelWorker(int size)
@@ -34,17 +35,20 @@ namespace SuperComicLib.Threading
             skipOne = false;
 
             indexes.Push(handle);
+            Interlocked.Increment(ref count);
 
             return new Awaiter(ares[handle]);
         }
 
         protected override void OnProcess()
         {
+            int cached_count = count;
+
             AutoResetEvent[] ares = this.ares;
             Action[] actions = this.actions;
             ConcurrentStack<int> indexes = this.indexes;
 
-            while (indexes.TryPop(out int idx))
+            while (--cached_count >= 0 && indexes.TryPop(out int idx))
             {
                 actions[idx].Invoke();
                 ares[idx].Set();
