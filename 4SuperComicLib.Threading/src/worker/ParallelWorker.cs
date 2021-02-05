@@ -48,11 +48,14 @@ namespace SuperComicLib.Threading
             Action[] actions = this.actions;
             ConcurrentStack<int> indexes = this.indexes;
 
-            while (--cached_count >= 0 && indexes.TryPop(out int idx))
+            int x = cached_count;
+            while (--x >= 0 && indexes.TryPop(out int idx))
             {
                 actions[idx].Invoke();
                 ares[idx].Set();
             }
+
+            Interlocked.Add(ref count, -cached_count);
         }
 
         protected override void Dispose(bool disposing)
