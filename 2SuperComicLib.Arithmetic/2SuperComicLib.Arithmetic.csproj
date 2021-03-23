@@ -45,10 +45,8 @@
     <Compile Include="common\Types.cs" />
     <Compile Include="common\BUtils.cs" />
     <Compile Include="common\CommonArithmeticHelper.cs" />
-    <Compile Include="float\BigFloat.cs" />
     <Compile Include="float\half\Half.cs" />
     <Compile Include="float\half\HalfToString.cs" />
-    <Compile Include="float\Quadruple.cs" />
     <Compile Include="integer\Extension\ArithmeticExtension.cs" />
     <Compile Include="integer\Extension\FastIntegerExtension.cs" />
     <Compile Include="integer\Int1024.cs" />
