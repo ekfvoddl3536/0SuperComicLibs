@@ -22,30 +22,42 @@ namespace SuperComicLib.XPatch
         internal Type DeclaringType { get; }
         internal string MethodName { get; }
         internal Type[] ArgumentTypes { get; }
+        internal Type[] GenericArguments { get; }
         internal PatchMode Mode { get; }
         internal bool IsILOnly { get; }
 
-        internal MethodInfo GetMethod() =>
-            ArgumentTypes == null
-                ? DeclaringType.GetMethod(MethodName, Helper.flag1)
-                : DeclaringType.GetMethod(MethodName, Helper.flag1, null, ArgumentTypes, null);
+        internal MethodInfo GetMethod()
+        {
+            MethodInfo meth =
+                ArgumentTypes == null
+                    ? DeclaringType.GetMethod(MethodName, Helper.flag1)
+                    : DeclaringType.GetMethod(MethodName, Helper.flag1, null, ArgumentTypes, null);
 
-        public TargetMethodAttribute(Type targetClass, string methodName, PatchMode patchMode)
+            return 
+                meth.IsGenericMethod && GenericArguments != null && GenericArguments.Length > 0 
+                ? meth.MakeGenericMethod(GenericArguments) 
+                : meth;
+        }
+
+        public TargetMethodAttribute(Type targetClass, string targetMethodName, PatchMode patchMode)
         {
             DeclaringType = targetClass;
-            MethodName = methodName;
+            MethodName = targetMethodName;
             Mode = patchMode & PatchMode.Replace;
             IsILOnly = (patchMode & PatchMode.ILOnly) != PatchMode.None;
         }
 
-        public TargetMethodAttribute(Type targetClass, string methodName, PatchMode patchMode, params Type[] argumentTypes)
+        public TargetMethodAttribute(Type targetClass, string targetMethodName, PatchMode patchMode, params Type[] argumentTypes)
         {
             DeclaringType = targetClass;
-            MethodName = methodName;
+            MethodName = targetMethodName;
             ArgumentTypes = argumentTypes;
             Mode = patchMode & PatchMode.Replace;
             IsILOnly = (patchMode & PatchMode.ILOnly) != PatchMode.None;
         }
+
+        public TargetMethodAttribute(Type targetClass, string targetMethodName, Type[] genericArguemtns, PatchMode patchMode, params Type[] argumentTypes) : this(targetClass, targetMethodName, patchMode, argumentTypes) =>
+            GenericArguments = genericArguemtns;
     }
 
 #if true

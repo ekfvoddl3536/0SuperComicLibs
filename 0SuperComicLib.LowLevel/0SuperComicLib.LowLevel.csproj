@@ -130,14 +130,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base\NativeClass_T.cs" />
-    <Compile Include="Types\NativeFixedObject.cs" />
-    <Compile Include="Types\NativeInstance_T.cs" />
-    <Compile Include="Utils\NativeSecureArray_T.cs" />
+    <Compile Include="NativeMethod\NativeMehods0.cs" />
+    <Compile Include="nheap\Constants.cs" />
+    <Compile Include="nheap\NativeProtectData_T.cs" />
+    <Compile Include="nheap\NativeRawDataArray.cs" />
+    <Compile Include="nheap\NativeSecureArray_T.cs" />
     <Compile Include="Types\Extension\Extensions.cs" />
     <Compile Include="Types\UnsafeCLIMemoryData.cs" />
-    <Compile Include="Utils\NativeProtectData_T.cs" />
-    <Compile Include="Utils\NativeHeapMgr.cs" />
-    <Compile Include="Types\NativeMethod\NativeMehods0.cs" />
     <Compile Include="Utils\BinaryStructureInfo.cs" />
     <Compile Include="NativeClass.cs" />
     <Compile Include="Base\PointerMethods_T.cs" />
@@ -146,6 +145,7 @@
     <Compile Include="Types\PubMethodTable.cs" />
     <Compile Include="Types\Types.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="nheap\NativeInstance_T.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="0SuperComicLib.LowLevel.nuspec" />

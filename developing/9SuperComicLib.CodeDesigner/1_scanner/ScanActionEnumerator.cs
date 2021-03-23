@@ -13,8 +13,8 @@ namespace SuperComicLib.CodeDesigner
         private static readonly Token endtoken = new Token("$", (TokenType)ExpressInt.end_symbol, -1, -1);
 
         private CStreamReader sr;
-        private IEnumerablePair<string, TokenType> sys;
-        private IEnumerablePair<string, TokenType> ids;
+        private IEnumeratorPair<string, TokenType> sys;
+        private IEnumeratorPair<string, TokenType> ids;
         private Token current;
         private int line;
         private int row;
@@ -24,8 +24,8 @@ namespace SuperComicLib.CodeDesigner
 
         public ScanActionEnumerator(
             CStreamReader sr,
-            IEnumerablePair<string, TokenType> sys,
-            IEnumerablePair<string, TokenType> ids,
+            IEnumeratorPair<string, TokenType> sys,
+            IEnumeratorPair<string, TokenType> ids,
             IExceptionHandler handler,
             ITypeMap typeMap)
         {
@@ -158,7 +158,7 @@ namespace SuperComicLib.CodeDesigner
             char* ptr = stackalloc char[4]; // 최대 4개의 심볼을 인식한다
             ptr[0] = read;
 
-            IEnumerablePair<string, TokenType> e1 = sys;
+            IEnumeratorPair<string, TokenType> e1 = sys;
 
             string key = null;
             TokenType tt = 0;
@@ -434,7 +434,7 @@ namespace SuperComicLib.CodeDesigner
                 goto ex2;
             }
 
-            IEnumerablePair<string, TokenType> e1 = ids;
+            IEnumeratorPair<string, TokenType> e1 = ids;
             while (e1.MoveNext())
                 if (e1.Item1 == text)
                 {

@@ -6,10 +6,10 @@ namespace SuperComicLib.CodeDesigner
     public sealed unsafe class CILCode
     {
         public const int
-            CODE_LABEL = 0x10_0000,
-            CODE_LOCAL = 0x11_0000,
-            CODE_EMIT_ACTION = 0x4000_0000;
-        public const int IDX_TEMPLOCAL = 0x1_0000;
+            CCODE_LABEL = 0x10_0000,
+            CCODE_LOCAL = 0x11_0000,
+            CCODE_LOAD_FIELD = 0x12_0000;
+        public const int TEMP_INDEX = 0x1_0000;
 
         public object operand;
         public int code;

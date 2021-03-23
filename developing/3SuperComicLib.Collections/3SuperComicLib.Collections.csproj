@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="Extension\ArrayExtension.cs" />
     <Compile Include="Extension\DictionaryExtension.cs" />
+    <Compile Include="Extension\Itmes\EnumerableConvert.cs" />
     <Compile Include="Extension\IForwardIteratorExtension.cs" />
     <Compile Include="Extension\Itmes\IteratorToEnumeratorWrapper.cs" />
     <Compile Include="Extension\Itmes\CountObserver_T.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Extension\StackExtension.cs" />
     <Compile Include="Extension\Itmes\StackPopEnumerable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\List\ValuePairTable.cs" />
     <Compile Include="src_gcsafe\List\NGCList_T.cs" />
     <Compile Include="Utils\ArrayStream.cs" />
     <Compile Include="Types.cs" />

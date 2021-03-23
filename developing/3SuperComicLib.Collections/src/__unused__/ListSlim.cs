@@ -285,7 +285,7 @@
 //        {
 //            private ListSlim<T> inst;
 //            private int idx;
-            
+
 //            public Iterator(ListSlim<T> inst)
 //            {
 //                this.inst = inst;

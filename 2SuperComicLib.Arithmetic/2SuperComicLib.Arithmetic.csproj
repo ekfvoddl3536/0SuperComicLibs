@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E4D87D14-E6B1-43A5-BA19-2B22DB5CED03}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SuperComicLib.Arithmetic</RootNamespace>
+    <AssemblyName>2SuperComicLib.Arithmetic</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="common\Types.cs" />
+    <Compile Include="common\BUtils.cs" />
+    <Compile Include="common\CommonArithmeticHelper.cs" />
+    <Compile Include="float\BigFloat.cs" />
+    <Compile Include="float\half\Half.cs" />
+    <Compile Include="float\half\HalfToString.cs" />
+    <Compile Include="float\Quadruple.cs" />
+    <Compile Include="integer\Extension\ArithmeticExtension.cs" />
+    <Compile Include="integer\Extension\FastIntegerExtension.cs" />
+    <Compile Include="integer\Int1024.cs" />
+    <Compile Include="integer\Int128.cs" />
+    <Compile Include="common\BigIntArithmetic.cs" />
+    <Compile Include="integer\Int256.cs" />
+    <Compile Include="integer\UInt1024.cs" />
+    <Compile Include="integer\UInt256.cs" />
+    <Compile Include="integer\UInt128.cs" />
+    <Compile Include="utils\ToInteger.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\0SuperComicLib.Core\0SuperComicLib.Core.csproj">
+      <Project>{1674b047-ca4c-44a1-9d39-211e38c800dc}</Project>
+      <Name>0SuperComicLib.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

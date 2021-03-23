@@ -16,7 +16,12 @@ namespace SuperComicLib.Collections
         void Apply();
     }
 
-    public interface IEnumerablePair<T1, T2> : IDisposable
+    public interface IEnumerablePair<T1, T2>
+    {
+        IEnumeratorPair<T1, T2> GetEnumeratorPair();
+    }
+
+    public interface IEnumeratorPair<T1, T2> : IDisposable
     {
         T1 Item1 { get; }
         T2 Item2 { get; }

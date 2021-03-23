@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // 어셈블리에 대한 일반 정보는 다음 특성 집합을 통해 
@@ -10,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("0SuperComicLib.Core")]
-[assembly: AssemblyCopyright("Copyright © 2019-2020. SuperComic (ekfvoddl3535@naver.com). All rights reserved.")]
+[assembly: AssemblyCopyright("Copyright © 2019. SuperComic (ekfvoddl3535@naver.com). All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

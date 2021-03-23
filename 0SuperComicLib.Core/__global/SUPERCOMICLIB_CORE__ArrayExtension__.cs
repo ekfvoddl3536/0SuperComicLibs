@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 /// <summary>
 /// 비관리형식 배열을 포인터로 읽습니다

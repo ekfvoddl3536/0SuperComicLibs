@@ -63,9 +63,9 @@ namespace SuperComicLib.CodeDesigner
             int temp;
             if ((temp = list.Peek().code) == 0x28 || temp == 0x6F) // Call Callvirt
             {
-                temp = CILCode.IDX_TEMPLOCAL | locals++;
+                temp = CILCode.TEMP_INDEX | locals++;
 
-                list.Push(new CILCode(CILCode.CODE_LOCAL, temp));
+                list.Push(new CILCode(CILCode.CCODE_LOCAL, temp));
                 list.Push(new CILCode(OpCodes.Stloc, temp));
                 list.Push(new CILCode(OpCodes.Ldloca, temp));
                 // buffer.code = 0x7F;

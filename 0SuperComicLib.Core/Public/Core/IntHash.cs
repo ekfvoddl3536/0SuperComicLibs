@@ -8,18 +8,21 @@ namespace SuperComicLib.Core
         /// useful when combining array hashcodes
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.PreserveSig)]
-        public static void CombineMOD(ref int value, int hashcode) =>
-            value = unchecked(((value << 5) + value) ^ hashcode);
+        public static int CombineMOD(int value, int hashcode) =>
+            unchecked(((value << 5) + value) ^ hashcode);
 
         /// <summary>
         /// simplest. not special
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.PreserveSig)]
-        public static void Combine(ref int value, int hashcode) =>
-            value = unchecked(31 * value + hashcode);
+        public static int Combine(int value, int hashcode) =>
+            unchecked(31 * value + hashcode);
 
+        /// <summary>
+        /// simplest. not special
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.PreserveSig)]
-        public static void Combine(ref int value, int hashcode, int key) =>
-            value = unchecked((key | 1) * value + hashcode);
+        public static int Combine(int value, int hashcode, int key) => 
+            unchecked((key | 1) * value + hashcode);
     }
 }

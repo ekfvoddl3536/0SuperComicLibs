@@ -3,6 +3,8 @@ using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SuperComicLib.CodeDesigner
 {
@@ -56,72 +58,25 @@ namespace SuperComicLib.CodeDesigner
         }
         #endregion
 
-        public abstract bool IsReference(HashedString source, HashedString target);
+        public object Load(string relativePath) =>
+            Load(relativePath, m_scanner.typeMap);
 
-        public bool IsEndlessRef(HashedString v1, HashedString v2) =>
-            IsReference(v1, v2) &&
-            IsReference(v2, v1);
-
-        public Type LoadOrGet(string relativePath) =>
-            LoadOrGet(relativePath, m_scanner.typeMap);
-
-        public abstract Type LoadOrGet(string relativePath, ITypeMap typeMap);
-        // public Type LoadOrGet(string relativePath, IExceptionHandler handler, ITypeMap typeMap)
-        // {
-        //     HashedString hs = new HashedString(relativePath);
-        //     if (cantLoad.Contains(hs))
-        //         return null;
-        //     
-        //     if (items.TryGetValue(hs, out Type result))
-        //         return result;
-        // 
-        //     string absolutePath = Path.Combine(path, relativePath);
-        //     if (File.Exists(absolutePath) == false)
-        //         throw new FileNotFoundException(absolutePath);
-        // 
-        //     ITokenEnumerator toks =
-        //         m_preprocessor == null
-        //         ? m_scanner.FromFile(absolutePath, Encoding.UTF8)
-        //         : m_scanner.FromStream(m_preprocessor, File.OpenRead(absolutePath), Encoding.UTF8, false);
-        // 
-        //     if (!references.TryGetValue(hs, out CHashSet<HashedString> map))
-        //     {
-        //         map = new CHashSet<HashedString>();
-        //         references.Add(hs, map);
-        //     }
-        // 
-        //     TypeBuilder tb = modbd.DefineType(PathToName(relativePath));
-        //     CodeGeneratorBase codegen = GetCodeGenerator(tb, map, hs, handler, typeMap);
-        //     codegen.Generate(m_parser.Parse(toks, true));
-        //     if (handler.FailCount > 0)
-        //     {
-        //         result = null;
-        //         cantLoad.Add(hs);
-        //     }
-        //     else
-        //     {
-        //         result = tb.CreateType();
-        //         items.Add(hs, result);
-        //     }
-        // 
-        //     codegen.Dispose();
-        //     
-        //     return result;
-        // }
+        public abstract object Load(string relativePath, ITypeMap typeMap);
 
         #region path help
         protected static string CurrentDirectory =>
             Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-        protected static string PathToName(string relpath)
+        protected static string PathToName(string path)
         {
-            int count = relpath.Length;
+            path = Path.GetFileName(path);
+            int count = path.Length;
             StringBuilder strb = new StringBuilder(count + 1);
             strb.Append("d"); // 이름오류 방지
 
             for (int x = 0; x < count; x++)
-                if (char.IsLetterOrDigit(relpath[x]))
-                    strb.Append(relpath[x]);
+                if (char.IsLetterOrDigit(path[x]))
+                    strb.Append(path[x]);
                 else
                     strb.Append('_'); // 이름 exception 방지
 

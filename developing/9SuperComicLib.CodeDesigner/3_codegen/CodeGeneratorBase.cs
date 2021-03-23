@@ -9,14 +9,6 @@ namespace SuperComicLib.CodeDesigner
 
         protected CodeGeneratorBase(IExceptionHandler handler, INode parsedNode)
         {
-#if DEBUG
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
-            else if (parsedNode == null)
-                throw new ArgumentNullException(nameof(parsedNode));
-            else if (parsedNode.ChildCount <= 0)
-                throw new ArgumentNullException(nameof(parsedNode));
-#endif
             m_handler = handler;
             m_enumerator = parsedNode.GetEnumerator();
         }
@@ -28,7 +20,9 @@ namespace SuperComicLib.CodeDesigner
         /// <param name="state">interrupt시 반환할 상태</param>
         /// <param name="argument">공유 인자, interrupt시 추가적으로 반환할 값 또는 로더가 일을 수행한 뒤 나온 값 (이전 상태에 따라 결정)</param>
         /// <returns>false는 끝</returns>
-        public abstract bool Generate(int previous_state, out int state, ref object argument);
+        public abstract void Generate(ScriptLoader owner);
+
+        public virtual object Result { get; }
 
         // 핵심
         //  1. Generate는 Interruptible하다는 점

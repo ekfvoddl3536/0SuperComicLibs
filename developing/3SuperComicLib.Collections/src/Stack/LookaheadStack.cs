@@ -147,18 +147,6 @@ namespace SuperComicLib.Collections
             return res;
         }
 
-        public virtual T[] ToArrayReverse()
-        {
-            int x = size;
-            T[] src = arr;
-            T[] res = new T[x];
-
-            while (--x >= 0)
-                res[x] = src[x];
-
-            return res;
-        }
-
         #region eunmerable
         public IEnumerator<T> GetEnumerator() => ((IEnumerable<T>)arr).GetEnumerator();
 

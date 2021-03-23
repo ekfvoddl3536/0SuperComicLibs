@@ -38,5 +38,14 @@ namespace SuperComicLib.Collections
 
         public static IEnumerable<T> Limit<T>(this IEnumerable<T> collection, int limit) =>
             new LimitEnumerable<T>(collection, limit);
+
+        public static IEnumerable<TOut> FastConvertAll<TIn, TOut>(this IEnumerable<TIn> collection, Converter<TIn, TOut> converter)
+        {
+#if DEBUG
+            System.Diagnostics.Contracts.Contract.Requires(collection != null);
+            System.Diagnostics.Contracts.Contract.Requires(converter != null);
+#endif
+            return new EnumerableConvert<TIn, TOut>(collection, converter);
+        }
     }
 }

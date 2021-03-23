@@ -12,7 +12,7 @@ namespace SuperComicLib.CodeDesigner
             {
                 { "id", id },
                 { "type", type },
-                { "type_arr", type_array },
+                // { "type_arr", type_array },
                 // { "type_ptr", type_pointer },
                 
                 { "==", comp_Equal },
@@ -102,6 +102,8 @@ namespace SuperComicLib.CodeDesigner
 
                 { "using", d__include_kw },
                 { "from", d__from_kw },
+
+                { "val", c__val_kw },
 
                 { "eol", EOL },
             };

@@ -20,7 +20,9 @@ namespace SuperComicLib.CodeDesigner
             UCTypes.LONG_T,
 
             CTypes.FLOAT_T,
-            CTypes.DOUBLE_T
+            CTypes.DOUBLE_T,
+
+            CTypes.VOID_T
         };
         private static readonly string[] names =
         {
@@ -36,7 +38,9 @@ namespace SuperComicLib.CodeDesigner
             "ulong",
 
             "float",
-            "double"
+            "double",
+
+            "void"
         };
 
         public static ITypeMap Instance = new ConcurrentTypeMap();

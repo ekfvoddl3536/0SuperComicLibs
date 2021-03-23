@@ -94,14 +94,19 @@
   <ItemGroup>
     <Compile Include="Public\Core\IntHash.cs" />
     <Compile Include="Public\Numerics\BitCounter.cs" />
+    <Compile Include="Public\Text\extension\FRngStringExtension.cs" />
+    <Compile Include="Public\Text\FCharEnumerator.cs" />
+    <Compile Include="Public\Text\FMultiRngString.cs" />
+    <Compile Include="Public\Text\FRngString.cs" />
+    <Compile Include="Public\Text\StringContext.cs" />
     <Compile Include="Public\Text\StringStream.cs" />
     <Compile Include="Public\Numerics\bits\Amd64Bits.cs" />
     <Compile Include="Public\Numerics\bits\Bits.cs" />
     <Compile Include="Public\Numerics\bits\factory\BitsFactory.cs" />
     <Compile Include="Public\Numerics\bits\factory\IRuntimeBitArray.cs" />
-    <Compile Include="Public\Numerics\bits\UnsafeBits.cs" />
     <Compile Include="Public\Numerics\bits\X86Bits.cs" />
     <Compile Include="Public\Tasks\TaskExtension.cs" />
+    <Compile Include="Public\__global__\LongHashedString.cs" />
     <Compile Include="Public\__global__\Range.cs" />
     <Compile Include="Public\Core\Whitespace.cs" />
     <Compile Include="Public\Core\Bool2Int.cs" />

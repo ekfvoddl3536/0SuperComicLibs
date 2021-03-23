@@ -13,7 +13,7 @@ namespace SuperComicLib.Collections
             int x = arr.Length;
             int result = 7;
             while (--x >= 0)
-                IntHash.CombineMOD(ref result, arr[x].GetHashCode());
+                result = IntHash.CombineMOD(result, arr[x].GetHashCode());
 
             return result;
         }
@@ -25,7 +25,7 @@ namespace SuperComicLib.Collections
 
             int result = 7;
             foreach (T v in arr)
-                IntHash.CombineMOD(ref result, v.GetHashCode());
+                result = IntHash.CombineMOD(result, v.GetHashCode());
 
             return result;
         }
@@ -38,7 +38,7 @@ namespace SuperComicLib.Collections
             int x = arr.Length;
             int result = 7;
             while (--x >= 0)
-                IntHash.CombineMOD(ref result, arr[x]?.GetHashCode() ?? 0);
+                result = IntHash.CombineMOD(result, arr[x]?.GetHashCode() ?? 0);
 
             return result;
         }
@@ -50,7 +50,7 @@ namespace SuperComicLib.Collections
 
             int result = 7;
             foreach (T v in arr)
-                IntHash.CombineMOD(ref result, v?.GetHashCode() ?? 0);
+                result = IntHash.CombineMOD(result, v?.GetHashCode() ?? 0);
 
             return result;
         }

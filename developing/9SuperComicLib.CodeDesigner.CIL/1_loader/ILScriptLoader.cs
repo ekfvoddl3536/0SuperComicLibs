@@ -18,17 +18,9 @@ namespace SuperComicLib.CodeDesigner
         {
         }
 
-        public override bool IsReference(HashedString source, HashedString target)
+        public override object Load(string relativePath, ITypeMap typeMap)
         {
             throw new NotImplementedException();
         }
-
-        public override Type LoadOrGet(string relativePath, ITypeMap typeMap)
-        {
-            throw new NotImplementedException();
-        }
-
-        // protected override CodeGeneratorBase GetCodeGenerator(TypeBuilder tb, CHashSet<HashedString> map, HashedString hs, IExceptionHandler handler, ITypeMap typeMap) =>
-        //     new ILCodeGenerator(this, tb, map, hs, handler, typeMap);
     }
 }

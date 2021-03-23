@@ -14,21 +14,50 @@ namespace SuperComicLib.XPatch
         public static IntPtr PrepareMethod(this DynamicMethod meth)
         {
             Type t = meth.GetType();
-            RuntimeMethodHandle handle =
-                    t.GetMethod("GetMethodDescriptor", mflag0) is MethodInfo getmd
-                    ? (RuntimeMethodHandle)getmd.Invoke(meth, null)
-                    : t.GetField("m_method", mflag0) is FieldInfo mm
-                    ? (RuntimeMethodHandle)mm.GetValue(meth)
-                    : (RuntimeMethodHandle)t.GetField("mhandle", mflag0).GetValue(meth);
 
-            Type ht = handle.GetType();
+            // mono only
+            MethodInfo mi = t.GetMethod("CreateDynMethod", mflag0);
+            if (mi != null)
+            {
+                mi.Invoke(meth, null);
+                return ((RuntimeMethodHandle)t.GetField("mhandle", mflag0).GetValue(meth)).GetFunctionPointer();
+            }
 
-            object result =
-                ht.GetField("m_value", mflag0) is FieldInfo fd
-                ? fd.GetValue(handle)
-                : ht.GetMethod("GetMethodInfo", mflag0) is MethodInfo mi
-                ? mi.Invoke(handle, null)
-                : null;
+            RuntimeMethodHandle handle;
+            FieldInfo fi;
+
+            mi = t.GetMethod("GetMethodDescriptor", mflag0);
+            if (mi != null)
+                handle = (RuntimeMethodHandle)mi.Invoke(meth, null);
+            else
+            {
+                fi = t.GetField("m_method", mflag0);
+                handle =
+                    fi != null
+                    ? (RuntimeMethodHandle)fi.GetValue(meth)
+                    : default;
+            }
+
+            t = handle.GetType();
+
+            object result;
+            fi = t.GetField("m_value", mflag0);
+            if (fi != null)
+                result = fi.GetValue(handle);
+            else
+            {
+                fi = t.GetField("Value", mflag0);
+                if (fi != null)
+                    result = fi.GetValue(handle);
+                else
+                {
+                    mi = t.GetMethod("GetMethodInfo", mflag0);
+                    if (mi != null)
+                        result = mi.Invoke(handle, null);
+                    else
+                        result = null;
+                }
+            }
 
             if (result != null)
                 try
@@ -54,7 +83,7 @@ namespace SuperComicLib.XPatch
             }
 
             // _CompileMethod(RuntimeMethodHandle)
-            if (p.ParameterType.IsAssignableFrom(ht))
+            if (p.ParameterType.IsAssignableFrom(t))
                 m_compileMeth.Invoke(null, new object[1] { handle });
 
             return handle.GetFunctionPointer();

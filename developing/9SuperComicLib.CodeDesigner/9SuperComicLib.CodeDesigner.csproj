@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="1_scanner\ScannerFactory.cs" />
+    <Compile Include="2_parser\pre_parse\EOLRemovePP.cs" />
     <Compile Include="types\Constants.cs" />
     <Compile Include="types\parser\node\EmptyNode.cs" />
     <Compile Include="utils\buildAttrb\NopBuildAttrb.cs" />
@@ -54,11 +55,10 @@
     <Compile Include="1_scanner\pre_scanner\DefPreProcessor.cs" />
     <Compile Include="1_scanner\pre_scanner\PreProcessor.cs" />
     <Compile Include="2_parser\LR\LRxItemComparerSlim.cs" />
-    <Compile Include="2_parser\pre_parse\PreParserFactory.cs" />
     <Compile Include="2_parser\pre_parse\DefPPAE.cs" />
     <Compile Include="2_parser\LALRParser.cs" />
     <Compile Include="2_parser\LR\LALRState.cs" />
-    <Compile Include="2_parser\pre_parse\PreParseActionEnumerator.cs" />
+    <Compile Include="2_parser\pre_parse\PreParserBase.cs" />
     <Compile Include="1_scanner\ScanActionEnumerator.cs" />
     <Compile Include="types\parser\CachedGrammar.cs" />
     <Compile Include="2_parser\LR\LR1Helper.cs" />

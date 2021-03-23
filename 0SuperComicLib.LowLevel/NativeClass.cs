@@ -400,9 +400,9 @@ namespace SuperComicLib.LowLevel
         }
 
         public static NativeInstance<T> Duplicate<T>(T obj) where T : class => NativeInstance<T>.Dup(obj);
-
+        
         public static NativeInstance<T> InitObj<T>() where T : class => NativeInstance<T>.Alloc();
-
+        
         public static NativeInstance<T> InitObj<T>(int size) where T : class => NativeInstance<T>.Alloc(size);
 
         public static IntPtr GetAddress(object obj)
@@ -538,6 +538,11 @@ namespace SuperComicLib.LowLevel
                 return ref *(TRet*)(**(byte***)&tr + (PtrSize_i + offset));
 #pragma warning restore
         }
+
+        public static void SetParent<TChild, TParent>()
+            where TChild : class
+            where TParent : class
+            => *GetMethodTable(typeof(TChild)).ParentMT = GetMethodTable(typeof(TParent));
 
         #region internal
         internal static int Internal_MemCompareTo_Un_S<T>(ref T left, ref T right)
@@ -730,6 +735,15 @@ namespace SuperComicLib.LowLevel
             }
             if (size >= X86BF_PTR_SIZE)
                 *ploc = 0;
+        }
+
+        internal static byte* Internal_Alloc(int size_bytes, bool zeromem)
+        {
+            byte* result = (byte*)Marshal.AllocHGlobal(size_bytes);
+            if (zeromem)
+                Internal_Zeromem(result, (uint)size_bytes);
+
+            return result;
         }
         #endregion
     }

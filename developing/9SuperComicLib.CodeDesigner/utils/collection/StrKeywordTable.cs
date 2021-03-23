@@ -67,12 +67,41 @@ namespace SuperComicLib.CodeDesigner
             GC.SuppressFinalize(this);
         }
 
-        public IEnumerablePair<string, TokenType> Pair => texts.MakePair(tokenTypes, idx);
+        public IEnumeratorPair<string, TokenType> Pair => texts.MakePair(tokenTypes, idx);
 
         #region hide
         IEnumerator<KeyValuePair<string, TokenType>> IEnumerable<KeyValuePair<string, TokenType>>.GetEnumerator() => null;
 
         IEnumerator IEnumerable.GetEnumerator() => null;
         #endregion
+
+        public static StrKeywordTable Combine(StrKeywordTable a1, StrKeywordTable b1, bool compress = false)
+        {
+            StrKeywordTable newTable = 
+                new StrKeywordTable(
+                    compress
+                    ? a1.idx + b1.idx
+                    : a1.texts.Length + b1.texts.Length);
+
+            string[] v1 = newTable.texts;
+            TokenType[] v2 = newTable.tokenTypes;
+
+            int idx = Add(a1.texts, a1.tokenTypes, v1, v2, 0);
+            Add(b1.texts, b1.tokenTypes, v1, v2, idx);
+
+            return newTable;
+        }
+
+        private static int Add(string[] s1, TokenType[] s2, string[] dst1, TokenType[] dst2, int startidx)
+        {
+            int size = s1.Length;
+            for (int x = 0; x < size; startidx++, x++)
+            {
+                dst1[startidx] = s1[x];
+                dst2[startidx] = s2[x];
+            }
+
+            return startidx;
+        }
     }
 }

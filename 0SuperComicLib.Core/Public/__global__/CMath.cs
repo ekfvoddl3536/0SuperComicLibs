@@ -30,8 +30,24 @@
 
         public static int Abs(this int value) => value < 0 ? -value : value;
 
-        public static int Div10fs(this int value) => (int)(((ulong)value * 0xCCCC_CCCD) >> 35);
+        public static int Div10fs(this int value) => (int)((value * 1717986919L) >> 34) - (value >> 31);
 
-        public static uint Div10fs(this uint value) => (uint)(((ulong)value * 0xCCCC_CCCD) >> 35);
+        public static uint Div10fs(this uint value) => (uint)Div10fs((int)value);
+
+        public static int DivMod10fs(this int value, out int mod)
+        {
+            int div = Div10fs(value);
+            mod = value - ((div << 2) + div << 1);
+
+            return div;
+        }
+
+        public static uint DivMod10fs(this uint value, out uint mod)
+        {
+            uint div = (uint)Div10fs((int)value);
+            mod = value - ((div << 2) + div << 1);
+
+            return div;
+        }
     }
 }

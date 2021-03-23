@@ -1,16 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SuperComicLib.Collections
 {
-    public sealed class BarrieredStack<T> : LookaheadStack<T>
+    public class BarrieredStack<T> : LookaheadStack<T>
     {
-        private Stack<int> barrier;
+        protected Stack<int> barrier;
 
         public BarrieredStack() : this(null)
         {
         }
 
         public BarrieredStack(T[] source) : base(source) => 
+            barrier = new Stack<int>();
+
+        public BarrieredStack(int initalCapacity) : base(initalCapacity) =>
             barrier = new Stack<int>();
 
         public void MarkPoint() => barrier.Push(size);
@@ -33,33 +37,34 @@ namespace SuperComicLib.Collections
                 Clear();
         }
 
-        public override T[] ToArray()
+        public virtual T[] PopAuto()
         {
-            loop:
+            T[] vs, arr = this.arr;
+            int x, ncnt;
+        loop:
             if (barrier.Count > 0)
             {
-                int ncnt = size - barrier.Pop();
-                if (ncnt <= 0)
+                ncnt = size - barrier.Pop();
+                if (ncnt == 0)
+                    return Array.Empty<T>();
+                else if (ncnt < 0)
                     goto loop;
 
-                T[] vs = new T[ncnt];
-                T[] arr = this.arr;
-
-                int tmp = size;
-                while (--tmp >= 0)
-                    vs[--ncnt] = arr[tmp];
-
-                return vs;
+                vs = new T[ncnt];
+                x = size - ncnt;
+                while (--ncnt >= 0)
+                    vs[ncnt] = arr[x++];
             }
             else
-                return base.ToArray();
-        }
+            {
+                ncnt = size;
+                vs = new T[ncnt];
 
-        public override T[] ToArrayReverse()
-        {
-            T[] result = ToArray();
-            result.ReverseFast();
-            return result;
+                for (x = 0; x < ncnt;)
+                    vs[x++] = Pop();
+            }
+
+            return vs;
         }
 
         protected override void Dispose(bool disposing)

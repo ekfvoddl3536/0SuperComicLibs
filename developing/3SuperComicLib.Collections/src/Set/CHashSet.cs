@@ -377,14 +377,7 @@ namespace SuperComicLib.Collections
             int ol = m_lastIndex;
             int arrlen = BitsFactory.ToLengthX86(ol);
 
-            Bits bit;
-            if (arrlen <= 100)
-            {
-                uint* ptr = stackalloc uint[arrlen];
-                bit = new UnsafeBits(ptr, arrlen);
-            }
-            else
-                bit = new X86Bits(new uint[arrlen]);
+            Bits bit = new X86Bits(new uint[arrlen]);
 
             int x;
             IEnumerator<T> e1 = other.GetEnumerator();

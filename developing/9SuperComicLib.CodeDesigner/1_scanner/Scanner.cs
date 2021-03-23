@@ -86,7 +86,7 @@ namespace SuperComicLib.CodeDesigner
 
         #region keywords & symbols
         protected virtual StrKeywordTable LoadDefaultCharKeywordTable() =>
-            new StrKeywordTable(24)
+            new StrKeywordTable(25)
             {
                 { "this", TokenType.this_kw },
                 // { "base", TokenType.base_kw },
@@ -124,6 +124,8 @@ namespace SuperComicLib.CodeDesigner
 
                 { "using", TokenType.d__include_kw },
                 { "from", TokenType.d__from_kw },
+
+                { "val", TokenType.c__val_kw }
             };
 
         protected virtual StrKeywordTable LoadDefaultSymbolTable() =>

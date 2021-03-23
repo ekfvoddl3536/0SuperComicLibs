@@ -42,10 +42,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="0_codegen\items\ILMethodSignature.cs" />
+    <Compile Include="0_codegen\LabelManager.cs" />
+    <Compile Include="0_codegen\partial\ILCodeGenerator_0.cs" />
     <Compile Include="0_codegen\CodeGeneratorStates.cs" />
-    <Compile Include="0_codegen\ILCodeGenerator.cs" />
+    <Compile Include="0_codegen\partial\ILCodeGenerator_1.cs" />
+    <Compile Include="0_codegen\helper\ForExpressionEnumerator.cs" />
     <Compile Include="0_codegenHelper\CILCodeHelper.cs" />
-    <Compile Include="0_codegen\ScopeVarInfo.cs" />
+    <Compile Include="0_codegen\helper\ILCodeGenHelper.cs" />
+    <Compile Include="0_codegen\items\ILMethodBuildState.cs" />
+    <Compile Include="0_codegen\items\ScopeVarInfo.cs" />
+    <Compile Include="collections\SuperComicLibCollectionLookaheadStackExtension.cs" />
     <Compile Include="0_msg\CIL_FMSG.cs" />
     <Compile Include="0_msg\CIL_WMSG.cs" />
     <Compile Include="1_loader\ILScriptLoader.cs" />
@@ -53,6 +60,7 @@
     <Compile Include="2_scanner\NopTypeMap.cs" />
     <Compile Include="A_opt\CILCodegenOpt.cs" />
     <Compile Include="CILCode.cs" />
+    <Compile Include="collections\InternalTypeStack.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -81,5 +89,6 @@
       <Name>9SuperComicLib.DataObject</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

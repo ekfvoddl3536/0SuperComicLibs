@@ -7,7 +7,7 @@ namespace SuperComicLib.Threading
     {
         private int m_initCount;
         private volatile int m_current;
-        private AutoResetEvent m_event;
+        private ManualResetEvent m_event;
 
         public CountdownEventSlim() : this(Environment.ProcessorCount) { }
 
@@ -19,7 +19,7 @@ namespace SuperComicLib.Threading
                 : 1;
 
             m_current = m_initCount;
-            m_event = new AutoResetEvent(false);
+            m_event = new ManualResetEvent(false);
         }
 
         public int CurrentCount => m_current;
@@ -39,7 +39,11 @@ namespace SuperComicLib.Threading
         public void Signal()
         {
             if (Interlocked.Decrement(ref m_current) == 0)
-                m_event.Set();
+            {
+                ManualResetEvent e = m_event;
+                e.Set();
+                e.Reset();
+            }
         }
 
         public void Exit() => Interlocked.Decrement(ref m_initCount);

@@ -2,7 +2,7 @@
 
 namespace SuperComicLib.Collections
 {
-    internal sealed class EnumerablePair<T1, T2> : IEnumerablePair<T1, T2>
+    internal sealed class EnumerablePair<T1, T2> : IEnumeratorPair<T1, T2>
     {
         private T1[] array;
         private T2[] other;

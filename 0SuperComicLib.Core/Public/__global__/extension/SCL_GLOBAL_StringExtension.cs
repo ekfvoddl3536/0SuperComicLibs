@@ -5,6 +5,9 @@ namespace SuperComicLib
 {
     public static class SCL_GLOBAL_StringExtension
     {
+        private const int hashcode_start_c = (5381 << 16) + 5381;
+        private const int hashcode_last_c = 1566083941;
+
         #region other
         // public static string RemoveBack(this string str, int count) => str.Remove(str.Length - count, count);
         public static string RemoveBack(this string str, int count) => str.Substring(0, str.Length - count);
@@ -254,26 +257,29 @@ namespace SuperComicLib
 #if DEBUG
             System.Diagnostics.Contracts.Contract.Requires(str != null);
 #endif
-            int hash1 = (5381 << 16) + 5381;
+            int hash1 = hashcode_start_c;
             int hash2 = hash1;
 
             fixed (char* src = str)
                 Internal_Hashcode(ref hash1, ref hash2, (int*)src, str.Length);
 
-            return hash1 + hash2 * 1566083941;
+            return hash1 + hash2 * hashcode_last_c;
         }
 
-        public static unsafe int GetFixedHashcode(this string str, IEnumerable<string> additionalStrings)
+        public static unsafe int GetFixedHashcode(this string str, IEnumerable<string> additionalStrings) =>
+            GetFixedHashcode(str, additionalStrings, out _);
+
+        public static unsafe int GetFixedHashcode(this string str, IEnumerable<string> additionalStrings, out int totalLength)
         {
 #if DEBUG
             System.Diagnostics.Contracts.Contract.Requires(str != null);
             System.Diagnostics.Contracts.Contract.Requires(additionalStrings != null);
 #endif
-            int hash1 = (5381 << 16) + 5381;
+            int hash1 = hashcode_start_c;
             int hash2 = hash1;
 
             fixed (char* src = str)
-                Internal_Hashcode(ref hash1, ref hash2, (int*)src, str.Length);
+                totalLength = Internal_Hashcode(ref hash1, ref hash2, (int*)src, str.Length);
 
             // too long
             var iter = additionalStrings.GetEnumerator();
@@ -282,26 +288,45 @@ namespace SuperComicLib
             {
                 str = iter.Current;
                 fixed (char* src = str)
-                    Internal_Hashcode(ref hash1, ref hash2, (int*)src, str.Length);
+                    totalLength += Internal_Hashcode(ref hash1, ref hash2, (int*)src, str.Length);
             }
 
             iter.Dispose();
 
-            return hash1 + hash2 * 1566083941;
+            return hash1 + hash2 * hashcode_last_c;
         }
 
-        private static unsafe void Internal_Hashcode(ref int hash1, ref int hash2, int* pint, int len)
+        public static unsafe int GetFixedHashcode(this string str, int startidx, int count)
         {
-            while (len > 2)
+            if (startidx < 0 ||
+                count < 1 ||
+                startidx + count > str.Length)
+                throw new ArgumentOutOfRangeException();
+
+            int hash1 = hashcode_start_c;
+            int hash2 = hash1;
+
+            fixed (char* src = str)
+                Internal_Hashcode(ref hash1, ref hash2, (int*)(src + startidx), count);
+
+            return hash1 + hash2 * hashcode_last_c;
+        }
+
+        private static unsafe int Internal_Hashcode(ref int hash1, ref int hash2, int* pint, int len)
+        {
+            int x = len;
+            while (x > 2)
             {
                 hash1 = ((hash1 << 5) + hash1 + (hash1 >> 27)) ^ pint[0];
                 hash2 = ((hash2 << 5) + hash2 + (hash2 >> 27)) ^ pint[1];
                 pint += 2;
-                len -= 4;
+                x -= 4;
             }
 
-            if (len > 0)
+            if (x > 0)
                 hash1 = ((hash1 << 5) + hash1 + (hash1 >> 27)) ^ pint[0];
+
+            return len;
         }
         #endregion
     }

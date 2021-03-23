@@ -110,6 +110,8 @@
         c__class_kw,
         c__final_kw,
 
+        c__val_kw,
+
         EOL = short.MaxValue, // End Of Line
     }
 }

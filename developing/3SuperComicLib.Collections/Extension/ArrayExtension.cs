@@ -98,12 +98,12 @@ namespace SuperComicLib.Collections
             return true;
         }
 
-        public static IEnumerablePair<T1, T2> MakePair<T1, T2>(this T1[] array, T2[] other) =>
+        public static IEnumeratorPair<T1, T2> MakePair<T1, T2>(this T1[] array, T2[] other) =>
             array.Length == other.Length 
             ? new EnumerablePair<T1, T2>(array, other, other.Length)
             : null;
 
-        public static IEnumerablePair<T1, T2> MakePair<T1, T2>(this T1[] array, T2[] other, int max) =>
+        public static IEnumeratorPair<T1, T2> MakePair<T1, T2>(this T1[] array, T2[] other, int max) =>
             array.Length.Min(max) == other.Length.Min(max)
             ? new EnumerablePair<T1, T2>(array, other, max)
             : null;

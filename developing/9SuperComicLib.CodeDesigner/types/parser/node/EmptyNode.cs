@@ -20,7 +20,7 @@ namespace SuperComicLib.CodeDesigner
         public INode C1 => null;
         public INode C2 => null;
         public INode C3 => null;
-        public int ChildCount => 0;
+        public int ChildCount => -1;
 
         public void Add(INode node) { }
 
