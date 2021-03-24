@@ -6,11 +6,11 @@ using SuperComicLib.Core;
 
 namespace SuperComicLib.Text
 {
-    public sealed class FMultiRngString : IEquatable<string>, IEnumerable<char>
+    public sealed class FMultiRngString : IEquatable<string>, IEnumerable<char>, IDisposable
     {
-        private readonly string str;
-        private readonly int sidx;
-        private readonly int eidx;
+        private string str;
+        private int sidx;
+        private int eidx;
         private FMultiRngString next;
 
         internal FMultiRngString(string str, int sidx, int eidx, FMultiRngString next) : this(str, sidx, eidx) =>
@@ -25,6 +25,10 @@ namespace SuperComicLib.Text
 
         public FMultiRngString(in FRngString value) : this(value.str, value.sidx, value.eidx)
         {
+        }
+
+        public FMultiRngString(string value) : this(value, 0, value.Length) 
+        { 
         }
 
         public int Length => eidx - sidx;
@@ -210,6 +214,42 @@ namespace SuperComicLib.Text
 
         public static bool operator ==(string left, FMultiRngString right) => right.Equals(left);
         public static bool operator !=(string left, FMultiRngString right) => !right.Equals(left);
+        #endregion
+
+        #region dispose (optional)
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                str = null;
+                sidx = 0;
+                eidx = 0;
+            }
+
+            // 모든 레퍼런스를 삭제
+            FMultiRngString p = this;
+            while (p.next != null)
+            {
+                FMultiRngString n = p.next;
+                p.next = null;
+                
+                p = n;
+            }
+        }
+
+        ~FMultiRngString()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// [Optional]
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
         #endregion
 
         #region inner class

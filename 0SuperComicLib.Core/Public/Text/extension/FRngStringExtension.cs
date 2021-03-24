@@ -14,7 +14,7 @@ namespace SuperComicLib.Text
             return new HashedString(value.str.GetFixedHashcode(sidx, cnt), cnt);
         }
 
-        public static int ToInt32(this FRngString value)
+        public static bool TryToInt32(this in FRngString value, out int result)
         {
             string str = value.str;
             int sidx = value.sidx;
@@ -22,28 +22,44 @@ namespace SuperComicLib.Text
 
             char first = str[sidx];
 
-            int result;
+            int locr;
             if (char.IsDigit(first))
-                result = first - '0';
+                locr = first - '0';
             else
             {
                 sidx++;
-                result = 0;
+                locr = 0;
             }
 
             for (; sidx < eidx; sidx++)
             {
                 char c = str[sidx];
                 if (!char.IsDigit(c))
-                    return 0;
+                {
+                    result = 0;
+                    return false;
+                }
                 else
-                    result = result * 10 + (c - '0');
+                    locr = locr * 10 + (c - '0');
             }
 
-            return
-                first == '-'
-                ? -result
-                : result;
+            result = 
+                first == '-' 
+                ? -locr 
+                : locr;
+            return true;
         }
+
+        public static int ToInt32(this in FRngString value)
+        {
+            TryToInt32(value, out int result);
+            return result;
+        }
+
+        public static decimal ToDecimal(this in FRngString value) => decimal.Parse(value.ToString());
+
+        public static double ToDouble(this in FRngString value) => double.Parse(value.ToString());
+
+        public static float ToFloat(this in FRngString value) => float.Parse(value.ToString());
     }
 }
