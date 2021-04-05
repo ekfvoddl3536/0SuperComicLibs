@@ -5,7 +5,7 @@
 |:--| :--: | :--: | :-- |
 | Elapsed Time (s) | 51.5 | **1.996** | lower is better |
 | Total Memory Used (GB) | 6.19 | **2.87** | lower is better |
-### Mixed `ReferenceType` and `ValueType` Fields
+### Mixed `ReferenceType`(e.g.: `string`) and `ValueType`(e.g.: `int`) Fields
 #### Reflection without __makeref
 |  | Reflection | LowLevel | Note |
 |:--| :--: | :--: | :-- |
