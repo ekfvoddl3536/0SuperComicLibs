@@ -86,8 +86,7 @@
     <Compile Include="Extension\Itmes\List_Iterator.cs" />
     <Compile Include="Extension\Itmes\List_ReverseIterator.cs" />
     <Compile Include="Extension\Itmes\RangeArray.cs" />
-    <Compile Include="Extension\Itmes\RangeEnumerator.cs" />
-    <Compile Include="Extension\Itmes\RangeIterator.cs" />
+    <Compile Include="Extension\Itmes\RangeForEachIterator.cs" />
     <Compile Include="Extension\Itmes\ReverseRangeIterator.cs" />
     <Compile Include="Extension\Itmes\Selector.cs" />
     <Compile Include="Extension\Itmes\LimitEnumerable.cs" />
@@ -95,6 +94,8 @@
     <Compile Include="Extension\Itmes\StackPopEnumerable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\List\ValuePairTable.cs" />
+    <Compile Include="src\Map\HashKeyBag.cs" />
+    <Compile Include="src_gcsafe\Array\CircularArray.cs" />
     <Compile Include="src_gcsafe\List\NGCList_T.cs" />
     <Compile Include="Utils\ArrayStream.cs" />
     <Compile Include="Types.cs" />

@@ -47,5 +47,22 @@ namespace SuperComicLib.Collections
 #endif
             return new EnumerableConvert<TIn, TOut>(collection, converter);
         }
+
+        public static int IndexOf<T>(this IEnumerable<T> collection, T key) =>
+            IndexOf(collection, key, EqualityComparer<T>.Default);
+
+        public static int IndexOf<T>(this IEnumerable<T> collection, T key, IEqualityComparer<T> comparer)
+        {
+            int idx = 0;
+
+            IEnumerator<T> e1 = collection.GetEnumerator();
+            for (; e1.MoveNext(); idx++)
+                if (comparer.Equals(e1.Current, key))
+                    return idx;
+
+            e1.Dispose();
+
+            return -1;
+        }
     }
 }
