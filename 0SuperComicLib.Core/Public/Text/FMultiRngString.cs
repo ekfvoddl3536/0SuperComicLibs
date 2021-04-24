@@ -12,26 +12,39 @@ namespace SuperComicLib.Text
         private int sidx;
         private int eidx;
         private FMultiRngString next;
+        private FMultiRngString last;
 
-        internal FMultiRngString(string str, int sidx, int eidx, FMultiRngString next) : this(str, sidx, eidx) =>
+        #region constructors
+        internal FMultiRngString(string str, int sidx, int eidx, FMultiRngString next) : this(str, sidx, eidx)
+        {
             this.next = next;
+            last = next;
+
+            next.last = null;
+        }
 
         internal FMultiRngString(string str, int sidx, int eidx)
         {
             this.str = str;
             this.sidx = sidx;
             this.eidx = eidx;
+
+            next = this;
+            last = this;
         }
 
-        public FMultiRngString(in FRngString value) : this(value.str, value.sidx, value.eidx)
+        public FMultiRngString(FRngString value) : this(value.str, value.sidx, value.eidx)
         {
         }
 
         public FMultiRngString(string value) : this(value, 0, value.Length) 
         { 
         }
+        #endregion
 
         public int Length => eidx - sidx;
+
+        public bool IsHead => last != null;
 
         #region method
         /// <summary>
@@ -67,16 +80,16 @@ namespace SuperComicLib.Text
                 sb.Append(str[sidx++]);
         }
 
-        public void AddLast(in FRngString value)
+        public void AddLast(FRngString value)
         {
-            if (value.IsEmpty)
+            if (value is null)
                 throw new ArgumentNullException(nameof(value));
 
-            LastNode().next =
-                new FMultiRngString(value.str, value.sidx, value.eidx);
+            AddLastInternal(new FMultiRngString(value.str, value.sidx, value.eidx));
         }
 
-        public void AddLast(string value) => AddLast(new FRngString(value, 0, value.Length));
+        public void AddLast(string value) =>
+            AddLast(new FRngString(value));
         #endregion
 
         #region to string
@@ -90,14 +103,16 @@ namespace SuperComicLib.Text
             FMultiRngString t = next;
             for (; t != null; t = t.next)
             {
-                sb.Append(joinCharacter);
+                if (joinCharacter > 0)
+                    sb.Append(joinCharacter);
+
                 t.ApeendTo(sb);
             }
 
             return sb.ToString();
         }
 
-        public override string ToString() => ToString(' ');
+        public override string ToString() => ToString(char.MinValue);
         #endregion
 
         #region compare
@@ -105,6 +120,8 @@ namespace SuperComicLib.Text
         {
             if (this == other)
                 return true;
+            else if (other == null)
+                return false;
 
             FMultiRngString left = this;
             do
@@ -127,6 +144,9 @@ namespace SuperComicLib.Text
 
         public bool Equals(string other, char joinCharacter)
         {
+            if (other == null)
+                return false;
+
             Enumerator fe = new Enumerator(this, joinCharacter);
             CharEnumerator ce = other.GetEnumerator();
 
@@ -157,18 +177,16 @@ namespace SuperComicLib.Text
         #endregion
 
         #region add
-        private FMultiRngString LastNode()
+        private void AddLastInternal(FMultiRngString add)
         {
-            FMultiRngString sel = this;
-            FMultiRngString n = next;
+            FMultiRngString lastNode = last;
+            lastNode.next = add;
 
-            for (; n != null; n = n.next)
-                sel = n;
-
-            return sel;
+            last = add;
+            add.last = null;
         }
 
-        public static FMultiRngString operator +(FMultiRngString left, in FRngString right)
+        public static FMultiRngString operator +(FMultiRngString left, FRngString right)
         {
             left.AddLast(right);
             return left;
@@ -206,14 +224,6 @@ namespace SuperComicLib.Text
         public IEnumerator<char> GetEnumerator() => GetEnumerator(' ');
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        #endregion
-
-        #region operator
-        public static bool operator ==(FMultiRngString left, string right) => left.Equals(right);
-        public static bool operator !=(FMultiRngString left, string right) => !left.Equals(right);
-
-        public static bool operator ==(string left, FMultiRngString right) => right.Equals(left);
-        public static bool operator !=(string left, FMultiRngString right) => !right.Equals(left);
         #endregion
 
         #region dispose (optional)
@@ -290,7 +300,11 @@ namespace SuperComicLib.Text
                     {
                         curr = next;
 
-                        str = null;
+                        str =
+                            joinCharacter > 0
+                            ? null
+                            : next.str;
+
                         cidx = next.sidx;
                         eidx = next.eidx;
                     }

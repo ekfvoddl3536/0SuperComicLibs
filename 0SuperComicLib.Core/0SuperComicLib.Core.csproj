@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Public\Core\IntHash.cs" />
+    <Compile Include="Public\Core\PRNG.cs" />
     <Compile Include="Public\Numerics\BitCounter.cs" />
     <Compile Include="Public\Text\extension\FRngStringExtension.cs" />
     <Compile Include="Public\Text\FCharEnumerator.cs" />

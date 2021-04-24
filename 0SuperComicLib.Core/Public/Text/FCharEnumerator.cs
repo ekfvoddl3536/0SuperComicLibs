@@ -11,7 +11,7 @@ namespace SuperComicLib.Text
         private int eidx;
         private int cidx;
 
-        public FCharEnumerator(in FRngString value) : this(value.str, value.sidx, value.eidx)
+        public FCharEnumerator(FRngString value) : this(value.str, value.sidx, value.eidx)
         {
         }
 

@@ -11,9 +11,9 @@ namespace SuperComicLib.Text
         internal int eidx;
         private bool closed;
 
-        public StringContext(in FRngString value)
+        public StringContext(FRngString value)
         {
-            if (value.IsEmpty)
+            if (value is null)
                 throw new ArgumentNullException(nameof(value));
 
             str = value.str;
@@ -26,11 +26,11 @@ namespace SuperComicLib.Text
         public bool IsClosed => closed;
 
         #region method
-        public void Add(in FRngString value)
+        public void Add(FRngString value)
         {
             if (closed)
                 throw new InvalidOperationException();
-            else if (value.IsEmpty)
+            else if (value is null)
                 throw new ArgumentNullException(nameof(value));
 
             if (str != value.str)
@@ -85,20 +85,20 @@ namespace SuperComicLib.Text
         public static bool operator !=(StringContext left, StringContext right) =>
             left != right || !left.Equals(right);
 
-        public static bool operator ==(StringContext left, in FRngString right) =>
+        public static bool operator ==(StringContext left, FRngString right) =>
             left.str == right.str &&
             left.sidx == right.sidx &&
             left.eidx == right.eidx;
-        public static bool operator !=(StringContext left, in FRngString right) =>
+        public static bool operator !=(StringContext left, FRngString right) =>
             left.str != right.str ||
             left.sidx != right.sidx ||
             left.eidx != right.eidx;
 
-        public static bool operator ==(in FRngString left, StringContext right) =>
+        public static bool operator ==(FRngString left, StringContext right) =>
             left.str == right.str &&
             left.sidx == right.sidx &&
             left.eidx == right.eidx;
-        public static bool operator !=(in FRngString left, StringContext right) =>
+        public static bool operator !=(FRngString left, StringContext right) =>
             left.str != right.str ||
             left.sidx != right.sidx ||
             left.eidx != right.eidx;
