@@ -62,9 +62,8 @@ namespace SuperComicLib
                 {
                     hash1 = ((hash1 << 5) + hash1 + (hash1 >> 27)) ^ pint[0];
                     hash2 = ((hash2 << 5) + hash2 + (hash2 >> 27)) ^ pint[1];
-                    
-                    // WOW! magic number
-                    comp = ((hash2 - hash1) << 3) + (hash2 >> 14) + (hash1 << 14) ^ comp;
+
+                    comp = (hash2 - hash1) ^ comp;
                     
                     pint += 2;
                     len -= 4;

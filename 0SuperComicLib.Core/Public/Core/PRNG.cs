@@ -1,9 +1,11 @@
-﻿namespace SuperComicLib.Core
+﻿using System;
+
+namespace SuperComicLib.Core
 {
     public static class PRNG
     {
         private const int B = 8;
-        private static readonly System.Random rnd = new System.Random();
+        private static readonly Random rnd = new Random();
 
         public static decimal NextDecimal() =>
             new decimal(
@@ -28,6 +30,9 @@
         public static int Next() =>
             rnd.Next();
 
+        public static int NextSign() =>
+            1 - ((rnd.Next() & 1) << 1);
+
         public static int Generate(int seed)
         {
             uint value = (uint)rnd.Next();
@@ -44,5 +49,13 @@
 
             return (int)value;
         }
+
+        public static int NextInt() =>
+            (rnd.Next() << 8) | (rnd.Next() & 0xFF);
+
+        public static int Generate() => Generate(NextInt());
+
+        public static void NextBytes(byte[] buffer) =>
+            rnd.NextBytes(buffer);
     }
 }
