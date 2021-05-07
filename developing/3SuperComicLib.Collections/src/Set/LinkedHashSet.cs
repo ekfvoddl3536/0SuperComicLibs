@@ -1,15 +1,13 @@
-﻿#pragma warning disable IDE0044 // 읽기 전용 한정자 추가
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using SuperComicLib.Numerics;
 
 namespace SuperComicLib.Collections
 {
-#if DEBUG
-    [System.Diagnostics.DebuggerTypeProxy(typeof(LinkedHashSetView<>))]
-    [System.Diagnostics.DebuggerDisplay("Count = {m_count}")]
-#endif
+    [DebuggerTypeProxy(typeof(IIterableView<>))]
+    [DebuggerDisplay("Count = {m_count}")]
     public class LinkedHashSet<T> : ISet<T>, IEnumerable<T>, IIterable<T>
     {
         protected const int bitmask = 0x7FFF_FFFF;
@@ -69,7 +67,7 @@ namespace SuperComicLib.Collections
         public IEqualityComparer<T> Comparer
         {
             get => m_comparer;
-            set => m_comparer = value ?? throw new ArgumentNullException(nameof(value));
+            set => m_comparer = value ?? EqualityComparer<T>.Default;
         }
         #endregion
 
@@ -175,6 +173,9 @@ namespace SuperComicLib.Collections
 
         public void Clear()
         {
+            var buckets = this.buckets;
+            var slots = this.slots;
+
             for (int x = 0; x < buckets.Length; x++)
             {
                 buckets[x] = 0;
@@ -440,9 +441,9 @@ namespace SuperComicLib.Collections
         public IEnumerator<T> GetEnumerator() => new Enumerator(this);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public IForwardIterator<T> Begin() => new Iterator(this);
+        public IIterator<T> Begin() => new Iterator(this);
 
-        public IForwardIterator<T> RBegin() => new ReverseIterator(this);
+        public IIterator<T> RBegin() => new ReverseIterator(this);
         #endregion
 
         #region capacity
@@ -512,13 +513,6 @@ namespace SuperComicLib.Collections
             public T Current => value;
             object IEnumerator.Current => Current;
 
-            public void Dispose()
-            {
-                inst = null;
-                node = null;
-                version = 0;
-            }
-
             public bool MoveNext()
             {
                 if (version != inst.m_version)
@@ -527,8 +521,8 @@ namespace SuperComicLib.Collections
                 if (node == null)
                     return false;
 
-                value = node.Value;
-                node = node.Next;
+                value = node.m_value;
+                node = node.m_next;
                 if (node == inst.m_head)
                     node = null;
 
@@ -540,10 +534,17 @@ namespace SuperComicLib.Collections
                 node = inst.m_head;
                 value = default;
             }
+
+            public void Dispose()
+            {
+                inst = null;
+                node = null;
+                version = 0;
+            }
         }
 
 #pragma warning disable
-        protected struct Iterator : IForwardIterator<T>
+        protected struct Iterator : IIterator<T>
         {
             private LinkedHashSet<T> inst;
             private LinkedNode<T> node;
@@ -559,7 +560,7 @@ namespace SuperComicLib.Collections
             public T Value
             {
                 get => node.m_value;
-                set => node.m_value = value;
+                set => throw new InvalidOperationException();
             }
 
             public void Add()
@@ -586,7 +587,7 @@ namespace SuperComicLib.Collections
             }
         }
 
-        protected struct ReverseIterator : IForwardIterator<T>
+        protected struct ReverseIterator : IIterator<T>
         {
             private LinkedHashSet<T> inst;
             private LinkedNode<T> node;
@@ -602,7 +603,7 @@ namespace SuperComicLib.Collections
             public T Value
             {
                 get => node.m_value;
-                set => node.m_value = value;
+                set => throw new InvalidOperationException();
             }
 
             public void Add()

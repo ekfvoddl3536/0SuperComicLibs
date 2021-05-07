@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SuperComicLib.Collections
 {
-    internal sealed class RangeForEachIterator<T> : IForwardIterator<T>, IEnumerator<T>
+    internal sealed class RangeForEachIterator<T> : IIterator<T>, IEnumerator<T>
     {
         private T[] arr;
         private int start;
@@ -20,20 +20,20 @@ namespace SuperComicLib.Collections
         }
 
         #region iterator
-        bool IForwardIterator<T>.IsAlive => idx < end;
+        bool IIterator<T>.IsAlive => idx < end;
 
-        int IForwardIterator<T>.Count => end - start;
+        int IIterator<T>.Count => end - start;
 
-        void IForwardIterator<T>.Add() => idx++;
-        bool IForwardIterator<T>.LazyAdd() => ++idx < end;
+        void IIterator<T>.Add() => idx++;
+        bool IIterator<T>.LazyAdd() => ++idx < end;
 
-        T IForwardIterator<T>.Value 
+        T IIterator<T>.Value 
         {
             get => arr[idx];
             set => arr[idx] = value;
         }
 
-        T[] IForwardIterator<T>.ToArray() => arr;
+        T[] IIterator<T>.ToArray() => arr;
         #endregion
 
         #region enumerator

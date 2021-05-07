@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace SuperComicLib.Collections
 {
-#if DEBUG
-    [System.Diagnostics.DebuggerTypeProxy(typeof(ValuePairTable<,>))]
-    [System.Diagnostics.DebuggerDisplay("Count = {m_count}")]
-#endif
+    [DebuggerTypeProxy(typeof(ValuePairTable<,>))]
+    [DebuggerDisplay("Count = {m_count}")]
     public class ValuePairTable<T1, T2> : IDisposable, IEnumerable<KeyValuePair<T1, T2>>, IEnumerablePair<T1, T2>
     {
         private T1[] t1s;

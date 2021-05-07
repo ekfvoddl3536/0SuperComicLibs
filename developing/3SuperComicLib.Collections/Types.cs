@@ -29,7 +29,7 @@ namespace SuperComicLib.Collections
         void Reset();
     }
 
-    public interface IForwardIterator<T> : IDisposable
+    public interface IIterator<T> : IDisposable
     {
         void Add();
         void Reset();
@@ -65,8 +65,9 @@ namespace SuperComicLib.Collections
 
     public interface IIterable<T>
     {
-        IForwardIterator<T> Begin();
-        IForwardIterator<T> RBegin();
+        IIterator<T> Begin();
+        IIterator<T> RBegin();
+        T[] ToArray();
     }
 
     public interface ILongHashedList<T> : IDisposable, IEnumerable<T>, IIterable<T>

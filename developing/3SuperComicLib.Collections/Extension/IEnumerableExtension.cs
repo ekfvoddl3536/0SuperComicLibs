@@ -64,5 +64,8 @@ namespace SuperComicLib.Collections
 
             return -1;
         }
+
+        public static IIterable<T> AsIterable<T>(this IEnumerable<T> collection) =>
+            new EnumerableToIterable<T>(collection);
     }
 }

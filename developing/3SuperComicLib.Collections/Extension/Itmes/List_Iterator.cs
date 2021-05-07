@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SuperComicLib.Collections
 {
-    internal sealed class List_Iterator<T> : IForwardIterator<T>
+    internal sealed class List_Iterator<T> : IIterator<T>
     {
         private IList<T> inst;
         private int index;

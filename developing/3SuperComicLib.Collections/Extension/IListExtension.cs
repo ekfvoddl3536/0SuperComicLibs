@@ -4,9 +4,9 @@ namespace SuperComicLib.Collections
 {
     public static class IListExtension
     {
-        public static IForwardIterator<T> Begin<T>(this IList<T> item) => new List_Iterator<T>(item);
+        public static IIterator<T> Begin<T>(this IList<T> item) => new List_Iterator<T>(item);
 
-        public static IForwardIterator<T> RBegin<T>(this IList<T> item) => new List_ReverseIterator<T>(item);
+        public static IIterator<T> RBegin<T>(this IList<T> item) => new List_ReverseIterator<T>(item);
 
         public static IAddOnlyList<T> AsAddOnly<T>(this IList<T> item) => new List_AddOnlyWrapper<T>(item);
 

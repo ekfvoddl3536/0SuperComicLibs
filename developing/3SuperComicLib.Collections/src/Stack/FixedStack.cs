@@ -4,10 +4,8 @@ using System.Collections.Generic;
 
 namespace SuperComicLib.Collections
 {
-#if DEBUG
-    [System.Diagnostics.DebuggerTypeProxy(typeof(DEBUG_StackView<>))]
+    [System.Diagnostics.DebuggerTypeProxy(typeof(IIterableView<>))]
     [System.Diagnostics.DebuggerDisplay("Count = {size}")]
-#endif
     public sealed class FixedStack<T> : IIterable<T>, IEnumerable<T>, IStack<T>
     {
         private T[] arr;
@@ -56,9 +54,9 @@ namespace SuperComicLib.Collections
             cnt = 0;
         }
 
-        public IForwardIterator<T> Begin() => arr.Slice(0, cnt).Begin();
+        public IIterator<T> Begin() => arr.Slice(0, cnt).Begin();
 
-        public IForwardIterator<T> RBegin() => arr.Slice(0, cnt).RBegin();
+        public IIterator<T> RBegin() => arr.Slice(0, cnt).RBegin();
 
         public IEnumerator<T> GetEnumerator() => arr.Slice(0, cnt).GetEnumerator();
 

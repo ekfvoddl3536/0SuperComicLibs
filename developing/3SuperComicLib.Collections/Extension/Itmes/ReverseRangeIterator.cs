@@ -2,7 +2,7 @@
 
 namespace SuperComicLib.Collections
 {
-    internal sealed class ReverseRangeIterator<T> : IForwardIterator<T>
+    internal sealed class ReverseRangeIterator<T> : IIterator<T>
     {
         private T[] arr;
         private int start;

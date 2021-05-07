@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using SuperComicLib.Numerics;
 
 namespace SuperComicLib.Collections
 {
-#if DEBUG
-    [System.Diagnostics.DebuggerTypeProxy(typeof(CHashSetView<>))]
-    [System.Diagnostics.DebuggerDisplay("Count = {m_count}")]
-#endif
+    [DebuggerTypeProxy(typeof(IIterableView<>))]
+    [DebuggerDisplay("Count = {m_count}")]
     public class CHashSet<T> : ISet<T>, IEnumerable<T>, IDisposable
     {
         protected const int bitmask = 0x7FFF_FFFF;

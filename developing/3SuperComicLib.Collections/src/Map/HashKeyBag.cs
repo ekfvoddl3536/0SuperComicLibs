@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace SuperComicLib.Collections
 {
-    public class HashKeyBag<T> : IEnumerable<int>
+    [DebuggerTypeProxy(typeof(IIterableView<>))]
+    [DebuggerDisplay("Count = {m_count}")]
+    public class HashKeyBag<T> : IEnumerable<int>, IIterable<int>
     {
         private readonly int[] m_buckets;
         private int m_count;
@@ -53,8 +56,14 @@ namespace SuperComicLib.Collections
 
         public int[] ArraySource() => m_buckets;
 
+        #region enumerable
         public IEnumerator<int> GetEnumerator() => new Enumerator(this);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public IIterator<int> Begin() => this.AsIterable().Begin();
+        public IIterator<int> RBegin() => this.AsIterable().RBegin();
+        int[] IIterable<int>.ToArray() => ArraySource();
+        #endregion
 
         private struct Enumerator : IEnumerator<int>
         {

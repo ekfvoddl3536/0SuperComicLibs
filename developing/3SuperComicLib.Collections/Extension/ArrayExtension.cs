@@ -5,9 +5,9 @@ namespace SuperComicLib.Collections
 {
     public static class ArrayExtension
     {
-        public static IForwardIterator<T> Begin<T>(this T[] array) => new Array_Iterator<T>(array);
+        public static IIterator<T> Begin<T>(this T[] array) => new Array_Iterator<T>(array);
 
-        public static IForwardIterator<T> RBegin<T>(this T[] array) => new Array_ReverseIterator<T>(array);
+        public static IIterator<T> RBegin<T>(this T[] array) => new Array_ReverseIterator<T>(array);
 
         public static IRangeRefArray<T> Slice<T>(this T[] array, int start, int end) => new RangeArray<T>(array, start, end);
 

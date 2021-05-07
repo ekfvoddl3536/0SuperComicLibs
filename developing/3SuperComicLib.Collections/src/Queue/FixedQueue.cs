@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace SuperComicLib.Collections
 {
-#if DEBUG
-    [System.Diagnostics.DebuggerTypeProxy(typeof(DEBUG_QueueView<>))]
-    [System.Diagnostics.DebuggerDisplay("Count = {size}")]
-#endif
+    [DebuggerTypeProxy(typeof(IIterableView<>))]
+    [DebuggerDisplay("Count = {size}")]
     public sealed class FixedQueue<T> : IEnumerable<T>
     {
         private readonly T[] arr;

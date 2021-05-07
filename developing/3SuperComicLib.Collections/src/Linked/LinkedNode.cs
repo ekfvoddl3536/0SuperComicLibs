@@ -30,8 +30,8 @@
             if (prev != null)
                 prev.m_next = next;
 
-            next = null;
-            prev = null;
+            next = this;
+            prev = this;
             m_value = default;
         }
     }

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace SuperComicLib.Collections
 {
-#if DEBUG
-    [System.Diagnostics.DebuggerTypeProxy(typeof(LongHashedListView<>))]
-    [System.Diagnostics.DebuggerDisplay("Count = {m_count}")]
-#endif
+    [DebuggerTypeProxy(typeof(IIterableView<>))]
+    [DebuggerDisplay("Count = {m_count}")]
     public unsafe class LongHashedList<T> : ILongHashedList<T>
     {
         protected const long bitmask = 0x7FFF_FFFF_FFFF_FFFF;
@@ -46,7 +45,7 @@ namespace SuperComicLib.Collections
             if (collection == null)
                 return;
 
-            for (IForwardIterator<T> x = collection.Begin(); x.IsAlive; x.Add())
+            for (IIterator<T> x = collection.Begin(); x.IsAlive; x.Add())
                 if (x.Value != null)
                     Add(x.Value.GetHashCode(), x.Value);
         }
@@ -263,9 +262,9 @@ namespace SuperComicLib.Collections
         public IEnumerator<T> GetEnumerator() => new Enumerator(this);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public IForwardIterator<T> Begin() => new Iterator(this);
+        public IIterator<T> Begin() => new Iterator(this);
 
-        public IForwardIterator<T> RBegin() => new ReverseIterator(this);
+        public IIterator<T> RBegin() => new ReverseIterator(this);
 
         public IEnumerable<long> Keys => new KeyEnumerator(this);
 
@@ -373,7 +372,7 @@ namespace SuperComicLib.Collections
         }
 
 #pragma warning disable
-        protected struct Iterator : IForwardIterator<T>
+        protected struct Iterator : IIterator<T>
         {
             private LongHashedList<T> inst;
             private int index;
@@ -420,7 +419,7 @@ namespace SuperComicLib.Collections
             }
         }
 
-        protected struct ReverseIterator : IForwardIterator<T>
+        protected struct ReverseIterator : IIterator<T>
         {
             private LongHashedList<T> inst;
             private int index;

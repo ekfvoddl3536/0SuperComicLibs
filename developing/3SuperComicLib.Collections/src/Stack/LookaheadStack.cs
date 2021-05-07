@@ -4,10 +4,8 @@ using System.Collections.Generic;
 
 namespace SuperComicLib.Collections
 {
-#if DEBUG
-    [System.Diagnostics.DebuggerTypeProxy(typeof(DEBUG_StackView<>))]
+    [System.Diagnostics.DebuggerTypeProxy(typeof(IIterableView<>))]
     [System.Diagnostics.DebuggerDisplay("Count = {size}")]
-#endif
     public class LookaheadStack<T> : IDisposable, ICollection<T>, IIterable<T>, IStack<T>
     {
         private const int defaultCapacity = 8;
@@ -152,9 +150,9 @@ namespace SuperComicLib.Collections
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public IForwardIterator<T> Begin() => arr.RBegin();
+        public IIterator<T> Begin() => arr.RBegin();
 
-        public IForwardIterator<T> RBegin() => arr.Begin();
+        public IIterator<T> RBegin() => arr.Begin();
 
         #region interface
         void ICollection<T>.Add(T item) => Push(item);
