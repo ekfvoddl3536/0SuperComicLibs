@@ -732,7 +732,7 @@ namespace SuperComicLib.LowLevel
             while (size >= AMD64_PTR_SIZE)
             {
                 *pUL = 0;
-                pUL--;
+                pUL++; // 
                 size -= AMD64_PTR_SIZE;
             }
 
