@@ -68,6 +68,30 @@ namespace SuperComicLib.Collections
             get => m_comparer;
             set => m_comparer = value ?? EqualityComparer<TKey>.Default;
         }
+
+        public TValue this[TKey key]
+        {
+            get
+            {
+                var slots = this.slots;
+                int hc = key.GetHashCode() & bitmask;
+                for (int x = buckets[hc % buckets.Length] - 1; x >= 0; x = slots[x].next)
+                    if (slots[x].hashCode == hc && m_comparer.Equals(slots[x].node.m_value.key, key))
+                        return slots[x].node.m_value.value;
+
+                throw new KeyNotFoundException();
+            }
+            set
+            {
+                var slots = this.slots;
+                int hc = key.GetHashCode() & bitmask;
+                for (int x = buckets[hc % buckets.Length] - 1; x >= 0; x = slots[x].next)
+                    if (slots[x].hashCode == hc && m_comparer.Equals(slots[x].node.m_value.key, key))
+                        slots[x].node.m_value.value = value;
+
+                throw new KeyNotFoundException();
+            }
+        }
         #endregion
 
         #region methods
@@ -241,7 +265,7 @@ namespace SuperComicLib.Collections
 
             m_freeList = -1;
 
-            m_version = 0;
+            m_version++;
             m_head = null;
         }
 
