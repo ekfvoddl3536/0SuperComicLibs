@@ -100,13 +100,16 @@
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>E:\[]UNITY_2019\unity 2019\2018.1.9f2\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>E:\[]UNITY_2019\unity 2019\2018.1.9f2\Editor\Data\Managed\UnityEngine\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>E:\[]UNITY_2019\unity 2019\2018.1.9f2\Editor\Data\UnityExtensions\Unity\GUISystem\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -114,6 +117,7 @@
     <Compile Include="Attribute\base\GetCompBaseAttribute.cs" />
     <Compile Include="Attribute\debug help\Attributes.cs" />
     <Compile Include="Attribute\base\FieldBaseAttribute.cs" />
+    <Compile Include="Attribute\debug help\ValueCompareMode.cs" />
     <Compile Include="Attribute\debug help\ValueContractHelper.cs" />
     <Compile Include="Attribute\debug help\ValueContractAttribute.cs" />
     <Compile Include="Attribute\GetCompAttribute.cs" />
@@ -121,10 +125,18 @@
     <Compile Include="Controller\Base\Model3DController.cs" />
     <Compile Include="Controller\Base\ModelClickController.cs" />
     <Compile Include="Controller\ModelMouseController.cs" />
+    <Compile Include="Exceptions\SingletonDirtyValueException.cs" />
     <Compile Include="Extensions\MonoBehaviourAttributeExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SCMonoBehaviour.cs" />
+    <Compile Include="SCUnityScriptBase.cs" />
+    <Compile Include="Systems\SCUpdateSystem.cs" />
+    <Compile Include="Systems\SCUpdateSystemMonoBehaviour.cs" />
+    <Compile Include="Systems\Types.cs" />
+    <Compile Include="Utility\SCDelayTask.cs" />
+    <Compile Include="Utility\SCDelayTaskResult.cs" />
+    <Compile Include="Utility\SCTask.cs" />
+    <Compile Include="Utility\VirtualCoroutine.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

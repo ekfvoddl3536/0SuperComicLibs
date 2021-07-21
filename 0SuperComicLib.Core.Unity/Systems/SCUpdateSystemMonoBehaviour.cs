@@ -25,19 +25,18 @@
 
 namespace SuperComicWorld
 {
-    /// <summary>
-    /// 필드의 타입으로 Component를 검색하는 Attribute
-    /// </summary>
-    public sealed class GetCompAttribute : GetCompBaseAttribute
+    public sealed class SCUpdateSystemMonoBehaviour : UnityEngine.MonoBehaviour
     {
-        /// <summary>
-        /// 기본 생성자
-        /// </summary>
-        public GetCompAttribute() { }
+        private static SCUpdateSystemMonoBehaviour singleton;
 
-        /// <summary>
-        /// 고급 검색 옵션이 있는 생성자
-        /// </summary>
-        public GetCompAttribute(bool findRootOnly) : base(findRootOnly) { }
+        internal void Awake()
+        {
+            if (singleton != null)
+                throw new SingletonDirtyValueException();
+
+            singleton = this;
+        }
+
+        internal void Update() => SCUpdateSystem.Update();
     }
 }

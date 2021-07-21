@@ -1,63 +1,62 @@
-﻿using UnityEngine;
+﻿#region LICENSE
+/* MIT License
+ * 
+ * Copyright (c) 2021 SuperComic <ekfvoddl3535@naver.com>
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE
+ */
+#endregion
 
 namespace SuperComicWorld
 {
-    /// <summary>
-    /// 슈퍼코믹이 개조한 MonoBehaviour
-    /// </summary>
-    public abstract class SCMonoBehaviour : MonoBehaviour
+    public abstract class SCMonoBehaviour : SCUnityScriptBase
     {
-        /// <summary>
-        /// 유니티 스크립트가 처음 시작될 때 (최초 1번)
-        /// </summary>
-        protected void Awake() =>
+        protected override sealed void Awake()
+        {
+            base.Awake();
             OnAwake(true);
+        }
 
-        /// <summary>
-        /// 프레임이 시작되기 전 ((매번) 최초 Update 호출 전 1번)
-        /// </summary>
         protected virtual void Start()
         {
         }
 
-        /// <summary>
-        /// 게임 오브젝트 삭제될 때
-        /// </summary>
         protected virtual void OnDestroy()
         {
         }
 
-        /// <summary>
-        /// Active 가 false 될 때
-        /// </summary>
         protected virtual void OnDisable()
         {
         }
 
-        /// <summary>
-        /// 프레임 마다
-        /// </summary>
         protected virtual void Update()
         {
         }
 
-        /// <summary>
-        /// 프레임 마다 (마지막)
-        /// </summary>
         protected virtual void LateUpdate()
         {
         }
 
-        /// <summary>
-        /// 초기화
-        /// </summary>
         protected virtual void Reset()
         {
         }
 
-        /// <summary>
-        /// OnAwake
-        /// </summary>
         protected virtual void OnAwake(bool scanAllFields)
         {
             if (scanAllFields)

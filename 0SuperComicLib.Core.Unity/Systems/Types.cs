@@ -25,19 +25,36 @@
 
 namespace SuperComicWorld
 {
-    /// <summary>
-    /// 필드의 타입으로 Component를 검색하는 Attribute
-    /// </summary>
-    public sealed class GetCompAttribute : GetCompBaseAttribute
+    public enum SCUpdateType
     {
-        /// <summary>
-        /// 기본 생성자
-        /// </summary>
-        public GetCompAttribute() { }
+        SCU_33ms_30fps,
+        SCU_100ms_10fps,
+        SCU_250ms_4fps,
+        SCU_1000ms
+    }
 
-        /// <summary>
-        /// 고급 검색 옵션이 있는 생성자
-        /// </summary>
-        public GetCompAttribute(bool findRootOnly) : base(findRootOnly) { }
+    public interface ISCUpdateFixed
+    {
+        SCUpdateType UpdateType { get; }
+
+        void Update(float dt);
+    }
+
+    public interface ISCSystem
+    {
+        string ServiceName { get; }
+
+        int UpdateOrder { get; }
+
+        bool IsDirty { get; }
+
+        void Update(float dt);
+    }
+
+    public interface ISCDependencies
+    {
+        ISCUpdateFixed[] GetList();
+
+        ISCSystem[] GetSystemList();
     }
 }
