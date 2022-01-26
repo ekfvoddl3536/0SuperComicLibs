@@ -19,8 +19,9 @@ namespace SuperComicLib
             return left - (temp & (temp >> 31));
         }
 
+        // RngIn --> Clampi 이름 변경
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int RngIn(this int num, int min, int max) => Max(min, Min(max, num));
+        public static int Clampi(this int num, int min, int max) => Max(min, Min(max, num));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsRngIn(this int num, int min, int max) => num >= min && num <= max;
@@ -52,14 +53,17 @@ namespace SuperComicLib
         public static int Normal(this int value) => (value >> 31) | (int)((uint)-value >> 31);
 
         // https://blog.naver.com/ekfvoddl3535/222629296802
+        // 분기가 없으므로 수식 개선
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Flip(this int value, int max_include) => max_include - value;
 
         // https://blog.naver.com/ekfvoddl3535/222629296802
+        // 분기가 없으므로 수식 개선
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Flip(this int value, int min_include, int max_include) => max_include - (min_include - value);
 
         // https://blog.naver.com/ekfvoddl3535/222629296802
+        // state는 조건 분기의 조건 역할을 하며, 1 (true)일 때 Flip은 수행됩니다
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Flip_s(this int value, int max_include, int state)
         {
@@ -68,11 +72,12 @@ namespace SuperComicLib
         }
 
         // https://blog.naver.com/ekfvoddl3535/222629296802
+        // state는 조건 분기의 조건 역할을 하며, 1 (true)일 때 Flip은 수행됩니다.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Flip_s(this int value, int min_include, int max_include, int state)
         {
             Contract.Requires(state >= 0 && state <= 1, "invalid state value");
-            return min_include + value - ((value << 1) - max_include) * state;
+            return value - ((value << 1) - max_include - min_include) * state;
         }
     }
 }
