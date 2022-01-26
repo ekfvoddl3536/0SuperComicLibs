@@ -53,11 +53,11 @@ namespace SuperComicLib
 
         // https://blog.naver.com/ekfvoddl3535/222629296802
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int Flip(this int value, int max_include) => value - ((value << 1) - max_include);
+        public static int Flip(this int value, int max_include) => max_include - value;
 
         // https://blog.naver.com/ekfvoddl3535/222629296802
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int Flip(this int value, int min_include, int max_include) => min_include + value - ((value << 1) - max_include);
+        public static int Flip(this int value, int min_include, int max_include) => max_include - (min_include - value);
 
         // https://blog.naver.com/ekfvoddl3535/222629296802
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
