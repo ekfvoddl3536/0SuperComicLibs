@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace SuperComicLib.Collections
 {
-    [DebuggerTypeProxy(typeof(IIterableView<>))]
+    [DebuggerTypeProxy(typeof(EnumerableView<>))]
     [DebuggerDisplay("Count = {size}")]
     public sealed class FixedQueue<T> : IEnumerable<T>
     {

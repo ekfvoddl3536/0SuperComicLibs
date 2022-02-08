@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace SuperComicLib.Text
 {
@@ -42,36 +43,49 @@ namespace SuperComicLib.Text
         }
 
         #region property
-        public char this[int relative_index] =>
+        public char this[int relative_index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get =>
 #if DEBUG
-            (relative_index += sidx) >= eidx
-            ? throw new ArgumentOutOfRangeException(nameof(relative_index))
-            : str[relative_index];
+                (relative_index += sidx) >= eidx
+                ? throw new ArgumentOutOfRangeException(nameof(relative_index))
+                : str[relative_index];
 #else
-            str[relative_index + sidx];
+                str[relative_index + sidx];
 #endif
+        }
 
-        public FRngString this[int relative_startIndex, int relative_endIndex] =>
+        public FRngString this[int relative_startIndex, int relative_endIndex]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get =>
 #if DEBUG
-            (relative_startIndex += sidx) >= (relative_endIndex += sidx) ||
-            relative_startIndex >= eidx
-            ? throw new ArgumentOutOfRangeException(nameof(relative_startIndex))
-            : relative_endIndex >= eidx
-            ? throw new ArgumentOutOfRangeException(nameof(relative_endIndex))
-            : this & new Range(relative_startIndex, relative_endIndex);
+                (relative_startIndex += sidx) >= (relative_endIndex += sidx) ||
+                relative_startIndex >= eidx
+                ? throw new ArgumentOutOfRangeException(nameof(relative_startIndex))
+                : relative_endIndex >= eidx
+                ? throw new ArgumentOutOfRangeException(nameof(relative_endIndex))
+                : this & new Range(relative_startIndex, relative_endIndex);
 #else
-            this & new Range(relative_startIndex + sidx, relative_endIndex + sidx);
+                this & new Range(relative_startIndex + sidx, relative_endIndex + sidx);
 #endif
+        }
 
-        public int Length => eidx - sidx;
+        public int Length
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => eidx - sidx;
+        }
         #endregion
 
         #region method
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Range GetRange() => new Range(sidx, eidx);
 
         public char[] ToCharArray()
         {
-            int len = Math.Max(0, Length);
+            int len = CMath.Max(0, Length);
 
             char[] vs = new char[len];
 
@@ -107,17 +121,21 @@ namespace SuperComicLib.Text
 
         #region method 2
         #region contains
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(Range range) =>
             range.end >= range.start &&
             sidx >= range.start &&
             eidx <= range.end;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(FRngString other) =>
             IndexOf(other) >= 0;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(string other) =>
             IndexOf(other) >= 0;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(char other) =>
             IndexOf(other) >= 0;
         #endregion
@@ -220,6 +238,7 @@ namespace SuperComicLib.Text
             return -1;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int IndexOf(char value) =>
             IndexOf(value, 0);
 
@@ -240,12 +259,15 @@ namespace SuperComicLib.Text
             return -1;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int IndexOf(string value, int startIndex) =>
             IndexOf(new FRngString(value), startIndex);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int IndexOf(FRngString value) =>
             IndexOf(value, 0);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int IndexOf(string value) =>
             IndexOf(new FRngString(value), 0);
 
@@ -264,9 +286,11 @@ namespace SuperComicLib.Text
             return -1;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int IndexOfAny(char[] anyOf, int startIndex) =>
             IndexOfAny(anyOf, startIndex, anyOf.Length);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int IndexOfAny(char[] anyOf) =>
             IndexOfAny(anyOf, 0, anyOf.Length);
         #endregion
@@ -284,6 +308,7 @@ namespace SuperComicLib.Text
             return -1;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int LastIndexOf(char value) =>
             LastIndexOf(value, 0);
 
@@ -303,12 +328,15 @@ namespace SuperComicLib.Text
             return -1;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int LastIndexOf(string value, int startIndex) =>
             LastIndexOf(new FRngString(value), startIndex);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int LastIndexOf(FRngString value) =>
             LastIndexOf(value, value.Length);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int LastIndexOf(string value) =>
             LastIndexOf(new FRngString(value), value.Length);
 
@@ -328,9 +356,11 @@ namespace SuperComicLib.Text
             return -1;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int LastIndexOfAny(char[] anyOf, int startIndex) =>
             LastIndexOfAny(anyOf, startIndex, anyOf.Length);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int LastIndexOfAny(char[] anyOf) =>
             LastIndexOfAny(anyOf, 0, anyOf.Length);
         #endregion
@@ -353,11 +383,14 @@ namespace SuperComicLib.Text
             return new FRngString(str, relative_startIndex, length);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FRngString SubString(int relative_startIndex) =>
             SubString(relative_startIndex, Length - relative_startIndex);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FRngString RemoveTail(int count) => SubString(0, Length - count);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FRngString RemoveHead(int count) => SubString(count);
 
         public FMultiRngString Insert(int startIndex, FRngString value)
@@ -378,6 +411,7 @@ namespace SuperComicLib.Text
                         new FMultiRngString(str, startIndex, eidx)));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FMultiRngString Insert(int startIndex, string value) => Insert(startIndex, new FRngString(value));
 
         public FRngString Trim()
@@ -396,12 +430,15 @@ namespace SuperComicLib.Text
             return new FRngString(str, sidx, eidx);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FRngString Trim(params char[] trimChars) =>
             TrimHelper(this, trimChars, TRIM_BOTH);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FRngString TrimEnd(params char[] trimChars) =>
             TrimHelper(this, trimChars, TRIM_TAIL);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FRngString TrimHead(params char[] trimChars) =>
             TrimHelper(this, trimChars, TRIM_HEAD);
 
@@ -432,72 +469,90 @@ namespace SuperComicLib.Text
         /// <summary>
         /// use <see cref="operator ~(FRngString)"/> instead of this method
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FMultiRngString Exclude() => ~this;
 
         /// <summary>
         /// use <see cref="operator +(FRngString, FRngString)"/> instead of this method
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FMultiRngString Add(FRngString value) => this + value;
 
         /// <summary>
         /// use <see cref="operator +(FRngString)"/> instead of this method
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FRngString ToEnd() => +this;
 
         /// <summary>
         /// use <see cref="operator -(FRngString)"/> instead of this method
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FRngString FirstTo() => -this;
 
         /// <summary>
         /// use <see cref="op_BitwiseAnd(FRngString, Range)"/> instead of this method
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FRngString Limit(Range relative_range) => this & relative_range;
         #endregion
         #endregion
 
         #region operator
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator FRngString(string value) => new FRngString(value);
 
         #region eq
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(FRngString left, FRngString right) =>
             left is null
             ? right is null
             : left.Equals(right);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(FRngString left, FRngString right) =>
             left is null
             ? !(right is null)
             : !left.Equals(right);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(FRngString left, string right) => 
             left is null
             ? right is null
             : left.Equals(right);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(FRngString left, string right) =>
             left is null
             ? !(right is null)
             : !left.Equals(right);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(string left, FRngString right) =>
             right is null
             ? left is null
             : right.Equals(left);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(string left, FRngString right) =>
             right is null
             ? !(left is null)
             : !right.Equals(left);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(FRngString left, Range right) => !(left is null) && left.Equals(right);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(FRngString left, Range right) => left is null || !left.Equals(right);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(Range left, FRngString right) => !(right is null) && right.Equals(left);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(Range left, FRngString right) => right is null || !right.Equals(left);
         #endregion
 
         #region arithmetic
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static FMultiRngString operator +(FRngString left, FRngString right) =>
             new FMultiRngString(left.str, left.sidx, left.eidx,
                 new FMultiRngString(right.str, right.sidx, right.eidx));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static FMultiRngString operator +(FRngString left, string right) =>
             new FMultiRngString(left.str, left.sidx, left.eidx,
                 new FMultiRngString(right));
@@ -515,20 +570,14 @@ namespace SuperComicLib.Text
         /// <summary>
         /// Right side string of the truncated range
         /// </summary>
-        public static FRngString operator +(FRngString v)
-        {
-            string str = v.str;
-            return new FRngString(str, v.eidx, str.Length);
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static FRngString operator +(FRngString v) => new FRngString(v.str, v.eidx, v.str.Length);
 
         /// <summary>
         /// Left side string of the truncated range
         /// </summary>
-        public static FRngString operator -(FRngString v)
-        {
-            string str = v.str;
-            return new FRngString(str, 0, v.sidx);
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static FRngString operator -(FRngString v) => new FRngString(v.str, 0, v.sidx);
 
         /// <summary>
         /// Add <paramref name="count"/> to startIndex and endIndex
@@ -546,8 +595,8 @@ namespace SuperComicLib.Text
             return
                 new FRngString(
                     str,
-                    Math.Max(0, left.sidx - count),
-                    Math.Min(str.Length, left.eidx + count));
+                    CMath.Max(0, left.sidx - count),
+                    CMath.Min(str.Length, left.eidx + count));
         }
 
         /// <summary>
@@ -564,7 +613,7 @@ namespace SuperComicLib.Text
             return
                 new FRngString(
                     str,
-                    Math.Min(left.sidx + count, eidx),
+                    CMath.Min(left.sidx + count, eidx),
                     eidx);
         }
 
@@ -584,8 +633,8 @@ namespace SuperComicLib.Text
             return
                 new FRngString(
                     str,
-                    Math.Min(left.sidx + count, len),
-                    Math.Min(left.eidx + count, len));
+                    CMath.Min(left.sidx + count, len),
+                    CMath.Min(left.eidx + count, len));
         }
 
         /// <summary>
@@ -604,8 +653,8 @@ namespace SuperComicLib.Text
             return
                 new FRngString(
                     str,
-                    Math.Max(left.sidx - count, 0),
-                    Math.Max(left.eidx - count, 0));
+                    CMath.Max(left.sidx - count, 0),
+                    CMath.Max(left.eidx - count, 0));
         }
 
         /// <summary>
@@ -628,8 +677,8 @@ namespace SuperComicLib.Text
             return
                 new FRngString(
                     left.str,
-                    Math.Max(sidx, ds),
-                    Math.Min(eidx, de));
+                    CMath.Max(sidx, ds),
+                    CMath.Min(eidx, de));
         }
         #endregion
         #endregion

@@ -69,12 +69,12 @@ namespace SuperComicLib.Collections
                     Add(val.GetHashCode(), val);
         }
 
-        public Map(IIterable<T> collection) : this(default_capacity)
+        public Map(IValueIterable<T> collection) : this(default_capacity)
         {
             if (collection == null)
                 return;
 
-            for (IIterator<T> x = collection.Begin(); x.IsAlive; x.Add())
+            for (IValueIterator<T> x = collection.Begin(); x.IsAlive; x.Add())
                 if (x.Value != null)
                     Add(x.Value.GetHashCode(), x.Value);
         }
@@ -254,7 +254,7 @@ namespace SuperComicLib.Collections
             return result;
         }
 
-        T[] IIterable<T>.ToArray() => ToValueArray();
+        T[] IValueIterable<T>.ToArray() => ToValueArray();
         #endregion
 
         #region capacity
@@ -293,9 +293,9 @@ namespace SuperComicLib.Collections
         public IEnumerator<KeyValuePair<int, T>> GetEnumerator() => new Enumerator(this);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public IIterator<T> Begin() => new Iterator(this);
+        public IValueIterator<T> Begin() => new Iterator(this);
 
-        public IIterator<T> RBegin() => new ReverseIterator(this);
+        public IValueIterator<T> RBegin() => new ReverseIterator(this);
 
         public IEnumerable<int> Keys => new KeyEnumerator(this);
 
@@ -401,7 +401,7 @@ namespace SuperComicLib.Collections
         }
 
 #pragma warning disable
-        protected struct Iterator : IIterator<T>
+        protected struct Iterator : IValueIterator<T>
         {
             private Map<T> inst;
             private int index;
@@ -448,7 +448,7 @@ namespace SuperComicLib.Collections
             }
         }
 
-        protected struct ReverseIterator : IIterator<T>
+        protected struct ReverseIterator : IValueIterator<T>
         {
             private Map<T> inst;
             private int index;

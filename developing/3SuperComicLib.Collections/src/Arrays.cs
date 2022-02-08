@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using SuperComicLib.Core;
 
 namespace SuperComicLib.Collections
@@ -53,6 +54,13 @@ namespace SuperComicLib.Collections
                 result = IntHash.CombineMOD(result, v?.GetHashCode() ?? 0);
 
             return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static int GetNextSize(int oldSize)
+        {
+            const int MaxArrayLength = 0x7FEF_FFFF;
+            return CMath.Min(oldSize << 1, MaxArrayLength);
         }
     }
 }

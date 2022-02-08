@@ -6,7 +6,7 @@ namespace SuperComicLib.Collections
 {
     [System.Diagnostics.DebuggerTypeProxy(typeof(IIterableView<>))]
     [System.Diagnostics.DebuggerDisplay("Count = {size}")]
-    public sealed class FixedStack<T> : IIterable<T>, IEnumerable<T>, IStack<T>
+    public sealed class FixedStack<T> : IValueIterable<T>, IEnumerable<T>, IStack<T>
     {
         private T[] arr;
         private int cnt;
@@ -54,9 +54,9 @@ namespace SuperComicLib.Collections
             cnt = 0;
         }
 
-        public IIterator<T> Begin() => arr.Slice(0, cnt).Begin();
+        public IValueIterator<T> Begin() => arr.Slice(0, cnt).Begin();
 
-        public IIterator<T> RBegin() => arr.Slice(0, cnt).RBegin();
+        public IValueIterator<T> RBegin() => arr.Slice(0, cnt).RBegin();
 
         public IEnumerator<T> GetEnumerator() => arr.Slice(0, cnt).GetEnumerator();
 

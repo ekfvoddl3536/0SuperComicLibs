@@ -19,7 +19,7 @@ namespace SuperComicLib.Core
             rnd.NextDouble();
 
         public static float NextFloat() =>
-            (float)(rnd.Next() % ushort.MaxValue) / (ushort.MaxValue - 1);
+            (float)(rnd.Next() & 0x7F_FFFF) / 0x7F_FFFF; // 1.0 ~ 1.192093E-7
 
         public static int NextMax(int max) =>
             rnd.Next() % max;

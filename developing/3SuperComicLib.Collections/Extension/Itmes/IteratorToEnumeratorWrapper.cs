@@ -6,10 +6,10 @@ namespace SuperComicLib.Collections
 {
     internal sealed class IteratorToEnumeratorWrapper<T> : IEnumerable<T>, IEnumerator<T>
     {
-        private IIterator<T> inst;
+        private IValueIterator<T> inst;
         private T current;
 
-        public IteratorToEnumeratorWrapper(IIterator<T> inst) => this.inst = inst;
+        public IteratorToEnumeratorWrapper(IValueIterator<T> inst) => this.inst = inst;
 
         public IEnumerator<T> GetEnumerator() => this;
         IEnumerator IEnumerable.GetEnumerator() => this;

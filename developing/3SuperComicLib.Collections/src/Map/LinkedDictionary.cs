@@ -7,7 +7,7 @@ namespace SuperComicLib.Collections
 {
     [DebuggerTypeProxy(typeof(IIterableView<>))]
     [DebuggerDisplay("Count = {m_count}")]
-    public class LinkedDictionary<TKey, TValue> : IIterable<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>
+    public class LinkedDictionary<TKey, TValue> : IValueIterable<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>
     {
         protected const int bitmask = 0x7FFF_FFFF;
         protected const int maxlen = 0x7FEF_FFFF;
@@ -349,8 +349,8 @@ namespace SuperComicLib.Collections
         #endregion
 
         #region enumerable
-        public IIterator<KeyValuePair<TKey, TValue>> Begin() => new Iterator(this);
-        public IIterator<KeyValuePair<TKey, TValue>> RBegin() => new ReverseIterator(this);
+        public IValueIterator<KeyValuePair<TKey, TValue>> Begin() => new Iterator(this);
+        public IValueIterator<KeyValuePair<TKey, TValue>> RBegin() => new ReverseIterator(this);
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => new KeyValueEnumerator(this);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -445,7 +445,7 @@ namespace SuperComicLib.Collections
         #endregion
 
         #region iterators
-        protected class Iterator : IIterator<KeyValuePair<TKey, TValue>>
+        protected class Iterator : IValueIterator<KeyValuePair<TKey, TValue>>
         {
             internal LinkedDictionary<TKey, TValue> inst;
             internal LinkedNode<TTKv> node;
@@ -465,7 +465,7 @@ namespace SuperComicLib.Collections
                     TTKv temp = node.m_value;
                     return new KeyValuePair<TKey, TValue>(temp.key, temp.value);
                 }
-                set { }
+                set => throw new AccessViolationException("ReadOnly");
             }
 
             public virtual void Add()

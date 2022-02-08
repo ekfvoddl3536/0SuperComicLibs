@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SuperComicLib.Collections
 {
     public static class ArrayExtension
     {
-        public static IIterator<T> Begin<T>(this T[] array) => new Array_Iterator<T>(array);
+        public static IValueIterator<T> Begin<T>(this T[] array) => new Array_Iterator<T>(array);
 
-        public static IIterator<T> RBegin<T>(this T[] array) => new Array_ReverseIterator<T>(array);
+        public static IValueIterator<T> RBegin<T>(this T[] array) => new Array_ReverseIterator<T>(array);
 
         public static IRangeRefArray<T> Slice<T>(this T[] array, int start, int end) => new RangeArray<T>(array, start, end);
-
-        public static IRangeRefArray<T> Slice<T>(this T[] array, int start, T end) => Slice(array, start, end, EqualityComparer<T>.Default);
 
         public static IRangeRefArray<T> Slice<T>(this T[] array, int start, T end, IEqualityComparer<T> comparer)
         {
@@ -107,5 +106,27 @@ namespace SuperComicLib.Collections
             array.Length.Min(max) == other.Length.Min(max)
             ? new EnumerablePair<T1, T2>(array, other, max)
             : null;
+
+        public static T[] ToFlatArray<T>(this Array array)
+        {
+            Type type = array.GetType().GetElementType();
+            if (type != CachedType<T>.Value)
+                throw new ArgumentException("Mismatch Type", nameof(array));
+            else if (array.Rank <= 1)
+                return (T[])array;
+
+            int n = array.Length;
+
+            T[] result = new T[n];
+
+            IEnumerator<T> iterator = array.Cast<T>().GetEnumerator();
+
+            while (--n >= 0 && iterator.MoveNext())
+                result[n] = iterator.Current;
+
+            iterator.Dispose();
+
+            return result;
+        }
     }
 }

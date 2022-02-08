@@ -46,7 +46,7 @@ namespace SuperComicLib.Collections
         {
             T[] arr = this.arr;
             if (size == arr.Length)
-                IncreaseCapacity(size << 1);
+                IncreaseCapacity(Arrays.GetNextSize(size));
             size++;
 
             ref int t = ref tail;

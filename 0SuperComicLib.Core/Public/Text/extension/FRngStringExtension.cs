@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Runtime.CompilerServices;
 
 namespace SuperComicLib.Text
 {
@@ -8,7 +8,7 @@ namespace SuperComicLib.Text
         {
 #if DEBUG
             if (value is null)
-                throw new ArgumentNullException(nameof(value));
+                throw new System.ArgumentNullException(nameof(value));
 #endif
             int sidx = value.sidx;
             int cnt = value.eidx - sidx;
@@ -57,10 +57,13 @@ namespace SuperComicLib.Text
             return result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static decimal ToDecimal(this FRngString value) => decimal.Parse(value.ToString());
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double ToDouble(this FRngString value) => double.Parse(value.ToString());
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float ToFloat(this FRngString value) => float.Parse(value.ToString());
     }
 }

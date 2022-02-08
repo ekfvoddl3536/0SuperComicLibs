@@ -29,7 +29,7 @@ namespace SuperComicLib.Collections
         void Reset();
     }
 
-    public interface IIterator<T> : IDisposable
+    public interface IValueIterator<T> : IDisposable
     {
         void Add();
         void Reset();
@@ -55,7 +55,7 @@ namespace SuperComicLib.Collections
         bool CanRead(int count);
     }
 
-    public interface IRangeRefArray<T> : IEnumerable<T>, IIterable<T>
+    public interface IRangeRefArray<T> : IEnumerable<T>, IValueIterable<T>
     {
         int Length { get; }
         T this[int index] { get; set; }
@@ -63,14 +63,14 @@ namespace SuperComicLib.Collections
         IRangeRefArray<T> Slice(int begin, int count);
     }
 
-    public interface IIterable<T>
+    public interface IValueIterable<T>
     {
-        IIterator<T> Begin();
-        IIterator<T> RBegin();
+        IValueIterator<T> Begin();
+        IValueIterator<T> RBegin();
         T[] ToArray();
     }
 
-    public interface ILongHashedList<T> : IDisposable, IEnumerable<T>, IIterable<T>
+    public interface ILongHashedList<T> : IDisposable, IEnumerable<T>, IValueIterable<T>
     {
         int Count { get; }
         int Capacity { get; }
@@ -87,7 +87,7 @@ namespace SuperComicLib.Collections
         void Clear();
     }
 
-    public interface IMap<T> : IDisposable, IEnumerable<KeyValuePair<int, T>>, IIterable<T>
+    public interface IMap<T> : IDisposable, IEnumerable<KeyValuePair<int, T>>, IValueIterable<T>
     {
         int Count { get; }
         int Capacity { get; }
@@ -137,5 +137,75 @@ namespace SuperComicLib.Collections
     public interface ICountObserver : IUniObserver
     {
         int Count { get; }
+    }
+
+    public interface IRawContainer
+    {
+#pragma warning disable IDE1006
+        int capacity();
+
+        int size();
+
+        RawMemory getMemory();
+#pragma warning restore IDE1006 // 명명규칙
+    }
+
+    public interface IRawContainer<T> : IRawContainer
+        where T : unmanaged
+    {
+        ref T this[int index] { get; }
+
+        ref T At(int index);
+
+#pragma warning disable IDE1006
+        RawIterator<T> begin();
+        RawIterator<T> end();
+
+        RawReverseIterator<T> rbegin();
+        RawReverseIterator<T> rend();
+#pragma warning restore IDE1006 // 명명규칙
+    }
+
+    public interface IRawList<T> : IRawContainer<T>
+        where T : unmanaged
+    {
+#pragma warning disable IDE1006
+        void push_back(T item);
+
+        T pop_back();
+
+        void insert(int index, T item);
+
+        bool removeAt(int index);
+
+        void earse(RawIterator<T> position);
+
+        void earse(RawIterator<T> first, RawIterator<T> last);
+#pragma warning restore IDE1006 // 명명규칙
+    }
+
+    public interface IRawAllocater
+    {
+#pragma warning disable IDE1006
+        IntPtr stdAlloc(int cb, bool initDefault);
+
+        void stdFree(IntPtr ptr);
+#pragma warning restore IDE1006 // 명명규칙
+    }
+
+    public interface IRawPersistentAllocater : IRawAllocater
+    {
+    }
+
+    internal interface IByReferenceIndexer_Internal<T>
+    {
+        ref T ByRefValue(int index);
+    }
+
+    internal interface ILinkedListSlim_Internal<T> : IByReferenceIndexer_Internal<T>
+    {
+        int GetNextNode(int node);
+
+        int GetPrevNode(int node);
     }
 }

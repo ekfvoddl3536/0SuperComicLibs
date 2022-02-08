@@ -2,7 +2,7 @@
 
 namespace SuperComicLib.Collections
 {
-    internal sealed class Array_Iterator<T> : IIterator<T>
+    internal sealed class Array_Iterator<T> : IValueIterator<T>
     {
         private T[] src;
         private int max; // fast

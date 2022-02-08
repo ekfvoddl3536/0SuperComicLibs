@@ -10,14 +10,7 @@ namespace SuperComicLib.Threading
 
         private volatile int m_state;
 
-        public bool IsLocked
-        {
-            get
-            {
-                int state = m_state;
-                return state == STATE_LOCK;
-            }
-        }
+        public bool IsLocked => m_state == STATE_LOCK;
 
         public bool TryEnter(int millisecondsTimeout)
         {

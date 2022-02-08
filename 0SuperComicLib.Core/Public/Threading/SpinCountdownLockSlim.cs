@@ -11,14 +11,7 @@ namespace SuperComicLib.Threading
         public SpinCountdownLockSlim(int initCount) =>
             m_count = m_initCount = initCount;
 
-        public bool IsLocked
-        {
-            get
-            {
-                int count = m_count;
-                return count == 0;
-            }
-        }
+        public bool IsLocked => m_count == 0;
 
         public bool TryEnter(int millisecondsTimeout)
         {

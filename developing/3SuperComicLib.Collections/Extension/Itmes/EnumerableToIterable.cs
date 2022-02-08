@@ -4,17 +4,17 @@ using System.Linq;
 
 namespace SuperComicLib.Collections
 {
-    internal sealed class EnumerableToIterable<T> : IIterable<T>
+    internal sealed class EnumerableToIterable<T> : IValueIterable<T>
     {
         private readonly IEnumerable<T> inst;
 
         public EnumerableToIterable(IEnumerable<T> inst) => this.inst = inst;
 
-        public IIterator<T> Begin() => new Worker(inst);
-        public IIterator<T> RBegin() => new Worker(inst.Reverse());
+        public IValueIterator<T> Begin() => new Worker(inst);
+        public IValueIterator<T> RBegin() => new Worker(inst.Reverse());
         public T[] ToArray() => inst.ToArray();
 
-        private sealed class Worker : IIterator<T>
+        private sealed class Worker : IValueIterator<T>
         {
             private IEnumerable<T> collection;
             private IEnumerator<T> enumerator;

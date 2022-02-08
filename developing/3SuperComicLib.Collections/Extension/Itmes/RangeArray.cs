@@ -24,14 +24,14 @@ namespace SuperComicLib.Collections
 
         public int Length => end - start;
 
-        public IIterator<T> Begin() =>
-            new RangeForEachIterator<T>(arr, start, end);
+        public IValueIterator<T> Begin() =>
+            new RangeIterator<T>(arr, start, end);
 
-        public IIterator<T> RBegin() =>
+        public IValueIterator<T> RBegin() =>
             new ReverseRangeIterator<T>(arr, start, end);
 
         public IEnumerator<T> GetEnumerator() =>
-            new RangeForEachIterator<T>(arr, start - 1, end);
+            new RangeArrayEnumerator<T>(arr, start, end);
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -46,6 +46,6 @@ namespace SuperComicLib.Collections
 
         public T[] Source() => arr;
 
-        T[] IIterable<T>.ToArray() => Source();
+        T[] IValueIterable<T>.ToArray() => Source();
     }
 }

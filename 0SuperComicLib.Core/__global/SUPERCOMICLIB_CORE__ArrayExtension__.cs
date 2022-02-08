@@ -95,6 +95,7 @@ public static class SUPERCOMICLIB_CORE__ArrayExtension__
         result = new T[count];
         for (int x = 0; x < count; x++, startIdx++)
             result[x] = _arr[startIdx];
+
         return true;
     }
 

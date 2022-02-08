@@ -1,10 +1,11 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
 namespace SuperComicLib
 {
     public static class CMath
     {
+        #region integer
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Min(this int left, int right)
         {
@@ -52,18 +53,13 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Normal(this int value) => (value >> 31) | (int)((uint)-value >> 31);
 
-        // https://blog.naver.com/ekfvoddl3535/222629296802
-        // 분기가 없으므로 수식 개선
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int Flip(this int value, int max_include) => max_include - value;
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //public static int Flip(this int value, int max_include) => max_include - value;
+
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //public static int Flip(this int value, int min_include, int max_include) => max_include - (value + min_include);
 
         // https://blog.naver.com/ekfvoddl3535/222629296802
-        // 분기가 없으므로 수식 개선
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int Flip(this int value, int min_include, int max_include) => max_include - (min_include - value);
-
-        // https://blog.naver.com/ekfvoddl3535/222629296802
-        // state는 조건 분기의 조건 역할을 하며, 1 (true)일 때 Flip은 수행됩니다
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Flip_s(this int value, int max_include, int state)
         {
@@ -72,12 +68,42 @@ namespace SuperComicLib
         }
 
         // https://blog.naver.com/ekfvoddl3535/222629296802
-        // state는 조건 분기의 조건 역할을 하며, 1 (true)일 때 Flip은 수행됩니다.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Flip_s(this int value, int min_include, int max_include, int state)
         {
             Contract.Requires(state >= 0 && state <= 1, "invalid state value");
             return value - ((value << 1) - max_include - min_include) * state;
         }
+        #endregion
+
+        #region long
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long Min(this long left, long right)
+        {
+            long temp = left - right;
+            return right + (temp & (temp >> 63));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long Max(this long left, long right)
+        {
+            long temp = left - right;
+            return left - (temp & (temp >> 63));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long Clampi(this long num, long min, long max) => Max(min, Min(max, num));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long Abs(this long value)
+        {
+            long temp = value >> 63;
+            return (value ^ temp) - temp;
+        }
+
+        // https://blog.naver.com/ekfvoddl3535/222607247076
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long Normal(this long value) => (value >> 63) | (long)((ulong)-value >> 63);
+        #endregion
     }
 }

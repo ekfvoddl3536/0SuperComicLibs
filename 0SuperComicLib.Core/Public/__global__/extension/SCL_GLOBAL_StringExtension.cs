@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace SuperComicLib
 {
@@ -10,6 +11,7 @@ namespace SuperComicLib
 
         #region other
         // public static string RemoveBack(this string str, int count) => str.Remove(str.Length - count, count);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string RemoveBack(this string str, int count) => str.Substring(0, str.Length - count);
 
         public static unsafe bool StartsWith(this string str, char* ptr, int cnt)

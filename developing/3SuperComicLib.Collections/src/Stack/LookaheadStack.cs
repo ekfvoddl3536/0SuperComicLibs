@@ -6,7 +6,7 @@ namespace SuperComicLib.Collections
 {
     [System.Diagnostics.DebuggerTypeProxy(typeof(IIterableView<>))]
     [System.Diagnostics.DebuggerDisplay("Count = {size}")]
-    public class LookaheadStack<T> : IDisposable, ICollection<T>, IIterable<T>, IStack<T>
+    public class LookaheadStack<T> : IDisposable, ICollection<T>, IValueIterable<T>, IStack<T>
     {
         private const int defaultCapacity = 8;
 
@@ -47,7 +47,7 @@ namespace SuperComicLib.Collections
         public void Push(T item)
         {
             if (size == arr.Length)
-                IncreaseCapacity(size << 1);
+                IncreaseCapacity(Arrays.GetNextSize(size));
 
             arr[size++] = item;
         }
@@ -150,9 +150,9 @@ namespace SuperComicLib.Collections
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public IIterator<T> Begin() => arr.RBegin();
+        public IValueIterator<T> Begin() => arr.RBegin();
 
-        public IIterator<T> RBegin() => arr.Begin();
+        public IValueIterator<T> RBegin() => arr.Begin();
 
         #region interface
         void ICollection<T>.Add(T item) => Push(item);

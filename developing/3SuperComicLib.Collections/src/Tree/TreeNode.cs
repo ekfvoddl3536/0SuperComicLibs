@@ -27,9 +27,11 @@ namespace SuperComicLib.Collections
 
         public void Expand(T value)
         {
-            TreeNode<T> child = new TreeNode<T>(this, value);
+            TreeNode<T> child = new TreeNode<T>(this, value)
+            {
+                prev = child_tail
+            };
 
-            child.prev = child_tail;
             child_tail = child;
         }
 

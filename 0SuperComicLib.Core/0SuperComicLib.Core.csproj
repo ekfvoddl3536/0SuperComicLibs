@@ -83,6 +83,37 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28net40%29|x86'">
+    <OutputPath>bin\x86\Release %28net40%29\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -93,7 +124,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Public\Core\IntHash.cs" />
+    <Compile Include="Public\Core\MemoryBlock.cs" />
     <Compile Include="Public\Core\PRNG.cs" />
+    <Compile Include="Public\Core\Share.cs" />
     <Compile Include="Public\Numerics\BitCounter.cs" />
     <Compile Include="Public\Text\extension\FRngStringExtension.cs" />
     <Compile Include="Public\Text\FCharEnumerator.cs" />
@@ -112,6 +145,7 @@
     <Compile Include="Public\Threading\SCL_CORE_THREADING_EXCEPTIONS.cs" />
     <Compile Include="Public\Threading\TaskExtension.cs" />
     <Compile Include="Public\Threading\SpinBlockLockSlim.cs" />
+    <Compile Include="Public\Threading\VolatileInt32.cs" />
     <Compile Include="Public\__global__\Cached.cs" />
     <Compile Include="Public\__global__\LongHashedString.cs" />
     <Compile Include="Public\__global__\Range.cs" />
@@ -128,6 +162,8 @@
     <Compile Include="Public\Numerics\QWORD.cs" />
     <Compile Include="Public\Numerics\Types.cs" />
     <Compile Include="Public\Numerics\WORD.cs" />
+    <Compile Include="Public\__global__\VarSwap.cs" />
+    <Compile Include="Public\__global__\types\Interfaces.cs" />
     <Compile Include="__global\SUPERCOMICLIB_CORE__BooleanExtension__.cs" />
     <Compile Include="__global\SUPERCOMICLIB_CORE__IntPtrExtension__.cs" />
     <Compile Include="__global\SCL_CORE_ObjectExtension.cs" />

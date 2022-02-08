@@ -8,7 +8,7 @@ namespace SuperComicLib.Collections
 {
     [DebuggerTypeProxy(typeof(IIterableView<>))]
     [DebuggerDisplay("Count = {m_count}")]
-    public class LinkedHashSet<T> : ISet<T>, IEnumerable<T>, IIterable<T>
+    public class LinkedHashSet<T> : ISet<T>, IEnumerable<T>, IValueIterable<T>
     {
         protected const int bitmask = 0x7FFF_FFFF;
         protected const int maxlen = 0x7FEF_FFFF;
@@ -441,9 +441,9 @@ namespace SuperComicLib.Collections
         public IEnumerator<T> GetEnumerator() => new Enumerator(this);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public IIterator<T> Begin() => new Iterator(this);
+        public IValueIterator<T> Begin() => new Iterator(this);
 
-        public IIterator<T> RBegin() => new ReverseIterator(this);
+        public IValueIterator<T> RBegin() => new ReverseIterator(this);
         #endregion
 
         #region capacity
@@ -544,7 +544,7 @@ namespace SuperComicLib.Collections
         }
 
 #pragma warning disable
-        protected struct Iterator : IIterator<T>
+        protected struct Iterator : IValueIterator<T>
         {
             private LinkedHashSet<T> inst;
             private LinkedNode<T> node;
@@ -587,7 +587,7 @@ namespace SuperComicLib.Collections
             }
         }
 
-        protected struct ReverseIterator : IIterator<T>
+        protected struct ReverseIterator : IValueIterator<T>
         {
             private LinkedHashSet<T> inst;
             private LinkedNode<T> node;

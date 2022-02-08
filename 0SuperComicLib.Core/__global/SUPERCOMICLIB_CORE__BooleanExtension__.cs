@@ -1,5 +1,7 @@
-﻿public static class SUPERCOMICLIB_CORE__BooleanExtension__
+﻿using System.Runtime.CompilerServices;
+
+public static class SUPERCOMICLIB_CORE__BooleanExtension__
 {
-    public static int ToInt(this bool value) => 
-        SuperComicLib.Core.Bool2Int._func(value);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe int ToInt(this bool value) => *(sbyte*)&value;
 }
