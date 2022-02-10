@@ -7,7 +7,7 @@ namespace SuperComicLib.Threading
     {
         #region classes
         #region base
-        private abstract class I : IEnumerator, IDisposable
+        private abstract class E_Base : IEnumerator, IDisposable
         {
             private IEnumerator e;
 
@@ -43,11 +43,11 @@ namespace SuperComicLib.Threading
         #endregion
 
         #region e0
-        private sealed class E0 : I
+        private sealed class E_Single : E_Base
         {
             private SingleSubThreadManager inst;
 
-            public E0(Action<IWorker> taskMethod)
+            public E_Single(Action<IWorker> taskMethod)
             {
                 SingleSubThreadManager v = new SingleSubThreadManager();
                 inst = v;
@@ -68,11 +68,11 @@ namespace SuperComicLib.Threading
         #endregion
 
         #region e1
-        private sealed class E1 : I
+        private sealed class E_Multi : E_Base
         {
             private MultiSubThreadManager inst;
 
-            public E1(Action<int, IMultiWorker>[] taskMethods, int threadSize)
+            public E_Multi(Action<int, IMultiWorker>[] taskMethods, int threadSize)
             {
                 MultiSubThreadManager v = new MultiSubThreadManager(taskMethods, threadSize);
                 inst = v;

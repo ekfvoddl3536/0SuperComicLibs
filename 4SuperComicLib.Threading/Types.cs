@@ -11,4 +11,11 @@ namespace SuperComicLib.Threading
     {
         Awaiter Invoke(int handle, Action action);
     }
+
+    public interface ILoopState
+    {
+        void Break();
+
+        void Stop();
+    }
 }
