@@ -7,7 +7,14 @@ namespace SuperComicLib.XPatch
     {
         public ReplaceMethodInfo(MethodInfo info) : base(info) { }
 
-        public override bool GenerateCode(ILGenerator il, MethodBase original, ParameterInfo[] parameters, int offset, bool hasReturn, bool hasArgBuffer)
+        public override bool GenerateCode(
+            ILGenerator il,
+            MethodBase original,
+            ParameterInfo[] parameters,
+            int offset,
+            bool hasReturn,
+            bool hasArgBuffer,
+            bool isValuetype)
         {
             if (original.IsStatic == false)
                 il.Emit(OpCodes.Ldarg_0);

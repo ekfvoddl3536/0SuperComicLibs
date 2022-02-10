@@ -35,6 +35,12 @@ namespace SuperComicLib.Numerics
             m_arr = new ulong[temp];
             m_length = temp;
         }
+
+        public Amd64Bits(ulong[] array, int arrayCount)
+        {
+            m_arr = array;
+            m_length = arrayCount;
+        }
         #endregion
 
         #region overrides
@@ -102,44 +108,43 @@ namespace SuperComicLib.Numerics
         {
             ulong[] vs = m_arr;
 
-            int len = count / size;
-            vs.Push(len);
+            int lsh = count & 0x3F;
+            int rsh = 64 - lsh;
 
-            int cnt = count % size;
-            if (cnt > 0)
-            {
-                int x = m_length - 1;
-                int cnt2 = size - cnt;
-                while (--x >= len)
-                {
-                    ref ulong tmp = ref vs[x + 1];
-                    tmp = (tmp << cnt) | (vs[x] >> cnt2);
-                }
+            int di = m_length - 1;
+            int si = di - (count >> 6);
 
-                vs[len] <<= cnt;
-            }
+            for (; si > 0; si--, di--)
+                vs[di] =
+                    (vs[si] << lsh) |
+                    (vs[si - 1] >> rsh);
+
+            vs[di] = vs[si] << lsh;
+
+            while (--di >= 0)
+                vs[di] = 0;
         }
 
         public override void RSHIFT(int count)
         {
             ulong[] vs = m_arr;
 
-            int len = count / size;
-            vs.Pull(len);
+            int rsh = count & 0x3F;
+            int lsh = 64 - rsh;
 
-            int cnt = count % size;
-            if (cnt > 0)
-            {
-                int max = m_length - len - 1;
-                int cnt2 = size - cnt;
-                for (int x = 0; x < max; x++)
-                {
-                    ref ulong tmp = ref vs[x];
-                    tmp = (tmp >> cnt) | (vs[x + 1] << cnt2);
-                }
+            int di = 0;
+            int si = di + (count >> 6);
 
-                vs[max] >>= cnt;
-            }
+            int max = m_length;
+            for (max--; si < max; si++, di++)
+                vs[di] =
+                    (vs[si] >> rsh) |
+                    (vs[si + 1] << lsh);
+
+            vs[di] = vs[si] >> rsh;
+
+            while (++di <= max)
+                vs[di] = 0;
         }
 
         public override bool Equals(Bits other) => other is Amd64Bits item && Equals(item);

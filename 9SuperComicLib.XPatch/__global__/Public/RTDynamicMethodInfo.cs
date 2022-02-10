@@ -7,7 +7,7 @@ namespace SuperComicLib.XPatch
 {
     public sealed class RTDynamicMethodInfo : MethodInfo
     {
-        private DynamicMethod m_owner;
+        private readonly DynamicMethod m_owner;
 
         public RTDynamicMethodInfo(DynamicMethod method) => m_owner = method ?? throw new InvalidOperationException();
 

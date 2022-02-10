@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="extensions\StreamReaderExtension.cs" />
+    <Compile Include="src\CStreamReader.cs" />
     <Compile Include="src\FastReader.cs" />
     <Compile Include="src\FastWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

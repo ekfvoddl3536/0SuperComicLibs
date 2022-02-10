@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using SuperComicLib.Reflection;
 
 namespace SuperComicLib.XPatch
 {
@@ -13,19 +14,23 @@ namespace SuperComicLib.XPatch
 
         public MethodBodyReader(MethodBase method) : this(method, (Module)null, false) { }
 
+        public MethodBodyReader(MethodBase method, bool isDynamicMethod) : this(method, (Module)null, isDynamicMethod) { }
+
         public MethodBodyReader(MethodBase method, Type owner, bool isDynamicMethod) : this(method, owner.Module, isDynamicMethod) { }
 
         public MethodBodyReader(MethodBase method, Module module, bool isDynamicMethod)
         {
-            if (isDynamicMethod)
-                this.method = new RTDynamicMethodInfo(method.GetType().GetField("m_owner", Helper.flag0).GetValue(method) as DynamicMethod);
-            else
-                this.method = method;
-            this.module = module;
+            if (method == null)
+                throw new ArgumentNullException(nameof(method));
+
+            this.method = 
+                isDynamicMethod
+                ? new RTDynamicMethodInfo(method as DynamicMethod)
+                : method;
+
+            this.module = module ?? method.Module;
             ParseIL();
         }
-
-        public MethodBodyReader() { }
 
         protected static T Read<T>(byte* ptr, ref int pos) where T : unmanaged
         {
@@ -50,11 +55,11 @@ namespace SuperComicLib.XPatch
                     OpCode code;
                     byte temp = Read<byte>(ptr, ref pos);
                     if (temp == 0xFE)
-                        code = ILBuffer.size_2_codes[Read<byte>(ptr, ref pos)];
+                        code = OpCodeConverter.GetCode_sz2(Read<byte>(ptr, ref pos));
                     else
-                        code = ILBuffer.size_1_codes[temp];
+                        code = OpCodeConverter.GetCode_sz1(temp);
 
-                    buf.opCode = code;
+                    buf.code = code;
 
                     switch (code.OperandType)
                     {

@@ -136,5 +136,21 @@ namespace SuperComicLib.Reflection
             else
                 il.Emit(OpCodes.Stfld, info);
         }
+
+        public static void Emit_Ldloc_OR_Ldarg(this ILGenerator il, int index, bool isLocal)
+        {
+            if (isLocal)
+                Emit_Ldloc(il, index);
+            else
+                Emit_Ldarg(il, index);
+        }
+
+        public static void Emit_CallMethod(this ILGenerator il, MethodInfo methinfo)
+        {
+            if (methinfo.IsVirtual)
+                il.Emit(OpCodes.Callvirt, methinfo);
+            else
+                il.Emit(OpCodes.Call, methinfo);
+        }
     }
 }

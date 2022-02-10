@@ -6,7 +6,7 @@ namespace SuperComicLib.XPatch
 {
     public sealed class ILMethodBody : MethodBody
     {
-        private byte[] ilstream;
+        private readonly byte[] ilstream;
 
         public ILMethodBody(ILGenerator gen)
         {

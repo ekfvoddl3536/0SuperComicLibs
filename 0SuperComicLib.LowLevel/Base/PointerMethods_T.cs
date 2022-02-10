@@ -10,6 +10,12 @@ namespace SuperComicLib.LowLevel
         public abstract T Default(void* ptr);
 
         [SecurityCritical]
+        public abstract TRet Read<TRet>(ref T inst, int offset) where TRet : unmanaged;
+
+        [SecurityCritical]
+        public abstract void Set<TSet>(ref T inst, TSet value, int offset) where TSet : unmanaged;
+
+        [SecurityCritical]
         public abstract void RefMemory(ref T obj, UnsafePointerAction cb);
     }
 }

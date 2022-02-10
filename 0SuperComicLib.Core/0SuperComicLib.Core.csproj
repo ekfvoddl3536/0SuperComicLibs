@@ -83,6 +83,37 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28net40%29|x86'">
+    <OutputPath>bin\x86\Release %28net40%29\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -92,40 +123,58 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Public\Core\IntHash.cs" />
+    <Compile Include="Public\Core\MemoryBlock.cs" />
+    <Compile Include="Public\Core\PRNG.cs" />
+    <Compile Include="Public\Core\Share.cs" />
+    <Compile Include="Public\Numerics\BitCounter.cs" />
+    <Compile Include="Public\Text\extension\FRngStringExtension.cs" />
+    <Compile Include="Public\Text\FCharEnumerator.cs" />
+    <Compile Include="Public\Text\FMultiRngString.cs" />
+    <Compile Include="Public\Text\FRngString.cs" />
+    <Compile Include="Public\Text\StringContext.cs" />
     <Compile Include="Public\Text\StringStream.cs" />
     <Compile Include="Public\Numerics\bits\Amd64Bits.cs" />
     <Compile Include="Public\Numerics\bits\Bits.cs" />
     <Compile Include="Public\Numerics\bits\factory\BitsFactory.cs" />
     <Compile Include="Public\Numerics\bits\factory\IRuntimeBitArray.cs" />
-    <Compile Include="Public\Numerics\bits\UnsafeBits.cs" />
     <Compile Include="Public\Numerics\bits\X86Bits.cs" />
-    <Compile Include="Public\Tasks\TaskExtension.cs" />
+    <Compile Include="Public\Threading\SpinCountBarrierLockSlim.cs" />
+    <Compile Include="Public\Threading\SpinCountdownLockSlim.cs" />
+    <Compile Include="Public\Threading\types.cs" />
+    <Compile Include="Public\Threading\SCL_CORE_THREADING_EXCEPTIONS.cs" />
+    <Compile Include="Public\Threading\TaskExtension.cs" />
+    <Compile Include="Public\Threading\SpinBlockLockSlim.cs" />
+    <Compile Include="Public\Threading\VolatileInt32.cs" />
+    <Compile Include="Public\__global__\Cached.cs" />
+    <Compile Include="Public\__global__\LongHashedString.cs" />
     <Compile Include="Public\__global__\Range.cs" />
-    <Compile Include="Public\__global__\Whitespace.cs" />
-    <Compile Include="Public\__global__\Bool2Int.cs" />
+    <Compile Include="Public\Core\Whitespace.cs" />
+    <Compile Include="Public\Core\Bool2Int.cs" />
     <Compile Include="Public\__global__\CMath.cs" />
-    <Compile Include="Public\__global__\CTypes.cs" />
+    <Compile Include="Public\Core\CTypes.cs" />
     <Compile Include="Public\IO\NopEncoding.cs" />
     <Compile Include="Public\IO\NopStream.cs" />
     <Compile Include="Public\IO\NopStreamWriter.cs" />
-    <Compile Include="Public\__global__\extension\ListExtension.cs" />
+    <Compile Include="Public\__global__\extension\SCL_GLOBAL_ListExtension.cs" />
     <Compile Include="Public\Numerics\BYTE.cs" />
     <Compile Include="Public\Numerics\DWORD.cs" />
     <Compile Include="Public\Numerics\QWORD.cs" />
     <Compile Include="Public\Numerics\Types.cs" />
     <Compile Include="Public\Numerics\WORD.cs" />
-    <Compile Include="__global\SCL_CORE_BooleanExtension.cs" />
-    <Compile Include="__global\SCL_CORE_IntPtrExtension.cs" />
+    <Compile Include="Public\__global__\VarSwap.cs" />
+    <Compile Include="Public\__global__\types\Interfaces.cs" />
+    <Compile Include="__global\SUPERCOMICLIB_CORE__BooleanExtension__.cs" />
+    <Compile Include="__global\SUPERCOMICLIB_CORE__IntPtrExtension__.cs" />
     <Compile Include="__global\SCL_CORE_ObjectExtension.cs" />
-    <Compile Include="Public\Reflection\VInt.cs" />
-    <Compile Include="__global\SCL_CORE_ArrayExtension.cs" />
+    <Compile Include="__global\SUPERCOMICLIB_CORE__ArrayExtension__.cs" />
     <Compile Include="Public\Numerics\BitMask.cs" />
     <Compile Include="Public\__global__\ClsArray.cs" />
-    <Compile Include="Public\__global__\extension\StringExtension.cs" />
+    <Compile Include="Public\__global__\extension\SCL_GLOBAL_StringExtension.cs" />
     <Compile Include="Public\__global__\HashedString.cs" />
-    <Compile Include="Public\Reflection\ObjectRef.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Public\Text\BOMEncoding.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

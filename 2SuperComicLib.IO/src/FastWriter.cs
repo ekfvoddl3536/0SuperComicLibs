@@ -1,26 +1,25 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 
-namespace SuperComicLib.Text
+namespace SuperComicLib.IO
 {
     public unsafe class FastWriter : IDisposable
     {
-        protected Stream ss;
+        protected Stream m_stream;
 
         protected FastWriter() { }
 
-        public FastWriter(Stream baseStream) => ss = baseStream;
+        public FastWriter(Stream baseStream) => m_stream = baseStream;
 
-        public FastWriter(string filepath) => ss = File.Open(filepath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        public FastWriter(string filepath) => m_stream = File.Open(filepath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
 
-        public FastWriter(string filepath, FileMode mode, FileAccess access) => ss = File.Open(filepath, mode, access);
+        public FastWriter(string filepath, FileMode mode, FileAccess access) => m_stream = File.Open(filepath, mode, access);
 
         #region 메서드
         protected void WriteUnsafe(byte* ptr, int length)
         {
-            // for (int x = 0; x < length; x++)
-            //     ss.WriteByte(ptr[x]);
+            for (int x = 0; x < length; x++)
+                m_stream.WriteByte(ptr[x]);
         }
 
         public virtual void Write_c<T>(T value) where T : unmanaged => WriteUnsafe((byte*)&value, sizeof(T));
@@ -31,13 +30,13 @@ namespace SuperComicLib.Text
                 WriteUnsafe((byte*)ptr, sizeof(T));
         }
 
-        public virtual void Write(byte[] data) => ss.Write(data, 0, data.Length);
+        public virtual void Write(byte[] data) => m_stream.Write(data, 0, data.Length);
 
-        public virtual void Write(byte data) => ss.WriteByte(data);
+        public virtual void Write(byte data) => m_stream.WriteByte(data);
 
-        public virtual void Write(sbyte data) => ss.WriteByte(*(byte*)&data);
+        public virtual void Write(sbyte data) => m_stream.WriteByte(*(byte*)&data);
 
-        public virtual void Write(bool data) => ss.WriteByte(data ? (byte)1 : byte.MinValue);
+        public virtual void Write(bool data) => m_stream.WriteByte(data ? (byte)1 : byte.MinValue);
 
         public virtual void Write(char data) => WriteUnsafe((byte*)&data, sizeof(char));
 
@@ -89,8 +88,8 @@ namespace SuperComicLib.Text
         {
             if (!disposedValue)
             {
-                ss.Close();
-                ss = null;
+                m_stream.Close();
+                m_stream = null;
 
                 disposedValue = true;
             }

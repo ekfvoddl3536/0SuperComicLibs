@@ -35,42 +35,27 @@ namespace SuperComicLib.Runtime
     {
         public override bool EqualsAB(T? left, T? right) =>
             left.HasValue
-            ?
-                right.HasValue
-                ? NativeClass.CompareTo(left.Value, right.Value) == 0
-                : false
+            ? right.HasValue && NativeClass.CompareTo(left.Value, right.Value) == 0
             : right.HasValue == false;
 
         public override bool Greater(T? left, T? right) =>
             left.HasValue
-            ?
-                right.HasValue
-                ? NativeClass.CompareTo(left.Value, right.Value) > 0
-                : false
+            ? right.HasValue && NativeClass.CompareTo(left.Value, right.Value) > 0
             : right.HasValue == false;
 
         public override bool GreatOrEquals(T? left, T? right) =>
             left.HasValue
-            ?
-                right.HasValue
-                ? NativeClass.CompareTo(left.Value, right.Value) >= 0
-                : false
+            ? right.HasValue && NativeClass.CompareTo(left.Value, right.Value) >= 0
             : right.HasValue == false;
 
         public override bool Lesser(T? left, T? right) =>
             left.HasValue
-            ?
-                right.HasValue
-                ? NativeClass.CompareTo(left.Value, right.Value) < 0
-                : false
+            ? right.HasValue && NativeClass.CompareTo(left.Value, right.Value) < 0
             : right.HasValue == false;
 
         public override bool LessOrEquals(T? left, T? right) =>
             left.HasValue
-            ?
-                right.HasValue
-                ? NativeClass.CompareTo(left.Value, right.Value) <= 0
-                : false
+            ? right.HasValue && NativeClass.CompareTo(left.Value, right.Value) <= 0
             : right.HasValue == false;
     }
 }

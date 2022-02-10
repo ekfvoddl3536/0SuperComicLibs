@@ -7,7 +7,7 @@ namespace SuperComicLib.XPatch
 {
     internal sealed class PatchManager : IDisposable
     {
-        internal Dictionary<int, PatchInfo> patchinfos = new Dictionary<int, PatchInfo>();
+        internal Dictionary<MethodBase, PatchInfo> patchinfos = new Dictionary<MethodBase, PatchInfo>();
 
         internal PatchManager() { }
 
@@ -26,7 +26,7 @@ namespace SuperComicLib.XPatch
         public void Add(MethodBase meth, MethodInfo patcher, PatchMode mode, bool ilonly)
         {
             if (meth.GetCustomAttribute<ILBranchableAttribute>() == null)
-                if (patchinfos.TryGetValue(meth.GetHashCode(), out PatchInfo value))
+                if (patchinfos.TryGetValue(meth, out PatchInfo value))
                 {
                     if (mode == PatchMode.Replace)
                         value.replace = ilonly ? new ILOnlyPatchMethod(patcher) : (ExMethodInfo)new ReplaceMethodInfo(patcher);
@@ -45,7 +45,7 @@ namespace SuperComicLib.XPatch
                     else
                         value.postfixes.Add(ilonly ? new ILOnlyPatchMethod(patcher) : new ExMethodInfo(patcher));
 
-                    patchinfos[meth.GetHashCode()] = value;
+                    patchinfos[meth] = value;
                 }
         }
 
@@ -56,11 +56,19 @@ namespace SuperComicLib.XPatch
                 List<DynamicMethod> rets = new List<DynamicMethod>();
                 foreach (PatchInfo p in patchinfos.Values)
                     rets.Add(p.DoPatch());
+
                 return rets;
             }
 #pragma warning disable
-            catch
+#if DEBUG
+            catch (Exception exc)
             {
+                System.Diagnostics.Debug.WriteLine(exc.ToString());
+                System.Diagnostics.Debugger.Break();
+#else
+            catch 
+            {
+#endif
                 return null;
             }
 #pragma warning restore
@@ -68,10 +76,15 @@ namespace SuperComicLib.XPatch
 
         public void Dispose()
         {
-            foreach (PatchInfo p in patchinfos.Values)
-                p.Dispose();
-            patchinfos.Clear();
-            patchinfos = null;
+            if (patchinfos != null)
+            {
+                foreach (PatchInfo p in patchinfos.Values)
+                    p.Dispose();
+
+                patchinfos.Clear();
+                patchinfos = null;
+            }
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{41E4867F-87E5-4B26-8684-7821F552E23B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SuperComicLib.CodeDesigner</RootNamespace>
+    <AssemblyName>9SuperComicLib.CodeDesigner</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="1_scanner\ScannerFactory.cs" />
+    <Compile Include="2_parser\pre_parse\EOLRemovePP.cs" />
+    <Compile Include="types\Constants.cs" />
+    <Compile Include="types\parser\node\EmptyNode.cs" />
+    <Compile Include="utils\buildAttrb\NopBuildAttrb.cs" />
+    <Compile Include="utils\codegen_help\FilteredTokenEnumerator.cs" />
+    <Compile Include="utils\codegen_help\ToTokenEnumerator.cs" />
+    <Compile Include="3_codegen\CodeGeneratorBase.cs" />
+    <Compile Include="4_loader\ScriptLoader.cs" />
+    <Compile Include="1_scanner\pre_scanner\DefPreProcessor.cs" />
+    <Compile Include="1_scanner\pre_scanner\PreProcessor.cs" />
+    <Compile Include="2_parser\LR\LRxItemComparerSlim.cs" />
+    <Compile Include="2_parser\pre_parse\DefPPAE.cs" />
+    <Compile Include="2_parser\LALRParser.cs" />
+    <Compile Include="2_parser\LR\LALRState.cs" />
+    <Compile Include="2_parser\pre_parse\PreParserBase.cs" />
+    <Compile Include="1_scanner\ScanActionEnumerator.cs" />
+    <Compile Include="types\parser\CachedGrammar.cs" />
+    <Compile Include="2_parser\LR\LR1Helper.cs" />
+    <Compile Include="2_parser\LR\LRxItem.cs" />
+    <Compile Include="types\parser\node\ExNode.cs" />
+    <Compile Include="types\parser\node\TokNode.cs" />
+    <Compile Include="types\parser\ExpressInt.cs" />
+    <Compile Include="types\parser\Grammar.cs" />
+    <Compile Include="2_parser\GHelper.cs" />
+    <Compile Include="types\parser\GItem.cs" />
+    <Compile Include="2_parser\ParserBase.cs" />
+    <Compile Include="types\parser\TableItem.cs" />
+    <Compile Include="utils\extensions\Extensions.cs" />
+    <Compile Include="utils\GString.cs" />
+    <Compile Include="utils\p_table\DebugSymbolMap.cs" />
+    <Compile Include="utils\p_table\EnumTM.cs" />
+    <Compile Include="0_msg\FMSG.cs" />
+    <Compile Include="types\delegates.cs" />
+    <Compile Include="utils\collection\StrKeywordTable.cs" />
+    <Compile Include="utils\exception_handler\DebugExceptionHandler.cs" />
+    <Compile Include="utils\exception_handler\ExceptionHandler.cs" />
+    <Compile Include="utils\exception_handler\factory\ExceptionHandlerFactory.cs" />
+    <Compile Include="1_scanner\Scanner.cs" />
+    <Compile Include="types\Token.cs" />
+    <Compile Include="types\TokenType.cs" />
+    <Compile Include="types\Interfaces.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="utils\p_table\InternalSymbolMap.cs" />
+    <Compile Include="utils\p_table\SymbolMapBase.cs" />
+    <Compile Include="utils\p_table\factory\SymbolMapFactory.cs" />
+    <Compile Include="utils\t_table\ConcurrentTypeMap.cs" />
+    <Compile Include="types\eventArgs\TypeMapChangedArgs.cs" />
+    <Compile Include="utils\t_table\InternalTypeDesc.cs" />
+    <Compile Include="utils\t_table\SafeRuntimeTypeMap.cs" />
+    <Compile Include="utils\t_table\TypeTable.cs" />
+    <Compile Include="0_msg\WMSG.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\0SuperComicLib.Core\0SuperComicLib.Core.csproj">
+      <Project>{1674b047-ca4c-44a1-9d39-211e38c800dc}</Project>
+      <Name>0SuperComicLib.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\2SuperComicLib.IO\2SuperComicLib.IO.csproj">
+      <Project>{18922299-c168-493f-b57f-67f0eda4cc24}</Project>
+      <Name>2SuperComicLib.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\2SuperComicLib.Runtime\2SuperComicLib.Runtime.csproj">
+      <Project>{27671106-2b65-4fff-b870-d50ca8ed55cf}</Project>
+      <Name>2SuperComicLib.Runtime</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\3SuperComicLib.Collections\3SuperComicLib.Collections.csproj">
+      <Project>{2c7bf115-111a-46b3-9721-a1761928b6cb}</Project>
+      <Name>3SuperComicLib.Collections</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\9SuperComicLib.DataObject\9SuperComicLib.DataObject.csproj">
+      <Project>{d980d475-6106-4ba7-95d2-824d6cf10041}</Project>
+      <Name>9SuperComicLib.DataObject</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

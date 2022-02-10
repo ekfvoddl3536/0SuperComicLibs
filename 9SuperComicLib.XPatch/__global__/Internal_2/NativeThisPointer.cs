@@ -11,6 +11,8 @@ namespace SuperComicLib.XPatch
         private static readonly IntPtr magic = new IntPtr(0x1345789A);
         private static bool hasThisPtr;
 
+        private NativeThisPointer() { }
+
         #region 준비용
 #pragma warning disable
         /// <summary>
@@ -32,11 +34,13 @@ namespace SuperComicLib.XPatch
         {
             if (retType.IsStruct() == false)
                 return false;
+
             int size = Marshal.SizeOf(retType);
             return
-                size < 3 || size == 4 || size == 8
-                ? false
-                : hasThisPtr;
+                size >= 3 && 
+                size != 4 && 
+                size != 8 && 
+                hasThisPtr;
         }
 
         // 한 번만 한다

@@ -7,9 +7,30 @@ namespace SuperComicLib.XPatch
 {
     public sealed class ILOnlyPatchMethod : ExMethodInfo
     {
-        public ILOnlyPatchMethod(MethodInfo info) : base(info) { }
+        private delegate void P1(ILGenerator il, MethodBase original, int offset, bool hasReturn, bool isValuetype);
+        private delegate bool P2(ILGenerator il, MethodBase original, int offset, bool hasReturn, bool isValuetype);
 
-        public override bool GenerateCode(ILGenerator il, MethodBase original, ParameterInfo[] parameters, int offset, bool hasReturn, bool hasArgBuffer)
+        private static readonly Type p1t = typeof(P1), p2t = typeof(P2);
+
+        private P1 v1;
+        private P2 v2;
+
+        public ILOnlyPatchMethod(MethodInfo info) : base(info)
+        {
+            if (info.ReturnType == CTypes.VOID_T)
+                v1 = (P1)info.CreateDelegate(p1t);
+            else
+                v2 = (P2)info.CreateDelegate(p2t);
+        }
+
+        public override bool GenerateCode(
+            ILGenerator il,
+            MethodBase original,
+            ParameterInfo[] parameters,
+            int offset,
+            bool hasReturn,
+            bool hasArgBuffer,
+            bool isValuetype)
         {
             if (toTypes == null || toTypes.Length < 4)
                 // 인수 길이가 충분하지 않습니다
@@ -21,13 +42,20 @@ namespace SuperComicLib.XPatch
                 // 패치 메소드의 반환은 void 또는 bool이어야 합니다
                 throw new InvalidOperationException("Return type of the patch method must be void or bool");
 
-            if (patching.ReturnType == CTypes.VOID_T)
+            if (v2 == null)
             {
-                patching.Invoke(null, new object[4] { il, original, offset, hasReturn });
+                v1.Invoke(il, original, offset, hasReturn, isValuetype);
                 return false;
             }
             else
-                return (bool)patching.Invoke(null, new object[4] { il, original, offset, hasReturn });
+                return v2.Invoke(il, original, offset, hasReturn, isValuetype);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            v1 = null;
+            v2 = null;
+            base.Dispose(disposing);
         }
     }
 }

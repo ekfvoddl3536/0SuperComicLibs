@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SuperComicLib.XPatch</RootNamespace>
     <AssemblyName>9SuperComicLib.XPatch</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,6 +23,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -60,12 +63,9 @@
     <Compile Include="__global__\Internal\Utils.cs" />
     <Compile Include="__global__\Internal_2\MethodBaseExtension.cs" />
     <Compile Include="__global__\Internal_2\NativeThisPointer.cs" />
-    <Compile Include="__global__\Public\ExceptionBlockInfo.cs" />
-    <Compile Include="__global__\Public\ILBuffer.cs" />
     <Compile Include="__global__\Public\ILMethodBody.cs" />
     <Compile Include="__global__\Public\MethodBodyEditor.cs" />
     <Compile Include="__global__\Public\MethodBodyReader.cs" />
-    <Compile Include="__global__\Public\PublicLabel.cs" />
     <Compile Include="__global__\Public\RTDynamicMethodInfo.cs" />
     <Compile Include="__global__\Public\Types.cs" />
   </ItemGroup>
@@ -77,6 +77,10 @@
     <ProjectReference Include="..\0SuperComicLib.Core\0SuperComicLib.Core.csproj">
       <Project>{1674b047-ca4c-44a1-9d39-211e38c800dc}</Project>
       <Name>0SuperComicLib.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\0SuperComicLib.LowLevel\0SuperComicLib.LowLevel.csproj">
+      <Project>{767db295-227d-484b-b903-d3f6391e7ad1}</Project>
+      <Name>0SuperComicLib.LowLevel</Name>
     </ProjectReference>
     <ProjectReference Include="..\7SuperComicLib.Reflection\7SuperComicLib.Reflection.csproj">
       <Project>{79c44ec8-246d-4827-aa48-1a9bb58b32ff}</Project>

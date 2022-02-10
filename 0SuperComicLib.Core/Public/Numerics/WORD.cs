@@ -50,22 +50,11 @@ namespace SuperComicLib
             ? Equals(r2)
             : obj is ushort r3
             ? Equals(r3)
-            : obj is char r4
-            ? Equals(r4)
-            : false;
+            : obj is char r4 && Equals(r4);
 
         public override string ToString() => unsigned.ToString("X");
         public override int GetHashCode() => base.GetHashCode();
-        public int Count()
-        {
-            // int c = signed - ((signed >> 1) & 0x5555);
-            // c = ((c >> 2) & 0x3333) + (c & 0x3333);
-            // c = ((c >> 4) + c) & 0x0F0F;
-            // return ((c >> 8) + c) & 0x00FF;
-            int c = signed - ((signed >> 1) & 0x5555);
-            c = (c & 0x3333) + ((c >> 2) & 0x3333);
-            return (((c + (c >> 4)) & 0x0F0F) * 0x0101) >> 8;
-        }
+        public int Count() => unsigned.POPCNT_S();
 
         public WORD OR(WORD other) => this | other;
         public WORD AND(WORD other) => this & other;

@@ -14,6 +14,6 @@ namespace SuperComicLib.LowLevel
         public readonly ushort NumVirtualMethods;
         public readonly ushort NumInterfaces;
         public readonly PubMethodTable* ParentMT;
-        public readonly IntPtr pEEClass;
+        public readonly IntPtr pModule;
     }
 }

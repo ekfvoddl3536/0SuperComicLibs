@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace SuperComicLib.Text
+namespace SuperComicLib.IO
 {
     public unsafe class FastReader : IDisposable
     {

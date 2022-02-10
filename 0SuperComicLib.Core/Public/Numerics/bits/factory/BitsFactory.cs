@@ -28,10 +28,8 @@ namespace SuperComicLib.Numerics
 
             public Bits Create(int numberOfBits)
             {
-                if (numberOfBits % 64 != 0)
-                    numberOfBits += numberOfBits % 64;
-
-                return new Amd64Bits(numberOfBits);
+                int size = numberOfBits / 64 + (numberOfBits % 64 != 0).ToInt();
+                return new Amd64Bits(new ulong[size], size);
             }
 
             public int ToLength(int n) =>
@@ -50,10 +48,8 @@ namespace SuperComicLib.Numerics
 
             public Bits Create(int numberOfBits)
             {
-                if (numberOfBits % 32 != 0)
-                    numberOfBits += numberOfBits % 32;
-
-                return new X86Bits(numberOfBits);
+                int size = numberOfBits / 32 + (numberOfBits % 32 != 0).ToInt();
+                return new X86Bits(new uint[size], size);
             }
 
             public int ToLength(int n) =>
