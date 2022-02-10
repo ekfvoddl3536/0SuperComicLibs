@@ -46,7 +46,7 @@ namespace SuperComicLib.XPatch
                 // 0xE9로 시작하면 jmp relative 모드임
                 if (*src == 0xE9)
                     // jmp를 타고, 지정된 주소로 이동함
-                    src += *(int*)(source + 1) + 5;
+                    src += *(int*)(src + 1) + 5;
 
                 // movabs rax, <addr>
                 // jmp rax
