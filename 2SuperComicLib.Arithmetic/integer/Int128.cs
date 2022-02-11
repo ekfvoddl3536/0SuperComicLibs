@@ -7,32 +7,32 @@ namespace SuperComicLib.Arithmetic
     {
         #region constant | static field
         public const int Size32 = 4;
-        public const int Size64 = 2;
-        public const int Bits = 128;
+        public const int Size64 = Size32 >> 1;
+        public const int Bits = Size32 << 5;
         public const bool Signed = true;
 
-        public static readonly Int128 MinValue = new Int128(0, long.MinValue);
-        public static readonly Int128 MaxValue = new Int128(ulong.MaxValue, long.MaxValue);
+        public static readonly Int128 MinValue = new Int128(long.MinValue, 0);
+        public static readonly Int128 MaxValue = new Int128(long.MaxValue, ulong.MaxValue);
         #endregion
 
-        internal readonly ulong low;
-        internal readonly long high;
+        public readonly ulong low;
+        public readonly long high;
 
         #region constructor
-        public Int128(int low, int mid, int high, int flag) :
-            this((uint)low, (uint)mid, (uint)high, flag)
+        public Int128(int head, int high, int mid, int low) :
+            this(head, (uint)high, (uint)mid, (uint)low)
         {
         }
 
-        public Int128(uint low, uint mid, uint high, int flag) :
-            this(((ulong)mid << 32) | low, ((long)flag << 32) | high)
+        public Int128(int head, uint high, uint mid, uint low) :
+            this(((long)head << 32) | high, ((ulong)mid << 32) | low)
         {
         }
 
-        public Int128(ulong low, long high)
+        public Int128(long high, ulong low)
         {
-            this.low = low;
             this.high = high;
+            this.low = low;
         }
         #endregion
 
@@ -61,27 +61,12 @@ namespace SuperComicLib.Arithmetic
             return IntHash.Combine(result, high.GetHashCode());
         }
 
-        public unsafe override string ToString()
-        {
-            fixed (ulong* ptr = &low)
-                return BigIntArithmetic.ToString((uint*)ptr, Size32, Signed);
-        }
-        #endregion
+        public unsafe override string ToString() => ToString(null);
 
-        #region format toString
         public unsafe string ToString(string format)
         {
-            if (string.IsNullOrWhiteSpace(format))
-                return ToString();
-
-            char f = char.ToLower(format[0]);
-            int count = ToInteger.Positive(format, 1);
-
             fixed (ulong* ptr = &low)
-                return
-                    f == 'h'
-                    ? BigIntArithmetic.ToHexString((uint*)ptr, Size32, count)
-                    : BigIntArithmetic.ToExpToString((uint*)ptr, Size32, count, Signed);
+                return BigIntArithmetic.FormatString((uint*)ptr, Size32, Signed, format);
         }
         #endregion
 
@@ -180,19 +165,19 @@ namespace SuperComicLib.Arithmetic
         public static implicit operator Int128(decimal v)
         {
             int[] vs = decimal.GetBits(v);
-            return new Int128(vs[0], vs[1], vs[2], vs[3] & int.MinValue);
+            return new Int128(vs[3] & int.MinValue, (uint)vs[2], (uint)vs[1], (uint)vs[0]);
         }
 
-        public static implicit operator Int128(uint v) => new Int128(v, 0, 0, 0);
-        public static implicit operator Int128(ulong v) => new Int128(v, 0);
+        public static implicit operator Int128(uint v) => new Int128(0, 0, 0, v);
+        public static implicit operator Int128(ulong v) => new Int128(0, v);
         public static implicit operator Int128(int v) => 
             v < 0
-            ? new Int128(v, -1, -1, -1)
-            : new Int128(v, 0, 0, 0);
+            ? new Int128(-1, uint.MaxValue, uint.MaxValue, (uint)v)
+            : new Int128(0, 0, 0, (uint)v);
         public static implicit operator Int128(long v) => 
             v < 0 
-            ? new Int128((ulong)v, -1) 
-            : new Int128((ulong)v, 0);
+            ? new Int128(-1L, (ulong)v) 
+            : new Int128(0L, (ulong)v);
         #endregion
 
         #region current -> x

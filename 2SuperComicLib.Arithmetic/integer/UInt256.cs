@@ -7,31 +7,31 @@ namespace SuperComicLib.Arithmetic
     {
         #region constant | static field
         public const int Size32 = 8;
-        public const int Size64 = 4;
-        public const int Bits = 256;
-        public const bool Signed = false;
+        public const int Size64 = Size32 >> 1;
+        public const int Bits = Size32 << 5;
+        public const bool Signed = true;
 
-        public static readonly UInt256 MinValue = new UInt256(0, 0, 0, long.MinValue);
-        public static readonly UInt256 MaxValue = new UInt256(ulong.MaxValue, ulong.MaxValue, ulong.MaxValue, ulong.MaxValue);
+        public static readonly UInt256 MinValue = new UInt256(long.MinValue, 0, 0, 0);
+        public static readonly UInt256 MaxValue = new UInt256(long.MaxValue, ulong.MaxValue, ulong.MaxValue, ulong.MaxValue);
         #endregion
 
-        internal readonly ulong low;
-        internal readonly ulong mid;
-        internal readonly ulong high;
-        internal readonly ulong flag;
+        public readonly ulong low;
+        public readonly ulong mid;
+        public readonly ulong high;
+        public readonly long flag;
 
         #region constructor
-        public UInt256(long low, long mid, long high, long flag) :
-            this((ulong)low, (ulong)mid, (ulong)high, (ulong)flag)
+        public UInt256(long head, long high, long mid, long low) :
+            this(head, (ulong)high, (ulong)mid, (ulong)low)
         {
         }
 
-        public UInt256(ulong low, ulong mid, ulong high, ulong flag)
+        public UInt256(long head, ulong high, ulong mid, ulong low)
         {
             this.low = low;
             this.mid = mid;
             this.high = high;
-            this.flag = flag;
+            this.flag = head;
         }
         #endregion
 
@@ -47,7 +47,7 @@ namespace SuperComicLib.Arithmetic
         public unsafe int CompareTo(UInt256 other)
         {
             fixed (ulong* ptr = &low)
-                return BigIntArithmetic.CompareTo_Un(ptr, &other.low, Size64);
+                return BigIntArithmetic.CompareTo(ptr, &other.low, Size64);
         }
         #endregion
 
@@ -66,27 +66,12 @@ namespace SuperComicLib.Arithmetic
             return IntHash.Combine(result, flag.GetHashCode());
         }
 
-        public unsafe override string ToString()
-        {
-            fixed (ulong* ptr = &low)
-                return BigIntArithmetic.ToString((uint*)ptr, Size32, Signed);
-        }
-        #endregion
+        public unsafe override string ToString() => ToString(null);
 
-        #region format toString
         public unsafe string ToString(string format)
         {
-            if (string.IsNullOrWhiteSpace(format))
-                return ToString();
-
-            char f = char.ToLower(format[0]);
-            int count = ToInteger.Positive(format, 1);
-
             fixed (ulong* ptr = &low)
-                return
-                    f == 'h'
-                    ? BigIntArithmetic.ToHexString((uint*)ptr, Size32, count)
-                    : BigIntArithmetic.ToExpToString((uint*)ptr, Size32, count, Signed);
+                return BigIntArithmetic.FormatString((uint*)ptr, Size32, Signed, format);
         }
         #endregion
 
@@ -118,6 +103,15 @@ namespace SuperComicLib.Arithmetic
             BigIntArithmetic.Mod(&left.low, &right.low, Size64);
             return left;
         }
+        #endregion
+
+        #region neg or pos
+        public unsafe static UInt256 operator -(UInt256 value)
+        {
+            BigIntArithmetic.NEG((uint*)&value.low, (uint*)&value.low, Size32);
+            return value;
+        }
+        public unsafe static UInt256 operator +(UInt256 value) => value;
         #endregion
 
         #region bit
@@ -167,32 +161,41 @@ namespace SuperComicLib.Arithmetic
         public static unsafe implicit operator UInt256(float v)
         {
             UInt256 result = default;
-            BigIntArithmetic.FormatIEEE754(v, &result.low, Size64);
+            if (BigIntArithmetic.FormatIEEE754(v, &result.low, Size64))
+                BigIntArithmetic.NEG((uint*)&result.low, (uint*)&result.low, Size32);
+
             return result;
         }
 
         public static implicit operator UInt256(decimal v)
         {
             int[] vs = decimal.GetBits(v);
-            return new UInt256(vs[0], vs[1], vs[2], vs[3] & int.MinValue);
+            return new UInt256(
+                (long)(vs[3] & int.MinValue) << 32,
+                0,
+                vs[2],
+                ((long)vs[1] << 32) | (uint)vs[0]);
         }
 
-        public static implicit operator UInt256(uint v) => new UInt256(v, 0, 0, 0);
-        public static implicit operator UInt256(ulong v) => new UInt256(v, 0, 0, 0);
+        public static implicit operator UInt256(uint v) => new UInt256(0, 0, 0, v);
+        public static implicit operator UInt256(ulong v) => new UInt256(0, 0, 0, v);
         public static implicit operator UInt256(int v) =>
             v < 0
-            ? new UInt256(v, -1, -1, -1)
-            : new UInt256(v, 0, 0, 0);
+            ? new UInt256(-1, -1, -1, v)
+            : new UInt256(0, 0, 0, v);
         public static implicit operator UInt256(long v) =>
             v < 0
-            ? new UInt256(v, -1, -1, -1)
-            : new UInt256((ulong)v, 0, 0, 0);
+            ? new UInt256(-1, -1, -1, v)
+            : new UInt256(0, 0, 0, (ulong)v);
+
+        // from low bits
+        public static implicit operator UInt256(in Int128 value) =>
+            value.high < 0
+            ? new UInt256(-1, -1, value.high, (long)value.low)
+            : new UInt256(0, 0, (ulong)value.high, value.low);
 
         public static implicit operator UInt256(in UInt128 value) =>
-            new UInt256(value.low, value.high, 0, 0);
-
-        public static implicit operator UInt256(in Int128 value) =>
-            new UInt256(value.low, (ulong)value.high, 0, 0);
+            new UInt256(0, 0, value.high, value.low);
         #endregion
 
         #region current -> x
@@ -204,24 +207,21 @@ namespace SuperComicLib.Arithmetic
 
         public static unsafe explicit operator float(UInt256 v)
         {
-            float result = BigIntArithmetic.ToIEEE754(&v.low);
-            return result;
-        }
-        #endregion
+            bool neg;
+            if (v.flag < 0) // neg
+            {
+                neg = true;
+                BigIntArithmetic.NEG((uint*)&v.low, (uint*)&v.low, Size32);
+            }
+            else
+                neg = false;
 
-        #region signed <-> unsigned
-        #region signed <-> unsigned
-        public static unsafe explicit operator Int256(in UInt256 v)
-        {
-            fixed (ulong* ptr = &v.low)
-                return *(Int256*)&ptr;
+            float result = BigIntArithmetic.ToIEEE754(&v.low);
+            return
+                neg
+                ? -result
+                : result;
         }
-        public static unsafe explicit operator UInt256(in Int256 v)
-        {
-            fixed (ulong* ptr = &v.low)
-                return *(UInt256*)&ptr;
-        }
-        #endregion
         #endregion
 
         #region compare

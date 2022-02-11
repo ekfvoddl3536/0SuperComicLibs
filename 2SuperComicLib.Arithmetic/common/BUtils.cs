@@ -58,7 +58,7 @@ namespace SuperComicLib.Arithmetic
             int exp = --idx * 32;
 
             int bit;
-            if (idx > 0 && (bit = CommonArithmeticHelper.BitHighZero(*ptr)) > 0)
+            if (idx > 0 && (bit = BitMath.FLS64(*ptr)) > 0)
             {
                 mantissa = (mantissa << bit) | (*(ptr - 2) >> (32 - bit));
                 exp -= bit;
@@ -88,7 +88,7 @@ namespace SuperComicLib.Arithmetic
             ulong mask2)
         {
             int t0;
-            if ((t0 = CommonArithmeticHelper.BitHighZero(mantissa) - bit_exp_size) < 0)
+            if ((t0 = mantissa.FLS64() - bit_exp_size) < 0)
                 mantissa >>= -t0;
             else
                 mantissa <<= t0;

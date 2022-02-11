@@ -7,32 +7,32 @@ namespace SuperComicLib.Arithmetic
     {
         #region constant | static field
         public const int Size32 = 4;
-        public const int Size64 = 2;
-        public const int Bits = 128;
+        public const int Size64 = Size32 >> 1;
+        public const int Bits = Size32 << 5;
         public const bool Signed = false;
 
-        public static readonly UInt128 MinValue = default;
+        public static readonly UInt128 MinValue = new UInt128(0, 0);
         public static readonly UInt128 MaxValue = new UInt128(ulong.MaxValue, ulong.MaxValue);
         #endregion
 
-        internal readonly ulong low;
-        internal readonly ulong high;
+        public readonly ulong low;
+        public readonly ulong high;
 
         #region constructor
-        public UInt128(int low, int mid, int high, int flag) :
-            this((uint)low, (uint)mid, (uint)high, (uint)flag)
+        public UInt128(int sign, int high, int mid, int low) :
+            this((uint)sign, (uint)high, (uint)mid, (uint)low)
         {
         }
 
-        public UInt128(uint low, uint mid, uint high, uint flag) :
-            this(((ulong)mid << 32) | low, ((ulong)flag << 32) | high)
+        public UInt128(uint head, uint high, uint mid, uint low) :
+            this(((ulong)head << 32) | high, ((ulong)mid << 32) | low)
         {
         }
 
-        public UInt128(ulong low, ulong high)
+        public UInt128(ulong high, ulong low)
         {
-            this.low = low;
             this.high = high;
+            this.low = low;
         }
         #endregion
 
@@ -61,27 +61,12 @@ namespace SuperComicLib.Arithmetic
             return IntHash.Combine(result, high.GetHashCode());
         }
 
-        public unsafe override string ToString()
-        {
-            fixed (ulong* ptr = &low)
-                return BigIntArithmetic.ToString((uint*)ptr, Size32, Signed);
-        }
-        #endregion
+        public unsafe override string ToString() => ToString(null);
 
-        #region format toString
         public unsafe string ToString(string format)
         {
-            if (string.IsNullOrWhiteSpace(format))
-                return ToString();
-
-            char f = char.ToLower(format[0]);
-            int count = ToInteger.Positive(format, 1);
-
             fixed (ulong* ptr = &low)
-                return
-                    f == 'h'
-                    ? BigIntArithmetic.ToHexString((uint*)ptr, Size32, count)
-                    : BigIntArithmetic.ToExpToString((uint*)ptr, Size32, count, Signed);
+                return BigIntArithmetic.FormatString((uint*)ptr, Size32, Signed, format);
         }
         #endregion
 
@@ -113,6 +98,15 @@ namespace SuperComicLib.Arithmetic
             BigIntArithmetic.Mod(&left.low, &right.low, Size64);
             return left;
         }
+        #endregion
+
+        #region neg or pos
+        public unsafe static UInt128 operator -(UInt128 value)
+        {
+            BigIntArithmetic.NEG((uint*)&value.low, (uint*)&value.low, Size32);
+            return value;
+        }
+        public unsafe static UInt128 operator +(UInt128 value) => value;
         #endregion
 
         #region bit
@@ -162,20 +156,28 @@ namespace SuperComicLib.Arithmetic
         public static unsafe explicit operator UInt128(float v)
         {
             UInt128 result = default;
-            BigIntArithmetic.FormatIEEE754(v, &result.low, Size64);
+            if (BigIntArithmetic.FormatIEEE754(v, &result.low, Size64))
+                BigIntArithmetic.NEG((uint*)&result.low, (uint*)&result.low, Size32);
+
             return result;
         }
 
         public static implicit operator UInt128(decimal v)
         {
             int[] vs = decimal.GetBits(v);
-            return new UInt128(vs[0], vs[1], vs[2], 0);
+            return new UInt128((uint)(vs[3] & int.MinValue), (uint)vs[2], (uint)vs[1], (uint)vs[0]);
         }
 
-        public static implicit operator UInt128(uint v) => new UInt128(v, 0, 0, 0);
-        public static implicit operator UInt128(ulong v) => new UInt128(v, 0);
-        public static implicit operator UInt128(int v) => new UInt128((uint)v, 0, 0, 0);
-        public static implicit operator UInt128(long v) => new UInt128((ulong)v, 0);
+        public static implicit operator UInt128(uint v) => new UInt128(0, 0, 0, v);
+        public static implicit operator UInt128(ulong v) => new UInt128(0, v);
+        public static implicit operator UInt128(int v) =>
+            v < 0
+            ? new UInt128(uint.MaxValue, uint.MaxValue, uint.MaxValue, (uint)v)
+            : new UInt128(0, 0, 0, (uint)v);
+        public static implicit operator UInt128(long v) =>
+            v < 0
+            ? new UInt128(ulong.MaxValue, (ulong)v)
+            : new UInt128(0L, (ulong)v);
         #endregion
 
         #region current -> x
@@ -183,21 +185,24 @@ namespace SuperComicLib.Arithmetic
         public static unsafe explicit operator uint(UInt128 v) => (uint)v.low;
         public static unsafe explicit operator long(UInt128 v) => (long)v.low;
         public static unsafe explicit operator ulong(UInt128 v) => v.low;
-        public static unsafe explicit operator decimal(UInt128 v) => new decimal((int)v.low, (int)(v.low >> 32), (int)v.high, false, 0);
+        public static unsafe explicit operator decimal(UInt128 v) => new decimal((int)v.low, (int)(v.low >> 32), (int)v.high, v.high < 0, 0);
 
-        public static unsafe explicit operator float(UInt128 v) => BigIntArithmetic.ToIEEE754(&v.low);
-        #endregion
+        public static unsafe explicit operator float(UInt128 v)
+        {
+            bool neg;
+            if (v.high < 0) // neg
+            {
+                neg = true;
+                BigIntArithmetic.NEG((uint*)&v.low, (uint*)&v.low, Size32);
+            }
+            else
+                neg = false;
 
-        #region signed <-> unsigned
-        public static unsafe explicit operator Int128(in UInt128 v)
-        {
-            fixed (ulong* ptr = &v.low)
-                return *(Int128*)&ptr;
-        }
-        public static unsafe explicit operator UInt128(in Int128 v)
-        {
-            fixed (ulong* ptr = &v.low)
-                return *(UInt128*)&ptr;
+            float result = BigIntArithmetic.ToIEEE754(&v.low);
+            return
+                neg
+                ? -result
+                : result;
         }
         #endregion
 

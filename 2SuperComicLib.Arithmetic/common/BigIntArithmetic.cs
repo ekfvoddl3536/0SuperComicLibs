@@ -10,6 +10,20 @@ namespace SuperComicLib.Arithmetic
         internal const int kcchBase = 9;
 
         #region print
+        public static string FormatString(uint* value, int size, bool signed, string format)
+        {
+            if (string.IsNullOrWhiteSpace(format))
+                return ToString(value, size, signed);
+
+            char f = char.ToLower(format[0]);
+            int count = ToInteger.Positive(format, 1);
+
+            return
+                (f == 'h' || f == 'x')
+                ? ToHexString(value, size, count)
+                : ToExpToString(value, size, count, signed);
+        }
+
         public static string ToHexString(uint* value, int count, int h_size)
         {
             StringBuilder sb = new StringBuilder(64);
@@ -229,6 +243,18 @@ namespace SuperComicLib.Arithmetic
                 }
             }
         }
+
+        public static void MulFast(uint* values, uint mul, uint* res, int count)
+        {
+            uint carry = 0;
+            ulong uuMul = mul;
+            for (int y = 0; y < count; y++)
+            {
+                ulong uuTemp = values[y] * uuMul + res[y] + carry;
+                res[y] = (uint)uuTemp;
+                carry = (uint)(uuTemp >> 32);
+            }
+        }
         #endregion
 
         #region bit
@@ -434,7 +460,7 @@ namespace SuperComicLib.Arithmetic
 
             uint uDen = den_s[cDen - 1];
             uint uDenNext = den_s[cDen - 2];
-            int lsh = CommonArithmeticHelper.BitHighZero(uDen);
+            int lsh = uDen.FLS();
             int rsh = 32 - lsh;
             if (lsh > 0)
             {
@@ -600,15 +626,15 @@ namespace SuperComicLib.Arithmetic
         public static float ToIEEE754(ulong* value)
         {
             int exp =
-                127 -
+                127 +
                 (value[1] == 0
-                ? 64 + CommonArithmeticHelper.BitHighZero(*value)
-                : CommonArithmeticHelper.BitHighZero(value[1]));
+                ? 63 + BitMath.FLS64(value[1])
+                : BitMath.FLS64(*value) - 1);
 
-            if (exp < 0)
+            if (exp < 127)
                 return 0f;
 
-            uint raw = (uint)(exp + 127) << 23;
+            uint raw = (uint)(exp << 23);
 
             int x = exp >> 6; // x / 64
             int y = exp & 0x3F; // x % 64

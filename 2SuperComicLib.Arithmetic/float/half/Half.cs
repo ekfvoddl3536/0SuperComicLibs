@@ -84,7 +84,7 @@ namespace SuperComicLib.Arithmetic
 
             int absK = Math.Abs(v);
 
-            int k = 31 - CommonArithmeticHelper.BitHighZero((uint)absK);
+            int k = 31 - absK.FLS();
             if (k > 15)
                 return
                     v < 0

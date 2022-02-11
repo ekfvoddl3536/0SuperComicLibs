@@ -21,8 +21,8 @@ namespace SuperComicLib.Arithmetic
             int k = 0;
             while (i != 0)
             {
-                i = i.DivMod10fs(out int d);
-                vs[k++] = (char)(d + '0');
+                vs[k++] = (char)(i % 10 + '0');
+                i /= 10;
             }
 
             while (--k >= 0)

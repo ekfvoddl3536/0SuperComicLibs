@@ -7,31 +7,31 @@ namespace SuperComicLib.Arithmetic
     {
         #region constant | static field
         public const int Size32 = 8;
-        public const int Size64 = 4;
-        public const int Bits = 256;
+        public const int Size64 = Size32 >> 1;
+        public const int Bits = Size32 << 5;
         public const bool Signed = true;
 
-        public static readonly Int256 MinValue = new Int256(0, 0, 0, long.MinValue);
-        public static readonly Int256 MaxValue = new Int256(ulong.MaxValue, ulong.MaxValue, ulong.MaxValue, long.MaxValue);
+        public static readonly Int256 MinValue = new Int256(long.MinValue, 0, 0, 0);
+        public static readonly Int256 MaxValue = new Int256(long.MaxValue, ulong.MaxValue, ulong.MaxValue, ulong.MaxValue);
         #endregion
 
-        internal readonly ulong low;
-        internal readonly ulong mid;
-        internal readonly ulong high;
-        internal readonly long flag;
+        public readonly ulong low;
+        public readonly ulong mid;
+        public readonly ulong high;
+        public readonly long flag;
 
         #region constructor
-        public Int256(long low, long mid, long high, long flag) :
-            this((ulong)low, (ulong)mid, (ulong)high, flag)
+        public Int256(long head, long high, long mid, long low) :
+            this(head, (ulong)high, (ulong)mid, (ulong)low)
         {
         }
 
-        public Int256(ulong low, ulong mid, ulong high, long flag)
+        public Int256(long head, ulong high, ulong mid, ulong low)
         {
             this.low = low;
             this.mid = mid;
             this.high = high;
-            this.flag = flag;
+            this.flag = head;
         }
         #endregion
 
@@ -66,27 +66,12 @@ namespace SuperComicLib.Arithmetic
             return IntHash.Combine(result, flag.GetHashCode());
         }
 
-        public unsafe override string ToString()
-        {
-            fixed (ulong* ptr = &low)
-                return BigIntArithmetic.ToString((uint*)ptr, Size32, Signed);
-        }
-        #endregion
+        public unsafe override string ToString() => ToString(null);
 
-        #region format toString
         public unsafe string ToString(string format)
         {
-            if (string.IsNullOrWhiteSpace(format))
-                return ToString();
-
-            char f = char.ToLower(format[0]);
-            int count = ToInteger.Positive(format, 1);
-
             fixed (ulong* ptr = &low)
-                return
-                    f == 'h'
-                    ? BigIntArithmetic.ToHexString((uint*)ptr, Size32, count)
-                    : BigIntArithmetic.ToExpToString((uint*)ptr, Size32, count, Signed);
+                return BigIntArithmetic.FormatString((uint*)ptr, Size32, Signed, format);
         }
         #endregion
 
@@ -185,28 +170,32 @@ namespace SuperComicLib.Arithmetic
         public static implicit operator Int256(decimal v)
         {
             int[] vs = decimal.GetBits(v);
-            return new Int256(vs[0], vs[1], vs[2], vs[3] & int.MinValue);
+            return new Int256(
+                (long)(vs[3] & int.MinValue) << 32,
+                0,
+                vs[2],
+                ((long)vs[1] << 32) | (uint)vs[0]);
         }
 
-        public static implicit operator Int256(uint v) => new Int256(v, 0, 0, 0);
-        public static implicit operator Int256(ulong v) => new Int256(v, 0, 0, 0);
+        public static implicit operator Int256(uint v) => new Int256(0, 0, 0, v);
+        public static implicit operator Int256(ulong v) => new Int256(0, 0, 0, v);
         public static implicit operator Int256(int v) =>
             v < 0
-            ? new Int256(v, -1, -1, -1)
-            : new Int256(v, 0, 0, 0);
+            ? new Int256(-1, -1, -1, v)
+            : new Int256(0, 0, 0, v);
         public static implicit operator Int256(long v) =>
             v < 0
-            ? new Int256(v, -1, -1, -1)
-            : new Int256((ulong)v, 0, 0, 0);
+            ? new Int256(-1, -1, -1, v)
+            : new Int256(0, 0, 0, (ulong)v);
 
         // from low bits
         public static implicit operator Int256(in Int128 value) =>
             value.high < 0
-            ? new Int256((long)value.low, value.high, -1, -1)
-            : new Int256(value.low, (ulong)value.high, 0, 0);
+            ? new Int256(-1, -1, value.high, (long)value.low)
+            : new Int256(0, 0, (ulong)value.high, value.low);
 
         public static implicit operator Int256(in UInt128 value) =>
-            new Int256(value.low, value.high, 0, 0);
+            new Int256(0, 0, value.high, value.low);
         #endregion
 
         #region current -> x
@@ -234,7 +223,6 @@ namespace SuperComicLib.Arithmetic
                 : result;
         }
         #endregion
-
 
         #region compare
         public static unsafe bool operator ==(Int256 left, Int256 right) =>
