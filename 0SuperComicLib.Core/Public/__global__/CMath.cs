@@ -71,24 +71,7 @@ namespace SuperComicLib
         #endregion
 
         #region uint
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Min(this uint left, uint right)
-        {
-            uint temp = left - right;
-            return right + (temp & (temp >> 31));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Max(this uint left, uint right)
-        {
-            uint temp = left - right;
-            return left - (temp & (temp >> 31));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Clampi(this uint num, uint min, uint max) => Max(min, Min(max, num));
-
+        // https://blog.naver.com/ekfvoddl3535/222607247076
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Normal(this uint value) => (value | (uint)-(int)value) >> 31;
         #endregion
@@ -124,23 +107,6 @@ namespace SuperComicLib
         #endregion
 
         #region ulong
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ulong Min(this ulong left, ulong right)
-        {
-            ulong temp = left - right;
-            return right + (temp & (temp >> 63));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ulong Max(this ulong left, ulong right)
-        {
-            ulong temp = left - right;
-            return left - (temp & (temp >> 63));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ulong Clampi(this ulong num, ulong min, ulong max) => Max(min, Min(max, num));
-
         // https://blog.naver.com/ekfvoddl3535/222607247076
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Normal(this ulong value) => (value | (ulong)-(long)value) >> 63;
