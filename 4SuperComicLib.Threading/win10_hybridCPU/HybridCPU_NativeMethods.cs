@@ -18,11 +18,17 @@ namespace SuperComicLib.Threading
             IntPtr Flags);
 
         [DllImport(kl32)]
-        public static extern IntPtr SetThreadAffinityMask(
+        public static extern UIntPtr SetThreadAffinityMask(
             [In] IntPtr hThread, 
-            [In] IntPtr dwThreadAffinityMask);
+            [In] UIntPtr dwThreadAffinityMask);
 
         [DllImport(kl32)]
         public static extern IntPtr GetCurrentThread();
+
+        [DllImport(kl32)]
+        public static extern bool SetThreadGroupAffinity(
+            [In] IntPtr hThread,
+            [In] GROUP_AFFINITY* GroupAffinity,
+            [Out, Optional] GROUP_AFFINITY* PreviousGroupAffinity);
     }
 }

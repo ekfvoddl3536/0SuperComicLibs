@@ -27,6 +27,5 @@ namespace SuperComicLib.Threading
         internal bool NeedBreak(int index) =>
             m_state == STATE_STOP ||
             m_state == STATE_BREAK && index >= m_lowestBreak.Value;
-
     }
 }

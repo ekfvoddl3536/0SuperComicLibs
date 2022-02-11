@@ -33,6 +33,19 @@ namespace SuperComicLib.Threading
             }
         }
 
+        /// <summary>
+        /// <paramref name="mode"/> 값에 따른 유효 논리 프로세서 개수를 가져옵니다.
+        /// </summary>
+        /// <param name="mode">사용자 지정 <see cref="Preference"/> 열거형 값 입니다.</param>
+        public static int EffectiveProcessorCount(Preference mode)
+        {
+            ref ProcessorCountEx _pinfo = ref procInfo;
+            if ((_pinfo.littleCores | _pinfo.bigCores) == 0)
+                GetProcessorCount(ref _pinfo);
+
+            return _pinfo.EffectiveCount(mode);
+        }
+
         private static void GetProcessorCount(ref ProcessorCountEx result)
         {
             if (IsValidateOS() == false)
@@ -51,7 +64,8 @@ namespace SuperComicLib.Threading
             // 시작할 때 SystemCPUSetInfo->efficiencyClass 액세스가 가능하도록 미리조정
             // big.LITTLE 같은 1:1 구조만 지원
 
-            for (byte* si = pbuf + 18, di = pbuf + (int)size; si <= di; si += sizeof(SystemCPUSetInfo))
+            const int SYSTEMCPUINFO_SZ = 32;
+            for (byte* si = pbuf + 18, di = pbuf + (int)size; si <= di; si += SYSTEMCPUINFO_SZ) 
                 cores[*si & 1]++;
 
             // 0번째 cpu의 SystemCPUSetInfo->efficiencyClass가 0(효율 코어)인 경우

@@ -34,5 +34,13 @@ namespace SuperComicLib.Threading
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int LittleCoreIndex(int __relative__littleCores_index) =>
             __relative__littleCores_index + bigCores * (HybridCPU.headLittleCores ^ 1);
+
+        /// <summary>
+        /// <paramref name="mode"/> 값에 따른 유효 논리 프로세서 개수를 가져옵니다.
+        /// </summary>
+        /// <param name="mode">사용자 지정 <see cref="Preference"/> 열거형 값 입니다.</param>
+        public int EffectiveCount(Preference mode) =>
+            littleCores * (((int)mode >> 1) & 1) +
+            bigCores * ((int)mode & 1);
     }
 }

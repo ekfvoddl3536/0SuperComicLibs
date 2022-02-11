@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace SuperComicLib.Threading
@@ -7,9 +8,23 @@ namespace SuperComicLib.Threading
 	{
 		public static readonly ParallelOptions defaultOpt = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount };
 
+		public static int EffectiveMaxConcurrencyLevel(TaskScheduler taskScheduler, int value)
+        {
+			uint max = (uint)taskScheduler.MaximumConcurrencyLevel;
+            return 
+				max < int.MaxValue 
+				? (int)CMath.Min(max, (uint)value) 
+				: value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int EffectiveMaxConcurrencyLevel(int value) => EffectiveMaxConcurrencyLevel(TaskScheduler.Current, value);
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void While(Func<bool> body) => 
 			While(defaultOpt, body);
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void While(int worker_count, Func<bool> body) => 
 			While(new ParallelOptions { MaxDegreeOfParallelism = worker_count }, body);
 

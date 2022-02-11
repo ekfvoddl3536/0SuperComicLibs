@@ -53,12 +53,6 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Normal(this int value) => (value >> 31) | (int)((uint)-value >> 31);
 
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //public static int Flip(this int value, int max_include) => max_include - value;
-
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //public static int Flip(this int value, int min_include, int max_include) => max_include - (value + min_include);
-
         // https://blog.naver.com/ekfvoddl3535/222629296802
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Flip_s(this int value, int max_include, int state)
@@ -74,6 +68,29 @@ namespace SuperComicLib
             Contract.Requires(state >= 0 && state <= 1, "invalid state value");
             return value - ((value << 1) - max_include - min_include) * state;
         }
+        #endregion
+
+        #region uint
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint Min(this uint left, uint right)
+        {
+            uint temp = left - right;
+            return right + (temp & (temp >> 31));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint Max(this uint left, uint right)
+        {
+            uint temp = left - right;
+            return left - (temp & (temp >> 31));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint Clampi(this uint num, uint min, uint max) => Max(min, Min(max, num));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint Normal(this uint value) => (value | (uint)-(int)value) >> 31;
         #endregion
 
         #region long
@@ -104,6 +121,29 @@ namespace SuperComicLib
         // https://blog.naver.com/ekfvoddl3535/222607247076
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Normal(this long value) => (value >> 63) | (long)((ulong)-value >> 63);
+        #endregion
+
+        #region ulong
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong Min(this ulong left, ulong right)
+        {
+            ulong temp = left - right;
+            return right + (temp & (temp >> 63));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong Max(this ulong left, ulong right)
+        {
+            ulong temp = left - right;
+            return left - (temp & (temp >> 63));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong Clampi(this ulong num, ulong min, ulong max) => Max(min, Min(max, num));
+
+        // https://blog.naver.com/ekfvoddl3535/222607247076
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong Normal(this ulong value) => (value | (ulong)-(long)value) >> 63;
         #endregion
     }
 }

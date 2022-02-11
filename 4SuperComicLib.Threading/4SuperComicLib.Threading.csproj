@@ -83,7 +83,8 @@
     <Compile Include="src\worker\WorkerBase.cs" />
     <Compile Include="win10_hybridCPU\HybridCPU.cs" />
     <Compile Include="win10_hybridCPU\HybridCPU_NativeMethods.cs" />
-    <Compile Include="win10_hybridCPU\SystemCPUSetInfo.cs" />
+    <Compile Include="win10_hybridCPU\parallel\HybridParallel.cs" />
+    <Compile Include="win10_hybridCPU\__structures.cs" />
     <Compile Include="win10_hybridCPU\thread_task\Preference.cs" />
     <Compile Include="win10_hybridCPU\thread_task\HybridThreadContext.cs" />
     <Compile Include="win10_hybridCPU\thread_task\HybridThread.cs" />
