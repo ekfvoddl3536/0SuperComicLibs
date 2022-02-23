@@ -9,15 +9,15 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Min(this int left, int right)
         {
-            int temp = left - right;
-            return right + (temp & (temp >> 31));
+            long temp = (long)left - right;
+            return right + (int)(temp & (temp >> 63));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Max(this int left, int right)
         {
-            int temp = left - right;
-            return left - (temp & (temp >> 31));
+            long temp = (long)left - right;
+            return left - (int)(temp & (temp >> 63));
         }
 
         // RngIn --> Clampi 이름 변경
@@ -53,6 +53,12 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Normal(this int value) => (value >> 31) | (int)((uint)-value >> 31);
 
+        /// <summary>
+        /// value to -1 or 1
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Normal_11(this int value) => (value >> 31) | (int)((uint)~value >> 31);
+
         // https://blog.naver.com/ekfvoddl3535/222629296802
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Flip_s(this int value, int max_include, int state)
@@ -71,28 +77,28 @@ namespace SuperComicLib
         #endregion
 
         #region uint
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint Min(this uint left, uint right)
+        {
+            long temp = (long)left - right;
+            return right + (uint)(temp & (temp >> 63));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint Max(this uint left, uint right)
+        {
+            long temp = (long)left - right;
+            return left - (uint)(temp & (temp >> 63));
+        }
+
         // https://blog.naver.com/ekfvoddl3535/222607247076
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Normal(this uint value) => (value | (uint)-(int)value) >> 31;
         #endregion
 
         #region long
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static long Min(this long left, long right)
-        {
-            long temp = left - right;
-            return right + (temp & (temp >> 63));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static long Max(this long left, long right)
-        {
-            long temp = left - right;
-            return left - (temp & (temp >> 63));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static long Clampi(this long num, long min, long max) => Max(min, Min(max, num));
+        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        // public static long Clampi(this long num, long min, long max) => Max(min, Min(max, num));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Abs(this long value)
@@ -104,9 +110,29 @@ namespace SuperComicLib
         // https://blog.naver.com/ekfvoddl3535/222607247076
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Normal(this long value) => (value >> 63) | (long)((ulong)-value >> 63);
+
+        /// <summary>
+        /// value to -1 or 1
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long Normal_11(this long value) => (value >> 63) | (long)((ulong)~value >> 63);
         #endregion
 
         #region ulong
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong Min(this ulong left, ulong right)
+        {
+            ulong temp = left - right;
+            return right + (temp & (temp >> 63));
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong Max(this ulong left, ulong right)
+        {
+            ulong temp = left - right;
+            return left - (temp & (temp >> 63));
+        }
+
         // https://blog.naver.com/ekfvoddl3535/222607247076
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Normal(this ulong value) => (value | (ulong)-(long)value) >> 63;
