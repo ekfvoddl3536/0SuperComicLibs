@@ -9,7 +9,7 @@ namespace SuperComicLib.Arithmetic
     public readonly unsafe struct floati : IComparable, IEquatable<floati>, IComparable<floati>, IConvertible, IFormattable
     {
         public const int MaxValue = int.MaxValue;
-        public const int MinValue = -(int.MinValue + 1);
+        public const int MinValue = int.MinValue + 1;
 
         private readonly int _value;
 
