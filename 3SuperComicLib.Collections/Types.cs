@@ -35,7 +35,7 @@ namespace SuperComicLib.Collections
         void Reset();
         bool LazyAdd();
         bool IsAlive { get; }
-        T Value { get; set; }
+        ref T Value { get; }
         T[] ToArray();
         int Count { get; }
     }
@@ -58,7 +58,7 @@ namespace SuperComicLib.Collections
     public interface IRangeRefArray<T> : IEnumerable<T>, IValueIterable<T>
     {
         int Length { get; }
-        T this[int index] { get; set; }
+        ref T this[int index] { get; }
         T[] Source();
         IRangeRefArray<T> Slice(int begin, int count);
     }
@@ -155,14 +155,30 @@ namespace SuperComicLib.Collections
     {
         ref T this[int index] { get; }
 
-        ref T At(int index);
-
 #pragma warning disable IDE1006
+        ref T at(int index);
+
         RawIterator<T> begin();
         RawIterator<T> end();
 
         RawReverseIterator<T> rbegin();
         RawReverseIterator<T> rend();
+#pragma warning restore IDE1006 // 명명규칙
+    }
+
+    public interface IReadOnlyRawContainer<T> : IRawContainer
+        where T : unmanaged
+    {
+        ref readonly T this[int index] { get; }
+
+#pragma warning disable IDE1006
+        ref readonly T at(int index);
+
+        RawConstIterator<T> begin();
+        RawConstIterator<T> end();
+
+        RawConstReverseIterator<T> rbegin();
+        RawConstReverseIterator<T> rend();
 #pragma warning restore IDE1006 // 명명규칙
     }
 

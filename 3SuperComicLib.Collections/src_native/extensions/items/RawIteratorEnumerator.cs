@@ -26,7 +26,7 @@ namespace SuperComicLib.Collections
         {
             if (current != end)
             {
-                item = !current;
+                item = current.Item;
                 current++;
 
                 return true;

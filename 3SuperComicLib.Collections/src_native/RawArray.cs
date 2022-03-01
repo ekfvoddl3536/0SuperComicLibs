@@ -11,8 +11,8 @@ namespace SuperComicLib.Collections
         where TItem : unmanaged
         where TAlloc : unmanaged, IRawAllocater
     {
-        protected int m_length;
-        protected TItem* m_ptr;
+        protected internal TItem* m_ptr;
+        protected internal int m_length;
 
         public RawArray(int length, bool initDefault = true)
         {
@@ -57,7 +57,7 @@ namespace SuperComicLib.Collections
         /// <summary>
         /// indexing after index range validate check
         /// </summary>
-        public ref TItem At(int index)
+        public ref TItem at(int index)
         {
             if (index < 0 || index >= m_length)
                 throw new ArgumentOutOfRangeException(nameof(index));
@@ -73,7 +73,7 @@ namespace SuperComicLib.Collections
         public virtual RawReverseIterator<TItem> rbegin() => new RawReverseIterator<TItem>(m_ptr + (m_length - 1));
         public virtual RawReverseIterator<TItem> rend() => new RawReverseIterator<TItem>(m_ptr - 1);
 
-        public virtual RawMemory getMemory() => new RawMemory(m_length, m_ptr);
+        public virtual RawMemory getMemory() => new RawMemory(m_ptr, m_length);
 
         public virtual int size() => m_length;
 

@@ -414,11 +414,7 @@ namespace SuperComicLib.Collections
 
             public bool IsAlive => index < inst.m_count;
             public int Count => inst.m_count;
-            public T Value
-            {
-                get => inst.slots[index].value;
-                set => inst.slots[index].value = value;
-            }
+            public ref T Value => ref inst.slots[index].value;
 
             public void Add() => index++;
 
@@ -461,11 +457,7 @@ namespace SuperComicLib.Collections
 
             public bool IsAlive => index >= 0 && index < inst.m_count;
             public int Count => inst.m_count;
-            public T Value
-            {
-                get => inst.slots[index].value;
-                set => inst.slots[index].value = value;
-            }
+            public ref T Value => ref inst.slots[index].value;
 
             public void Add() => index--;
 

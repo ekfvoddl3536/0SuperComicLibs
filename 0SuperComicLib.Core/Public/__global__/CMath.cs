@@ -59,6 +59,12 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Normal_11(this int value) => (value >> 31) | (int)((uint)~value >> 31);
 
+        /// <summary>
+        /// value to 0 or 1
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Normal_01(this int value) => (int)(~(uint)(value | (value - 1)) >> 31);
+
         // https://blog.naver.com/ekfvoddl3535/222629296802
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Flip_s(this int value, int max_include, int state)

@@ -55,6 +55,26 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -68,6 +88,7 @@
   <ItemGroup>
     <Compile Include="Extension\ArrayExtension.cs" />
     <Compile Include="Extension\DictionaryExtension.cs" />
+    <Compile Include="Extension\IRawContainerExtension.cs" />
     <Compile Include="Extension\Itmes\EnumerableConvert.cs" />
     <Compile Include="Extension\IIteratorExtension.cs" />
     <Compile Include="Extension\Itmes\EnumerableToIterable.cs" />
@@ -93,6 +114,7 @@
     <Compile Include="Extension\Itmes\ReverseRangeIterator.cs" />
     <Compile Include="Extension\Itmes\Selector.cs" />
     <Compile Include="Extension\Itmes\LimitEnumerable.cs" />
+    <Compile Include="Extension\Itmes\ReadOnlyRawContainerWrapper.cs" />
     <Compile Include="Extension\StackExtension.cs" />
     <Compile Include="Extension\Itmes\StackPopEnumerable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -102,12 +124,15 @@
     <Compile Include="src\List\FreeListPool.cs" />
     <Compile Include="src\Map\KeyValueTable.cs" />
     <Compile Include="src\Map\ValueListMap.cs" />
+    <Compile Include="src\__Indexing\Index2D.cs" />
     <Compile Include="src_native\allocater\CoTaskAllocater.cs" />
     <Compile Include="src_native\allocater\HGlobalAllocater.cs" />
     <Compile Include="src_native\allocater\CachedRawAllocater.cs" />
     <Compile Include="src_native\extensions\IRawContainer_Extension.cs" />
     <Compile Include="src_native\extensions\items\RawIteratorEnumerator.cs" />
     <Compile Include="src_native\extensions\RawContainerUtility.cs" />
+    <Compile Include="src_native\iterators\RawConstIterator.cs" />
+    <Compile Include="src_native\iterators\RawConstReverseIterator.cs" />
     <Compile Include="src_native\NativeArray.cs" />
     <Compile Include="src_native\RawArray.cs" />
     <Compile Include="src\List\ValuePairTable.cs" />
@@ -118,9 +143,10 @@
     <Compile Include="src_gcsafe\List\NGCList_T.cs" />
     <Compile Include="src_native\iterators\RawIterator.cs" />
     <Compile Include="src_native\RawMemory.cs" />
-    <Compile Include="src_native\iterators\RawVoidPtr.cs" />
     <Compile Include="src_native\iterators\RawReverseIterator.cs" />
     <Compile Include="src_native\list\RawVector.cs" />
+    <Compile Include="src_native\span\NativeConstSpan.cs" />
+    <Compile Include="src_native\span\NativeSpan.cs" />
     <Compile Include="Utils\ArrayStream.cs" />
     <Compile Include="Types.cs" />
     <Compile Include="Utils\RangeArrayStream.cs" />

@@ -429,19 +429,10 @@ namespace SuperComicLib.Collections
 
             public int Count => _list.m_size;
             public bool IsAlive => _index < _list.m_size;
-            public T Value
-            {
-                get =>
-                    _version != _list.m_version
-                    ? Reference(_index, ref _node).value
-                    : _list.m_list[_node].value;
-
-                set => 
-                    (_version != _list.m_version 
-                    ? ref Reference(_index, ref _node) 
-                    : ref _list.m_list[_node])
-                    .value = value;
-            }
+            public ref T Value => 
+                ref (_version != _list.m_version
+                ? ref Reference(_index, ref _node).value
+                : ref _list.m_list[_node].value);
 
             public void Add() => _index++;
 

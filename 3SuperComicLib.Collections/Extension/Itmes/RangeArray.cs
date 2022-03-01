@@ -16,11 +16,7 @@ namespace SuperComicLib.Collections
             this.end = end;
         }
 
-        public T this[int index]
-        {
-            get => arr[index + start];
-            set => arr[index + start] = value;
-        }
+        public ref T this[int index] => ref arr[index + start];
 
         public int Length => end - start;
 

@@ -544,10 +544,11 @@ namespace SuperComicLib.Collections
         }
 
 #pragma warning disable
-        protected struct Iterator : IValueIterator<T>
+        protected class Iterator : IValueIterator<T>
         {
-            private LinkedHashSet<T> inst;
-            private LinkedNode<T> node;
+            protected LinkedHashSet<T> inst;
+            protected LinkedNode<T> node;
+            protected T value;
 
             public Iterator(LinkedHashSet<T> inst)
             {
@@ -557,28 +558,32 @@ namespace SuperComicLib.Collections
 
             public bool IsAlive => node != null;
             public int Count => inst.m_count;
-            public T Value
+            public ref T Value
             {
-                get => node.m_value;
-                set => throw new InvalidOperationException();
+                get
+                {
+                    value = node.m_value;
+                    return ref value;
+                }
             }
 
-            public void Add()
+            public virtual void Add()
             {
                 node = node.Next;
                 if (node == inst.m_head)
                     node = null;
             }
 
-            public void Reset() => node = inst.m_head;
 
-            public bool LazyAdd()
+            public virtual bool LazyAdd()
             {
                 node = node.Next;
                 return node != inst.m_head;
             }
 
             public T[] ToArray() => inst.ToArray();
+
+            public void Reset() => node = inst.m_head;
 
             public void Dispose()
             {
@@ -587,46 +592,23 @@ namespace SuperComicLib.Collections
             }
         }
 
-        protected struct ReverseIterator : IValueIterator<T>
+        protected sealed class ReverseIterator : Iterator
         {
-            private LinkedHashSet<T> inst;
-            private LinkedNode<T> node;
-
-            public ReverseIterator(LinkedHashSet<T> inst)
+            public ReverseIterator(LinkedHashSet<T> inst) : base(inst)
             {
-                this.inst = inst;
-                node = inst.m_head;
             }
 
-            public bool IsAlive => node != null;
-            public int Count => inst.m_count;
-            public T Value
-            {
-                get => node.m_value;
-                set => throw new InvalidOperationException();
-            }
-
-            public void Add()
+            public override void Add()
             {
                 node = node.Prev;
                 if (node == inst.m_head)
                     node = null;
             }
 
-            public void Reset() => node = inst.m_head;
-
-            public bool LazyAdd()
+            public override bool LazyAdd()
             {
                 node = node.Prev;
                 return node != inst.m_head;
-            }
-
-            public T[] ToArray() => inst.ToArray();
-
-            public void Dispose()
-            {
-                inst = null;
-                node = null;
             }
         }
 #pragma warning restore

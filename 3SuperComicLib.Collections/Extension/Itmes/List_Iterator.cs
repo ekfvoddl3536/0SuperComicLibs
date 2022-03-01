@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SuperComicLib.Collections
 {
@@ -7,33 +8,33 @@ namespace SuperComicLib.Collections
     {
         private IList<T> inst;
         private int index;
+        private T value;
 
-        public List_Iterator(IList<T> inst) => this.inst = inst;
+        public List_Iterator(IList<T> inst)
+        {
+            this.inst = inst;
+            Reset();
+        }
 
         public bool IsAlive => index < inst.Count;
         public int Count => inst.Count;
-        public T Value
+        public ref T Value => ref value;
+
+        public void Add() => inst[index++] = value; // apply previous value
+
+        public bool LazyAdd()
         {
-            get => inst[index];
-            set => inst[index] = value;
+            inst[index++] = value; // apply previous value
+            return index < inst.Count;
         }
 
-        public void Add() => index++;
+        public void Reset() =>
+            value =
+                inst.Count == (index = 0)
+                ? default(T)
+                : inst[0];
 
-        public void Reset() => index = 0;
-
-        public bool LazyAdd() => ++index < inst.Count;
-
-        public T[] ToArray()
-        {
-            int max = inst.Count;
-            T[] temp = new T[max];
-
-            for (int x = 0; x < max; x++)
-                temp[x] = inst[x];
-
-            return temp;
-        }
+        public T[] ToArray() => inst.ToArray();
 
         public void Dispose()
         {

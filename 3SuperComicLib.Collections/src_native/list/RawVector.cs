@@ -113,7 +113,7 @@ namespace SuperComicLib.Collections
 
         public RawArray<TItem, TAlloc> ToArray() => new RawArray<TItem, TAlloc>(this);
 
-        public RawMemory ToDirectArray() => new RawMemory(m_last, m_ptr);
+        public RawMemory ToDirectArray() => new RawMemory(m_ptr, m_last);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureCapacity(int size)

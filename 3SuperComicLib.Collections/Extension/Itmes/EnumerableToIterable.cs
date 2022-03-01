@@ -43,11 +43,7 @@ namespace SuperComicLib.Collections
                 ? countCache = collection.Count()
                 : countCache;
 
-            public T Value
-            {
-                get => value;
-                set => throw new NotSupportedException();
-            }
+            public ref T Value => ref value;
 
             public void Add()
             {

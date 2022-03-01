@@ -16,11 +16,7 @@ namespace SuperComicLib.Collections
 
         public bool IsAlive => idx < max;
         public int Count => max;
-        public T Value
-        {
-            get => src[idx];
-            set => src[idx] = value;
-        }
+        public ref T Value => ref src[idx];
 
         public void Add() => idx++;
 

@@ -9,8 +9,8 @@ namespace SuperComicLib.Collections
         where TItem : unmanaged
         where TAlloc : unmanaged, IRawAllocater
     {
-        private readonly int m_length;
-        private readonly TItem* m_ptr;
+        internal readonly TItem* m_ptr;
+        internal readonly int m_length;
 
         public NativeArray(int length, bool initDefault = true)
         {
@@ -41,7 +41,7 @@ namespace SuperComicLib.Collections
             get => m_length;
         }
 
-        public RawMemory GetMemory() => new RawMemory(m_length, m_ptr);
+        public RawMemory GetMemory() => new RawMemory(m_ptr, m_length);
 
         public void Dispose()
         {

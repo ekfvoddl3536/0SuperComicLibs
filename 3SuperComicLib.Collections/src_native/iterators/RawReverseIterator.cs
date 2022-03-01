@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 namespace SuperComicLib.Collections
 {
     [StructLayout(LayoutKind.Sequential)]
-    public readonly unsafe struct RawReverseIterator<T> : IEquatable<RawReverseIterator<T>>, IEquatable<RawVoidPtr>, IConvertible<RawVoidPtr>
+    public readonly unsafe struct RawReverseIterator<T> : IEquatable<RawReverseIterator<T>>, IEquatable<IntPtr>
        where T : unmanaged
     {
         public readonly T* Value;
@@ -14,11 +14,34 @@ namespace SuperComicLib.Collections
 
         #region override
         public override bool Equals(object obj) =>
-            obj is IntPtr v0 && this == v0 ||
-            obj is RawReverseIterator<T> p1 && this == p1 ||
+            obj is IntPtr v0 && (IntPtr)this == v0 ||
             obj is IEquatable<RawReverseIterator<T>> comp && comp.Equals(this);
         public override int GetHashCode() => ((IntPtr)Value).GetHashCode();
         public override string ToString() => ((IntPtr)Value).ToString();
+        #endregion
+
+        #region instance member
+        public ref T Item
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ref *Value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public RawIterator<T> Base() => new RawIterator<T>(Value + 1);
+        #endregion
+
+        #region interface impl
+        public bool Equals(RawReverseIterator<T> other) => this == other;
+
+        public bool Equals(IntPtr other) => Value == (void*)other;
+        #endregion
+
+        #region compare self
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator ==(RawReverseIterator<T> left, RawReverseIterator<T> right) => left.Value == right.Value;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator !=(RawReverseIterator<T> left, RawReverseIterator<T> right) => left.Value != right.Value;
         #endregion
 
         #region ++/--
@@ -33,76 +56,14 @@ namespace SuperComicLib.Collections
         public static RawReverseIterator<T> operator --(RawReverseIterator<T> left) => new RawReverseIterator<T>(unchecked(left.Value + 1));
         #endregion
 
-        #region compare self
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(RawReverseIterator<T> left, RawReverseIterator<T> right) => left.Value == right.Value;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(RawReverseIterator<T> left, RawReverseIterator<T> right) => left.Value != right.Value;
-        #endregion
-
-        #region compare another pointers
-        public static bool operator ==(RawReverseIterator<T> left, IntPtr right) => left.Value == right.ToPointer();
-        public static bool operator !=(RawReverseIterator<T> left, IntPtr right) => left.Value != right.ToPointer();
-
-        public static bool operator ==(IntPtr left, RawReverseIterator<T> right) => left.ToPointer() == right.Value;
-        public static bool operator !=(IntPtr left, RawReverseIterator<T> right) => left.ToPointer() != right.Value;
-
-        public static bool operator ==(RawReverseIterator<T> left, void* right) => left.Value == right;
-        public static bool operator !=(RawReverseIterator<T> left, void* right) => left.Value != right;
-
-        public static bool operator ==(void* left, RawReverseIterator<T> right) => left == right.Value;
-        public static bool operator !=(void* left, RawReverseIterator<T> right) => left != right.Value;
-        #endregion
-
-        #region unary operator
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T operator +(RawReverseIterator<T> self) => *self.Value;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T operator -(RawReverseIterator<T> self) => *self.Value;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T operator !(RawReverseIterator<T> self) => *self.Value;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T operator ~(RawReverseIterator<T> self) => *self.Value;
-        #endregion
-
         #region explicit/implicit cast operator
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator IntPtr(RawReverseIterator<T> self) => new IntPtr(self.Value);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static explicit operator UIntPtr(RawReverseIterator<T> self) => new UIntPtr(self.Value);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator T(RawReverseIterator<T> self) => *self.Value;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator RawReverseIterator<T>(RawIterator<T> iter) => new RawReverseIterator<T>(iter.Value - 1);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator RawVoidPtr(RawReverseIterator<T> self) => new RawVoidPtr(self.Value);
-        #endregion
-
-        #region method
-        public ref T Item
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => ref *Value;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int AddressInt32() => (int)Value;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public long AddressInt64() => (long)Value;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public RawIterator<T> Base() => new RawIterator<T>(Value + 1);
-        #endregion
-
-        #region interface impl
-        public bool Equals(RawReverseIterator<T> other) => this == other;
-
-        public bool Equals(RawVoidPtr other) => Value == other.ptr;
-
-        public RawVoidPtr ConvertTo() => this;
         #endregion
     }
 }

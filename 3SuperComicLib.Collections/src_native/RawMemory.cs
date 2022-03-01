@@ -6,13 +6,13 @@ namespace SuperComicLib.Collections
     public readonly unsafe struct RawMemory
     {
         // 바이트 기준이 아니므로, 정확하지 않음
-        public readonly int _size;
         public readonly void* _value;
+        public readonly int _size;
 
-        public RawMemory(int size, void* value)
+        public RawMemory(void* value, int size)
         {
-            _size = size;
             _value = value;
+            _size = size;
         }
     }
 }

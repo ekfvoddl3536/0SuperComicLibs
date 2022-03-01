@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 
 namespace SuperComicLib.Collections
 {
@@ -97,20 +98,18 @@ namespace SuperComicLib.Collections
         #region methods
         public KeyValuePair<TKey, TValue> First()
         {
-            TTKv temp = m_head?.m_value;
-            return
-                temp == null
-                ? throw new IndexOutOfRangeException()
-                : new KeyValuePair<TKey, TValue>(temp.key, temp.value);
+            Contract.Requires<IndexOutOfRangeException>(m_head != null);
+
+            ref TTKv temp = ref m_head.m_value;
+            return new KeyValuePair<TKey, TValue>(temp.key, temp.value);
         }
 
         public KeyValuePair<TKey, TValue> Last()
         {
-            TTKv temp = m_head?.m_prev.m_value;
-            return
-                temp == null
-                ? throw new IndexOutOfRangeException()
-                : new KeyValuePair<TKey, TValue>(temp.key, temp.value);
+            Contract.Requires<IndexOutOfRangeException>(m_head != null);
+
+            ref TTKv temp = ref m_head.m_prev.m_value;
+            return new KeyValuePair<TKey, TValue>(temp.key, temp.value);
         }
 
         public bool ContainsKey(TKey key)
@@ -335,11 +334,11 @@ namespace SuperComicLib.Collections
             }
         }
 
-        internal sealed class TTKv
+        internal struct TTKv
         {
             public TKey key;
             public TValue value;
-
+        
             public TTKv(TKey key, TValue value)
             {
                 this.key = key;
@@ -449,6 +448,7 @@ namespace SuperComicLib.Collections
         {
             internal LinkedDictionary<TKey, TValue> inst;
             internal LinkedNode<TTKv> node;
+            internal KeyValuePair<TKey, TValue> lastValue;
 
             public Iterator(LinkedDictionary<TKey, TValue> inst)
             {
@@ -458,14 +458,16 @@ namespace SuperComicLib.Collections
 
             public bool IsAlive => node != null;
             public int Count => inst.m_count;
-            public KeyValuePair<TKey, TValue> Value
+            public ref KeyValuePair<TKey, TValue> Value // readOnly
             {
                 get
                 {
+                    ref var pair = ref lastValue;
                     TTKv temp = node.m_value;
-                    return new KeyValuePair<TKey, TValue>(temp.key, temp.value);
+
+                    pair = new KeyValuePair<TKey, TValue>(temp.key, temp.value);
+                    return ref pair;
                 }
-                set => throw new AccessViolationException("ReadOnly");
             }
 
             public virtual void Add()

@@ -9,11 +9,7 @@
 
         public int Count => end - start;
 
-        public T Value
-        {
-            get => arr[idx];
-            set => arr[idx] = value;
-        }
+        public ref T Value => ref arr[idx];
 
         public void Add() => idx--;
 
