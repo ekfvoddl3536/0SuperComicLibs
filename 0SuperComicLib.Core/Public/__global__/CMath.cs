@@ -63,7 +63,7 @@ namespace SuperComicLib
         /// value to 0 or 1
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int Normal_01(this int value) => (int)(~(uint)(value | (value - 1)) >> 31);
+        public static int Normal_01(this int value) => (int)Normal((uint)value);
 
         // https://blog.naver.com/ekfvoddl3535/222629296802
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
