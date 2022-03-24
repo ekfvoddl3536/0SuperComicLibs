@@ -2,13 +2,16 @@
 
 using System.Runtime.CompilerServices;
 
-namespace SuperComicLib.Arithmetic
+namespace SuperComicLib
 {
     public static class BitMath
     {
-        #region fill
+        #region underbits
+        /// <summary>
+        /// 0b0001_0100 -> 0b0001_1111
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Fill(this uint value)
+        public static uint SetUnderbits(this uint value)
         {
             value |= value >> 1;
             value |= value >> 2;
@@ -17,8 +20,11 @@ namespace SuperComicLib.Arithmetic
             return value >> 16;
         }
 
+        /// <summary>
+        /// 0b0001_0100 -> 0b0001_1111
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ulong Fill64(this ulong value)
+        public static ulong SetUnderbits64(this ulong value)
         {
             value |= value >> 1;
             value |= value >> 2;
@@ -42,7 +48,7 @@ namespace SuperComicLib.Arithmetic
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int MSB(this uint value)
         {
-            value = Fill(value);
+            value = SetUnderbits(value);
             return (int)(value - (value >> 1));
         }
 
@@ -58,7 +64,7 @@ namespace SuperComicLib.Arithmetic
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long MSB64(this ulong value)
         {
-            value = Fill64(value);
+            value = SetUnderbits64(value);
             return (long)(value - (value >> 1));
         }
         #endregion
@@ -107,9 +113,9 @@ namespace SuperComicLib.Arithmetic
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Popcnt64(this ulong value)
         {
-            value -= (value >> 1) & 0x5555555555555555UL;
-            value = (value & 0x3333333333333333UL) + ((value >> 2) & 0x3333333333333333UL);
-            return (int)((((value + (value >> 4)) & 0xF0F0F0F0F0F0F0FUL) * 0x101010101010101UL) >> 56);
+            value -= (value >> 1) & 0x5555_5555_5555_5555UL;
+            value = (value & 0x3333_3333_3333_3333UL) + ((value >> 2) & 0x3333_3333_3333_3333UL);
+            return (int)((((value + (value >> 4)) & 0x0F0F_0F0F_0F0F_0F0FUL) * 0x0101_0101_0101_0101UL) >> 56);
         }
         #endregion
 
@@ -150,7 +156,7 @@ namespace SuperComicLib.Arithmetic
         /// Find Last Set, 최상위 비트 position (index + 1)
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int FLS(this uint value) => Popcnt(Fill(value));
+        public static int FLS(this uint value) => Popcnt(SetUnderbits(value));
 
         /// <summary>
         /// Find Last Set, 최상위 비트 position (index + 1)
@@ -162,7 +168,7 @@ namespace SuperComicLib.Arithmetic
         /// Find Last Set, 최상위 비트 position (index + 1)
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int FLS64(this ulong value) => Popcnt64(Fill64(value));
+        public static int FLS64(this ulong value) => Popcnt64(SetUnderbits64(value));
         #endregion
     }
 }

@@ -83,11 +83,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BitMath.cs" />
     <Compile Include="common\Statistics.cs" />
     <Compile Include="common\Types.cs" />
     <Compile Include="common\BUtils.cs" />
     <Compile Include="common\CommonArithmeticHelper.cs" />
+    <Compile Include="core\BYTE.cs" />
+    <Compile Include="core\DWORD.cs" />
+    <Compile Include="core\QWORD.cs" />
+    <Compile Include="core\Types.cs" />
+    <Compile Include="core\UnionDecimal.cs" />
+    <Compile Include="core\WORD.cs" />
+    <Compile Include="float\halfi.cs" />
     <Compile Include="float\half\Half.cs" />
     <Compile Include="float\half\HalfToString.cs" />
     <Compile Include="float\floati.cs" />

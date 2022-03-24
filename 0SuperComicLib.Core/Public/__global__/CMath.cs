@@ -7,17 +7,17 @@ namespace SuperComicLib
     {
         #region integer
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int Min(this int left, int right)
+        public static unsafe int Min(this int left, int right)
         {
-            long temp = (long)left - right;
-            return right + (int)(temp & (temp >> 63));
+            bool t = left > right;
+            return *(byte*)&t * (right - left) + left;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int Max(this int left, int right)
+        public static unsafe int Max(this int left, int right)
         {
-            long temp = (long)left - right;
-            return left - (int)(temp & (temp >> 63));
+            bool t = left > right;
+            return *(byte*)&t * (left - right) + right;
         }
 
         // RngIn --> Clampi 이름 변경
@@ -86,15 +86,15 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Min(this uint left, uint right)
         {
-            long temp = (long)left - right;
-            return right + (uint)(temp & (temp >> 63));
+            int temp = (int)left - (int)right;
+            return right + (uint)(temp & (temp >> 31));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Max(this uint left, uint right)
         {
-            long temp = (long)left - right;
-            return left - (uint)(temp & (temp >> 63));
+            int temp = (int)left - (int)right;
+            return left - (uint)(temp & (temp >> 31));
         }
 
         // https://blog.naver.com/ekfvoddl3535/222607247076
@@ -103,8 +103,22 @@ namespace SuperComicLib
         #endregion
 
         #region long
-        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        // public static long Clampi(this long num, long min, long max) => Max(min, Min(max, num));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe long Min(this long left, long right)
+        {
+            bool t = left > right;
+            return *(byte*)&t * (right - left) + left;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe long Max(this long left, long right)
+        {
+            bool t = left > right;
+            return *(byte*)&t * (left - right) + right;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long Clampi(this long num, long min, long max) => Max(min, Min(max, num));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Abs(this long value)
