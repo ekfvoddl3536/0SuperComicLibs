@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace SuperComicLib
@@ -15,11 +15,11 @@ namespace SuperComicLib
             Values = (uint[])other.Values.Clone();
         }
 
-        public BitArray(int memory_size)
+        public BitArray(int uintArray_size)
         {
-            System.Diagnostics.Contracts.Contract.Requires(memory_size > 0);
+            System.Diagnostics.Contracts.Contract.Requires(uintArray_size > 0);
 
-            Values = new uint[(int)CMath.Max((uint)memory_size, 1u)];
+            Values = new uint[(int)CMath.Max((uint)uintArray_size, 1u)];
         }
 
         #region method 1
@@ -38,7 +38,10 @@ namespace SuperComicLib
             set
             {
                 ref uint k = ref Values[bitPosition >> 5];
-                k ^= k ^ ((uint)(*(byte*)&value & 1) << (bitPosition & 0x1F));
+
+                uint _set = 1u << (bitPosition & 0x1F);
+                
+                k ^= (k & _set) ^ _set;
             }
         }
 
