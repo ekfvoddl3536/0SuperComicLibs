@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>SuperComicLib</RootNamespace>
+    <Copyright>Copyright © 2022. SuperComic (ekfvoddl3535@naver.com). All rights reserved.</Copyright>
+    <Authors>SuperComic (ekfvoddl3535@naver.com)</Authors>
+    <Product>0SuperComicLib.NET5Core</Product>
+    <PackageId>0SuperComicLib.NET5Core</PackageId>
+    <RepositoryUrl>https://github.com/ekfvoddl3536/0SuperComicLibs</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>G:\[]SuperComicLib_Split\0SuperComicLib.NET5Core\0SuperComicLib.NET5Core.xml</DocumentationFile>
+  </PropertyGroup>
+
+</Project>
