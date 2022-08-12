@@ -7,11 +7,9 @@ namespace SuperComicLib.Core
     {
         public T Value;
 
-        public Share() { }
+        public Share(T initValue) => Value = initValue;
 
-        public Share(T initValue = default) => Value = initValue;
-
-        public Share(ref T ref_initValue) => Value = ref_initValue;
+        public Share(in T ref_initValue) => Value = ref_initValue;
 
         public override bool Equals(object obj) => Value.Equals(obj);
         public override int GetHashCode() => Value.GetHashCode();

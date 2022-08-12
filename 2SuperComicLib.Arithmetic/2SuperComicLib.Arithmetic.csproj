@@ -93,6 +93,7 @@
     <Compile Include="core\Types.cs" />
     <Compile Include="core\UnionDecimal.cs" />
     <Compile Include="core\WORD.cs" />
+    <Compile Include="float\bfloat16.cs" />
     <Compile Include="float\halfi.cs" />
     <Compile Include="float\half\Half.cs" />
     <Compile Include="float\half\HalfToString.cs" />

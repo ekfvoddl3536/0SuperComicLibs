@@ -37,4 +37,16 @@ namespace SuperComicLib.Threading
             __reserved__ = 0;
         }
     }
+
+    [StructLayout(LayoutKind.Explicit, Size = 32)]
+    public readonly unsafe ref struct ThreadEntry32 // 28bytes? 강제로 32bytes 정렬
+    {
+        [FieldOffset(0)]
+        public readonly uint dwSize;
+        [FieldOffset(sizeof(int) * 2)]
+        public readonly uint th32ThreadID;
+
+        [FieldOffset(sizeof(int) * 6)]
+        public readonly ulong __reserved__; // struct size hint. 하위 32비트는 dwFlags이나 사용되지 않음
+    }
 }

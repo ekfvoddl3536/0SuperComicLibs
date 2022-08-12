@@ -37,20 +37,20 @@ namespace SuperComicLib.Threading
         private Action<int, IMultiWorker> TryGetNext()
         {
             int cachedIndex = Interlocked.Increment(ref nextMethodIndex);
-            return 
-                cachedIndex >= sizeOfMethods 
-                ? null 
+            return
+                cachedIndex >= sizeOfMethods
+                ? null
                 : methods[cachedIndex];
         }
 
         private void SubThread(object state)
         {
             Package p = (Package)state;
-            
+
             int workerIndex = p.workerIndex;
             IMultiWorker inst = p.inst;
 
-            loop:
+        loop:
             Action<int, IMultiWorker> current = TryGetNext();
             if (current != null)
             {

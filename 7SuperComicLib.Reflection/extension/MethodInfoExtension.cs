@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace SuperComicLib.Reflection
+namespace SuperComicLib.Runtime
 {
     public static class MethodInfoExtension
     {

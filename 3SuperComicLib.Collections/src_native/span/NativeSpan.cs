@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable CS0809 // 사용되는 멤버를 재정의하여 사용하지 않음으로 표시
+using System;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -12,10 +13,18 @@ namespace SuperComicLib.Collections
         public readonly T* Source;
         public readonly int Length;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeSpan(T* source, int length)
         {
             Source = source;
             Length = length;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public NativeSpan(IRawContainer<T> iter)
+        {
+            Source = iter.begin().Value;
+            Length = iter.size();
         }
 
         #region property
@@ -40,25 +49,32 @@ namespace SuperComicLib.Collections
             return new NativeSpan<T>(Source + startIndex, length);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T[] ToArray()
         {
-            int i = Length;
+            int len = Length;
 
-            T* ptr = Source + i;
-            T[] res = new T[i];
+            if (len <= 0)
+                return Array.Empty<T>();
 
-            while (--i >= 0)
-                res[i] = *--ptr;
+            T[] res = new T[len];
+
+            fixed (T* pdst = &res[0])
+            {
+                ulong copysize = (ulong)(uint)Length + (uint)sizeof(T);
+                Buffer.MemoryCopy(Source, pdst, copysize, copysize);
+            }
 
             return res;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryCopyTo(NativeSpan<T> dst)
         {
             if ((uint)Length <= (uint)dst.Length)
             {
-                for (T* src_b = Source, end = src_b + Length, dst_b = dst.Source; src_b != end;)
-                    *dst_b++ = *src_b++;
+                ulong copysize = (ulong)(uint)Length * (uint)sizeof(T);
+                Buffer.MemoryCopy(Source, dst.Source, copysize, copysize);
 
                 return true;
             }
@@ -66,12 +82,13 @@ namespace SuperComicLib.Collections
             return false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyTo(NativeSpan<T> dst)
         {
             Contract.Requires<ArgumentOutOfRangeException>((uint)Length <= (uint)dst.Length, $"'{nameof(dst)}'");
 
-            for (T* src_b = Source, end = src_b + Length, dst_b = dst.Source; src_b != end;)
-                *dst_b++ = *src_b++;
+            ulong copysize = (ulong)(uint)Length * (uint)sizeof(T);
+            Buffer.MemoryCopy(Source, dst.Source, copysize, copysize);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -83,13 +100,11 @@ namespace SuperComicLib.Collections
         #endregion
 
         #region override
-#pragma warning disable CS0809
         [Obsolete("NotSupport")]
         public override bool Equals(object obj) => throw new NotSupportedException();
 
         [Obsolete("NotSupport")]
         public override int GetHashCode() => throw new NotSupportedException();
-#pragma warning restore CS0809 // 사용되지 않는 멤버가 사용되는 멤버를 재정의합니다.
 
         public override string ToString()
         {
@@ -119,55 +134,6 @@ namespace SuperComicLib.Collections
         public reverse_iterator rend() => new reverse_iterator(Source - 1);
         #endregion
 
-        #region nested structs
-        public readonly ref struct iterator
-        {
-            private readonly T* _ptr;
-
-            internal iterator(T* source) => _ptr = source;
-
-            public ref T Value
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get => ref *_ptr;
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static iterator operator +(iterator left, int right) => new iterator(left._ptr + right);
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static iterator operator -(iterator left, int right) => new iterator(left._ptr - right);
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static iterator operator ++(iterator left) => new iterator(left._ptr + 1);
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static iterator operator --(iterator left) => new iterator(left._ptr - 1);
-        }
-
-        public readonly ref struct reverse_iterator
-        {
-            private readonly T* _ptr;
-
-            internal reverse_iterator(T* source) => _ptr = source;
-
-            public ref T Value
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get => ref *_ptr;
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static reverse_iterator operator +(reverse_iterator left, int right) => new reverse_iterator(left._ptr - right);
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static reverse_iterator operator -(reverse_iterator left, int right) => new reverse_iterator(left._ptr + right);
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static reverse_iterator operator ++(reverse_iterator left) => new reverse_iterator(left._ptr - 1);
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static reverse_iterator operator --(reverse_iterator left) => new reverse_iterator(left._ptr + 1);
-        }
-#pragma warning restore IDE1006 // 명명 규칙
-        #endregion
-
         #region static members
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(NativeSpan<T> left, NativeSpan<T> right) => 
@@ -181,6 +147,133 @@ namespace SuperComicLib.Collections
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator NativeConstSpan<T>(NativeSpan<T> val) => new NativeConstSpan<T>(val.Source, val.Length);
+        #endregion
+
+        #region nested structs
+        public readonly ref struct iterator
+        {
+            private readonly T* _ptr;
+
+            public iterator(T* source) => _ptr = source;
+
+            public ref T this[int index]
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get => ref *(_ptr + index);
+            }
+
+            public ref T Value
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get => ref *_ptr;
+            }
+
+            #region override
+            [Obsolete("NotSupport")]
+            public override int GetHashCode() => throw new NotSupportedException();
+            [Obsolete("NotSupport")]
+            public override bool Equals(object obj) => throw new NotSupportedException();
+            #endregion
+
+            #region sum & sub
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static iterator operator +(iterator left, int right) => new iterator(left._ptr + right);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static iterator operator -(iterator left, int right) => new iterator(left._ptr - right);
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static iterator operator ++(iterator left) => new iterator(left._ptr + 1);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static iterator operator --(iterator left) => new iterator(left._ptr - 1);
+            #endregion
+
+            #region compare & equals
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator ==(iterator left, iterator right) => left._ptr == right._ptr;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator !=(iterator left, iterator right) => left._ptr != right._ptr;
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator <=(iterator left, iterator right) => left._ptr <= right._ptr;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator >=(iterator left, iterator right) => left._ptr >= right._ptr;
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator <(iterator left, iterator right) => left._ptr < right._ptr;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator >(iterator left, iterator right) => left._ptr > right._ptr;
+            #endregion
+
+            #region cast
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static implicit operator iterator(T* ptr) => new iterator(ptr);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static explicit operator T*(iterator ptr) => ptr._ptr;
+            #endregion
+        }
+
+        public readonly ref struct reverse_iterator
+        {
+            private readonly T* _ptr;
+
+            public reverse_iterator(T* source) => _ptr = source;
+
+            public ref T this[int index]
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get => ref *(_ptr - index);
+            }
+
+            public ref T Value
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get => ref *_ptr;
+            }
+
+            #region override
+            [Obsolete("NotSupport")]
+            public override int GetHashCode() => throw new NotSupportedException();
+            [Obsolete("NotSupport")]
+            public override bool Equals(object obj) => throw new NotSupportedException();
+            #endregion
+
+            #region sum & sub
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static reverse_iterator operator +(reverse_iterator left, int right) => new reverse_iterator(left._ptr - right);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static reverse_iterator operator -(reverse_iterator left, int right) => new reverse_iterator(left._ptr + right);
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static reverse_iterator operator ++(reverse_iterator left) => new reverse_iterator(left._ptr - 1);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static reverse_iterator operator --(reverse_iterator left) => new reverse_iterator(left._ptr + 1);
+            #endregion
+
+            #region compare & equals
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator ==(reverse_iterator left, reverse_iterator right) => left._ptr == right._ptr;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator !=(reverse_iterator left, reverse_iterator right) => left._ptr != right._ptr;
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator <=(reverse_iterator left, reverse_iterator right) => left._ptr <= right._ptr;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator >=(reverse_iterator left, reverse_iterator right) => left._ptr >= right._ptr;
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator <(reverse_iterator left, reverse_iterator right) => left._ptr < right._ptr;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator >(reverse_iterator left, reverse_iterator right) => left._ptr > right._ptr;
+            #endregion
+
+            #region cast
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static implicit operator reverse_iterator(T* ptr) => new reverse_iterator(ptr);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static explicit operator T*(reverse_iterator ptr) => ptr._ptr;
+            #endregion
+        }
+#pragma warning restore IDE1006 // 명명 규칙
         #endregion
     }
 }

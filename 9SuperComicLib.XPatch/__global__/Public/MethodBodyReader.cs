@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using SuperComicLib.Reflection;
+using SuperComicLib.Runtime;
 
 namespace SuperComicLib.XPatch
 {
     public unsafe class MethodBodyReader : IDisposable
     {
-        protected List<ILBuffer> m_buffers = new List<ILBuffer>();
+        protected List<ILBuffer> m_buffers;
         protected MethodBase method;
         protected Module module;
 
@@ -23,13 +23,14 @@ namespace SuperComicLib.XPatch
             if (method == null)
                 throw new ArgumentNullException(nameof(method));
 
+            m_buffers = new List<ILBuffer>();
+
             this.method = 
                 isDynamicMethod
                 ? new RTDynamicMethodInfo(method as DynamicMethod)
                 : method;
 
             this.module = module ?? method.Module;
-            ParseIL();
         }
 
         protected static T Read<T>(byte* ptr, ref int pos) where T : unmanaged
@@ -38,6 +39,8 @@ namespace SuperComicLib.XPatch
             pos += sizeof(T);
             return result;
         }
+
+        public void Parse() => ParseIL();
 
         protected virtual void ParseIL()
         {
@@ -191,37 +194,31 @@ namespace SuperComicLib.XPatch
         public override string ToString() => Utils.IL2String(m_buffers);
 
         #region IDisposable Support
-        private bool disposedValue = false; // 중복 호출을 검색하려면
-
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (m_buffers != null)
             {
                 foreach (ILBuffer buf in m_buffers)
                     buf.Dispose();
 
                 m_buffers.Clear();
-                m_buffers = null;
 
-                method = null;
-
-                disposedValue = true;
+                if (disposing)
+                {
+                    m_buffers = null;
+                    method = null;
+                }
             }
         }
 
-        // TODO: 위의 Dispose(bool disposing)에 관리되지 않는 리소스를 해제하는 코드가 포함되어 있는 경우에만 종료자를 재정의합니다.
         ~MethodBodyReader()
         {
-            // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
             Dispose(false);
         }
 
-        // 삭제 가능한 패턴을 올바르게 구현하기 위해 추가된 코드입니다.
         public void Dispose()
         {
-            // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
             Dispose(true);
-            // TODO: 위의 종료자가 재정의된 경우 다음 코드 줄의 주석 처리를 제거합니다.
             GC.SuppressFinalize(this);
         }
         #endregion

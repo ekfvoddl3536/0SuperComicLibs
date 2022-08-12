@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace SuperComicLib.Collections
 {
@@ -104,5 +105,13 @@ namespace SuperComicLib.Collections
 
             return false;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static NativeSpan<T> AsSpan<T>(this IRawContainer<T> source) where T : unmanaged => 
+            new NativeSpan<T>(source);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static NativeConstSpan<T> AsConstSpan<T>(this IReadOnlyRawContainer<T> source) where T : unmanaged => 
+            new NativeConstSpan<T>(source);
     }
 }

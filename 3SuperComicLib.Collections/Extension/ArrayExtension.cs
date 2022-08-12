@@ -110,7 +110,7 @@ namespace SuperComicLib.Collections
         public static T[] ToFlatArray<T>(this Array array)
         {
             Type type = array.GetType().GetElementType();
-            if (type != CachedType<T>.Value)
+            if (type != typeof(T))
                 throw new ArgumentException("Mismatch Type", nameof(array));
             else if (array.Rank <= 1)
                 return (T[])array;

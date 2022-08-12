@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Reflection.Emit;
 
-namespace SuperComicLib.Reflection
+namespace SuperComicLib.Runtime
 {
     public static class ILGeneratorExtension
     {

@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using SuperComicLib.Numerics;
 
 namespace SuperComicLib.Collections
 {
@@ -413,9 +412,8 @@ namespace SuperComicLib.Collections
         private unsafe void IntersectWithEnumerable(IEnumerable<T> other)
         {
             int ol = m_lastIndex;
-            int arrlen = BitsFactory.ToLengthX86(ol);
 
-            Bits bit = new X86Bits(new uint[arrlen]);
+            BitArray bit = new BitArray((ol >> 5) + 1);
 
             int x;
             foreach (T item in other)
@@ -424,7 +422,7 @@ namespace SuperComicLib.Collections
                 for (x = buckets[hc % buckets.Length] - 1; x >= 0; x = slots[x].next)
                     if (slots[x].hashCode == hc && m_comparer.Equals(slots[x].node.m_value, item))
                     {
-                        bit.MarkBit(x);
+                        bit[x] = true;
                         break;
                     }
             }
@@ -432,8 +430,6 @@ namespace SuperComicLib.Collections
             for (x = 0; x < ol; x++)
                 if (slots[x].hashCode >= 0 && !bit[x])
                     Remove(slots[x].node.m_value);
-
-            bit.Dispose();
         }
         #endregion
 

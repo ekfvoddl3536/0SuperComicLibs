@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using SuperComicLib.Collections;
 
-namespace SuperComicLib.Reflection
+namespace SuperComicLib.Runtime
 {
     public static class ClassWrapper
     {

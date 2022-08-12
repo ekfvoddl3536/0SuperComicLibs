@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SuperComicLib.Reflection
+namespace SuperComicLib.Runtime
 {
 
     [AttributeUsage(AttributeTargets.Property)]

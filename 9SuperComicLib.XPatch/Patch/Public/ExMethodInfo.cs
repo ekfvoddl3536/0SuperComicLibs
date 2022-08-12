@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using SuperComicLib.Reflection;
+using SuperComicLib.Runtime;
 
 namespace SuperComicLib.XPatch
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using SuperComicLib.Collections;
 
-namespace SuperComicLib.Reflection
+namespace SuperComicLib.Runtime
 {
     public static class UnmanagedTypeExtension
     {
@@ -21,9 +21,9 @@ namespace SuperComicLib.Reflection
             if (type.IsValueType)
             {
                 HashSet<Type> done = new HashSet<Type>();
-                Stack<IForwardIterator<FieldInfo>> stack = new Stack<IForwardIterator<FieldInfo>>();
+                Stack<IValueIterator<FieldInfo>> stack = new Stack<IValueIterator<FieldInfo>>();
 
-                IForwardIterator<FieldInfo> e1 = type.GetFields(flg).Begin();
+                IValueIterator<FieldInfo> e1 = type.GetFields(flg).Begin();
             loop:
                 for (; e1.IsAlive; e1.Add())
                 {

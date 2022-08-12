@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace SuperComicLib.Core
 {
@@ -6,17 +7,39 @@ namespace SuperComicLib.Core
     {
         public static void Clear(IntPtr ptr, int size_bytes)
         {
-            int ptr_sz = IntPtr.Size;
+            byte* p1 = (byte*)ptr;
 
-            byte* bp = (byte*)ptr;
+            for (int i = size_bytes >> 6; i-- > 0; p1 += sizeof(Block64))
+                *(Block64*)p1 = default;
 
-            IntPtr zero = default;
+            if (IntPtr.Size == sizeof(int))
+            {
+                for (int i = (size_bytes & 0x3F) >> 2; i-- > 0; p1 += sizeof(uint))
+                    *(uint*)p1 = 0;
+            }
+            else
+            {
+                for (int i = (size_bytes & 0x3F) >> 3; i-- > 0; p1 += sizeof(ulong))
+                    *(ulong*)p1 = 0;
 
-            for (; size_bytes >= ptr_sz; size_bytes -= ptr_sz, bp += ptr_sz)
-                *(IntPtr*)bp = zero;
+                if ((size_bytes & 4) != 0)
+                {
+                    *(uint*)p1 = 0;
+                    p1 += sizeof(uint);
+                }
+            }
 
-            if (size_bytes > 0)
-                *(IntPtr*)(bp - (ptr_sz - size_bytes)) = zero;
+            if ((size_bytes & 2) != 0)
+            {
+                *(ushort*)p1 = 0;
+                p1 += sizeof(ushort);
+            }
+
+            if ((size_bytes & 1) != 0)
+                *p1 = 0;
         }
+
+        [StructLayout(LayoutKind.Sequential, Size = 64)]
+        private readonly ref struct Block64 { }
     }
 }

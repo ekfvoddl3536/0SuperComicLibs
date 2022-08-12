@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using SuperComicLib.Core;
 
-namespace SuperComicLib.Reflection
+namespace SuperComicLib.Runtime
 {
     public static class TypeExtension
     {

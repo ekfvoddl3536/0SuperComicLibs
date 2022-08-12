@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace SuperComicLib.Threading
 {
@@ -16,6 +15,7 @@ namespace SuperComicLib.Threading
             m_mask = GetMask(mode);
         }
 
+        #region methods
         protected void PARAM_RUN(object arg)
         {
             if (m_mask != UIntPtr.Zero)
@@ -33,7 +33,9 @@ namespace SuperComicLib.Threading
         }
 
         public abstract void Start();
+        #endregion
 
+        #region help static methods
         internal static UIntPtr GetMask(Preference mode)
         {
             var c = HybridCPU.ProcessorCount;
@@ -52,6 +54,7 @@ namespace SuperComicLib.Threading
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ulong Mask(int idx) => (1UL << idx) - 1;
+        #endregion
 
         #region 핵심 static method
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -69,33 +72,16 @@ namespace SuperComicLib.Threading
         {
             ProcessorCountEx cpu = HybridCPU.ProcessorCount;
 
-            switch ((int)mode + 3 * HybridCPU.headLittleCores)
+            switch (HybridCPU.headLittleCores)
             {
-                // bigCore head
-                case (int)Preference.BigCores:
-                    __SetGroupAffinity(cpu.bigCores, cpu.littleCores, 1, 0);
-                    break;
-
-                case (int)Preference.LittleCores:
-                    __SetGroupAffinity(cpu.bigCores, cpu.littleCores, 0, 1);
-                    break;
-
                 // littleCore head
-                case (int)(Preference.Normal + 3):
-                    __SetGroupAffinity(cpu.littleCores, cpu.bigCores, 1, 1);
+                case 1:
+                    __SetGroupAffinity(cpu.bigCores, cpu.littleCores, ((uint)mode >> 1) ^ 1, (uint)mode ^ 1);
                     break;
 
-                case (int)(Preference.BigCores + 3):
-                    __SetGroupAffinity(cpu.littleCores, cpu.bigCores, 0, 1);
-                    break;
-
-                case (int)(Preference.LittleCores + 3):
-                    __SetGroupAffinity(cpu.littleCores, cpu.bigCores, 1, 0);
-                    break;
-
-                // bigCore head (normal --> default)
+                // bigCore head
                 default:
-                    __SetGroupAffinity(cpu.bigCores, cpu.littleCores, 1, 1);
+                    __SetGroupAffinity(cpu.littleCores, cpu.bigCores, (uint)mode ^ 1, ((uint)mode >> 1) ^ 1);
                     break;
             }
         }
@@ -179,16 +165,22 @@ namespace SuperComicLib.Threading
         #endregion
 
         #region 기능 확장 static method
+        /// <summary>
+        /// 선호 스레드를 지정하여 작업을 수행합니다.
+        /// </summary>
         public static void Invoke(Preference mode, Action work)
         {
             IntPtr handle = GetCurrentThread();
-            
+
             UIntPtr prev_mask = SetThreadAffinityMask(handle, GetMask(mode));
             work.Invoke();
 
             SetThreadAffinityMask(handle, prev_mask);
         }
 
+        /// <summary>
+        /// 선호 스레드를 지정하여 작업을 수행합니다.
+        /// </summary>
         public static void Invoke<T>(Preference mode, Action<T> work, T arg)
         {
             IntPtr handle = GetCurrentThread();
@@ -199,6 +191,9 @@ namespace SuperComicLib.Threading
             SetThreadAffinityMask(handle, prev_mask);
         }
 
+        /// <summary>
+        /// 선호 스레드를 지정하여 작업을 수행합니다.
+        /// </summary>
         public static TResult Invoke<TIn, TResult>(Preference mode, Func<TIn, TResult> work, TIn arg)
         {
             IntPtr handle = GetCurrentThread();

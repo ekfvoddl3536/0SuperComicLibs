@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable CS0809 // 사용되는 멤버를 재정의하여 사용하지 않음으로 표시
+using System;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -12,10 +13,25 @@ namespace SuperComicLib.Collections
         private readonly T* _ptr;
         public readonly int Length;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeConstSpan(T* source, int length)
         {
             _ptr = source;
             Length = length;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public NativeConstSpan(IReadOnlyRawContainer<T> iter)
+        {
+            _ptr = iter.cbegin().ptr;
+            Length = iter.size();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public NativeConstSpan(IRawContainer<T> iter)
+        {
+            _ptr = iter.begin().Value;
+            Length = iter.size();
         }
 
         #region property
@@ -40,15 +56,21 @@ namespace SuperComicLib.Collections
             return new NativeConstSpan<T>(_ptr + startIndex, length);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T[] ToArray()
         {
-            int i = Length;
+            int len = Length;
 
-            T* ptr = _ptr + i;
-            T[] res = new T[i];
+            if (len <= 0)
+                return Array.Empty<T>();
 
-            while (--i >= 0)
-                res[i] = *--ptr;
+            T[] res = new T[len];
+
+            fixed (T* pdst = &res[0])
+            {
+                ulong copysize = (ulong)(uint)Length + (uint)sizeof(T);
+                Buffer.MemoryCopy(_ptr, pdst, copysize, copysize);
+            }
 
             return res;
         }
@@ -58,8 +80,8 @@ namespace SuperComicLib.Collections
         {
             if ((uint)Length <= (uint)dst.Length)
             {
-                for (T* src_b = _ptr, end = src_b + Length, dst_b = dst.Source; src_b != end;)
-                    *dst_b++ = *src_b++;
+                ulong copysize = (ulong)(uint)Length * (uint)sizeof(T);
+                Buffer.MemoryCopy(_ptr, dst.Source, copysize, copysize);
 
                 return true;
             }
@@ -72,19 +94,17 @@ namespace SuperComicLib.Collections
         {
             Contract.Requires<ArgumentOutOfRangeException>((uint)Length <= (uint)dst.Length, $"'{nameof(dst)}'");
 
-            for (T* src_b = _ptr, end = src_b + Length, dst_b = dst.Source; src_b != end;)
-                *dst_b++ = *src_b++;
+            ulong copysize = (ulong)(uint)Length + (uint)sizeof(T);
+            Buffer.MemoryCopy(_ptr, dst.Source, copysize, copysize);
         }
         #endregion
 
         #region override
-#pragma warning disable CS0809
         [Obsolete("NotSupport")]
         public override bool Equals(object obj) => throw new NotSupportedException();
 
         [Obsolete("NotSupport")]
         public override int GetHashCode() => throw new NotSupportedException();
-#pragma warning restore CS0809 // 사용되지 않는 멤버가 사용되는 멤버를 재정의합니다.
 
         public override string ToString()
         {
@@ -114,55 +134,6 @@ namespace SuperComicLib.Collections
         public const_reverse_iterator rend() => new const_reverse_iterator(_ptr - 1);
         #endregion
 
-        #region nested structs
-        public readonly ref struct const_iterator
-        {
-            private readonly T* _ptr;
-
-            internal const_iterator(T* source) => _ptr = source;
-
-            public ref readonly T Value
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get => ref *_ptr;
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static const_iterator operator +(const_iterator left, int right) => new const_iterator(left._ptr + right);
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static const_iterator operator -(const_iterator left, int right) => new const_iterator(left._ptr - right);
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static const_iterator operator ++(const_iterator left) => new const_iterator(left._ptr + 1);
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static const_iterator operator --(const_iterator left) => new const_iterator(left._ptr - 1);
-        }
-
-        public readonly ref struct const_reverse_iterator
-        {
-            private readonly T* _ptr;
-
-            internal const_reverse_iterator(T* source) => _ptr = source;
-
-            public ref readonly T Value
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get => ref *_ptr;
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static const_reverse_iterator operator +(const_reverse_iterator left, int right) => new const_reverse_iterator(left._ptr - right);
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static const_reverse_iterator operator -(const_reverse_iterator left, int right) => new const_reverse_iterator(left._ptr + right);
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static const_reverse_iterator operator ++(const_reverse_iterator left) => new const_reverse_iterator(left._ptr - 1);
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static const_reverse_iterator operator --(const_reverse_iterator left) => new const_reverse_iterator(left._ptr + 1);
-        }
-#pragma warning restore IDE1006 // 명명 규칙
-        #endregion
-
         #region static memeber
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(NativeConstSpan<T> left, NativeConstSpan<T> right) =>
@@ -173,6 +144,133 @@ namespace SuperComicLib.Collections
         public static bool operator !=(NativeConstSpan<T> left, NativeConstSpan<T> right) => 
             left._ptr != right._ptr || 
             left.Length != right.Length;
+        #endregion
+
+        #region nested structs
+        public readonly ref struct const_iterator
+        {
+            private readonly T* _ptr;
+
+            public const_iterator(T* source) => _ptr = source;
+
+            public ref readonly T this[int index]
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get => ref *(_ptr + index);
+            }
+
+            public ref readonly T Value
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get => ref *_ptr;
+            }
+
+            #region override
+            [Obsolete("NotSupport")]
+            public override int GetHashCode() => throw new NotSupportedException();
+            [Obsolete("NotSupport")]
+            public override bool Equals(object obj) => throw new NotSupportedException();
+            #endregion
+
+            #region sum & sub
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static const_iterator operator +(const_iterator left, int right) => new const_iterator(left._ptr + right);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static const_iterator operator -(const_iterator left, int right) => new const_iterator(left._ptr - right);
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static const_iterator operator ++(const_iterator left) => new const_iterator(left._ptr + 1);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static const_iterator operator --(const_iterator left) => new const_iterator(left._ptr - 1);
+            #endregion
+
+            #region compare & equals
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator ==(const_iterator left, const_iterator right) => left._ptr == right._ptr;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator !=(const_iterator left, const_iterator right) => left._ptr != right._ptr;
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator <=(const_iterator left, const_iterator right) => left._ptr <= right._ptr;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator >=(const_iterator left, const_iterator right) => left._ptr >= right._ptr;
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator <(const_iterator left, const_iterator right) => left._ptr < right._ptr;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator >(const_iterator left, const_iterator right) => left._ptr > right._ptr;
+            #endregion
+
+            #region cast
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static implicit operator const_iterator(T* ptr) => new const_iterator(ptr);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static explicit operator T*(const_iterator ptr) => ptr._ptr;
+            #endregion
+        }
+
+        public readonly ref struct const_reverse_iterator
+        {
+            private readonly T* _ptr;
+
+            public const_reverse_iterator(T* source) => _ptr = source;
+
+            public ref readonly T this[int index]
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get => ref *(_ptr - index);
+            }
+
+            public ref readonly T Value
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get => ref *_ptr;
+            }
+
+            #region override
+            [Obsolete("NotSupport")]
+            public override int GetHashCode() => throw new NotSupportedException();
+            [Obsolete("NotSupport")]
+            public override bool Equals(object obj) => throw new NotSupportedException();
+            #endregion
+
+            #region sum & sub
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static const_reverse_iterator operator +(const_reverse_iterator left, int right) => new const_reverse_iterator(left._ptr - right);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static const_reverse_iterator operator -(const_reverse_iterator left, int right) => new const_reverse_iterator(left._ptr + right);
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static const_reverse_iterator operator ++(const_reverse_iterator left) => new const_reverse_iterator(left._ptr - 1);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static const_reverse_iterator operator --(const_reverse_iterator left) => new const_reverse_iterator(left._ptr + 1);
+            #endregion
+
+            #region compare & equals
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator ==(const_reverse_iterator left, const_reverse_iterator right) => left._ptr == right._ptr;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator !=(const_reverse_iterator left, const_reverse_iterator right) => left._ptr != right._ptr;
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator <=(const_reverse_iterator left, const_reverse_iterator right) => left._ptr <= right._ptr;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator >=(const_reverse_iterator left, const_reverse_iterator right) => left._ptr >= right._ptr;
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator <(const_reverse_iterator left, const_reverse_iterator right) => left._ptr < right._ptr;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool operator >(const_reverse_iterator left, const_reverse_iterator right) => left._ptr > right._ptr;
+            #endregion
+
+            #region cast
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static implicit operator const_reverse_iterator(T* ptr) => new const_reverse_iterator(ptr);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static explicit operator T*(const_reverse_iterator ptr) => ptr._ptr;
+            #endregion
+        }
+#pragma warning restore IDE1006 // 명명 규칙
         #endregion
     }
 }

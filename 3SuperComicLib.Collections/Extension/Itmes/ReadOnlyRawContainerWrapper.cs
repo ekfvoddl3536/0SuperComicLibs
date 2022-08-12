@@ -11,11 +11,11 @@
 
         public ref readonly T at(int index) => ref container.at(index);
 
-        public RawConstIterator<T> begin() => new RawConstIterator<T>(container.begin().Value);
-        public RawConstIterator<T> end() => new RawConstIterator<T>(container.end().Value);
+        public RawConstIterator<T> cbegin() => new RawConstIterator<T>(container.begin().Value);
+        public RawConstIterator<T> cend() => new RawConstIterator<T>(container.end().Value);
 
-        public RawConstReverseIterator<T> rbegin() => new RawConstReverseIterator<T>(container.rbegin().Value);
-        public RawConstReverseIterator<T> rend() => new RawConstReverseIterator<T>(container.rend().Value);
+        public RawConstReverseIterator<T> crbegin() => new RawConstReverseIterator<T>(container.rbegin().Value);
+        public RawConstReverseIterator<T> crend() => new RawConstReverseIterator<T>(container.rend().Value);
 
         public int capacity() => container.capacity();
 

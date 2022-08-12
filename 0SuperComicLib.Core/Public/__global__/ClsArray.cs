@@ -26,8 +26,8 @@ namespace SuperComicLib
 
         public static void DisposeAll<T>(ref List<T> _list) where T : class, IDisposable
         {
-            foreach (T a in _list)
-                a.Dispose();
+            for (int i = _list.Count; --i >= 0;)
+                _list[i].Dispose();
 
             _list.Clear();
             _list = null;

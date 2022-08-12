@@ -88,10 +88,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Public\CodeContracts\Attributes.cs" />
+    <Compile Include="Public\CodeContracts\ValidRangeAttribute.cs" />
     <Compile Include="Public\Core\IntHash.cs" />
     <Compile Include="Public\Core\MemoryBlock.cs" />
     <Compile Include="Public\Core\PRNG.cs" />
     <Compile Include="Public\Core\Share.cs" />
+    <Compile Include="Public\IO\UnmanagedVectorStream.cs" />
+    <Compile Include="Public\Text\extension\HexCharInvalidCheckerExtension.cs" />
     <Compile Include="Public\__global__\BitMath.cs" />
     <Compile Include="Public\Text\extension\FRngStringExtension.cs" />
     <Compile Include="Public\Text\FCharEnumerator.cs" />
@@ -107,20 +111,15 @@
     <Compile Include="Public\Threading\TaskExtension.cs" />
     <Compile Include="Public\Threading\SpinBlockLockSlim.cs" />
     <Compile Include="Public\Threading\VolatileInt32.cs" />
-    <Compile Include="Public\__global__\Cached.cs" />
+    <Compile Include="Public\__global__\CachedType.cs" />
     <Compile Include="Public\__global__\LongHashedString.cs" />
     <Compile Include="Public\__global__\Range.cs" />
     <Compile Include="Public\Core\Whitespace.cs" />
     <Compile Include="Public\__global__\CMath.cs" />
     <Compile Include="Public\Core\CTypes.cs" />
-    <Compile Include="Public\IO\NopEncoding.cs" />
-    <Compile Include="Public\IO\NopStream.cs" />
-    <Compile Include="Public\IO\NopStreamWriter.cs" />
-    <Compile Include="Public\__global__\extension\SCL_GLOBAL_ListExtension.cs" />
-    <Compile Include="Public\__global__\VarSwap.cs" />
-    <Compile Include="__global\SUPERCOMICLIB_CORE__BooleanExtension__.cs" />
-    <Compile Include="__global\SUPERCOMICLIB_CORE__IntPtrExtension__.cs" />
-    <Compile Include="__global\SCL_CORE_ObjectExtension.cs" />
+    <Compile Include="Public\Text\io\NopEncoding.cs" />
+    <Compile Include="Public\Text\io\NopStream.cs" />
+    <Compile Include="Public\Text\io\NopStreamWriter.cs" />
     <Compile Include="__global\SUPERCOMICLIB_CORE__ArrayExtension__.cs" />
     <Compile Include="Public\__global__\ClsArray.cs" />
     <Compile Include="Public\__global__\extension\SCL_GLOBAL_StringExtension.cs" />

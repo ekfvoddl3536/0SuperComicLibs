@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
 namespace SuperComicLib
@@ -28,84 +29,84 @@ namespace SuperComicLib
         #endregion
 
         #region split
-        public static string[] Split_s(this string str, char[] chars, out char[] bounds)
-        {
-            List<string> vs = new List<string>();
-            List<char> bds = new List<char>();
+        //public static string[] Split_s(this string str, char[] chars, out char[] bounds)
+        //{
+        //    List<string> vs = new List<string>();
+        //    List<char> bds = new List<char>();
 
-            int x = 0, st = 0;
-            for (int max = str.Length; x < max; x++)
-            {
-                foreach (char d in chars)
-                    if (str[x] == d)
-                    {
-                        int cnt = x - st;
+        //    int x = 0, st = 0;
+        //    for (int max = str.Length; x < max; x++)
+        //    {
+        //        foreach (char d in chars)
+        //            if (str[x] == d)
+        //            {
+        //                int cnt = x - st;
 
-                        vs.Add(str.Substring(st, cnt));
-                        bds.Add(d);
+        //                vs.Add(str.Substring(st, cnt));
+        //                bds.Add(d);
 
-                        st += cnt + 1;
+        //                st += cnt + 1;
 
-                        break;
-                    }
-            }
+        //                break;
+        //            }
+        //    }
 
-            if (st < x) // 아직 남은 문자가 있다
-                vs.Add(str.Substring(st));
+        //    if (st < x) // 아직 남은 문자가 있다
+        //        vs.Add(str.Substring(st));
 
-            bounds = bds.ToArray();
-            return vs.ToArray();
-        }
+        //    bounds = bds.ToArray();
+        //    return vs.ToArray();
+        //}
 
-        public static string[] Split_s(this string str, string[] strs, out string[] bounds)
-        {
-            List<string> vs = new List<string>();
-            List<string> bds = new List<string>();
+        //public static string[] Split_s(this string str, string[] strs, out string[] bounds)
+        //{
+        //    List<string> vs = new List<string>();
+        //    List<string> bds = new List<string>();
 
-            int strsMax = strs.Length;
-            int[] strsLen = Array.ConvertAll(strs, s => s.Length);
+        //    int strsMax = strs.Length;
+        //    int[] strsLen = Array.ConvertAll(strs, s => s.Length);
 
-            int x = 0, st = 0;
-            for (int max = str.Length - 1; x < max;) // 마지막 한 문자는 제외
-            {
-                for (int z = 0; z < strsMax; z++)
-                {
-                    int sl = strsLen[z];
-                    if (x + sl >= max)
-                        continue;
+        //    int x = 0, st = 0;
+        //    for (int max = str.Length - 1; x < max;) // 마지막 한 문자는 제외
+        //    {
+        //        for (int z = 0; z < strsMax; z++)
+        //        {
+        //            int sl = strsLen[z];
+        //            if (x + sl >= max)
+        //                continue;
 
-                    string ztmp = strs[z];
-                    for (int tmp = x, i = 0; i < sl; i++, tmp++)
-                        if (ztmp[i] != str[tmp])
-                            goto end2;
+        //            string ztmp = strs[z];
+        //            for (int tmp = x, i = 0; i < sl; i++, tmp++)
+        //                if (ztmp[i] != str[tmp])
+        //                    goto end2;
 
-                    // matched
-                    int cnt = x - st;
+        //            // matched
+        //            int cnt = x - st;
 
-                    vs.Add(str.Substring(st, cnt));
+        //            vs.Add(str.Substring(st, cnt));
 
-                    st += cnt;
-                    bds.Add(str.Substring(st, sl));
+        //            st += cnt;
+        //            bds.Add(str.Substring(st, sl));
 
-                    st += sl;
-                    x += sl;
+        //            st += sl;
+        //            x += sl;
 
-                    goto end;
-                end2:
-                    ;
-                }
+        //            goto end;
+        //        end2:
+        //            ;
+        //        }
 
-                x++;
-            end:
-                ;
-            }
+        //        x++;
+        //    end:
+        //        ;
+        //    }
 
-            if (st < x) // 아직 남은 문자가 있다
-                vs.Add(str.Substring(st));
+        //    if (st < x) // 아직 남은 문자가 있다
+        //        vs.Add(str.Substring(st));
 
-            bounds = bds.ToArray();
-            return vs.ToArray();
-        }
+        //    bounds = bds.ToArray();
+        //    return vs.ToArray();
+        //}
 
         public static string[] Split(this string str, string value) => str.Split(value.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
@@ -155,36 +156,36 @@ namespace SuperComicLib
             return vs.ToArray();
         }
 
-        public static string[] SplitExceptRange(this string str, char split, char except_begin, char except_end)
-        {
-            List<string> vs = new List<string>();
-
-            bool skip = false;
-            char c;
-
-            int x = 0, st = 0;
-            for (int max = str.Length; x < max; x++)
-                if (skip)
-                {
-                    if (str[x] == except_end)
-                        skip = false;
-                }
-                else if ((c = str[x]) == except_begin)
-                    skip = true;
-                else if (c == split)
-                {
-                    int cnt = x - st;
-
-                    vs.Add(str.Substring(st, cnt));
-
-                    st += cnt + 1;
-                }
-
-            if (st < x) // 아직 남은 문자가 있다
-                vs.Add(str.Substring(st));
-
-            return vs.ToArray();
-        }
+        // public static string[] SplitExceptRange(this string str, char split, char except_begin, char except_end)
+        // {
+        //     List<string> vs = new List<string>();
+        // 
+        //     bool skip = false;
+        //     char c;
+        // 
+        //     int x = 0, st = 0;
+        //     for (int max = str.Length; x < max; x++)
+        //         if (skip)
+        //         {
+        //             if (str[x] == except_end)
+        //                 skip = false;
+        //         }
+        //         else if ((c = str[x]) == except_begin)
+        //             skip = true;
+        //         else if (c == split)
+        //         {
+        //             int cnt = x - st;
+        // 
+        //             vs.Add(str.Substring(st, cnt));
+        // 
+        //             st += cnt + 1;
+        //         }
+        // 
+        //     if (st < x) // 아직 남은 문자가 있다
+        //         vs.Add(str.Substring(st));
+        // 
+        //     return vs.ToArray();
+        // }
         #endregion
 
         #region index
@@ -256,9 +257,8 @@ namespace SuperComicLib
         #region hashcode
         public static unsafe int GetFixedHashcode(this string str)
         {
-#if DEBUG
-            System.Diagnostics.Contracts.Contract.Requires(str != null);
-#endif
+            Contract.Requires(str != null);
+
             int hash1 = hashcode_start_c;
             int hash2 = hash1;
 
@@ -273,10 +273,9 @@ namespace SuperComicLib
 
         public static unsafe int GetFixedHashcode(this string str, IEnumerable<string> additionalStrings, out int totalLength)
         {
-#if DEBUG
-            System.Diagnostics.Contracts.Contract.Requires(str != null);
-            System.Diagnostics.Contracts.Contract.Requires(additionalStrings != null);
-#endif
+            Contract.Requires(str != null);
+            Contract.Requires(additionalStrings != null);
+
             int hash1 = hashcode_start_c;
             int hash2 = hash1;
 

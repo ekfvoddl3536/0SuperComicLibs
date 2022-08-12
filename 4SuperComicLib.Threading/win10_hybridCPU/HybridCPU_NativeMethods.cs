@@ -9,6 +9,7 @@ namespace SuperComicLib.Threading
         private const string kl32 = "kernel32.dll";
 
         // LONG및 ULONG이 long 및 unsigned long 이라서 x86 에서는 int와 unsigned int 크기임 (즉, 가변 크기)
+        // windows 10 이상 사용가능
         [DllImport(kl32)]
         public static extern bool GetSystemCpuSetInformation(
             [Out, Optional] SystemCPUSetInfo* Information,
@@ -19,7 +20,7 @@ namespace SuperComicLib.Threading
 
         [DllImport(kl32)]
         public static extern UIntPtr SetThreadAffinityMask(
-            [In] IntPtr hThread, 
+            [In] IntPtr hThread,
             [In] UIntPtr dwThreadAffinityMask);
 
         [DllImport(kl32)]

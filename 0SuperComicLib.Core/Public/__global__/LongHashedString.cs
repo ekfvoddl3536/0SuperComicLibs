@@ -39,7 +39,7 @@ namespace SuperComicLib
         public HashedString ToHashedString() => new HashedString(CombineHashCode, length);
 
         public bool Equals(LongHashedString other) => Low == other.Low && High == other.High;
-        public bool Equals(string other) => this == other;
+        public bool Equals(string other) => this == new LongHashedString(other);
 
         public bool HashcodeEquals(LongHashedString other) => b_hash == other.b_hash;
         public bool HashcodeEquals(int other) => b_hash == other;

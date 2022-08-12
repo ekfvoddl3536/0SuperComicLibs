@@ -9,15 +9,15 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe int Min(this int left, int right)
         {
-            bool t = left > right;
-            return *(byte*)&t * (right - left) + left;
+            bool t = left < right;
+            return ((*(byte*)&t - 1) & (right - left)) + left;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe int Max(this int left, int right)
         {
-            bool t = left > right;
-            return *(byte*)&t * (left - right) + right;
+            bool t = left < right;
+            return ((*(byte*)&t - 1) & (left - right)) + right;
         }
 
         // RngIn --> Clampi 이름 변경
@@ -86,35 +86,38 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Min(this uint left, uint right)
         {
-            int temp = (int)left - (int)right;
-            return right + (uint)(temp & (temp >> 31));
+            uint temp = left - right;
+            return right + (temp & (uint)((int)temp >> 31));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Max(this uint left, uint right)
         {
-            int temp = (int)left - (int)right;
-            return left - (uint)(temp & (temp >> 31));
+            uint temp = left - right;
+            return left - (temp & (uint)((int)temp >> 31));
         }
 
         // https://blog.naver.com/ekfvoddl3535/222607247076
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Normal(this uint value) => (value | (uint)-(int)value) >> 31;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint Clampu(this uint value, uint min, uint max) => Min(value + min, max);
         #endregion
 
         #region long
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe long Min(this long left, long right)
         {
-            bool t = left > right;
-            return *(byte*)&t * (right - left) + left;
+            bool t = left < right;
+            return ((*(byte*)&t - 1) & (right - left)) + left;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe long Max(this long left, long right)
         {
-            bool t = left > right;
-            return *(byte*)&t * (left - right) + right;
+            bool t = left < right;
+            return ((*(byte*)&t - 1) & (left - right)) + right;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -143,19 +146,22 @@ namespace SuperComicLib
         public static ulong Min(this ulong left, ulong right)
         {
             ulong temp = left - right;
-            return right + (temp & (temp >> 63));
+            return right + (temp & (ulong)((long)temp >> 63));
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Max(this ulong left, ulong right)
         {
             ulong temp = left - right;
-            return left - (temp & (temp >> 63));
+            return left - (temp & (ulong)((long)temp >> 63));
         }
 
         // https://blog.naver.com/ekfvoddl3535/222607247076
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Normal(this ulong value) => (value | (ulong)-(long)value) >> 63;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong Clampu(this ulong value, ulong min, ulong max) => Min(value + min, max);
         #endregion
     }
 }

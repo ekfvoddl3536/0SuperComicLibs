@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using SuperComicLib.Reflection;
+using SuperComicLib.Runtime;
 
 namespace SuperComicLib.XPatch
 {
@@ -149,8 +149,8 @@ namespace SuperComicLib.XPatch
             // ldarg.s -> stloc.s
             // 0xE ~ 0x13
             // + FDFB = long version (remove 's')
-            WORD v = qcode.Value;
-            if (Range(v, 0xE, 0x13))
+            int v = (ushort)qcode.Value;
+            if (v.IsRngIn(0xE, 0x13))
             {
                 v += 0xFD_FB;
                 // fix operand size
@@ -170,7 +170,7 @@ namespace SuperComicLib.XPatch
                 else if (v == 3 || v == 4)
                     v++;
                 // ldarg ldarga starg
-                else if (Range(v, 0xFE_09, 0xFE_0B))
+                else if (v.IsRngIn(0xFE_09, 0xFE_0B))
                     current.operand = (short)((short)current.operand + 1);
             }
             if (hasReturn)
@@ -188,21 +188,21 @@ namespace SuperComicLib.XPatch
                     current.operand = (short)4;
                 }
                 // ldloc_0 ldloc_1 ldloc_2 stloc_0 stloc_1 stloc_2
-                else if (Range(v, 6, 8) || Range(v, 0xA, 0xD))
+                else if (v.IsRngIn(6, 8) || v.IsRngIn(0xA, 0xD))
                     v++;
                 // ldloc ldloca stloc
-                else if (Range(v, 0xFE_0C, 0xFE_0E))
+                else if (v.IsRngIn(0xFE_0C, 0xFE_0E))
                     current.operand = (short)((short)current.operand + 1);
             }
 
             // br.s -> blt.un.s
-            if (Range(v, 0x2B, 0x37))
+            if (v.IsRngIn(0x2B, 0x37))
                 v += 0xD;
             else if (v == 0xDE) // leave.s
                 v = 0xDD;
 
             if (v != qcode.Value)
-                current.code = OpCodeConverter.GetCode(v.unsigned);
+                current.code = OpCodeConverter.GetCode(v);
         }
 
         protected void ForEach(ILGenerator il, Action<ILBuffer> action)

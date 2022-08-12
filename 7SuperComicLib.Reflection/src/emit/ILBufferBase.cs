@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection.Emit;
 
-namespace SuperComicLib.Reflection
+namespace SuperComicLib.Runtime
 {
     public class ILBufferBase : IDisposable
     {

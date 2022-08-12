@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using SuperComicLib.LowLevel;
-using SuperComicLib.Reflection;
+using SuperComicLib.Runtime;
 
 namespace SuperComicLib.XPatch
 {
     internal static unsafe class Utils
     {
-        internal static bool Range(ushort value, int min, int max) => value >= min && value <= max;
+        internal static bool Range(ushort value, int min, int max) =>
+            value >= min && value <= max;
 
         internal static ILBuffer FindILBuffer(IReadOnlyList<ILBuffer> buffers, int offset)
         {
@@ -69,7 +69,7 @@ namespace SuperComicLib.XPatch
                 {
                     case OperandType.InlineBrTarget:
                     case OperandType.ShortInlineBrTarget:
-                        strb.Append($" IL_{FindILBuffer(buffers, NativeClass.ReadMemoryValue_unsafe<int>(il.operand, 0)).offset:X4}");
+                        strb.Append($" IL_{FindILBuffer(buffers, (int)il.operand).offset:X4}");
                         break;
 
                     case OperandType.InlineField:

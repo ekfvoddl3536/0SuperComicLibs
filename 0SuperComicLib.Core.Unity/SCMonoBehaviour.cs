@@ -25,24 +25,15 @@
 
 namespace SuperComicWorld
 {
-    public abstract class SCMonoBehaviour : SCUnityScriptBase
+    public abstract class SCMonoBehaviour : SCScriptBase
     {
-        protected override sealed void Awake()
-        {
-            base.Awake();
-            OnAwake(true);
-        }
-
-        protected virtual void Start()
-        {
-        }
-
-        protected virtual void OnDestroy()
-        {
-        }
-
         protected virtual void OnDisable()
         {
+        }
+
+        protected virtual void OnEnable()
+        {
+
         }
 
         protected virtual void Update()
@@ -55,12 +46,6 @@ namespace SuperComicWorld
 
         protected virtual void Reset()
         {
-        }
-
-        protected virtual void OnAwake(bool scanAllFields)
-        {
-            if (scanAllFields)
-                this.UpdateAnyFields();
         }
     }
 }

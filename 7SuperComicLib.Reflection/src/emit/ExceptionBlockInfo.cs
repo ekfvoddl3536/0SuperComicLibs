@@ -1,7 +1,7 @@
 ﻿using System;
 using SuperComicLib.Core;
 
-namespace SuperComicLib.Reflection
+namespace SuperComicLib.Runtime
 {
     [Flags]
     public enum ExceptionBlockType
@@ -37,12 +37,11 @@ namespace SuperComicLib.Reflection
         public override bool Equals(object obj) => false;
         public override int GetHashCode()
         {
-            int result = 7;
-            IntHash.Combine(ref result, (int)blockType);
-            if (catchType != null)
-                IntHash.Combine(ref result, catchType.GetHashCode());
-
-            return result;
+            int result = IntHash.Combine(7, (int)blockType);
+            return
+                catchType != null 
+                ? IntHash.Combine(result, catchType.GetHashCode()) 
+                : result;
         }
 
         public static bool operator ==(ExceptionBlockInfo left, ExceptionBlockInfo right) =>

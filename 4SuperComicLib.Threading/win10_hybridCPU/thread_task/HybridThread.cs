@@ -16,5 +16,19 @@ namespace SuperComicLib.Threading
         public override void Start() => m_thread.Start();
 
         public void Start(object parameter) => m_thread.Start(parameter);
+
+        public static HybridThread StartNew(Action start, Preference mode)
+        {
+            var result = new HybridThread(start, mode);
+            result.Start();
+            return result;
+        }
+
+        public static HybridThread StartNew(Action<object> start, object parameter, Preference mode)
+        {
+            var result = new HybridThread(start, mode);
+            result.Start(parameter);
+            return result;
+        }
     }
 }

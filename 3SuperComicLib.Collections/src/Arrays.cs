@@ -62,12 +62,5 @@ namespace SuperComicLib.Collections
             const int MaxArrayLength = 0x7FEF_FFFF;
             return CMath.Min(oldSize << 1, MaxArrayLength);
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static int AutoClampSize(int capacity)
-        {
-            const int MaxArrayLength = 0x7FEF_FFFF;
-            return CMath.Clampi(capacity, 4, MaxArrayLength);
-        }
     }
 }

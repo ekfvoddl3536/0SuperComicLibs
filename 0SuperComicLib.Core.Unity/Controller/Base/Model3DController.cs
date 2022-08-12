@@ -38,12 +38,7 @@ namespace SuperComicWorld.Controller
         private Vector3 initScale;
         #endregion
 
-        protected override void OnAwake(bool scanAllFields)
-        {
-            initScale = transform.localScale = new Vector3(minZoom, minZoom, 1f);
-
-            base.OnAwake(scanAllFields);
-        }
+        protected override void Awake() => initScale = transform.localScale = new Vector3(minZoom, minZoom, 1f);
 
         public override void OnScroll(PointerEventData arg) =>
             Zoom2D(transform, initScale, zoomSpeed * arg.scrollDelta.y, maxZoom);

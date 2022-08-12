@@ -1,27 +1,32 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace SuperComicLib.Collections
 {
     internal static unsafe class RawContainerUtility
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void Internal_IncreaseCapacity<Ty, Ta>(ref Ty* ptr, int prev_size, int want_size)
-            where Ty : unmanaged
-            where Ta : unmanaged, IRawAllocater
+        internal static void Internal_Clear<T>(T* iter, T* end) where T : unmanaged
         {
-            var item = CachedRawAllocater<Ta>.item;
-            Ty* np = (Ty*)item.stdAlloc(want_size, false);
+            while (iter != end)
+                *iter++ = default;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void Internal_IncreaseCapacity<T>(ref T* ptr, int prev_size, int want_size) where T : unmanaged
+        {
+            T* np = (T*)Marshal.AllocHGlobal(want_size * sizeof(T));
 
             int i;
             for (i = prev_size; --i >= 0;)
                 np[i] = ptr[i];
 
-            Ty def00 = default;
+            T def00 = default;
             for (i = want_size; --i >= prev_size;)
                 np[i] = def00;
 
-            item.stdFree((IntPtr)ptr);
+            Marshal.FreeHGlobal((IntPtr)ptr);
             ptr = np;
         }
 

@@ -21,7 +21,7 @@ namespace SuperComicLib.Collections
         #region constructors
         public IndexLinkedList(int capacity)
         {
-            m_list = new Node[Arrays.AutoClampSize(capacity)];
+            m_list = new Node[Math.Max(capacity, 4)];
             m_free_idx = -1;
         }
 
@@ -40,7 +40,7 @@ namespace SuperComicLib.Collections
         }
         #endregion
 
-        #region properties
+        #region properties & indexing
         public int Capacity => m_list.Length;
 
         public int Count => m_size;
@@ -71,12 +71,12 @@ namespace SuperComicLib.Collections
         #region internal interface impl
         ref T IByReferenceIndexer_Internal<T>.ByRefValue(int index) => ref m_list[index].value;
 
-        int ILinkedListSlim_Internal<T>.GetNextNode(int node) 
+        int ILinkedListSlim_Internal<T>.GetNextNode(int node)
         {
             int next = m_list[node].next;
-            return 
+            return
                 next < 0 // invalid reference
-                ? node 
+                ? node
                 : next;
         }
 
@@ -139,7 +139,7 @@ namespace SuperComicLib.Collections
         {
             ValidateNodeIndex(ref node);
             int result = P_InsertBefore(node.m_index, ref value);
-            
+
             if (node.m_index == m_head_idx) // head 위치 이전에 삽입 = AddFirst와 같음
                 m_head_idx = result;
 
@@ -156,6 +156,9 @@ namespace SuperComicLib.Collections
 
             list_[target_.next].prev = target_.prev;
             list_[target_.prev].next = target_.next;
+            
+            // clear
+            target_.value = default;
 
             if (m_head_idx == node_idx)
                 m_head_idx = target_.next;
@@ -199,6 +202,50 @@ namespace SuperComicLib.Collections
             return false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T RemoveFirst()
+        {
+            int head_idx = m_head_idx;
+            T result = m_list[head_idx].value;
+            Internal_RemoveAt(head_idx);
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T RemoveLast()
+        {
+            int idx = m_list[m_head_idx].prev;
+            T result = m_list[idx].value;
+            Internal_RemoveAt(idx);
+
+            return result;
+        }
+
+        public bool TryRemoveFirst(out T result)
+        {
+            if (m_size <= 0)
+            {
+                result = default;
+                return false;
+            }
+
+            result = RemoveFirst();
+            return true;
+        }
+
+        public bool TryRemoveLast(out T result)
+        {
+            if (m_size <= 0)
+            {
+                result = default;
+                return false;
+            }
+
+            result = RemoveLast();
+            return true;
+        }
+
         public bool TryRemove(NodeIndex<T> node)
         {
             if (node.m_owner != this || node.m_index < 0)
@@ -218,7 +265,7 @@ namespace SuperComicLib.Collections
             {
                 ref Node n = ref list_[i];
                 i = n.next;
-                
+
                 n = defval_; // reset
             }
 
@@ -227,6 +274,21 @@ namespace SuperComicLib.Collections
             m_head_idx = 0;
             m_free_idx = NULL_PTR;
             m_version++;
+        }
+
+        public void ClearResize(int new_capacity)
+        {
+            if (new_capacity > m_list.Length)
+            {
+                m_list = new Node[Math.Max(new_capacity, 4)];
+
+                m_size = 0;
+                m_head_idx = 0;
+                m_free_idx = NULL_PTR;
+                m_version++;
+            }
+            else
+                Clear();
         }
         #endregion
 
@@ -265,6 +327,38 @@ namespace SuperComicLib.Collections
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(T value, EqualityComparer<T> comparer) => FindFirst(value, comparer).m_owner != null;
+
+        public NodeIndex<T> FirstAt(int position)
+        {
+            if (m_size == 0)
+                return default;
+
+            var list = m_list;
+
+            int idx;
+            ref Node n = ref list[idx = m_head_idx];
+
+            while (--position >= 0)
+                n = ref list[idx = n.next];
+
+            return new NodeIndex<T>(this, idx);
+        }
+
+        public NodeIndex<T> LastAt(int position)
+        {
+            if (m_size == 0)
+                return default;
+
+            var list = m_list;
+
+            int idx;
+            ref Node n = ref list[idx = list[m_head_idx].prev];
+
+            while (--position >= 0)
+                n = ref list[idx = n.prev];
+
+            return new NodeIndex<T>(this, idx);
+        }
         #endregion
 
         #region util methods & interface impl
@@ -286,7 +380,7 @@ namespace SuperComicLib.Collections
             for (int idx = list[m_head_idx].prev; --sz >= 0;)
             {
                 ref Node n = ref list[idx];
-                
+
                 result[sz] = n.value;
 
                 idx = n.prev;
@@ -316,6 +410,32 @@ namespace SuperComicLib.Collections
 
                 idx = n.next;
             }
+        }
+
+        /// <summary>
+        /// 데이터를 대상 배열로 복사합니다
+        /// </summary>
+        /// <param name="array">데이터를 수신 받을 버퍼입니다</param>
+        /// <param name="arrayIndex">버퍼에서 수신 받기 시작할 위치입니다</param>
+        /// <param name="startPosition">원본에서 읽기 시작할 위치입니다</param>
+        /// <returns>실제로 복사한 데이터의 개수입니다</returns>
+        public int TryCopyTo(T[] array, int arrayIndex, int startPosition)
+        {
+            int size = Math.Min(array.Length - arrayIndex, m_size);
+
+            Node[] list = m_list;
+
+            int idx = m_head_idx;
+            ref Node n = ref list[idx];
+
+            // 원형 연결 리스트라서 안전함
+            while (--startPosition >= 0)
+                n = ref list[n.next];
+
+            for (int i = size; --i >= 0; n = ref list[n.next])
+                array[arrayIndex++] = n.value;
+
+            return size;
         }
         #endregion
 
@@ -394,7 +514,7 @@ namespace SuperComicLib.Collections
                     return false;
 
                 ref Node node = ref _list.m_list[_curnode];
-                
+
                 _current = node.value;
 
                 if ((_curnode = node.next) == _list.m_head_idx)
@@ -429,7 +549,7 @@ namespace SuperComicLib.Collections
 
             public int Count => _list.m_size;
             public bool IsAlive => _index < _list.m_size;
-            public ref T Value => 
+            public ref T Value =>
                 ref (_version != _list.m_version
                 ? ref Reference(_index, ref _node).value
                 : ref _list.m_list[_node].value);
@@ -449,7 +569,7 @@ namespace SuperComicLib.Collections
 
             protected virtual ref Node Reference(int index, ref int node_)
             {
-                var inst = _list; 
+                var inst = _list;
                 var nodes = inst.m_list;
 
                 int i = inst.m_head_idx;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace SuperComicLib.Collections
 {
@@ -25,11 +26,15 @@ namespace SuperComicLib.Collections
             m_array = new T[Math.Max(minimum_size, size)];
         }
 
-        public T this[int idx] => m_array[(m_readpos + idx) % m_array.Length];
+        public T this[int idx] => m_array[CMath.Abs(m_readpos + idx) % m_array.Length];
 
         public int Capacity => m_array.Length;
 
         public int Count => m_size;
+
+        public int FirstItemIndex => m_readpos;
+
+        public RawBuffer GetBuffer() => new RawBuffer(m_array, m_readpos);
 
         public void Write(T value)
         {
@@ -105,6 +110,26 @@ namespace SuperComicLib.Collections
             {
                 inst = null;
                 m_init_pos = m_idx = m_size = 0;
+            }
+        }
+        #endregion
+
+        #region ref enumerate
+        public readonly ref struct RawBuffer
+        {
+            private readonly T[] m_arr;
+            private readonly int m_pos;
+
+            internal RawBuffer(T[] arr, int pos)
+            {
+                m_arr = arr;
+                m_pos = pos;
+            }
+
+            public ref T this[int idx]
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get => ref m_arr[(m_pos + idx) % m_arr.Length];
             }
         }
         #endregion

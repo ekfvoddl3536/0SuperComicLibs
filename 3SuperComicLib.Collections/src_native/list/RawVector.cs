@@ -6,9 +6,8 @@ using System.Runtime.InteropServices;
 namespace SuperComicLib.Collections
 {
     [StructLayout(LayoutKind.Sequential)]
-    public sealed unsafe class RawVector<TItem, TAlloc> : RawArray<TItem, TAlloc>, IRawList<TItem>
-        where TItem : unmanaged
-        where TAlloc : unmanaged, IRawAllocater
+    public sealed unsafe class RawVector<T> : RawArray<T>, IRawList<T>
+        where T : unmanaged
     {
         private int m_last;
 
@@ -21,11 +20,11 @@ namespace SuperComicLib.Collections
         {
         }
 
-        public RawVector(TItem[] source) : base(source)
+        public RawVector(T[] source) : base(source)
         {
         }
 
-        public RawVector(IRawContainer<TItem> collection) : base(collection)
+        public RawVector(IRawContainer<T> collection) : base(collection)
         {
         }
 
@@ -33,36 +32,36 @@ namespace SuperComicLib.Collections
         {
         }
 
-        public RawVector(IEnumerable<TItem> managed_collection) : base(managed_collection)
+        public RawVector(IEnumerable<T> managed_collection) : base(managed_collection)
         {
         }
         #endregion
 
-        public override RawIterator<TItem> end() => new RawIterator<TItem>(m_ptr + m_last);
+        public override RawIterator<T> end() => new RawIterator<T>(m_ptr + m_last);
 
-        public override RawReverseIterator<TItem> rbegin() => new RawReverseIterator<TItem>(m_ptr + (m_last - 1));
+        public override RawReverseIterator<T> rbegin() => new RawReverseIterator<T>(m_ptr + (m_last - 1));
 
         public override int size() => m_last;
 
-        public void push_back(TItem item)
+        public void push_back(T item)
         {
             EnsureCapacity(m_last);
             m_ptr[m_last++] = item;
         }
 
-        public TItem pop_back()
+        public T pop_back()
         {
             if (m_last <= 0)
                 throw new InvalidOperationException("empty list");
 
-            ref TItem ref_item = ref m_ptr[--m_last];
-            TItem backup = ref_item;
+            ref T ref_item = ref m_ptr[--m_last];
+            T backup = ref_item;
             ref_item = default;
 
             return backup;
         }
 
-        public void insert(int index, TItem item)
+        public void insert(int index, T item)
         {
             if (index < 0 || index >= m_last)
             {
@@ -89,7 +88,7 @@ namespace SuperComicLib.Collections
             return true;
         }
 
-        public void earse(RawIterator<TItem> position)
+        public void earse(RawIterator<T> position)
         {
             RawContainerUtility.CheckVaildateAddress(position.Value, position.Value, m_ptr, m_ptr + m_last);
             RawContainerUtility.Internal_Earse_Single(position, end());
@@ -97,11 +96,11 @@ namespace SuperComicLib.Collections
             m_last--;
         }
 
-        public void earse(RawIterator<TItem> first, RawIterator<TItem> last)
+        public void earse(RawIterator<T> first, RawIterator<T> last)
         {
             if (last.Value < first.Value)
             {
-                RawIterator<TItem> backup = first;
+                RawIterator<T> backup = first;
                 first = last;
                 last = backup;
             }
@@ -111,7 +110,7 @@ namespace SuperComicLib.Collections
             m_last -= RawContainerUtility.Internal_Earse(first, last, end());
         }
 
-        public RawArray<TItem, TAlloc> ToArray() => new RawArray<TItem, TAlloc>(this);
+        public RawArray<T> ToArray() => new RawArray<T>(this);
 
         public RawMemory ToDirectArray() => new RawMemory(m_ptr, m_last);
 
@@ -119,7 +118,7 @@ namespace SuperComicLib.Collections
         private void EnsureCapacity(int size)
         {
             if (size == m_length)
-                RawContainerUtility.Internal_IncreaseCapacity<TItem, TAlloc>(ref m_ptr, size, size + 12);
+                RawContainerUtility.Internal_IncreaseCapacity(ref m_ptr, size, size + 12);
         }
     }
 }

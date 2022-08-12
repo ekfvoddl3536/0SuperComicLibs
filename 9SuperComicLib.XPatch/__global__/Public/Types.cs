@@ -1,5 +1,4 @@
-﻿using SuperComicLib.XPatch;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Reflection.Emit;
 
 namespace SuperComicLib.XPatch

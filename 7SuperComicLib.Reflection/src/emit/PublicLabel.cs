@@ -1,7 +1,7 @@
 ﻿using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 
-namespace SuperComicLib.Reflection
+namespace SuperComicLib.Runtime
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public readonly unsafe struct PublicLabel

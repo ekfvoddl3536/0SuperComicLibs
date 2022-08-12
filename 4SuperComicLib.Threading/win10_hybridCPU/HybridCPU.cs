@@ -65,7 +65,7 @@ namespace SuperComicLib.Threading
             // big.LITTLE 같은 1:1 구조만 지원
 
             const int SYSTEMCPUINFO_SZ = 32;
-            for (byte* si = pbuf + 18, di = pbuf + (int)size; si <= di; si += SYSTEMCPUINFO_SZ) 
+            for (byte* si = pbuf + 18, di = pbuf + (int)size; si <= di; si += SYSTEMCPUINFO_SZ)
                 cores[*si & 1]++;
 
             // 0번째 cpu의 SystemCPUSetInfo->efficiencyClass가 0(효율 코어)인 경우
@@ -79,7 +79,7 @@ namespace SuperComicLib.Threading
             return;
 
         f_exit:
-            result = new ProcessorCountEx(Environment.ProcessorCount, 0);
+            result = new ProcessorCountEx(0, Environment.ProcessorCount);
         }
 
         private static bool IsValidateOS()
@@ -89,7 +89,7 @@ namespace SuperComicLib.Threading
                 // runtime is x64
                 // IntPtr.Size >= sizeof(long) &&
                 // Windows 10 이상
-                os.Platform == PlatformID.Win32NT && 
+                os.Platform == PlatformID.Win32NT &&
                 os.Version.Major >= 10;
         }
     }

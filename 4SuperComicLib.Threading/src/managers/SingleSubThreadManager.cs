@@ -5,21 +5,21 @@ using System.Threading.Tasks;
 namespace SuperComicLib.Threading
 {
     internal sealed class SingleSubThreadManager : IDisposable
-	{
+    {
         private Task task;
 
-		public IEnumerator StartTask(Action<IWorker> asyncMethod)
-		{
-			SimpleThreadWorker e = new SimpleThreadWorker();
+        public IEnumerator StartTask(Action<IWorker> asyncMethod)
+        {
+            SimpleThreadWorker e = new SimpleThreadWorker();
             task = Task.Factory.StartNew(SubThread, new Package(e, asyncMethod));
             return e;
-		}
+        }
 
-		private static void SubThread(object state)
+        private static void SubThread(object state)
         {
-			Package p = (Package)state;
+            Package p = (Package)state;
 
-			p.method.Invoke(p.inst);
+            p.method.Invoke(p.inst);
             p.inst.Dispose();
         }
 
@@ -40,8 +40,8 @@ namespace SuperComicLib.Threading
         #region block
         private sealed class Package
         {
-			public readonly SimpleThreadWorker inst;
-			public readonly Action<IWorker> method;
+            public readonly SimpleThreadWorker inst;
+            public readonly Action<IWorker> method;
 
             public Package(SimpleThreadWorker inst, Action<IWorker> method)
             {

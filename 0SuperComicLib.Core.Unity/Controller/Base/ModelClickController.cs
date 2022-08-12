@@ -27,7 +27,7 @@ using UnityEngine.EventSystems;
 
 namespace SuperComicWorld.Controller
 {
-    public abstract class ModelClickController : SCMonoBehaviour, IPointerClickHandler
+    public abstract class ModelClickController : SCScriptBase, IPointerClickHandler
     {
         public virtual void OnPointerClick(PointerEventData arg)
         {

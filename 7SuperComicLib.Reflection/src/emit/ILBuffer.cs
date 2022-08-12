@@ -1,6 +1,6 @@
 ﻿using System.Reflection.Emit;
 
-namespace SuperComicLib.Reflection
+namespace SuperComicLib.Runtime
 {
     public sealed class ILBuffer : ILBufferBase
     {

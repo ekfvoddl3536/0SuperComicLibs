@@ -125,15 +125,12 @@
     <Compile Include="src\Map\KeyValueTable.cs" />
     <Compile Include="src\Map\ValueListMap.cs" />
     <Compile Include="src\__Indexing\Index2D.cs" />
-    <Compile Include="src_native\allocater\CoTaskAllocater.cs" />
-    <Compile Include="src_native\allocater\HGlobalAllocater.cs" />
-    <Compile Include="src_native\allocater\CachedRawAllocater.cs" />
     <Compile Include="src_native\extensions\IRawContainer_Extension.cs" />
     <Compile Include="src_native\extensions\items\RawIteratorEnumerator.cs" />
     <Compile Include="src_native\extensions\RawContainerUtility.cs" />
     <Compile Include="src_native\iterators\RawConstIterator.cs" />
     <Compile Include="src_native\iterators\RawConstReverseIterator.cs" />
-    <Compile Include="src_native\NativeArray.cs" />
+    <Compile Include="src_native\memory\NativeArray.cs" />
     <Compile Include="src_native\RawArray.cs" />
     <Compile Include="src\List\ValuePairTable.cs" />
     <Compile Include="src\Map\HashKeyBag.cs" />
@@ -163,9 +160,6 @@
     <Compile Include="src\Linked\LinkedNode.cs" />
     <Compile Include="src\Stack\ListStack.cs" />
     <Compile Include="src\Stack\LookaheadStack.cs" />
-    <Compile Include="src\__unused__\ListSlim.cs" />
-    <Compile Include="src\__unused__\IndexBagLarge.cs" />
-    <Compile Include="src\__unused__\IndexBag_T.cs" />
     <Compile Include="src\List\LongHashedList.cs" />
     <Compile Include="src\Map\Map.cs" />
   </ItemGroup>

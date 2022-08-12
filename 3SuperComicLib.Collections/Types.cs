@@ -174,11 +174,11 @@ namespace SuperComicLib.Collections
 #pragma warning disable IDE1006
         ref readonly T at(int index);
 
-        RawConstIterator<T> begin();
-        RawConstIterator<T> end();
+        RawConstIterator<T> cbegin();
+        RawConstIterator<T> cend();
 
-        RawConstReverseIterator<T> rbegin();
-        RawConstReverseIterator<T> rend();
+        RawConstReverseIterator<T> crbegin();
+        RawConstReverseIterator<T> crend();
 #pragma warning restore IDE1006 // 명명규칙
     }
 

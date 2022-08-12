@@ -21,10 +21,10 @@ namespace SuperComicLib.Collections
         #endregion
 
         #region instance member
-        public ref readonly T Item
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => ref *ptr;
+        public ref readonly T this[int index] 
+        { 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)] 
+            get => ref *(ptr - index);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

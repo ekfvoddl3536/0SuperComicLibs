@@ -13,7 +13,7 @@ namespace SuperComicLib.Threading
 
         public CountdownEventSlim(int initCount)
         {
-            m_initCount = 
+            m_initCount =
                 initCount > 1
                 ? initCount
                 : 1;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using SuperComicLib.Reflection;
+using SuperComicLib.Runtime;
 
 namespace SuperComicLib.XPatch
 {
@@ -21,8 +21,7 @@ namespace SuperComicLib.XPatch
         /// (어셈블리 기준)
         /// </summary>
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private Test GetTest(IntPtr t1, IntPtr t2) =>
-            throw new NotImplementedException();
+        private Test GetTest(IntPtr t1, IntPtr t2) => default(Test);
 
         private static void ReplacedTest(NativeThisPointer instance, IntPtr ptr, IntPtr t1, IntPtr t2) =>
             hasThisPtr = t1 == t2 && t1 == magic;
