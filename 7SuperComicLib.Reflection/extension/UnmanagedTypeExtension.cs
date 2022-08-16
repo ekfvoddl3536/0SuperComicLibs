@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using SuperComicLib.Collections;
 
 namespace SuperComicLib.Runtime
 {
@@ -21,23 +20,24 @@ namespace SuperComicLib.Runtime
             if (type.IsValueType)
             {
                 HashSet<Type> done = new HashSet<Type>();
-                Stack<IValueIterator<FieldInfo>> stack = new Stack<IValueIterator<FieldInfo>>();
+                Stack<Memory<FieldInfo>> stack = new Stack<Memory<FieldInfo>>();
 
-                IValueIterator<FieldInfo> e1 = type.GetFields(flg).Begin();
+                Memory<FieldInfo> e1 = type.GetFields(flg);
+
             loop:
-                for (; e1.IsAlive; e1.Add())
+                var arr = e1.GetSourceArray();
+                for (int i = e1.GetRange().start; i < arr.Length; i++)
                 {
-                    Type tmp = e1.Value.FieldType;
+                    Type tmp = arr[i].FieldType;
                     if (tmp.IsPointer)
                         continue;
                     else if (!tmp.IsValueType)
                         return false;
                     else if (!tmp.IsPrimitive && done.Add(tmp))
                     {
-                        stack.Push(e1);
-                        e1.Add();
+                        stack.Push(new Memory<FieldInfo>(arr, i + 1));
 
-                        e1 = tmp.GetFields(flg).Begin();
+                        e1 = tmp.GetFields(flg);
                         goto loop;
                     }
                 }

@@ -11,12 +11,20 @@ namespace SuperComicLib
         internal readonly int _start;
         public readonly int Length;
 
-        #region constructor
+        #region constructors
         public Memory(T[] source, int startIndex, int length)
         {
             _source = source;
             _start = startIndex;
             Length = length;
+        }
+
+        public Memory(T[] source, int startIndex) : this(source, startIndex, source.Length - startIndex)
+        {
+        }
+
+        public Memory(T[] source) : this(source, 0, source.Length)
+        {
         }
         #endregion
 
