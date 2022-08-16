@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable IDE1006 // 명명 스타일
+using System;
 using System.Collections.Generic;
 
 namespace SuperComicLib.Collections
@@ -29,17 +30,6 @@ namespace SuperComicLib.Collections
         void Reset();
     }
 
-    public interface IValueIterator<T> : IDisposable
-    {
-        void Add();
-        void Reset();
-        bool LazyAdd();
-        bool IsAlive { get; }
-        ref T Value { get; }
-        T[] ToArray();
-        int Count { get; }
-    }
-
     public interface IArrayStream<T> : IDisposable
     {
         bool EndOfStream { get; }
@@ -55,22 +45,7 @@ namespace SuperComicLib.Collections
         bool CanRead(int count);
     }
 
-    public interface IRangeRefArray<T> : IEnumerable<T>, IValueIterable<T>
-    {
-        int Length { get; }
-        ref T this[int index] { get; }
-        T[] Source();
-        IRangeRefArray<T> Slice(int begin, int count);
-    }
-
-    public interface IValueIterable<T>
-    {
-        IValueIterator<T> Begin();
-        IValueIterator<T> RBegin();
-        T[] ToArray();
-    }
-
-    public interface ILongHashedList<T> : IDisposable, IEnumerable<T>, IValueIterable<T>
+    public interface ILongHashedList<T> : IDisposable, IEnumerable<T>
     {
         int Count { get; }
         int Capacity { get; }
@@ -87,7 +62,7 @@ namespace SuperComicLib.Collections
         void Clear();
     }
 
-    public interface IMap<T> : IDisposable, IEnumerable<KeyValuePair<int, T>>, IValueIterable<T>
+    public interface IMap<T> : IDisposable, IEnumerable<KeyValuePair<int, T>>
     {
         int Count { get; }
         int Capacity { get; }
@@ -141,13 +116,25 @@ namespace SuperComicLib.Collections
 
     public interface IRawContainer
     {
-#pragma warning disable IDE1006
         int capacity();
 
         int size();
 
         RawMemory getMemory();
-#pragma warning restore IDE1006 // 명명규칙
+    }
+
+    public interface IReadOnlyRawContainer<T> : IRawContainer
+    where T : unmanaged
+    {
+        ref readonly T this[int index] { get; }
+
+        ref readonly T at(int index);
+
+        const_iterator<T> cbegin();
+        const_iterator<T> cend();
+
+        const_reverse_iterator<T> crbegin();
+        const_reverse_iterator<T> crend();
     }
 
     public interface IRawContainer<T> : IRawContainer
@@ -155,62 +142,38 @@ namespace SuperComicLib.Collections
     {
         ref T this[int index] { get; }
 
-#pragma warning disable IDE1006
         ref T at(int index);
 
-        RawIterator<T> begin();
-        RawIterator<T> end();
+        _iterator<T> begin();
+        _iterator<T> end();
 
-        RawReverseIterator<T> rbegin();
-        RawReverseIterator<T> rend();
-#pragma warning restore IDE1006 // 명명규칙
-    }
-
-    public interface IReadOnlyRawContainer<T> : IRawContainer
-        where T : unmanaged
-    {
-        ref readonly T this[int index] { get; }
-
-#pragma warning disable IDE1006
-        ref readonly T at(int index);
-
-        RawConstIterator<T> cbegin();
-        RawConstIterator<T> cend();
-
-        RawConstReverseIterator<T> crbegin();
-        RawConstReverseIterator<T> crend();
-#pragma warning restore IDE1006 // 명명규칙
+        reverse_iterator<T> rbegin();
+        reverse_iterator<T> rend();
     }
 
     public interface IRawList<T> : IRawContainer<T>
         where T : unmanaged
     {
-#pragma warning disable IDE1006
-        void push_back(T item);
+        void push_back(in T item);
 
         T pop_back();
 
-        void insert(int index, T item);
+        void insert(int index, in T item);
 
         bool removeAt(int index);
 
-        void earse(RawIterator<T> position);
+        void earse(_iterator<T> position);
 
-        void earse(RawIterator<T> first, RawIterator<T> last);
-#pragma warning restore IDE1006 // 명명규칙
+        void earse(_iterator<T> first, _iterator<T> last);
     }
 
     public interface IRawAllocater
     {
-#pragma warning disable IDE1006
+        bool IsPersistent { get; }
+
         IntPtr stdAlloc(int cb, bool initDefault);
 
         void stdFree(IntPtr ptr);
-#pragma warning restore IDE1006 // 명명규칙
-    }
-
-    public interface IRawPersistentAllocater : IRawAllocater
-    {
     }
 
     internal interface IByReferenceIndexer_Internal<T>

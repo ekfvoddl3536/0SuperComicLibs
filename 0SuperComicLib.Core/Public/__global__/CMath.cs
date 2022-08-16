@@ -163,5 +163,25 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Clampu(this ulong value, ulong min, ulong max) => Min(value + min, max);
         #endregion
+
+        #region native int
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe static void* Min(void* left, void* right)
+        {
+            if (sizeof(int) == System.IntPtr.Size) // 32-bit
+                return (void*)Min((uint)left, (uint)right);
+            else
+                return (void*)Min((ulong)left, (ulong)right);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe static void* Max(void* left, void* right)
+        {
+            if (sizeof(int) == System.IntPtr.Size) // 32-bit
+                return (void*)Max((uint)left, (uint)right);
+            else
+                return (void*)Max((ulong)left, (ulong)right);
+        }
+        #endregion
     }
 }

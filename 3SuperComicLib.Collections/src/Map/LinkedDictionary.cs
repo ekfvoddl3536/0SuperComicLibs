@@ -6,9 +6,8 @@ using System.Diagnostics.Contracts;
 
 namespace SuperComicLib.Collections
 {
-    [DebuggerTypeProxy(typeof(IIterableView<>))]
     [DebuggerDisplay("Count = {m_count}")]
-    public class LinkedDictionary<TKey, TValue> : IValueIterable<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>
+    public class LinkedDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
     {
         protected const int bitmask = 0x7FFF_FFFF;
         protected const int maxlen = 0x7FEF_FFFF;
@@ -348,9 +347,6 @@ namespace SuperComicLib.Collections
         #endregion
 
         #region enumerable
-        public IValueIterator<KeyValuePair<TKey, TValue>> Begin() => new Iterator(this);
-        public IValueIterator<KeyValuePair<TKey, TValue>> RBegin() => new ReverseIterator(this);
-
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => new KeyValueEnumerator(this);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         #endregion
@@ -440,80 +436,6 @@ namespace SuperComicLib.Collections
 
             protected override KeyValuePair<TKey, TValue> Convert(TKey key, TValue value) =>
                 new KeyValuePair<TKey, TValue>(key, value);
-        }
-        #endregion
-
-        #region iterators
-        protected class Iterator : IValueIterator<KeyValuePair<TKey, TValue>>
-        {
-            internal LinkedDictionary<TKey, TValue> inst;
-            internal LinkedNode<TTKv> node;
-            internal KeyValuePair<TKey, TValue> lastValue;
-
-            public Iterator(LinkedDictionary<TKey, TValue> inst)
-            {
-                this.inst = inst;
-                node = inst.m_head;
-            }
-
-            public bool IsAlive => node != null;
-            public int Count => inst.m_count;
-            public ref KeyValuePair<TKey, TValue> Value // readOnly
-            {
-                get
-                {
-                    ref var pair = ref lastValue;
-                    TTKv temp = node.m_value;
-
-                    pair = new KeyValuePair<TKey, TValue>(temp.key, temp.value);
-                    return ref pair;
-                }
-            }
-
-            public virtual void Add()
-            {
-                node = node.Next;
-                if (node == inst.m_head)
-                    node = null;
-            }
-
-
-            public virtual bool LazyAdd()
-            {
-                node = node.Next;
-                return node != inst.m_head;
-            }
-
-            public virtual void Reset() => node = inst.m_head;
-
-            public KeyValuePair<TKey, TValue>[] ToArray() => inst.ToArray();
-
-            public void Dispose()
-            {
-                inst = null;
-                node = null;
-            }
-        }
-
-        protected class ReverseIterator : Iterator
-        {
-            public ReverseIterator(LinkedDictionary<TKey, TValue> inst) : base(inst) =>
-                node = inst.m_head?.m_prev;
-
-            public override void Add()
-            {
-                node = node.Prev;
-                if (node == inst.m_head)
-                    node = null;
-            }
-
-            public override bool LazyAdd()
-            {
-                node = node.Prev;
-                return node != inst.m_head;
-            }
-
-            public override void Reset() => node = inst.m_head?.m_prev;
         }
         #endregion
 

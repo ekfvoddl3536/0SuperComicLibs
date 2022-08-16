@@ -50,11 +50,7 @@ namespace SuperComicLib.Collections
         /// <summary>
         /// indexing fastest. "UNSAFE METHOD"
         /// </summary>
-        public ref T this[int idx]
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => ref m_ptr[idx];
-        }
+        public ref T this[int idx] => ref m_ptr[idx];
 
         /// <summary>
         /// indexing after index range validate check
@@ -72,17 +68,25 @@ namespace SuperComicLib.Collections
         #endregion
 
         #region container impl
-        public virtual RawIterator<T> begin() => new RawIterator<T>(m_ptr);
-        public virtual RawIterator<T> end() => new RawIterator<T>(m_ptr + m_length);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public virtual _iterator<T> begin() => new _iterator<T>(m_ptr);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public virtual _iterator<T> end() => new _iterator<T>(m_ptr + m_length);
 
-        public virtual RawReverseIterator<T> rbegin() => new RawReverseIterator<T>(m_ptr + (m_length - 1));
-        public virtual RawReverseIterator<T> rend() => new RawReverseIterator<T>(m_ptr - 1);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public virtual reverse_iterator<T> rbegin() => new reverse_iterator<T>(m_ptr + (m_length - 1));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public virtual reverse_iterator<T> rend() => new reverse_iterator<T>(m_ptr - 1);
 
-        public virtual RawConstIterator<T> cbegin() => new RawConstIterator<T>(m_ptr);
-        public virtual RawConstIterator<T> cend() => new RawConstIterator<T>(m_ptr + m_length);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_iterator<T> cbegin() => begin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_iterator<T> cend() => end();
 
-        public virtual RawConstReverseIterator<T> crbegin() => new RawConstReverseIterator<T>(m_ptr + (m_length - 1));
-        public virtual RawConstReverseIterator<T> crend() => new RawConstReverseIterator<T>(m_ptr - 1);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_reverse_iterator<T> crbegin() => rbegin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_reverse_iterator<T> crend() => rend();
 
         public virtual RawMemory getMemory() => new RawMemory(m_ptr, m_length);
 

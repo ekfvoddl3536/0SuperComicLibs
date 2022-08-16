@@ -5,7 +5,6 @@ using System.Diagnostics;
 
 namespace SuperComicLib.Collections
 {
-    [DebuggerTypeProxy(typeof(IIterableView<>))]
     [DebuggerDisplay("Count = {size}")]
     public class LookaheadQueue<T> : IDisposable, IEnumerable<T>
     {

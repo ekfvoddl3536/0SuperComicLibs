@@ -6,9 +6,9 @@ using System.Runtime.CompilerServices;
 
 namespace SuperComicLib.Collections
 {
-    [DebuggerTypeProxy(typeof(IIterableView<>))]
+    // [DebuggerTypeProxy(typeof(IIterableView<>))]
     [DebuggerDisplay("Count = {m_size}")]
-    public class IndexLinkedList<T> : ICollection<T>, IReadOnlyCollection<T>, IEnumerable<T>, IValueIterable<T>, ILinkedListSlim_Internal<T>
+    public class IndexLinkedList<T> : ICollection<T>, IReadOnlyCollection<T>, IEnumerable<T>, ILinkedListSlim_Internal<T>
     {
         private const int NULL_PTR = -1;
 
@@ -365,9 +365,6 @@ namespace SuperComicLib.Collections
         public IEnumerator<T> GetEnumerator() => new Enumerator(this);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public IValueIterator<T> Begin() => new Iterator(this);
-        public IValueIterator<T> RBegin() => new ReverseIterator(this);
-
         public T[] ToArray()
         {
             int sz;
@@ -532,90 +529,6 @@ namespace SuperComicLib.Collections
             }
 
             public void Dispose() { }
-        }
-
-        private class Iterator : IValueIterator<T>
-        {
-            protected readonly IndexLinkedList<T> _list;
-            protected uint _version;
-            protected int _node;
-            protected int _index;
-
-            public Iterator(IndexLinkedList<T> inst)
-            {
-                _list = inst;
-                Reset();
-            }
-
-            public int Count => _list.m_size;
-            public bool IsAlive => _index < _list.m_size;
-            public ref T Value =>
-                ref (_version != _list.m_version
-                ? ref Reference(_index, ref _node).value
-                : ref _list.m_list[_node].value);
-
-            public void Add() => _index++;
-
-            public bool LazyAdd() => ++_index < _list.m_size;
-
-            public virtual void Reset()
-            {
-                _version = _list.m_version;
-                _node = _list.m_head_idx;
-                _index = 0;
-            }
-
-            public T[] ToArray() => _list.ToArray();
-
-            protected virtual ref Node Reference(int index, ref int node_)
-            {
-                var inst = _list;
-                var nodes = inst.m_list;
-
-                int i = inst.m_head_idx;
-                while (--index >= 0)
-                    i = nodes[i].next;
-
-                // synchronize
-                _version = inst.m_version;
-
-                node_ = i;
-                return ref nodes[i];
-            }
-
-            public void Dispose()
-            {
-            }
-        }
-
-        private sealed class ReverseIterator : Iterator
-        {
-            public ReverseIterator(IndexLinkedList<T> inst) : base(inst)
-            {
-            }
-
-            public override void Reset()
-            {
-                _version = _list.m_version;
-                _node = _list.LastIndex;
-                _index = 0;
-            }
-
-            protected override ref Node Reference(int index, ref int node_)
-            {
-                var inst = _list;
-                var nodes = inst.m_list;
-
-                int i = inst.LastIndex;
-                while (--index >= 0)
-                    i = nodes[i].prev;
-
-                // synchronize
-                _version = inst.m_version;
-
-                node_ = i;
-                return ref nodes[i];
-            }
         }
         #endregion
     }

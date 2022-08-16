@@ -89,6 +89,12 @@
     <Compile Include="core_src\IFormatParseResolver.cs" />
     <Compile Include="core_src\NativeCharStream.cs" />
     <Compile Include="extensions\NativeCharStreamExtensions.cs" />
+    <Compile Include="pio\_types\Delegates.cs" />
+    <Compile Include="pio\helpers\ByteStream.cs" />
+    <Compile Include="pio\OffsetParallelStream.cs" />
+    <Compile Include="pio\_types\Interfaces.cs" />
+    <Compile Include="pio\ParallelFileReadWorker.cs" />
+    <Compile Include="pio\ParallelFileStream.cs" />
     <Compile Include="resolvers\structures\Int32x16Table.cs" />
     <Compile Include="resolvers\Int32x16TableResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

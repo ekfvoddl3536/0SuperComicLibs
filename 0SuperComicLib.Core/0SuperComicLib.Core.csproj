@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SuperComicLib.Core</RootNamespace>
     <AssemblyName>0SuperComicLib.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -111,7 +111,15 @@
     <Compile Include="Public\Threading\TaskExtension.cs" />
     <Compile Include="Public\Threading\SpinBlockLockSlim.cs" />
     <Compile Include="Public\Threading\VolatileInt32.cs" />
-    <Compile Include="Public\__global__\CachedType.cs" />
+    <Compile Include="Public\__global__\collections\iters\const_iterator.cs" />
+    <Compile Include="Public\__global__\collections\iters\const_reverse_iterator.cs" />
+    <Compile Include="Public\__global__\collections\Memory.cs" />
+    <Compile Include="Public\__global__\collections\NativeConstSpan.cs" />
+    <Compile Include="Public\__global__\collections\NativeSpan.cs" />
+    <Compile Include="Public\__global__\collections\iters\reverse_iterator.cs" />
+    <Compile Include="Public\__global__\collections\iters\_iterator.cs" />
+    <Compile Include="Public\__global__\extension\SCL_GLOBAL_ArrayExtension_MemoryT.cs" />
+    <Compile Include="Public\__global__\extension\SCL_GLOBAL_NativeSTLFunctionExtension_Iterators.cs" />
     <Compile Include="Public\__global__\LongHashedString.cs" />
     <Compile Include="Public\__global__\Range.cs" />
     <Compile Include="Public\Core\Whitespace.cs" />
@@ -120,6 +128,7 @@
     <Compile Include="Public\Text\io\NopEncoding.cs" />
     <Compile Include="Public\Text\io\NopStream.cs" />
     <Compile Include="Public\Text\io\NopStreamWriter.cs" />
+    <Compile Include="Public\__global__\Range64.cs" />
     <Compile Include="__global\SUPERCOMICLIB_CORE__ArrayExtension__.cs" />
     <Compile Include="Public\__global__\ClsArray.cs" />
     <Compile Include="Public\__global__\extension\SCL_GLOBAL_StringExtension.cs" />

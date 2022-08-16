@@ -5,7 +5,6 @@ using System.Diagnostics;
 
 namespace SuperComicLib.Collections
 {
-    [DebuggerTypeProxy(typeof(IIterableView<>))]
     [DebuggerDisplay("Count = {m_count}")]
     public class Map<T> : IMap<T>
     {
@@ -67,16 +66,6 @@ namespace SuperComicLib.Collections
             foreach (T val in collection)
                 if (val != null)
                     Add(val.GetHashCode(), val);
-        }
-
-        public Map(IValueIterable<T> collection) : this(default_capacity)
-        {
-            if (collection == null)
-                return;
-
-            for (IValueIterator<T> x = collection.Begin(); x.IsAlive; x.Add())
-                if (x.Value != null)
-                    Add(x.Value.GetHashCode(), x.Value);
         }
 
         public Map() : this(default_capacity) { }
@@ -253,8 +242,6 @@ namespace SuperComicLib.Collections
 
             return result;
         }
-
-        T[] IValueIterable<T>.ToArray() => ToValueArray();
         #endregion
 
         #region capacity
@@ -292,10 +279,6 @@ namespace SuperComicLib.Collections
         #region interface_enumerable
         public IEnumerator<KeyValuePair<int, T>> GetEnumerator() => new Enumerator(this);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        public IValueIterator<T> Begin() => new Iterator(this);
-
-        public IValueIterator<T> RBegin() => new ReverseIterator(this);
 
         public IEnumerable<int> Keys => new KeyEnumerator(this);
 
@@ -399,93 +382,6 @@ namespace SuperComicLib.Collections
                 current = default;
             }
         }
-
-#pragma warning disable
-        protected struct Iterator : IValueIterator<T>
-        {
-            private Map<T> inst;
-            private int index;
-
-            public Iterator(Map<T> inst)
-            {
-                this.inst = inst;
-                index = 0;
-            }
-
-            public bool IsAlive => index < inst.m_count;
-            public int Count => inst.m_count;
-            public ref T Value => ref inst.slots[index].value;
-
-            public void Add() => index++;
-
-            public void Reset() => index = 0;
-
-            public bool LazyAdd()
-            {
-                index++;
-                return index < inst.m_count;
-            }
-
-            public T[] ToArray()
-            {
-                int max = inst.m_count;
-                T[] temp = new T[max];
-
-                for (int x = 0; x < max; x++)
-                    temp[x] = inst.slots[x].value;
-
-                return temp;
-            }
-
-            public void Dispose()
-            {
-                inst = null;
-                index = 0;
-            }
-        }
-
-        protected struct ReverseIterator : IValueIterator<T>
-        {
-            private Map<T> inst;
-            private int index;
-
-            public ReverseIterator(Map<T> inst)
-            {
-                this.inst = inst;
-                index = inst.m_count - 1;
-            }
-
-            public bool IsAlive => index >= 0 && index < inst.m_count;
-            public int Count => inst.m_count;
-            public ref T Value => ref inst.slots[index].value;
-
-            public void Add() => index--;
-
-            public void Reset() => index = inst.m_count - 1;
-
-            public bool LazyAdd()
-            {
-                index++;
-                return index < inst.m_count;
-            }
-
-            public T[] ToArray()
-            {
-                int max = inst.m_count;
-                T[] temp = new T[max];
-
-                for (int x = 0; x < max; x++)
-                    temp[x] = inst.slots[x].value;
-
-                return temp;
-            }
-            public void Dispose()
-            {
-                inst = null;
-                index = 0;
-            }
-        }
-#pragma warning restore
 
         protected struct KeyEnumerator : IEnumerable<int>, IEnumerator<int>
         {

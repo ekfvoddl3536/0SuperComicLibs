@@ -23,11 +23,11 @@ namespace SuperComicLib.Collections
                 return;
             }
 
-            RawIterator<T> src_iter = source.begin() + src_start_index;
-            RawIterator<T> dst_iter = dest.begin() + dst_start_index;
+            _iterator<T> src_iter = source.begin() + src_start_index;
+            _iterator<T> dst_iter = dest.begin() + dst_start_index;
 
             for (; --count >= 0; dst_iter++, src_iter++)
-                *dst_iter.Value = *src_iter.Value;
+                dst_iter.value = src_iter.value;
         }
 
         internal static void Internal_CopySelf<T>(this IRawContainer<T> self, int sidx, int didx, int count)
@@ -36,8 +36,8 @@ namespace SuperComicLib.Collections
             if (sidx == didx)
                 return;
 
-            RawIterator<T> ss_iter = self.begin();
-            RawIterator<T> ds_iter = ss_iter;
+            _iterator<T> ss_iter = self.begin();
+            _iterator<T> ds_iter = ss_iter;
 
             if (sidx < didx)
             {
@@ -47,7 +47,7 @@ namespace SuperComicLib.Collections
                 ds_iter += didx + tmp_i;
 
                 for (; --count >= 0; ds_iter--, ss_iter--)
-                    *ds_iter.Value = *ss_iter.Value;
+                    ds_iter.value = ss_iter.value;
             }
             else
             {
@@ -55,7 +55,7 @@ namespace SuperComicLib.Collections
                 ds_iter += didx;
 
                 for (; --count >= 0; ds_iter++, ss_iter++)
-                    *ds_iter.Value = *ss_iter.Value;
+                    ds_iter.value = ss_iter.value;
             }
         }
 
@@ -64,31 +64,31 @@ namespace SuperComicLib.Collections
             int sz = source.size();
             T[] result = new T[sz];
 
-            for (RawReverseIterator<T> r_iter = source.rbegin(); --sz >= 0; r_iter++)
-                result[sz] = *r_iter.Value;
+            for (var r_iter = source.rbegin(); --sz >= 0; r_iter++)
+                result[sz] = r_iter.value;
 
             return result;
         }
 
         public static IEnumerator<T> GetEnumerator<T>(this IRawContainer<T> source) where T : unmanaged => new RawIteratorEnumerator<T>(source);
 
-        public static RawIterator<T> Find<T>(this IRawContainer<T> source, T item) where T : unmanaged =>
+        public static _iterator<T> Find<T>(this IRawContainer<T> source, T item) where T : unmanaged =>
             Find(source, item, EqualityComparer<T>.Default);
 
-        public static RawIterator<T> Find<T>(this IRawContainer<T> source, T item, IEqualityComparer<T> comparer) where T : unmanaged
+        public static _iterator<T> Find<T>(this IRawContainer<T> source, T item, IEqualityComparer<T> comparer) where T : unmanaged
         {
-            RawIterator<T> cur = source.begin();
-            RawIterator<T> end = source.end();
+            _iterator<T> cur = source.begin();
+            _iterator<T> end = source.end();
 
             for (; cur != end; cur++)
-                if (comparer.Equals(*cur.Value, item))
+                if (comparer.Equals(cur.value, item))
                     return cur;
 
             return default;
         }
 
-        public static int ToIndex<T>(this IRawContainer<T> source, RawIterator<T> iterator) where T : unmanaged =>
-            (int)(iterator.Value - source.begin().Value) / sizeof(T);
+        public static int ToIndex<T>(this IRawContainer<T> source, _iterator<T> iterator) where T : unmanaged =>
+            (int)(iterator - source.begin()) / sizeof(T);
 
         public static bool SequenceEqual<T>(this IRawContainer<T> first, IRawContainer<T> second) where T : unmanaged =>
             SequenceEqual(first, second, EqualityComparer<T>.Default);
@@ -108,10 +108,10 @@ namespace SuperComicLib.Collections
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static NativeSpan<T> AsSpan<T>(this IRawContainer<T> source) where T : unmanaged => 
-            new NativeSpan<T>(source);
+            new NativeSpan<T>(source.begin(), source.end());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static NativeConstSpan<T> AsConstSpan<T>(this IReadOnlyRawContainer<T> source) where T : unmanaged => 
-            new NativeConstSpan<T>(source);
+            new NativeConstSpan<T>(source.cbegin(), source.cend());
     }
 }

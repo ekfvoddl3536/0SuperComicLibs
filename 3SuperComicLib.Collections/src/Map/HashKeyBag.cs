@@ -5,9 +5,8 @@ using System.Diagnostics;
 
 namespace SuperComicLib.Collections
 {
-    [DebuggerTypeProxy(typeof(IIterableView<>))]
     [DebuggerDisplay("Count = {m_count}")]
-    public class HashKeyBag<T> : IEnumerable<int>, IValueIterable<int>
+    public class HashKeyBag<T> : IEnumerable<int>
     {
         private readonly int[] m_buckets;
         private int m_count;
@@ -59,10 +58,6 @@ namespace SuperComicLib.Collections
         #region enumerable
         public IEnumerator<int> GetEnumerator() => new Enumerator(this);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        public IValueIterator<int> Begin() => this.AsIterable().Begin();
-        public IValueIterator<int> RBegin() => this.AsIterable().RBegin();
-        int[] IValueIterable<int>.ToArray() => ArraySource();
         #endregion
 
         private struct Enumerator : IEnumerator<int>

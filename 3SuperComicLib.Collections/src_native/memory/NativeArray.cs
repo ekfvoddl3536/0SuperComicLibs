@@ -11,7 +11,7 @@ namespace SuperComicLib.Collections
         public readonly T* Ptr;
         public readonly int Length;
 
-        #region constructor
+        #region constructors
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeArray(int length, bool initDefault)
         {
@@ -34,6 +34,13 @@ namespace SuperComicLib.Collections
                 Buffer.MemoryCopy(psrc, Ptr, cb, cb);
             }
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public NativeArray(T* hGlobalAllocated_Ptr, int length)
+        {
+            Ptr = hGlobalAllocated_Ptr;
+            Length = length;
+        }
         #endregion
 
         #region indexer
@@ -49,6 +56,11 @@ namespace SuperComicLib.Collections
         }
         #endregion
 
+        #region methods
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public NativeSpan<T> AsSpan() => new NativeSpan<T>(Ptr, Length);
+        #endregion
+
         #region explicit implement interfaces
         ref readonly T IReadOnlyRawContainer<T>.this[int index] => ref this[index];
         ref readonly T IReadOnlyRawContainer<T>.at(int index) => ref at(index);
@@ -60,17 +72,25 @@ namespace SuperComicLib.Collections
         #region implement interfaces
         public RawMemory getMemory() => new RawMemory(Ptr, Length);
 
-        public RawIterator<T> begin() => new RawIterator<T>(Ptr);
-        public RawIterator<T> end() => new RawIterator<T>(Ptr + Length);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public _iterator<T> begin() => new _iterator<T>(Ptr);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public _iterator<T> end() => new _iterator<T>(Ptr + Length);
 
-        public RawReverseIterator<T> rbegin() => new RawReverseIterator<T>(Ptr + (Length - 1));
-        public RawReverseIterator<T> rend() => new RawReverseIterator<T>(Ptr - 1);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public reverse_iterator<T> rbegin() => new reverse_iterator<T>(Ptr + (Length - 1));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public reverse_iterator<T> rend() => new reverse_iterator<T>(Ptr - 1);
 
-        public RawConstIterator<T> cbegin() => new RawConstIterator<T>(Ptr);
-        public RawConstIterator<T> cend() => new RawConstIterator<T>(Ptr + Length);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_iterator<T> cbegin() => begin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_iterator<T> cend() => end();
 
-        public RawConstReverseIterator<T> crbegin() => new RawConstReverseIterator<T>(Ptr + (Length - 1));
-        public RawConstReverseIterator<T> crend() => new RawConstReverseIterator<T>(Ptr - 1);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_reverse_iterator<T> crbegin() => rbegin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_reverse_iterator<T> crend() => rend();
 
         public void Dispose() => Marshal.FreeHGlobal((IntPtr)Ptr);
         #endregion
@@ -85,7 +105,9 @@ namespace SuperComicLib.Collections
         #endregion
 
         #region static members
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(in NativeArray<T> left, in NativeArray<T> right) => left.Ptr == right.Ptr;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(in NativeArray<T> left, in NativeArray<T> right) => left.Ptr != right.Ptr;
         #endregion
     }

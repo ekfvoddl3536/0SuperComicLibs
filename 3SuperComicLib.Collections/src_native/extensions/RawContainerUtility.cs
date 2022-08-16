@@ -30,27 +30,29 @@ namespace SuperComicLib.Collections
             ptr = np;
         }
 
-        internal static int Internal_Earse<T>(RawIterator<T> first, RawIterator<T> last, RawIterator<T> arrayEnd) where T : unmanaged
+        internal static int Internal_Earse<T>(_iterator<T> first, _iterator<T> last, _iterator<T> arrayEnd) where T : unmanaged
         {
-            RawIterator<T> copy_src = last + 1, copy_dst = first;
-            for (; copy_src != arrayEnd; copy_dst++, copy_src++)
-                *copy_dst.Value = *copy_src.Value;
+            var iter = last + 1;
 
-            T def00 = default;
-            int earse_cnt = 0;
-            for (; copy_dst != arrayEnd; copy_dst++, earse_cnt++)
-                *copy_dst.Value = def00;
+            var cnt = (uint)((T*)last.UnsafePointerValue - (T*)first.UnsafePointerValue);
 
-            return earse_cnt;
+            ulong sz = (ulong)cnt * (uint)sizeof(T);
+            Buffer.MemoryCopy(iter.UnsafePointerValue, first.UnsafePointerValue, sz, sz);
+
+            for (iter = arrayEnd - (int)cnt; iter != arrayEnd; iter++)
+                iter.value = default;
+
+            return (int)(arrayEnd - iter);
         }
 
-        internal static void Internal_Earse_Single<T>(RawIterator<T> position, RawIterator<T> arrayEnd) where T : unmanaged
+        internal static void Internal_Earse_Single<T>(_iterator<T> position, _iterator<T> arrayEnd) where T : unmanaged
         {
-            RawIterator<T> copy_src = position + 1;
-            for (; copy_src != arrayEnd; position++, copy_src++)
-                *position.Value = *copy_src.Value;
+            var iter = position + 1;
 
-            *position.Value = default;
+            ulong sz = (ulong)((T*)arrayEnd.UnsafePointerValue - (T*)iter.UnsafePointerValue) * (uint)sizeof(T);
+            Buffer.MemoryCopy(iter.UnsafePointerValue, position.UnsafePointerValue, sz, sz);
+
+            (arrayEnd - 1).value = default;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

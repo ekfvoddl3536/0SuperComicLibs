@@ -3,18 +3,18 @@ using System.Collections.Generic;
 
 namespace SuperComicLib.Collections
 {
-    internal sealed class RawIteratorEnumerator<T> : IEnumerator<T> 
+    internal sealed unsafe class RawIteratorEnumerator<T> : IEnumerator<T> 
         where T : unmanaged
     {
-        private readonly RawIterator<T> start;
-        private readonly RawIterator<T> end;
-        private RawIterator<T> current;
+        private readonly T* start;
+        private readonly T* end;
+        private T* current;
         private T item;
 
         public RawIteratorEnumerator(IRawContainer<T> container)
         {
-            current = start = container.begin();
-            end = container.end();
+            current = start = (T*)container.begin().UnsafePointerValue;
+            end = (T*)container.end().UnsafePointerValue;
         }
 
         public T Current => item;
@@ -26,9 +26,7 @@ namespace SuperComicLib.Collections
         {
             if (current != end)
             {
-                item = (T)current;
-                current++;
-
+                item = *current++;
                 return true;
             }
 

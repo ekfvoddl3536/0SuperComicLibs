@@ -37,13 +37,13 @@ namespace SuperComicLib.Collections
         }
         #endregion
 
-        public override RawIterator<T> end() => new RawIterator<T>(m_ptr + m_last);
+        public override _iterator<T> end() => new _iterator<T>(m_ptr + m_last);
 
-        public override RawReverseIterator<T> rbegin() => new RawReverseIterator<T>(m_ptr + (m_last - 1));
+        public override reverse_iterator<T> rbegin() => new reverse_iterator<T>(m_ptr + (m_last - 1));
 
         public override int size() => m_last;
 
-        public void push_back(T item)
+        public void push_back(in T item)
         {
             EnsureCapacity(m_last);
             m_ptr[m_last++] = item;
@@ -61,7 +61,7 @@ namespace SuperComicLib.Collections
             return backup;
         }
 
-        public void insert(int index, T item)
+        public void insert(int index, in T item)
         {
             if (index < 0 || index >= m_last)
             {
@@ -88,24 +88,29 @@ namespace SuperComicLib.Collections
             return true;
         }
 
-        public void earse(RawIterator<T> position)
+        public void earse(_iterator<T> position)
         {
-            RawContainerUtility.CheckVaildateAddress(position.Value, position.Value, m_ptr, m_ptr + m_last);
+            if (position - begin() >= end().UnsafePointerValue)
+                throw new ArgumentOutOfRangeException(nameof(position));
+
+            RawContainerUtility.CheckVaildateAddress(position.UnsafePointerValue, position.UnsafePointerValue, m_ptr, m_ptr + m_last);
             RawContainerUtility.Internal_Earse_Single(position, end());
 
             m_last--;
         }
 
-        public void earse(RawIterator<T> first, RawIterator<T> last)
+        public void earse(_iterator<T> first, _iterator<T> last)
         {
-            if (last.Value < first.Value)
-            {
-                RawIterator<T> backup = first;
-                first = last;
-                last = backup;
-            }
+            if (last < first)
+                throw new ArgumentException("invalid operation");
 
-            RawContainerUtility.CheckVaildateAddress(first.Value, last.Value, m_ptr, m_ptr + m_last);
+            if (first < begin())
+                throw new ArgumentOutOfRangeException(nameof(first));
+
+            if (last >= end())
+                throw new ArgumentOutOfRangeException(nameof(last));
+
+            RawContainerUtility.CheckVaildateAddress(first.UnsafePointerValue, last.UnsafePointerValue, m_ptr, m_ptr + m_last);
 
             m_last -= RawContainerUtility.Internal_Earse(first, last, end());
         }

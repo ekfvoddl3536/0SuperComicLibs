@@ -110,6 +110,10 @@ namespace SuperComicLib.Collections
             count = 0;
         }
 
+        #region special methods
+        public Memory<T> AsMemory() => new Memory<T>(arr, 0, count);
+        #endregion
+
         public IEnumerator<T> GetEnumerator() => ((IEnumerable<T>)arr).GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }

@@ -5,7 +5,6 @@ using System.Diagnostics;
 
 namespace SuperComicLib.Collections
 {
-    [DebuggerTypeProxy(typeof(IIterableView<>))]
     [DebuggerDisplay("Count = {m_count}")]
     public class CHashSet<T> : ISet<T>, IEnumerable<T>, IDisposable
     {

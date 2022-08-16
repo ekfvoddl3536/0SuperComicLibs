@@ -1,4 +1,6 @@
-﻿namespace SuperComicLib.Collections
+﻿using System.Runtime.CompilerServices;
+
+namespace SuperComicLib.Collections
 {
     internal readonly unsafe struct ReadOnlyRawContainerWrapper<T> : IReadOnlyRawContainer<T>
         where T : unmanaged
@@ -11,11 +13,15 @@
 
         public ref readonly T at(int index) => ref container.at(index);
 
-        public RawConstIterator<T> cbegin() => new RawConstIterator<T>(container.begin().Value);
-        public RawConstIterator<T> cend() => new RawConstIterator<T>(container.end().Value);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_iterator<T> cbegin() => container.begin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_iterator<T> cend() => container.end();
 
-        public RawConstReverseIterator<T> crbegin() => new RawConstReverseIterator<T>(container.rbegin().Value);
-        public RawConstReverseIterator<T> crend() => new RawConstReverseIterator<T>(container.rend().Value);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_reverse_iterator<T> crbegin() => container.rbegin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_reverse_iterator<T> crend() => container.rend();
 
         public int capacity() => container.capacity();
 

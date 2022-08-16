@@ -5,9 +5,8 @@ using System.Diagnostics;
 
 namespace SuperComicLib.Collections
 {
-    [DebuggerTypeProxy(typeof(IIterableView<>))]
     [DebuggerDisplay("Count = {m_count}")]
-    public class LinkedHashSet<T> : ISet<T>, IEnumerable<T>, IValueIterable<T>
+    public class LinkedHashSet<T> : ISet<T>, IEnumerable<T>
     {
         protected const int bitmask = 0x7FFF_FFFF;
         protected const int maxlen = 0x7FEF_FFFF;
@@ -436,10 +435,6 @@ namespace SuperComicLib.Collections
         #region enumerable
         public IEnumerator<T> GetEnumerator() => new Enumerator(this);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        public IValueIterator<T> Begin() => new Iterator(this);
-
-        public IValueIterator<T> RBegin() => new ReverseIterator(this);
         #endregion
 
         #region capacity
@@ -538,76 +533,6 @@ namespace SuperComicLib.Collections
                 version = 0;
             }
         }
-
-#pragma warning disable
-        protected class Iterator : IValueIterator<T>
-        {
-            protected LinkedHashSet<T> inst;
-            protected LinkedNode<T> node;
-            protected T value;
-
-            public Iterator(LinkedHashSet<T> inst)
-            {
-                this.inst = inst;
-                node = inst.m_head;
-            }
-
-            public bool IsAlive => node != null;
-            public int Count => inst.m_count;
-            public ref T Value
-            {
-                get
-                {
-                    value = node.m_value;
-                    return ref value;
-                }
-            }
-
-            public virtual void Add()
-            {
-                node = node.Next;
-                if (node == inst.m_head)
-                    node = null;
-            }
-
-
-            public virtual bool LazyAdd()
-            {
-                node = node.Next;
-                return node != inst.m_head;
-            }
-
-            public T[] ToArray() => inst.ToArray();
-
-            public void Reset() => node = inst.m_head;
-
-            public void Dispose()
-            {
-                inst = null;
-                node = null;
-            }
-        }
-
-        protected sealed class ReverseIterator : Iterator
-        {
-            public ReverseIterator(LinkedHashSet<T> inst) : base(inst)
-            {
-            }
-
-            public override void Add()
-            {
-                node = node.Prev;
-                if (node == inst.m_head)
-                    node = null;
-            }
-
-            public override bool LazyAdd()
-            {
-                node = node.Prev;
-                return node != inst.m_head;
-            }
-        }
-#pragma warning restore
         #endregion
     }
 }
