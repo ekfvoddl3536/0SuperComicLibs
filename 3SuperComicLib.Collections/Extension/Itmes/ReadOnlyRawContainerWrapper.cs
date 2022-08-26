@@ -9,10 +9,6 @@ namespace SuperComicLib.Collections
 
         public ReadOnlyRawContainerWrapper(IRawContainer<T> container) => this.container = container;
 
-        public ref readonly T this[int index] => ref container[index];
-
-        public ref readonly T at(int index) => ref container.at(index);
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public const_iterator<T> cbegin() => container.begin();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -23,10 +19,22 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public const_reverse_iterator<T> crend() => container.rend();
 
+#if AnyCPU
+        public ref readonly T this[size_t index] => ref container[index];
+        public ref readonly T at(size_t index) => ref container.at(index);
+        public size_t capacity() => container.capacity();
+        public size_t size() => container.size();
+#elif X86
+        public ref readonly T this[int index] => ref container[index];
+        public ref readonly T at(int index) => ref container.at(index);
         public int capacity() => container.capacity();
-
         public int size() => container.size();
-
+#else
+        public ref readonly T this[long index] => ref container[index];
+        public ref readonly T at(long index) => ref container.at(index);
+        public long capacity() => container.capacity();
+        public long size() => container.size();
+#endif
         public RawMemory getMemory() => container.getMemory();
     }
 }

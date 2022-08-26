@@ -8,15 +8,13 @@ namespace SuperComicLib
     public readonly unsafe ref struct const_reverse_iterator<T>
         where T : unmanaged
     {
-        internal readonly T* _ptr;
+        public readonly T* _ptr;
 
         public const_reverse_iterator(T* source) => _ptr = source;
 
         public ref readonly T this[int index] => ref *(_ptr - index);
 
         public ref readonly T value => ref *_ptr;
-
-        public void* UnsafePointerValue => _ptr;
 
         #region special methods
         public const_iterator<T> _base() => new const_iterator<T>(_ptr + 1);
@@ -34,6 +32,13 @@ namespace SuperComicLib
         public static const_reverse_iterator<T> operator +(const_reverse_iterator<T> left, int right) => new const_reverse_iterator<T>(left._ptr - right);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static const_reverse_iterator<T> operator -(const_reverse_iterator<T> left, int right) => new const_reverse_iterator<T>(left._ptr + right);
+
+#if AnyCPU || X64
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static const_reverse_iterator<T> operator +(const_reverse_iterator<T> left, long right) => new const_reverse_iterator<T>(left._ptr + right);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static const_reverse_iterator<T> operator -(const_reverse_iterator<T> left, long right) => new const_reverse_iterator<T>(left._ptr - right);
+#endif
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static const_reverse_iterator<T> operator ++(const_reverse_iterator<T> left) => new const_reverse_iterator<T>(left._ptr - 1);
@@ -64,8 +69,8 @@ namespace SuperComicLib
         #region cast
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator const_reverse_iterator<T>(T* ptr) => new const_reverse_iterator<T>(ptr);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static explicit operator T*(const_reverse_iterator<T> ptr) => ptr._ptr;
+        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        // public static explicit operator T*(const_reverse_iterator<T> ptr) => ptr._ptr;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator const_reverse_iterator<T>(reverse_iterator<T> iter) => new const_reverse_iterator<T>(iter._ptr);

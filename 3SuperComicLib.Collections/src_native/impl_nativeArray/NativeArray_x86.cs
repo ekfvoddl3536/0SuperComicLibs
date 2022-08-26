@@ -1,49 +1,54 @@
-﻿using System;
+﻿#if X86
+using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace SuperComicLib.Collections
 {
-    [StructLayout(LayoutKind.Sequential)]
-    public readonly unsafe struct NativeArray<T> : IDisposable, IRawContainer<T>, IReadOnlyRawContainer<T>, IEquatable<NativeArray<T>>
-        where T : unmanaged
+    unsafe partial struct NativeArray<T>
     {
         public readonly T* Ptr;
         public readonly int Length;
 
         #region constructors
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeArray(int length, bool initDefault)
-        {
-            if (length <= 0)
-                throw new ArgumentOutOfRangeException(nameof(length));
-
-            Length = length;
-            Ptr = (T*)Marshal.AllocHGlobal(sizeof(T) * length);
-
-            if (initDefault)
-                RawContainerUtility.Internal_Clear(Ptr, Ptr + length);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeArray(T[] source) : this(source?.Length ?? 0, false)
-        {
-            fixed (T* psrc = &source[0])
-            {
-                ulong cb = (ulong)(uint)source.Length * (uint)sizeof(T);
-                Buffer.MemoryCopy(psrc, Ptr, cb, cb);
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeArray(T* hGlobalAllocated_Ptr, int length)
         {
             Ptr = hGlobalAllocated_Ptr;
             Length = length;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public NativeArray(int length, bool initDefault)
+        {
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length));
+
+            Length = length;
+            Ptr = (T*)Marshal.AllocHGlobal(length * sizeof(T));
+
+            if (initDefault)
+                MemoryBlock.Clear32((byte*)Ptr, (uint)length * (uint)sizeof(T));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public NativeArray(T[] source)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            Length = source.Length;
+            Ptr = (T*)Marshal.AllocHGlobal(source.Length * sizeof(T));
+
+            fixed (T* psrc = &source[0])
+            {
+                ulong cb = (uint)source.Length * (uint)sizeof(T);
+                Buffer.MemoryCopy(psrc, Ptr, cb, cb);
+            }
+        }
         #endregion
 
-        #region indexer
+        #region indexer & property
         public ref T this[int index] => ref Ptr[index];
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -65,11 +70,12 @@ namespace SuperComicLib.Collections
         ref readonly T IReadOnlyRawContainer<T>.this[int index] => ref this[index];
         ref readonly T IReadOnlyRawContainer<T>.at(int index) => ref at(index);
 
-        int IRawContainer.capacity() => Length;
         int IRawContainer.size() => Length;
+        int IRawContainer.capacity() => Length;
         #endregion
 
         #region implement interfaces
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public RawMemory getMemory() => new RawMemory(Ptr, Length);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -106,9 +112,15 @@ namespace SuperComicLib.Collections
 
         #region static members
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(in NativeArray<T> left, in NativeArray<T> right) => left.Ptr == right.Ptr;
+        public static bool ReferenceEquals(in NativeArray<T> left, in NativeArray<T> right) => left.Ptr == right.Ptr;
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(in NativeArray<T> left, in NativeArray<T> right) => left.Ptr != right.Ptr;
+        public static bool operator ==(in NativeArray<T> left, in NativeArray<T> right) =>
+            left.Ptr == right.Ptr && left.Length == right.Length;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator !=(in NativeArray<T> left, in NativeArray<T> right) =>
+            left.Ptr != right.Ptr || left.Length != right.Length;
         #endregion
     }
 }
+#endif

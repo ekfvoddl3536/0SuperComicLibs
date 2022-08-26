@@ -116,19 +116,33 @@ namespace SuperComicLib.Collections
 
     public interface IRawContainer
     {
-        int capacity();
-
+#if AnyCPU
+        size_t size();
+        size_t capacity();
+#elif X86
         int size();
-
+        int capacity();
+#else
+        long size();
+        long capacity();
+#endif
+        [CodeContracts.X64LossOfLength]
         RawMemory getMemory();
     }
 
     public interface IReadOnlyRawContainer<T> : IRawContainer
-    where T : unmanaged
+        where T : unmanaged
     {
+#if AnyCPU
+        ref readonly T this[size_t index] { get; }
+        ref readonly T at(size_t index);
+#elif X86
         ref readonly T this[int index] { get; }
-
         ref readonly T at(int index);
+#else
+        ref readonly T this[long index] { get; }
+        ref readonly T at(long index);
+#endif
 
         const_iterator<T> cbegin();
         const_iterator<T> cend();
@@ -140,9 +154,16 @@ namespace SuperComicLib.Collections
     public interface IRawContainer<T> : IRawContainer
         where T : unmanaged
     {
+#if AnyCPU
+        ref T this[size_t index] { get; }
+        ref T at(size_t index);
+#elif X86
         ref T this[int index] { get; }
-
         ref T at(int index);
+#else
+        ref T this[long index] { get; }
+        ref T at(long index);
+#endif
 
         _iterator<T> begin();
         _iterator<T> end();
@@ -158,9 +179,16 @@ namespace SuperComicLib.Collections
 
         T pop_back();
 
+#if AnyCPU
+        void insert(size_t index, in T item);
+        bool removeAt(size_t index);
+#elif X86
         void insert(int index, in T item);
-
         bool removeAt(int index);
+#else
+        void insert(long index, in T item);
+        bool removeAt(long index);
+#endif
 
         void earse(_iterator<T> position);
 

@@ -8,15 +8,13 @@ namespace SuperComicLib
     public readonly unsafe ref struct const_iterator<T> 
         where T : unmanaged
     {
-        internal readonly T* _ptr;
+        public readonly T* _ptr;
 
         public const_iterator(T* source) => _ptr = source;
 
         public ref readonly T this[int index] => ref *(_ptr + index);
 
         public ref readonly T value => ref *_ptr;
-
-        public void* UnsafePointerValue => _ptr;
 
         #region override
         [Obsolete("NotSupport")]
@@ -31,11 +29,17 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static const_iterator<T> operator -(const_iterator<T> left, int right) => new const_iterator<T>(left._ptr - right);
 
+#if AnyCPU || X64
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static const_iterator<T> operator +(const_iterator<T> left, long right) => new const_iterator<T>(left._ptr + right);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static const_iterator<T> operator -(const_iterator<T> left, long right) => new const_iterator<T>(left._ptr - right);
+#endif
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static const_iterator<T> operator ++(const_iterator<T> left) => new const_iterator<T>(left._ptr + 1);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static const_iterator<T> operator --(const_iterator<T> left) => new const_iterator<T>(left._ptr - 1);
-
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void* operator -(const_iterator<T> left, const_iterator<T> right) => (void*)(left._ptr - right._ptr);
@@ -61,8 +65,8 @@ namespace SuperComicLib
         #region cast
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator const_iterator<T>(T* ptr) => new const_iterator<T>(ptr);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static explicit operator T*(const_iterator<T> ptr) => ptr._ptr;
+        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        // public static explicit operator T*(const_iterator<T> ptr) => ptr._ptr;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator const_iterator<T>(_iterator<T> iter) => new const_iterator<T>(iter._ptr);

@@ -8,15 +8,13 @@ namespace SuperComicLib
     public readonly unsafe ref struct _iterator<T>
         where T : unmanaged
     {
-        internal readonly T* _ptr;
+        public readonly T* _ptr;
 
         public _iterator(T* source) => _ptr = source;
 
         public ref T this[int index] => ref *(_ptr + index);
 
         public ref T value => ref *_ptr;
-
-        public void* UnsafePointerValue => _ptr;
 
         #region override
         [Obsolete("NotSupport")]
@@ -30,6 +28,13 @@ namespace SuperComicLib
         public static _iterator<T> operator +(_iterator<T> left, int right) => new _iterator<T>(left._ptr + right);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static _iterator<T> operator -(_iterator<T> left, int right) => new _iterator<T>(left._ptr - right);
+
+#if AnyCPU || X64
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static _iterator<T> operator +(_iterator<T> left, long right) => new _iterator<T>(left._ptr + right);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static _iterator<T> operator -(_iterator<T> left, long right) => new _iterator<T>(left._ptr - right);
+#endif
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static _iterator<T> operator ++(_iterator<T> left) => new _iterator<T>(left._ptr + 1);
@@ -60,8 +65,8 @@ namespace SuperComicLib
         #region cast
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator _iterator<T>(T* ptr) => new _iterator<T>(ptr);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static explicit operator T*(_iterator<T> ptr) => ptr._ptr;
+        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        // public static explicit operator T*(_iterator<T> ptr) => ptr._ptr;
         #endregion
     }
 }

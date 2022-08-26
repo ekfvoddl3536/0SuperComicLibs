@@ -29,7 +29,7 @@ namespace SuperComicLib
         #endregion
 
         #region property
-        public ref T this[int index] => ref _source[index + _start];
+        public ref T this[int index] => ref _source[_start + index];
         #endregion
 
         #region methods (at, slice, copy, +ToArray)
@@ -39,8 +39,11 @@ namespace SuperComicLib
             if ((uint)index >= (uint)Length)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
-            return ref _source[index + _start];
+            return ref _source[_start + index];
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Memory<T> Slice(int startIndex) => Slice(startIndex, Length - startIndex);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Memory<T> Slice(int startIndex, int length)
@@ -48,7 +51,7 @@ namespace SuperComicLib
             if ((uint)(startIndex + length) > (uint)Length)
                 throw new ArgumentOutOfRangeException($"'{nameof(startIndex)}' and '{nameof(length)}'");
 
-            return new Memory<T>(_source, startIndex + _start, length);
+            return new Memory<T>(_source, _start + startIndex, length);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -65,6 +68,9 @@ namespace SuperComicLib
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyTo(Memory<T> dst) => Array.Copy(_source, dst._source, Length);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CopyTo(Memory<T> dst, int length) => Array.Copy(_source, _start, dst._source, dst._start, length);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyTo(int startIndex, Memory<T> array, int arrayIndex, int length)
@@ -93,11 +99,13 @@ namespace SuperComicLib
         #region methods (array functional
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int BinarySearch(T value) => Array.BinarySearch(_source, _start, Length, value);
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int BinarySearch(T value, IComparer<T> comparer) => Array.BinarySearch(_source, _start, Length, value, comparer);
         #endregion
 
         #region special method
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T[] GetSourceArray() => _source;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

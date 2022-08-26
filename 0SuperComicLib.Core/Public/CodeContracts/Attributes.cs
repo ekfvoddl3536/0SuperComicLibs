@@ -55,4 +55,28 @@ namespace SuperComicLib.CodeContracts
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
     public sealed class DisallowNullOrEmptyAttribute : Attribute { }
+
+    /// <summary>
+    /// Need 64-bit Processor, 64-bit OS
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Constructor, AllowMultiple = false, Inherited = true)]
+    public sealed class X64OnlyAttribute : Attribute { }
+
+    /// <summary>
+    /// It convert 64-bit integer (QWORD) to 32-bit integer (DWORD).
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Constructor, AllowMultiple = false, Inherited = true)]
+    public sealed class X64LossOfLengthAttribute : Attribute { }
+
+    /// <summary>
+    /// This functional or <see langword="class"/>, <see langword="struct"/>, <see langword="interface"/>, API is development version
+    /// </summary>
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = true)]
+    public sealed class DevReleaseAttribute : Attribute { }
+
+    /// <summary>
+    /// This struct must be passed using the keywords <see langword="ref"/> or <see langword="in"/>
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Struct, AllowMultiple = false, Inherited = true)]
+    public sealed class ParamRefAttribute : Attribute { }
 }

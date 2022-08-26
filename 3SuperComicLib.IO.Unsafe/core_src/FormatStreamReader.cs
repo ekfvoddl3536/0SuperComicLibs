@@ -100,7 +100,11 @@ namespace SuperComicLib.IO
 
                 int pos;
                 fixed (byte* ptr = &encarr[0])
+#if AnyCPU || X86
                     pos = encoding_.GetChars(ptr, readcnt, buf.Ptr, buf.Length);
+#else
+                    pos = encoding_.GetChars(ptr, readcnt, buf.Ptr, (int)buf.Length);
+#endif
 
                 if (Calli(inst, &local_buf, &local_res, pos))
                     return local_res;
@@ -117,9 +121,9 @@ namespace SuperComicLib.IO
 
             return state == ResolverState.Success;
         }
-        #endregion
+#endregion
 
-        #region dispose
+#region dispose
         ~FormatStreamReader()
         {
             if (_resolver != null)
@@ -142,6 +146,6 @@ namespace SuperComicLib.IO
             }
             GC.SuppressFinalize(this);
         }
-        #endregion
+#endregion
     }
 }

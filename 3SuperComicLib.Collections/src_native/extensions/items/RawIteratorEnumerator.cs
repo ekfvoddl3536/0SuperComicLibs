@@ -13,8 +13,8 @@ namespace SuperComicLib.Collections
 
         public RawIteratorEnumerator(IRawContainer<T> container)
         {
-            current = start = (T*)container.begin().UnsafePointerValue;
-            end = (T*)container.end().UnsafePointerValue;
+            current = start = container.begin()._ptr;
+            end = container.end()._ptr;
         }
 
         public T Current => item;
