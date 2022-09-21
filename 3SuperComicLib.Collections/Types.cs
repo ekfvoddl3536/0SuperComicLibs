@@ -36,9 +36,9 @@ namespace SuperComicLib.Collections
         int Length { get; }
         int Position { get; set; }
         T Read();
-        IArrayStream<T> Read(int count);
+        Memory<T> Read(int count);
         T Peek();
-        IArrayStream<T> Peek(int count);
+        Memory<T> Peek(int count);
         void Reset();
         void Move();
         void Move(int count);

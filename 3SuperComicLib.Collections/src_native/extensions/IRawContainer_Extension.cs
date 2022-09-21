@@ -22,10 +22,10 @@ namespace SuperComicLib.Collections
 
         public static IEnumerator<T> GetEnumerator<T>(this IRawContainer<T> source) where T : unmanaged => new RawIteratorEnumerator<T>(source);
 
-        public static _iterator<T> Find<T>(this IRawContainer<T> source, T item) where T : unmanaged =>
+        public static _iterator<T> Find<T>(this IRawContainer<T> source, in T item) where T : unmanaged =>
             Find(source, item, EqualityComparer<T>.Default);
 
-        public static _iterator<T> Find<T>(this IRawContainer<T> source, T item, IEqualityComparer<T> comparer) where T : unmanaged
+        public static _iterator<T> Find<T>(this IRawContainer<T> source, in T item, IEqualityComparer<T> comparer) where T : unmanaged
         {
             _iterator<T> cur = source.begin();
             _iterator<T> end = source.end();
@@ -36,8 +36,6 @@ namespace SuperComicLib.Collections
 
             return default;
         }
-
-        public static void* ToIndex<T>(this IRawContainer<T> source, _iterator<T> iterator) where T : unmanaged => iterator - source.begin();
 
         public static bool SequenceEqual<T>(this IRawContainer<T> first, IRawContainer<T> second) where T : unmanaged =>
             SequenceEqual(first, second, EqualityComparer<T>.Default);

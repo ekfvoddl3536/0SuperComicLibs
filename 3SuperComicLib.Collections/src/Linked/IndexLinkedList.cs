@@ -21,7 +21,7 @@ namespace SuperComicLib.Collections
         #region constructors
         public IndexLinkedList(int capacity)
         {
-            m_list = new Node[Math.Max(capacity, 4)];
+            m_list = new Node[(int)CMath.Max((uint)capacity, 4u)];
             m_free_idx = -1;
         }
 
@@ -190,7 +190,7 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Remove(T value) => Remove(value, EqualityComparer<T>.Default);
 
-        public bool Remove(T value, EqualityComparer<T> comparer)
+        public bool Remove(T value, IEqualityComparer<T> comparer)
         {
             var node = FindFirst(value, comparer);
             if (node.m_owner != null)
@@ -259,14 +259,13 @@ namespace SuperComicLib.Collections
         {
             Node[] list_ = m_list;
 
-            Node defval_ = default;
             // reset values
             for (int i = m_head_idx, sz = m_size; --sz >= 0;)
             {
                 ref Node n = ref list_[i];
                 i = n.next;
 
-                n = defval_; // reset
+                n = default; // reset
             }
 
             // reset variables
@@ -296,7 +295,7 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NodeIndex<T> FindFirst(T value) => FindFirst(value, EqualityComparer<T>.Default);
 
-        public NodeIndex<T> FindFirst(T value, EqualityComparer<T> comparer)
+        public NodeIndex<T> FindFirst(T value, IEqualityComparer<T> comparer)
         {
             Node[] list = m_list;
             for (int i = m_head_idx, sz = m_size; --sz >= 0; i = list[i].next)
@@ -309,7 +308,7 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NodeIndex<T> FindLast(T value) => FindLast(value, EqualityComparer<T>.Default);
 
-        public NodeIndex<T> FindLast(T value, EqualityComparer<T> comparer)
+        public NodeIndex<T> FindLast(T value, IEqualityComparer<T> comparer)
         {
             Node[] list = m_list;
             for (int i = m_head_idx, sz = m_size; --sz >= 0;)
@@ -466,7 +465,7 @@ namespace SuperComicLib.Collections
 
             ref Node n = ref m_list[node.m_index];
             if (n.next < 0 ||
-                (n.next | n.prev) == 0 && (node.m_index != 0 || m_size != 1))
+                (n.next | n.prev) == 0 && node.m_index != 0)
                 throw new InvalidOperationException($"Dereference to {nameof(NULL_PTR)}");
         }
         #endregion

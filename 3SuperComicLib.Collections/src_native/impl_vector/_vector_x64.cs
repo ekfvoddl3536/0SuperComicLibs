@@ -22,24 +22,19 @@ namespace SuperComicLib.Collections
             m_Last = m_Ptr + size;
             m_End = m_Last;
 
-            MemoryBlock.Memset(m_Ptr, size, val);
+            MemoryBlock.Memset64(m_Ptr, (ulong)size, val);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public _vector(const_iterator<T> first, const_iterator<T> last)
         {
-            var len = (long)(last - first);
+            var len = (ulong)((byte*)last._ptr - (byte*)first._ptr);
 
-            m_Ptr = (T*)Marshal.AllocHGlobal((IntPtr)((ulong)len * (uint)sizeof(T)));
-            m_Last = m_Ptr + len;
-            m_End = m_Ptr + len;
+            m_Ptr = (T*)Marshal.AllocHGlobal((IntPtr)len);
+            m_Last = (T*)((byte*)m_Ptr + len);
+            m_End = m_Last;
 
-            MemoryBlock.Memmove(m_Ptr, first._ptr, len, sizeof(T));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public _vector(in _vector<T> source) : this(source.cbegin(), source.cend())
-        {
+            Buffer.MemoryCopy(first._ptr, m_Ptr, len, len);
         }
         #endregion
 
@@ -98,25 +93,22 @@ namespace SuperComicLib.Collections
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long capacity() => m_End - m_Ptr;
+        #endregion
 
-        ref T IRawContainer<T>.this[long index] => ref this[index];
-        ref T IRawContainer<T>.at(long index) => ref at(index);
+        #region interface impl (readonly)
+        ref readonly T IReadOnlyRawContainer<T>.this[long index] => ref this[index];
+
+        ref readonly T IReadOnlyRawContainer<T>.at(long index) => ref at(index);
         #endregion
 
         #region methods 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void push_back(in T item)
         {
-            reserve((long)(m_Last - m_Ptr) + 1);
+            reserve(m_Last - m_Ptr + 1);
 
             *m_Last++ = item;
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T pop_back() =>
-            m_Ptr == m_Last
-            ? throw new InvalidOperationException("empty collection")
-            : *m_Last--;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void insert(long index, in T item)
@@ -126,13 +118,13 @@ namespace SuperComicLib.Collections
 
             reserve(size() + 1);
 
-            T* dst = m_Ptr + index;
+            T* src = m_Ptr + index;
+            T* dst = src + 1;
 
-            var sizeInBytes = (ulong)((byte*)m_Last - (byte*)(dst + 1));
+            var copysize = (ulong)((byte*)m_Last - (byte*)dst);
+            Buffer.MemoryCopy(src, dst, copysize, copysize);
 
-            Buffer.MemoryCopy(dst, dst + 1, sizeInBytes, sizeInBytes);
-
-            *dst = item;
+            *src = item;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -142,8 +134,11 @@ namespace SuperComicLib.Collections
                 return false;
 
             T* dst = m_Ptr + index;
+            T* src = dst + 1;
 
-            MemoryBlock.Memmove(dst + 1, dst, m_Last - (dst + 1), sizeof(T));
+            var copysize = (ulong)((byte*)m_Last - (byte*)src);
+            Buffer.MemoryCopy(src, dst, copysize, copysize);
+
             m_Last--;
 
             return true;
@@ -152,11 +147,13 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void earse(_iterator<T> position)
         {
-            if ((size_t)(position - m_Ptr) >= size())
+            if (position._ptr - m_Ptr >= size())
                 throw new ArgumentOutOfRangeException(nameof(position));
 
             T* dst = position._ptr + 1;
-            MemoryBlock.Memmove(dst, position._ptr, m_Last - dst, sizeof(T));
+
+            var copysize = (ulong)((byte*)m_Last - (byte*)dst);
+            Buffer.MemoryCopy(dst, position._ptr, copysize, copysize);
 
             m_Last--;
         }
@@ -168,12 +165,11 @@ namespace SuperComicLib.Collections
                 throw new ArgumentOutOfRangeException($"{nameof(first)} or {nameof(last)}");
 
             T* dst = last._ptr + 1;
-            MemoryBlock.Memmove(dst, first._ptr, m_Last - dst, sizeof(T));
 
-            if (IntPtr.Size == sizeof(T))
-                m_Last -= (ulong)(last._ptr - first._ptr);
-            else
-                m_Last -= (ulong)(last._ptr - first._ptr);
+            var copysize = (ulong)((byte*)m_Last - (byte*)dst);
+            Buffer.MemoryCopy(dst, first._ptr, copysize, copysize);
+
+            m_Last -= (ulong)(last._ptr - first._ptr);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64LossOfLength]

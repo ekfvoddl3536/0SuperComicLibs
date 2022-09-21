@@ -115,6 +115,9 @@
     <Compile Include="src_native\extensions\IRawContainer_Extension.cs" />
     <Compile Include="src_native\extensions\items\RawIteratorEnumerator.cs" />
     <Compile Include="src_native\extensions\RawContainerUtility.cs" />
+    <Compile Include="src_native\impl_indexLinkedVector\_index_linked_vector_AnyCPU.cs" />
+    <Compile Include="src_native\impl_indexLinkedVector\_index_linked_vector_x64.cs" />
+    <Compile Include="src_native\impl_indexLinkedVector\_index_linked_vector_x86.cs" />
     <Compile Include="src_native\impl_nativeArray\NativeArray_AnyCPU.cs" />
     <Compile Include="src_native\impl_nativeArray\NativeArray_x64.cs" />
     <Compile Include="src_native\impl_nativeArray\NativeArray_x86.cs" />
@@ -128,10 +131,11 @@
     <Compile Include="src\Tree\TreeNode.cs" />
     <Compile Include="src_gcsafe\LoopArray.cs" />
     <Compile Include="src_native\RawMemory.cs" />
+    <Compile Include="src_native\_index_linked_vector.cs" />
+    <Compile Include="src_native\impl_indexLinkedVector\structs\_index_node.cs" />
     <Compile Include="src_native\_vector.cs" />
     <Compile Include="Utils\ArrayStream.cs" />
     <Compile Include="Types.cs" />
-    <Compile Include="Utils\RangeArrayStream.cs" />
     <Compile Include="src\Arrays.cs" />
     <Compile Include="src\Linked\UserLinkedValue.cs" />
     <Compile Include="src\Debug.cs" />

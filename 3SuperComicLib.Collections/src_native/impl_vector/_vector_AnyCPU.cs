@@ -10,12 +10,12 @@ namespace SuperComicLib.Collections
     unsafe partial struct _vector<T>
     {
         #region constructor
-        [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public _vector(size_t size) : this(size, default)
         {
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public _vector(size_t size, in T val)
         {
             m_Ptr = (T*)MemoryBlock.Memalloc(size, sizeof(T));
@@ -44,11 +44,6 @@ namespace SuperComicLib.Collections
             }
 
             MemoryBlock.Memmove(m_Ptr, first._ptr, len, sizeof(T));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public _vector(in _vector<T> source) : this(source.cbegin(), source.cend())
-        {
         }
         #endregion
 
@@ -161,21 +156,26 @@ namespace SuperComicLib.Collections
             : ref at((long)index.value);
         #endregion
 
+        #region interface impl (readonly)
+        ref readonly T IReadOnlyRawContainer<T>.this[size_t index] =>
+            ref IntPtr.Size == sizeof(int)
+            ? ref this[(int)index.value]
+            : ref this[(long)index.value];
+        ref readonly T IReadOnlyRawContainer<T>.at(size_t index) => 
+            ref IntPtr.Size == sizeof(int)
+            ? ref at((int)index.value)
+            : ref at((long)index.value);
+        #endregion
+
         #region methods 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void push_back(in T item)
         {
             // operator order -> long (T* (T* + 1) - T*)
-            reserve((m_Last + 1) - m_Ptr);
+            reserve(m_Last + 1 - m_Ptr);
 
             *m_Last++ = item;
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T pop_back() =>
-            m_Ptr == m_Last
-            ? throw new InvalidOperationException("empty collection")
-            : *m_Last--;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void insert(size_t index, in T item)
@@ -217,7 +217,7 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void earse(_iterator<T> position)
         {
-            if ((size_t)(position - m_Ptr) >= size())
+            if ((size_t)(position._ptr - m_Ptr) >= size())
                 throw new ArgumentOutOfRangeException(nameof(position));
 
             T* dst = position._ptr + 1;
@@ -235,7 +235,7 @@ namespace SuperComicLib.Collections
             T* dst = last._ptr + 1;
             MemoryBlock.Memmove(dst, first._ptr, m_Last - dst, sizeof(T));
 
-            if (IntPtr.Size == sizeof(T))
+            if (IntPtr.Size == sizeof(int))
                 m_Last -= (uint)(last._ptr - first._ptr);
             else
                 m_Last -= (ulong)(last._ptr - first._ptr);

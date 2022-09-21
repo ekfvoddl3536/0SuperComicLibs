@@ -11,8 +11,8 @@ namespace SuperComicLib
             System.IntPtr.Size == sizeof(int)
             ? p + (uint)n.value
             : p + (ulong)n.value;
-#elif X86 || X64
-            p + n.value;
+#else
+        p + n.value;
 #endif
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -21,8 +21,8 @@ namespace SuperComicLib
             System.IntPtr.Size == sizeof(int)
             ? p + (uint)n.value
             : p + (ulong)n.value;
-#elif X86 || X64
-            p + n.value;
+#else
+        p + n.value;
 #endif
     }
 }

@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Public\CodeContracts\Attributes.cs" />
+    <Compile Include="Public\CodeContracts\NoExceptAttribute.cs" />
     <Compile Include="Public\CodeContracts\ValidRangeAttribute.cs" />
     <Compile Include="Public\Core\IntHash.cs" />
     <Compile Include="Public\Core\PRNG.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="Public\Threading\TaskExtension.cs" />
     <Compile Include="Public\Threading\SpinBlockLockSlim.cs" />
     <Compile Include="Public\Threading\VolatileInt32.cs" />
+    <Compile Include="Public\__global__\collections\ConstMemory.cs" />
     <Compile Include="Public\__global__\collections\impl_nativeConstSpan\NativeConstSpan_AnyCPU.cs" />
     <Compile Include="Public\__global__\collections\impl_nativeConstSpan\NativeConstSpan_x64.cs" />
     <Compile Include="Public\__global__\collections\impl_nativeConstSpan\NativeConstSpan_x86.cs" />
@@ -127,6 +129,7 @@
     <Compile Include="Public\__global__\c_api\impl_size_t\size_t_AnyCPU.cs" />
     <Compile Include="Public\__global__\c_api\impl_size_t\size_t_x64.cs" />
     <Compile Include="Public\__global__\c_api\impl_size_t\size_t_x86.cs" />
+    <Compile Include="Public\__global__\c_api\ptr_math.cs" />
     <Compile Include="Public\__global__\extension\SCL_GLOBAL_ArrayExtension_MemoryT.cs" />
     <Compile Include="Public\__global__\LongHashedString.cs" />
     <Compile Include="Public\__global__\c_api\ptr_offset.cs" />

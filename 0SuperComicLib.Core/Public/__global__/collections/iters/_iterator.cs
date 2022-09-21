@@ -65,8 +65,6 @@ namespace SuperComicLib
         #region cast
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator _iterator<T>(T* ptr) => new _iterator<T>(ptr);
-        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        // public static explicit operator T*(_iterator<T> ptr) => ptr._ptr;
         #endregion
     }
 }

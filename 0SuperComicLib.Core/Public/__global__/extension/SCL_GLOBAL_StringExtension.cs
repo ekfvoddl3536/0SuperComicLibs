@@ -20,9 +20,12 @@ namespace SuperComicLib
             if (str.Length < cnt)
                 return false;
 
-            while (--cnt >= 0)
-                if (str[cnt] != ptr[cnt])
-                    return false;
+            fixed (char* pstr = str)
+            {
+                for (char* pl = pstr, end = ptr + cnt; ptr != end;)
+                    if (*pl++ != *ptr++)
+                        return false;
+            }
 
             return true;
         }

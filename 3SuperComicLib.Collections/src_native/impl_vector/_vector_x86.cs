@@ -9,7 +9,7 @@ namespace SuperComicLib.Collections
 {
     unsafe partial struct _vector<T>
     {
-        #region constructor
+#region constructor
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public _vector(int size) : this(size, default)
         {
@@ -22,28 +22,24 @@ namespace SuperComicLib.Collections
             m_Last = m_Ptr + size;
             m_End = m_Last;
 
-            MemoryBlock.Memset(m_Ptr, size, val);
+            MemoryBlock.Memset32(m_Ptr, (uint)size, val);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public _vector(const_iterator<T> first, const_iterator<T> last)
         {
-            var len = (int)(last - first);
+            var len = (int)((byte*)last._ptr - (byte*)first._ptr);
 
-            m_Ptr = (T*)Marshal.AllocHGlobal(len * sizeof(T));
-            m_Last = m_Ptr + len;
-            m_End = m_Ptr + len;
+            m_Ptr = (T*)Marshal.AllocHGlobal(len);
+            m_Last = (T*)((byte*)m_Ptr + len);
+            m_End = m_Last;
 
-            MemoryBlock.Memmove(m_Ptr, first._ptr, len, sizeof(T));
+            ulong copysize = (uint)len;
+            Buffer.MemoryCopy(first._ptr, m_Ptr, copysize, copysize);
         }
+#endregion
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public _vector(in _vector<T> source) : this(source.cbegin(), source.cend())
-        {
-        }
-        #endregion
-
-        #region indexer & property
+#region indexer & property
         public ref T this[int index] => ref *(m_Ptr + index);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -56,9 +52,9 @@ namespace SuperComicLib.Collections
         public int Count => size();
 
         public int Capacity => capacity();
-        #endregion
+#endregion
 
-        #region set capacity
+#region set capacity
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void reserve(int capacity)
         {
@@ -90,20 +86,23 @@ namespace SuperComicLib.Collections
             m_Last = last;
             m_End = end;
         }
-        #endregion
+#endregion
 
-        #region impl interface
+#region impl interface
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int size() => (int)(m_Last - m_Ptr);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int capacity() => (int)(m_End - m_Ptr);
+#endregion
 
-        ref T IRawContainer<T>.this[int index] => ref this[index];
-        ref T IRawContainer<T>.at(int index) => ref at(index);
-        #endregion
+#region interface impl (readonly)
+        ref readonly T IReadOnlyRawContainer<T>.this[int index] => ref this[index];
 
-        #region methods 
+        ref readonly T IReadOnlyRawContainer<T>.at(int index) => ref at(index);
+#endregion
+
+#region methods 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void push_back(in T item)
         {
@@ -113,12 +112,6 @@ namespace SuperComicLib.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T pop_back() =>
-            m_Ptr == m_Last
-            ? throw new InvalidOperationException("empty collection")
-            : *m_Last--;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void insert(int index, in T item)
         {
             if (index >= size())
@@ -126,13 +119,13 @@ namespace SuperComicLib.Collections
 
             reserve(size() + 1);
 
-            T* dst = m_Ptr + index;
+            T* src = m_Ptr + index;
+            T* dst = src + 1;
 
-            var sizeInBytes = (ulong)((byte*)m_Last - (byte*)(dst + 1));
+            var copysize = (ulong)((byte*)m_Last - (byte*)dst);
+            Buffer.MemoryCopy(src, dst, copysize, copysize);
 
-            Buffer.MemoryCopy(dst, dst + 1, sizeInBytes, sizeInBytes);
-
-            *dst = item;
+            *src = item;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -142,8 +135,11 @@ namespace SuperComicLib.Collections
                 return false;
 
             T* dst = m_Ptr + index;
+            T* src = dst + 1;
 
-            MemoryBlock.Memmove(dst + 1, dst, (int)(m_Last - (dst + 1)), sizeof(T));
+            ulong copysize = (uint)((byte*)m_Last - (byte*)src);
+            Buffer.MemoryCopy(src, dst, copysize, copysize);
+
             m_Last--;
 
             return true;
@@ -152,11 +148,13 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void earse(_iterator<T> position)
         {
-            if ((size_t)(position - m_Ptr) >= size())
+            if ((int)(position._ptr - m_Ptr) >= size())
                 throw new ArgumentOutOfRangeException(nameof(position));
 
             T* dst = position._ptr + 1;
-            MemoryBlock.Memmove(dst, position._ptr, (int)(m_Last - dst), sizeof(T));
+
+            ulong copysize = (uint)((byte*)m_Last - (byte*)dst);
+            Buffer.MemoryCopy(dst, position._ptr, copysize, copysize);
 
             m_Last--;
         }
@@ -168,16 +166,15 @@ namespace SuperComicLib.Collections
                 throw new ArgumentOutOfRangeException($"{nameof(first)} or {nameof(last)}");
 
             T* dst = last._ptr + 1;
-            MemoryBlock.Memmove(dst, first._ptr, (int)(m_Last - dst), sizeof(T));
 
-            if (IntPtr.Size == sizeof(T))
-                m_Last -= (uint)(last._ptr - first._ptr);
-            else
-                m_Last -= (ulong)(last._ptr - first._ptr);
+            ulong copysize = (uint)((byte*)m_Last - (byte*)dst);
+            Buffer.MemoryCopy(dst, first._ptr, copysize, copysize);
+
+            m_Last -= (uint)(last._ptr - first._ptr);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64LossOfLength]
-        public RawMemory getMemory() => new RawMemory(m_Ptr, (int)size());
+        public RawMemory getMemory() => new RawMemory(m_Ptr, size());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void _increaseCapacity(int min_size)
@@ -201,7 +198,7 @@ namespace SuperComicLib.Collections
             m_Last = last;
             m_End = end;
         }
-        #endregion
+#endregion
     }
 }
 #endif

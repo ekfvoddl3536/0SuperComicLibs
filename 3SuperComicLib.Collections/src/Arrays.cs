@@ -59,8 +59,15 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static int GetNextSize(int oldSize)
         {
-            const int MaxArrayLength = 0x7FEF_FFFF;
-            return CMath.Min(oldSize << 1, MaxArrayLength);
+            const uint MaxArrayLength = 0x7FEF_FFFF;
+            return (int)CMath.Min((uint)oldSize << 1, MaxArrayLength);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static long GetNextSize(long oldSize)
+        {
+            const ulong MaxArrayLength = 0x7FEF_FFFF_FFFF; // 48 bits
+            return (long)CMath.Min((ulong)oldSize << 1, MaxArrayLength);
         }
     }
 }

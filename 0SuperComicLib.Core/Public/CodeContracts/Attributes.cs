@@ -33,12 +33,6 @@ namespace SuperComicLib.CodeContracts
     public sealed class DisallowEmptyArrayAttribute : Attribute { }
 
     /// <summary>
-    /// 이 특성으로 표시된 메소드나 속성은 예외가 발생할 가능성이 극히 낮은 안전한 작업만을 수행합니다 (예: 변수에 대한 상수 시프트 연산, 검사된 범위 내에서 정수/부동소수 사칙연산)
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    public sealed class NoExceptAttribute : Attribute { }
-
-    /// <summary>
     /// 이 특성으로 표시된 메소드나 속성은 객체(class나 struct)의 상태(field 값)를 변경하지 않습니다
     /// </summary>
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]

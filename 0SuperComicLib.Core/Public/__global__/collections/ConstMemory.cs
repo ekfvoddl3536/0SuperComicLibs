@@ -6,36 +6,36 @@ using System.Runtime.CompilerServices;
 
 namespace SuperComicLib
 {
-    public readonly struct Memory<T> : IList<T>, IReadOnlyList<T>, IEquatable<Memory<T>>
+    public readonly struct ConstMemory<T> : IList<T>, IReadOnlyList<T>, IEquatable<ConstMemory<T>>
     {
-        public readonly T[] _source;
+        private readonly T[] _source;
         public readonly int _start;
         public readonly int Length;
 
         #region constructors
-        public Memory(T[] source, int startIndex, int length)
+        public ConstMemory(T[] source, int startIndex, int length)
         {
             _source = source;
             _start = startIndex;
             Length = length;
         }
 
-        public Memory(T[] source, int startIndex) : this(source, startIndex, source.Length - startIndex)
+        public ConstMemory(T[] source, int startIndex) : this(source, startIndex, source.Length - startIndex)
         {
         }
 
-        public Memory(T[] source) : this(source, 0, source.Length)
+        public ConstMemory(T[] source) : this(source, 0, source.Length)
         {
         }
         #endregion
 
         #region property
-        public ref T this[int index] => ref _source[_start + index];
+        public ref readonly T this[int index] => ref _source[_start + index];
         #endregion
 
         #region methods (at, slice, copy, +ToArray)
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T At(int index)
+        public ref readonly T At(int index)
         {
             if ((uint)index >= (uint)Length)
                 throw new ArgumentOutOfRangeException(nameof(index));
@@ -44,15 +44,15 @@ namespace SuperComicLib
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Memory<T> Slice(int startIndex) => Slice(startIndex, Length - startIndex);
+        public ConstMemory<T> Slice(int startIndex) => Slice(startIndex, Length - startIndex);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Memory<T> Slice(int startIndex, int length)
+        public ConstMemory<T> Slice(int startIndex, int length)
         {
             if ((uint)(startIndex + length) > (uint)Length)
                 throw new ArgumentOutOfRangeException($"'{nameof(startIndex)}' and '{nameof(length)}'");
 
-            return new Memory<T>(_source, _start + startIndex, length);
+            return new ConstMemory<T>(_source, _start + startIndex, length);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -112,11 +112,11 @@ namespace SuperComicLib
 
         #region interface impl (explicit)
         #region IList<T>
-        T IList<T>.this[int index] { get => At(index); set => At(index) = value; }
+        T IList<T>.this[int index] { get => At(index); set => throw new NotSupportedException("ReadOnlyCollection"); }
         void IList<T>.Insert(int index, T item) => throw new NotSupportedException("FixedSizeCollection");
         void IList<T>.RemoveAt(int index) => throw new NotSupportedException("FixedSizeCollection");
         int ICollection<T>.Count => Length;
-        bool ICollection<T>.IsReadOnly => false;
+        bool ICollection<T>.IsReadOnly => true;
         void ICollection<T>.Add(T item) => throw new NotSupportedException("FixedSizeCollection");
         void ICollection<T>.CopyTo(T[] array, int arrayIndex) => Array.Copy(_source, _start, array, arrayIndex, Length);
         bool ICollection<T>.Remove(T item) => throw new NotSupportedException("FixedSizeCollection");
@@ -134,27 +134,29 @@ namespace SuperComicLib
         #endregion
 
         #region equatable
-        bool IEquatable<Memory<T>>.Equals(Memory<T> other) => this == other;
+        bool IEquatable<ConstMemory<T>>.Equals(ConstMemory<T> other) => this == other;
         #endregion
         #endregion
 
         #region override
-        public override bool Equals(object obj) => obj is Memory<T> other && this == other;
+        public override bool Equals(object obj) => obj is ConstMemory<T> other && this == other;
         public override int GetHashCode() => _source.GetHashCode() ^ _start ^ Length;
         #endregion
 
         #region static
         // !== CAST
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator Memory<T>(T[] source) => new Memory<T>(source, 0, source.Length);
+        public static implicit operator ConstMemory<T>(T[] source) => new ConstMemory<T>(source, 0, source.Length);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator ConstMemory<T>(Memory<T> v) => new ConstMemory<T>(v._source, v._start, v.Length);
 
         // !== EQ
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(in Memory<T> left, in Memory<T> right) =>
+        public static bool operator ==(in ConstMemory<T> left, in ConstMemory<T> right) =>
             left._source == right._source &&
             ((left._start - right._start) | (left.Length - right.Length)) == 0;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(in Memory<T> left, in Memory<T> right) =>
+        public static bool operator !=(in ConstMemory<T> left, in ConstMemory<T> right) =>
             left._source != right._source ||
             ((left._start - right._start) | (left.Length - right.Length)) != 0;
         #endregion

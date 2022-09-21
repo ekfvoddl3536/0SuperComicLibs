@@ -8,7 +8,6 @@ namespace SuperComicLib.Collections
     {
         protected T[] arr;
         protected int idx;
-        protected int len;
 
         #region constructor
         public ArrayStream(T[] source) : this(source, 0) { }
@@ -16,23 +15,21 @@ namespace SuperComicLib.Collections
         public ArrayStream(T[] source, int begin)
         {
             arr = source ?? Array.Empty<T>();
-            len = arr.Length;
             idx = begin;
         }
 
         public ArrayStream(ICollection<T> collection, int begin)
         {
             arr = collection?.ToArray() ?? Array.Empty<T>();
-            len = arr.Length;
             idx = begin;
         }
 
         protected ArrayStream() { }
         #endregion
 
-        public virtual bool EndOfStream => idx < 0 || idx >= len;
+        public virtual bool EndOfStream => (uint)idx >= (uint)arr.Length;
 
-        public virtual int Length => len;
+        public virtual int Length => arr.Length;
 
         public virtual int Position
         {
@@ -42,45 +39,45 @@ namespace SuperComicLib.Collections
 
         public T Read()
         {
-            if (idx >= 0 && idx < len)
+            if ((uint)idx < (uint)arr.Length)
             {
-                int temp = idx;
-                idx++;
+                int temp = idx++;
                 return arr[temp];
             }
             else
                 return default;
         }
 
-        public IArrayStream<T> Read(int count)
+        public Memory<T> Read(int count)
         {
             int idx = this.idx;
             int end = idx + count;
 
-            if (idx >= 0 && count >= 0 && end <= len)
+            if ((uint)idx < (uint)end && (uint)end <= (uint)arr.Length)
             {
                 this.idx = end;
-                return new RangeArrayStream<T>(arr, idx, end);
+                return new Memory<T>(arr, idx, count);
             }
-            return null;
+
+            return default;
         }
 
-        public T Peek() => idx >= 0 && idx < len ? arr[idx] : default;
+        public T Peek() => (uint)idx < (uint)arr.Length ? arr[idx] : default;
 
-        public IArrayStream<T> Peek(int count)
+        public Memory<T> Peek(int count)
         {
             int idx = this.idx;
             int end = idx + count;
 
             return
-                idx >= 0 && count >= 0 && end <= len
-                ? new RangeArrayStream<T>(arr, idx, end)
-                : null;
+                (uint)idx < (uint)end && (uint)end <= (uint)arr.Length
+                ? new Memory<T>(arr, idx, count)
+                : default;
         }
 
         public virtual void Reset() => idx = 0;
 
-        public bool CanRead(int count) => idx <= len - count;
+        public bool CanRead(int count) => idx <= arr.Length - count;
 
         public void Move() => idx++;
 
@@ -93,7 +90,6 @@ namespace SuperComicLib.Collections
             {
                 arr = null;
                 idx = 0;
-                len = 0;
             }
         }
 

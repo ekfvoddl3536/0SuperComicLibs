@@ -71,9 +71,9 @@ namespace SuperComicLib
         public static bool operator >(size_t left, size_t right) => left.value > right.value;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >=(size_t left, size_t right) => left.value <= right.value;
+        public static bool operator >=(size_t left, size_t right) => left.value >= right.value;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <=(size_t left, size_t right) => left.value >= right.value;
+        public static bool operator <=(size_t left, size_t right) => left.value <= right.value;
         #endregion
     }
 }

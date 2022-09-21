@@ -40,15 +40,16 @@ namespace SuperComicLib.Collections
             Length = source.LongLength;
             Ptr = (T*)Marshal.AllocHGlobal((IntPtr)((ulong)source.LongLength * (uint)sizeof(T)));
 
-            fixed (T* psrc = &source[0])
-            {
-                ulong cb = (ulong)source.Length * (uint)sizeof(T);
-                Buffer.MemoryCopy(psrc, Ptr, cb, cb);
-            }
+            if (source.Length > 0)
+                fixed (T* psrc = &source[0])
+                {
+                    ulong cb = (ulong)source.Length * (uint)sizeof(T);
+                    Buffer.MemoryCopy(psrc, Ptr, cb, cb);
+                }
         }
-#endregion
+        #endregion
 
-#region indexer & property
+        #region indexer & property
         public ref T this[long index] => ref Ptr[index];
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -79,26 +80,10 @@ namespace SuperComicLib.Collections
         public RawMemory getMemory() => new RawMemory(Ptr, (int)Length);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public _iterator<T> begin() => new _iterator<T>(Ptr);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public _iterator<T> end() => new _iterator<T>(Ptr + Length);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public reverse_iterator<T> rbegin() => new reverse_iterator<T>(Ptr + (Length - 1));
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public reverse_iterator<T> rend() => new reverse_iterator<T>(Ptr - 1);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public const_iterator<T> cbegin() => begin();
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public const_iterator<T> cend() => end();
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public const_reverse_iterator<T> crbegin() => rbegin();
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public const_reverse_iterator<T> crend() => rend();
-
-        public void Dispose() => Marshal.FreeHGlobal((IntPtr)Ptr);
 #endregion
 
 #region explicit impl longerface

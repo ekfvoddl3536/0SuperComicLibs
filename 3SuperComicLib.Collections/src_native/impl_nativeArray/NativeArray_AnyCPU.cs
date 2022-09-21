@@ -28,11 +28,15 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeArray(T[] source) : this(source?.Length ?? 0, false)
         {
-            fixed (T* psrc = &source[0])
-            {
-                ulong cb = (ulong)(uint)source.Length * (uint)sizeof(T);
-                Buffer.MemoryCopy(psrc, Ptr, cb, cb);
-            }
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (source.Length > 0)
+                fixed (T* psrc = &source[0])
+                {
+                    ulong cb = (ulong)(uint)source.Length * (uint)sizeof(T);
+                    Buffer.MemoryCopy(psrc, Ptr, cb, cb);
+                }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -116,16 +120,20 @@ namespace SuperComicLib.Collections
             ? ref at((int)index.value)
             : ref at((long)index.value);
 
-        size_t IRawContainer.capacity() => Length;
-        size_t IRawContainer.size() => Length;
+        size_t IRawContainer.capacity() =>
+            IntPtr.Size == sizeof(int)
+            ? Length
+            : LongLength;
+        size_t IRawContainer.size() =>
+            IntPtr.Size == sizeof(int)
+            ? Length
+            : LongLength;
         #endregion
 
         #region implement interfaces
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64LossOfLength]
         public RawMemory getMemory() => new RawMemory(Ptr, Length);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public _iterator<T> begin() => new _iterator<T>(Ptr);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public _iterator<T> end() =>
             IntPtr.Size == sizeof(int)
@@ -137,20 +145,6 @@ namespace SuperComicLib.Collections
             IntPtr.Size == sizeof(int)
             ? new reverse_iterator<T>(Ptr + (Length - 1))
             : new reverse_iterator<T>(Ptr + (LongLength - 1));
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public reverse_iterator<T> rend() => new reverse_iterator<T>(Ptr - 1);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public const_iterator<T> cbegin() => begin();
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public const_iterator<T> cend() => end();
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public const_reverse_iterator<T> crbegin() => rbegin();
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public const_reverse_iterator<T> crend() => rend();
-
-        public void Dispose() => Marshal.FreeHGlobal((IntPtr)Ptr);
         #endregion
 
         #region explicit impl interface
