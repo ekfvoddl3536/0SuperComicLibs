@@ -1,0 +1,46 @@
+name: .NET Framework
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+    inputs:
+      build_config:
+        type: choice
+        required: true
+        default: 'Release'
+        description: Build configuration
+        options:
+        - Debug
+        - Release
+      arch_config:
+        type: choice
+        required: true
+        default: 'AnyCPU'
+        description: Target architecture
+        options:
+        - AnyCPU
+        - x86
+        - x64
+        
+jobs:
+  build:
+  
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+      with:
+        msbuild-architecture: x64
+
+    - name: Build app for [${{ github.event.inputs.build_config }} | ${{ github.event.inputs.arch_config }}]
+      run: >
+          foreach ($f in Get-ChildItem ${{ github.workspace }} -Recurse -Filter *.csproj) {
+          msbuild $f.FullName -r -p:Configuration=${{ github.event.inputs.build_config }} -p:Platform=${{ github.event.inputs.arch_config }}
+          }
