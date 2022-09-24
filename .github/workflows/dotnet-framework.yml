@@ -36,7 +36,7 @@ jobs:
       with:
         msbuild-architecture: x64
 
-    - name: Build app for [${{ github.event.inputs.build_config }} | ${{ github.event.inputs.arch_config }}]
+    - name: Build app for ( ${{ github.event.inputs.build_config }}-${{ github.event.inputs.arch_config }} )
       run: >
           foreach ($f in Get-ChildItem ${{ github.workspace }} -Recurse -Filter *.csproj) {
           msbuild $f.FullName -r -p:Configuration=${{ github.event.inputs.build_config }} -p:Platform=${{ github.event.inputs.arch_config }}
