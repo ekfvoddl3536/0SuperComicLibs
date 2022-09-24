@@ -1,10 +1,6 @@
-name: .NET Framework
+name: .NET Framework 4.x
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
   workflow_dispatch:
     inputs:
       build_config:
@@ -28,7 +24,8 @@ on:
 jobs:
   build:
   
-    runs-on: windows-latest
+    # for using .NET Framework 4.0 SDK
+    runs-on: windows-2019
 
     steps:
     - name: Checkout Code
