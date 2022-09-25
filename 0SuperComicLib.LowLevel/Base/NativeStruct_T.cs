@@ -3,26 +3,27 @@ using System.Security;
 
 namespace SuperComicLib.LowLevel
 {
-    public unsafe sealed class NativeStruct<T> : PointerMethods<T> where T : struct
+    [SuppressUnmanagedCodeSecurity]
+    public unsafe sealed class NativeStruct<T> : PointerMethods<T> 
+        where T : struct
     {
         #region instance members
         private readonly UnsafeReadPointerStruct<T> read;
 
         internal NativeStruct() => read = NativeClass.CreateReadPointer<T>(typeof(NativeStruct<T>));
 
-        [SecurityCritical]
         public T Read(void* ptr) => read.Invoke(ptr);
 
-        public override TRet Read<TRet>(ref T inst, int offset)
+        public override TOut Get<TOut>(ref T inst, int offset)
         {
             TypedReference tr = __makeref(inst);
-            return *(TRet*)(*(byte**)&tr + offset);
+            return *(TOut*)(*(byte**)&tr + offset);
         }
 
-        public override void Set<TSet>(ref T inst, TSet value, int offset)
+        public override void Set<TIn>(ref T inst, TIn value, int offset)
         {
             TypedReference tr = __makeref(inst);
-            *(TSet*)(*(byte**)&tr + offset) = value;
+            *(TIn*)(*(byte**)&tr + offset) = value;
         }
 
         public override T Default(void* ptr) => Read(ptr);

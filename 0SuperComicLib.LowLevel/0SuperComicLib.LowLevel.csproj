@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SuperComicLib.LowLevel</RootNamespace>
     <AssemblyName>0SuperComicLib.LowLevel</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -94,19 +94,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base\NativeClass_T.cs" />
-    <Compile Include="NativeMethod\NativeMehods0.cs" />
-    <Compile Include="nheap\Constants.cs" />
-    <Compile Include="nheap\NativeProtectData_T.cs" />
-    <Compile Include="nheap\NativeByteArray.cs" />
-    <Compile Include="nheap\NativeSecureArray_T.cs" />
-    <Compile Include="Types\Extension\Extensions.cs" />
-    <Compile Include="nheap\NativeString.cs" />
     <Compile Include="Types\UnsafeCLIMemoryData.cs" />
-    <Compile Include="Utils\BinaryStructureInfo.cs" />
     <Compile Include="NativeClass.cs" />
     <Compile Include="Base\PointerMethods_T.cs" />
     <Compile Include="Base\NativeStruct_T.cs" />
-    <Compile Include="Types\Extension\NET35IntPtrExtension.cs" />
     <Compile Include="Types\PubMethodTable.cs" />
     <Compile Include="Types\Types.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

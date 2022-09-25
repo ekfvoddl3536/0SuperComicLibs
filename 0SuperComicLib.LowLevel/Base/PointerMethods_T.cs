@@ -2,20 +2,17 @@
 
 namespace SuperComicLib.LowLevel
 {
+    [SuppressUnmanagedCodeSecurity]
     public unsafe abstract class PointerMethods<T>
     {
         protected PointerMethods() { }
 
-        [SecurityCritical]
         public abstract T Default(void* ptr);
 
-        [SecurityCritical]
-        public abstract TRet Read<TRet>(ref T inst, int offset) where TRet : unmanaged;
+        public abstract TOut Get<TOut>(ref T inst, int offset) where TOut : unmanaged;
 
-        [SecurityCritical]
-        public abstract void Set<TSet>(ref T inst, TSet value, int offset) where TSet : unmanaged;
+        public abstract void Set<TIn>(ref T inst, TIn value, int offset) where TIn : unmanaged;
 
-        [SecurityCritical]
         public abstract void RefMemory(ref T obj, UnsafePointerAction cb);
     }
 }

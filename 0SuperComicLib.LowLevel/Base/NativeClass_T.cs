@@ -3,17 +3,18 @@ using System.Security;
 
 namespace SuperComicLib.LowLevel
 {
-    public unsafe sealed class NativeClass<T> : PointerMethods<T> where T : class
+    [SuppressUnmanagedCodeSecurity]
+    public unsafe sealed class NativeClass<T> : PointerMethods<T>
+        where T : class
     {
         #region instance members
         private readonly UnsafeCastClass<T> cast;
 
         internal NativeClass() => cast = NativeClass.CreateCastClass<T>(typeof(NativeClass<T>));
 
-        [SecurityCritical]
         public T Cast(void* ptr) => cast.Invoke(ptr);
 
-        public override TRet Read<TRet>(ref T inst, int offset) =>
+        public override TRet Get<TRet>(ref T inst, int offset) =>
             inst != null 
             ? Read_unsafe<TRet>(ref inst, offset)
             : default;
@@ -21,7 +22,7 @@ namespace SuperComicLib.LowLevel
         public TRet Read_unsafe<TRet>(ref T inst, int offset) where TRet : unmanaged
         {
             TypedReference tr = __makeref(inst);
-            return *(TRet*)(**(byte***)&tr + (NativeClass.PtrSize_i + offset));
+            return *(TRet*)(**(byte***)&tr + (sizeof(void*) + offset));
         }
 
         public override void Set<TSet>(ref T inst, TSet value, int offset)
@@ -35,18 +36,15 @@ namespace SuperComicLib.LowLevel
         public void Set_unsafe<TSet>(ref T inst, TSet value, int offset) where TSet : unmanaged
         {
             TypedReference tr = __makeref(inst);
-            *(TSet*)(**(byte***)&tr + (NativeClass.PtrSize_i + offset)) = value;
+            *(TSet*)(**(byte***)&tr + (sizeof(void*) + offset)) = value;
         }
 
         public override T Default(void* ptr) => Cast(ptr);
 
         public override void RefMemory(ref T obj, UnsafePointerAction cb)
         {
-#if DEBUG
-            System.Diagnostics.Debug.Assert(obj != null);
-#endif
             TypedReference tr = __makeref(obj);
-            cb.Invoke(**(byte***)&tr + NativeClass.PtrSize_i);
+            cb.Invoke(**(byte***)&tr + sizeof(void*));
         }
         #endregion
 
