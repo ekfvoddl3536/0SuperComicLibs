@@ -23,7 +23,7 @@ namespace SuperComicLib.Collections.Concurrent
             OnBeginEnumerate(threadCount);
 
             ConcurrentEnumerator<T> vs = new ConcurrentEnumerator<T>(origin);
-            Share<VolatileInt32> token = new Share<VolatileInt32>();
+            Share<VolatileInt32> token = new Share<VolatileInt32>(default);
 
             Action[] methods = new Action[threadCount];
             for (int x = 0; x < threadCount; x++)

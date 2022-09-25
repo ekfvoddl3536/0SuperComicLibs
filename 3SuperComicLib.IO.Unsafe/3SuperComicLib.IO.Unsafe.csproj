@@ -100,11 +100,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\[]SuperComicLibs\0SuperComicLib.Core\0SuperComicLib.Core.csproj">
+    <ProjectReference Include="..\0SuperComicLib.Core\0SuperComicLib.Core.csproj">
       <Project>{1674b047-ca4c-44a1-9d39-211e38c800dc}</Project>
       <Name>0SuperComicLib.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\[]SuperComicLibs\3SuperComicLib.Collections\3SuperComicLib.Collections.csproj">
+    <ProjectReference Include="..\3SuperComicLib.Collections\3SuperComicLib.Collections.csproj">
       <Project>{2c7bf115-111a-46b3-9721-a1761928b6cb}</Project>
       <Name>3SuperComicLib.Collections</Name>
     </ProjectReference>

@@ -84,6 +84,9 @@ namespace SuperComicLib.Collections
 
             return newNode_;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public long index_of(_index_node<T> node) => _index(node._ptr, _ptr);
 #endregion
 
 #region erase

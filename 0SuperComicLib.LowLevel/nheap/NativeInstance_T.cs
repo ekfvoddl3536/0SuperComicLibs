@@ -6,9 +6,16 @@ namespace SuperComicLib.LowLevel
     public unsafe struct NativeInstance<T> : IDisposable
         where T : class
     {
-        internal static readonly NativeClass<T> inst = NativeClass<T>.Instance;
-        internal static readonly IntPtr typehnd = typeof(T).TypeHandle.Value;
-        internal static readonly int size = *((int*)typehnd + (sizeof(int) + NativeClass.PtrSize_i));
+        internal static readonly NativeClass<T> inst;
+        internal static readonly IntPtr typehnd;
+        internal static readonly int size;
+
+        static NativeInstance()
+        {
+            inst = NativeClass<T>.Instance;
+            typehnd = typeof(T).TypeHandle.Value;
+            size = ((int*)typehnd)[1];
+        }
 
         private byte* m_ptr;
 
@@ -31,8 +38,7 @@ namespace SuperComicLib.LowLevel
         {
             if (m_ptr != null)
             {
-                T value = Value;
-                if (value is IDisposable d)
+                if (Value is IDisposable d)
                     d.Dispose();
 
                 Marshal.FreeHGlobal((IntPtr)m_ptr);
@@ -58,7 +64,7 @@ namespace SuperComicLib.LowLevel
                 return default;
 
             int ptrsize = NativeClass.PtrSize_i;
-            byte* ptr = NativeClass.Internal_Alloc(size, true);
+            byte* ptr = NativeClass.Internal_Alloc(size, false);
             *(IntPtr*)(ptr + ptrsize) = typehnd;
 
             TypedReference tr = __makeref(obj);
@@ -67,20 +73,20 @@ namespace SuperComicLib.LowLevel
             return new NativeInstance<T>(ptr);
         }
 
-        public static NativeInstance<T> Alloc()
+        public static NativeInstance<T> Alloc(bool zeromem = true)
         {
-            byte* ptr = NativeClass.Internal_Alloc(size, true);
+            byte* ptr = NativeClass.Internal_Alloc(size, zeromem);
             *(IntPtr*)(ptr + NativeClass.PtrSize_i) = typehnd;
 
             return new NativeInstance<T>(ptr);
         }
 
-        public static NativeInstance<T> Alloc(int additional_size)
+        public static NativeInstance<T> Alloc(int additional_size, bool zeromem = true)
         {
             if (additional_size < 0)
                 throw new InvalidOperationException();
 
-            byte* ptr = NativeClass.Internal_Alloc(size + additional_size, true);
+            byte* ptr = NativeClass.Internal_Alloc(size + additional_size, zeromem);
             *(IntPtr*)(ptr + NativeClass.PtrSize_i) = typehnd;
 
             return new NativeInstance<T>(ptr);

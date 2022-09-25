@@ -4,24 +4,24 @@ using System.Runtime.InteropServices;
 namespace SuperComicLib.LowLevel
 {
     [StructLayout(LayoutKind.Sequential, Pack = sizeof(int))]
-    public unsafe struct NativeRawDataArray : IDisposable, IEquatable<NativeRawDataArray>, IComparable<NativeRawDataArray>
+    public unsafe struct NativeByteArray : IDisposable, IEquatable<NativeByteArray>, IComparable<NativeByteArray>
     {
         private byte* m_ptr;
         private int m_size;
 
-        public NativeRawDataArray(int init_size, bool initDefaultValue = false)
+        public NativeByteArray(int init_size, bool initDefaultValue = false)
         {
             m_ptr = NativeClass.Internal_Alloc(init_size, initDefaultValue);
             m_size = init_size;
         }
 
-        public NativeRawDataArray(IntPtr HGlobalPTR, int size)
+        public NativeByteArray(IntPtr HGlobalPTR, int size)
         {
             m_ptr = (byte*)HGlobalPTR;
             m_size = size;
         }
 
-        public NativeRawDataArray(IntPtr HGlobalPTR) : this(HGlobalPTR, -1) { }
+        public NativeByteArray(IntPtr HGlobalPTR) : this(HGlobalPTR, -1) { }
 
         public bool IsInvalid => m_ptr == null && m_size == 0;
         
@@ -31,7 +31,7 @@ namespace SuperComicLib.LowLevel
 
         public ref T Value<T>(int offset) where T : unmanaged => ref *(T*)(m_ptr + offset);
 
-        public int CompareTo(NativeRawDataArray other)
+        public int CompareTo(NativeByteArray other)
         {
             if (IsInvalid || other.IsInvalid)
                 throw new InvalidOperationException();
@@ -53,26 +53,26 @@ namespace SuperComicLib.LowLevel
             m_size = 0;
         }
 
-        public bool Equals(NativeRawDataArray right) =>
+        public bool Equals(NativeByteArray right) =>
             m_ptr == right.m_ptr &&
             m_size == right.m_size;
 
         public override bool Equals(object obj) =>
-            obj is NativeRawDataArray right
+            obj is NativeByteArray right
             ? Equals(right)
-            : obj is IEquatable<NativeRawDataArray> eq && eq.Equals(this);
+            : obj is IEquatable<NativeByteArray> eq && eq.Equals(this);
 
         public override int GetHashCode() =>
             m_ptr != null
             ? ((IntPtr)m_ptr).GetHashCode()
             : -1;
 
-        public static bool operator ==(NativeRawDataArray left, NativeRawDataArray right) => left.m_ptr == right.m_ptr;
-        public static bool operator !=(NativeRawDataArray left, NativeRawDataArray right) => left.m_ptr != right.m_ptr;
+        public static bool operator ==(NativeByteArray left, NativeByteArray right) => left.m_ptr == right.m_ptr;
+        public static bool operator !=(NativeByteArray left, NativeByteArray right) => left.m_ptr != right.m_ptr;
 
-        public static bool operator <(NativeRawDataArray left, NativeRawDataArray right) => left.CompareTo(right) < 0;
-        public static bool operator <=(NativeRawDataArray left, NativeRawDataArray right) => left.CompareTo(right) <= 0;
-        public static bool operator >(NativeRawDataArray left, NativeRawDataArray right) => left.CompareTo(right) > 0;
-        public static bool operator >=(NativeRawDataArray left, NativeRawDataArray right) => left.CompareTo(right) >= 0;
+        public static bool operator <(NativeByteArray left, NativeByteArray right) => left.CompareTo(right) < 0;
+        public static bool operator <=(NativeByteArray left, NativeByteArray right) => left.CompareTo(right) <= 0;
+        public static bool operator >(NativeByteArray left, NativeByteArray right) => left.CompareTo(right) > 0;
+        public static bool operator >=(NativeByteArray left, NativeByteArray right) => left.CompareTo(right) >= 0;
     }
 }

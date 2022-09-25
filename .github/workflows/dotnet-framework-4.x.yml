@@ -1,0 +1,70 @@
+name: .NET Framework 4.x
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_config:
+        type: choice
+        required: true
+        default: 'Release'
+        description: Build configuration
+        options:
+        - Debug
+        - Release
+      arch_config:
+        type: choice
+        required: true
+        default: 'AnyCPU'
+        description: Target architecture
+        options:
+        - AnyCPU
+        - x86
+        - x64
+
+jobs:
+  build:
+
+    runs-on: windows-2019
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: Build library for ( ${{ github.event.inputs.build_config }}-${{ github.event.inputs.arch_config }} )
+      shell: pwsh
+      run: |
+          foreach ($f in Get-ChildItem ${{ github.workspace }} -Recurse -Filter *.csproj -Exclude *Unity*,*NET5*) {
+          msbuild $f.FullName -t:rebuild -p:Configuration=${{ github.event.inputs.build_config }} -p:Platform=${{ github.event.inputs.arch_config }}
+          }
+    
+    - name: Preparing for upload
+      shell: pwsh
+      # AnyCPU -> bin\${{build_config}}
+      # x64 -> x64\bin\${{build_config}}
+      run: |
+          if ("${{ github.event.inputs.arch_config }}" -eq "AnyCPU") {
+          $dirs = Get-ChildItem ${{ github.workspace }} -Recurse -Directory | Where-Object -Property FullName -like *\bin\${{ github.event.inputs.build_config }}
+          }
+          else {
+          $dirs = Get-ChildItem ${{ github.workspace }} -Recurse -Directory | Where-Object -Property FullName -like *\bin\${{ github.event.inputs.arch_config }}\${{ github.event.inputs.build_config }}
+          }
+          $dst = "${{ github.workspace }}\artifact"
+          foreach ($d in $dirs) {
+          echo $d.FullName
+          $temp = $d.Parent.Parent
+          if ("${{ github.event.inputs.arch_config }}" -ne "AnyCPU") { $temp = $temp.Parent }
+          $dstdir = [System.IO.Path]::Combine($dst, $temp.Name)
+          mkdir -p $dstdir
+          foreach ($f in $d.EnumerateFiles("*.dll")) {
+          $rname = [System.IO.Path]::Combine($dstdir, $f.Name)
+          $f.MoveTo($rname)
+          }
+          }
+    
+    - name: Uploading
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ github.event.inputs.build_config }}-${{ github.event.inputs.arch_config }}
+        path: ${{ github.workspace }}\artifact

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -349,10 +349,12 @@ namespace SuperComicLib.LowLevel
            ? -1
            : 0;
 
-        // [Obsolete("this is typehandle compare method. you can compare typehandle 'is' keyword instead of")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int ReferenceCompare(object left, object right) => 
-            ((ulong)Unsafe.AsPointer(ref left)).CompareTo((ulong)Unsafe.AsPointer(ref right));
+        public static int ReferenceCompare(object left, object right)
+        {
+            TypedReference tr_left = __makeref(left), tr_right = __makeref(right);
+            return ((ulong)*(UIntPtr*)&tr_left).CompareTo((ulong)*(UIntPtr*)&tr_right);
+        }
 
         public static void ZeroMem<T>(ref T obj)
         {
@@ -378,7 +380,6 @@ namespace SuperComicLib.LowLevel
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static NativeInstance<T> InitObj<T>(int size) where T : class => NativeInstance<T>.Alloc(size);
 
-        [Obsolete("use 'Unsafe.AsPointer' instead of")]
         public static IntPtr GetAddress(object obj)
         {
             if (obj == null)

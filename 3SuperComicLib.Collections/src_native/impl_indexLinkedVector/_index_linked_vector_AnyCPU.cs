@@ -16,7 +16,7 @@ namespace SuperComicLib.Collections
         private size_t _free;
         private size_t _size;
 
-        #region constructor
+#region constructor
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public _index_linked_vector(size_t initCapacity) 
         {
@@ -27,17 +27,17 @@ namespace SuperComicLib.Collections
 
             increaseCapacity(initCapacity);
         }
-        #endregion
+#endregion
 
-        #region size & capacity
+#region size & capacity
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public size_t capacity() => *(size_t*)(_ptr - sizeof(size_t));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public size_t size() => _size;
-        #endregion
+#endregion
 
-        #region indexer
+#region indexer
         public _index_node<T> this[size_t raw_index] => new _index_node<T>(_get(_ptr, raw_index));
 
         /// <exception cref="ArgumentOutOfRangeException">out of range</exception>
@@ -55,9 +55,12 @@ namespace SuperComicLib.Collections
 
             return v;
         }
-        #endregion
 
-        #region insert
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public size_t index_of(_index_node<T> node) => _index(node._ptr, _ptr);
+#endregion
+
+#region insert
         private byte* p_insert_before(byte* baseNode, in T value)
         {
             size_t tidx_;
@@ -84,9 +87,9 @@ namespace SuperComicLib.Collections
 
             return newNode_;
         }
-        #endregion
+#endregion
 
-        #region erase
+#region erase
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void erase_unsafe(_index_node<T> node)
         {
@@ -118,9 +121,9 @@ namespace SuperComicLib.Collections
             validate_node(node);
             erase_unsafe(node);
         }
-        #endregion
+#endregion
 
-        #region private method
+#region private method
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void validate_node(_index_node<T> node)
         {
@@ -175,18 +178,18 @@ namespace SuperComicLib.Collections
             _head = ptr_offset<byte>.add(vs_np, _index(_head, _ptr));
             _ptr = vs_np;
         }
-        #endregion
+#endregion
 
-        #region dispose
+#region dispose
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Dispose()
         {
             if (_ptr != null)
                 Marshal.FreeHGlobal((IntPtr)(_ptr - sizeof(size_t)));
         }
-        #endregion
+#endregion
 
-        #region helper methods
+#region helper methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static size_t _sizeInBytes(size_t size) =>
             sizeof(void*) == sizeof(int)
@@ -215,7 +218,7 @@ namespace SuperComicLib.Collections
         private static size_t* v_prev(byte* p) => (size_t*)(p + sizeof(size_t));
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static T* v_value(byte* p) => (T*)(p + sizeof(size_t) + sizeof(size_t));
-        #endregion
+#endregion
     }
 }
 #endif

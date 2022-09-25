@@ -55,9 +55,12 @@ namespace SuperComicLib.Collections
 
             return v;
         }
-#endregion
 
-#region insert
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int index_of(_index_node<T> node) => _index(node._ptr, _ptr);
+        #endregion
+
+        #region insert
         private byte* p_insert_before(byte* baseNode, in T value)
         {
             int tidx_;

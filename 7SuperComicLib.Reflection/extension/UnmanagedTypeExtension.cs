@@ -6,15 +6,13 @@ namespace SuperComicLib.Runtime
 {
     public static class UnmanagedTypeExtension
     {
-        private const BindingFlags flg = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
         private static readonly HashSet<Type> bag = new HashSet<Type>();
 
         public static bool IsUnmanaged(this Type type)
         {
-            while (type.IsPointer || type.IsArray)
-                type = type.GetElementType();
+            const BindingFlags FLAG = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
-            if (type.IsPrimitive || type.IsEnum || bag.Contains(type))
+            if (type.IsPointer || type.IsPrimitive || type.IsEnum || bag.Contains(type))
                 return true;
 
             if (type.IsValueType)
@@ -22,11 +20,11 @@ namespace SuperComicLib.Runtime
                 HashSet<Type> done = new HashSet<Type>();
                 Stack<Memory<FieldInfo>> stack = new Stack<Memory<FieldInfo>>();
 
-                Memory<FieldInfo> e1 = type.GetFields(flg);
+                Memory<FieldInfo> e1 = type.GetFields(FLAG);
 
             loop:
-                var arr = e1.GetSourceArray();
-                for (int i = e1.GetRange().start; i < arr.Length; i++)
+                var arr = e1._source;
+                for (int i = e1._start; (uint)i < (uint)arr.Length; i++)
                 {
                     Type tmp = arr[i].FieldType;
                     if (tmp.IsPointer)
@@ -37,7 +35,7 @@ namespace SuperComicLib.Runtime
                     {
                         stack.Push(new Memory<FieldInfo>(arr, i + 1));
 
-                        e1 = tmp.GetFields(flg);
+                        e1 = tmp.GetFields(FLAG);
                         goto loop;
                     }
                 }
