@@ -215,7 +215,7 @@ namespace SuperComicLib.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void earse(_iterator<T> position)
+        public void erase(_iterator<T> position)
         {
             if ((size_t)(position._ptr - m_Ptr) >= size())
                 throw new ArgumentOutOfRangeException(nameof(position));
@@ -227,7 +227,7 @@ namespace SuperComicLib.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void earse(_iterator<T> first, _iterator<T> last)
+        public void erase(_iterator<T> first, _iterator<T> last)
         {
             if (m_Ptr > first._ptr || m_Last < last._ptr || last._ptr < first._ptr)
                 throw new ArgumentOutOfRangeException($"{nameof(first)} or {nameof(last)}");
@@ -240,6 +240,10 @@ namespace SuperComicLib.Collections
             else
                 m_Last -= (ulong)(last._ptr - first._ptr);
         }
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void clear() => MemoryBlock.Clear(m_Ptr, size(), sizeof(T));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64LossOfLength]
         public RawMemory getMemory() => new RawMemory(m_Ptr, (int)size().value);

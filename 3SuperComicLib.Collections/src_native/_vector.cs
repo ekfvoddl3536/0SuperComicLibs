@@ -51,6 +51,9 @@ namespace SuperComicLib.Collections
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T pop_back_unsafe() => *m_Last--;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void fast_clear() => m_Last = m_Ptr;
         #endregion
 
         #region common

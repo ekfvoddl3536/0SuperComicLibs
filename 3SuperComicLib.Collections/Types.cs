@@ -190,9 +190,9 @@ namespace SuperComicLib.Collections
         bool removeAt(long index);
 #endif
 
-        void earse(_iterator<T> position);
+        void erase(_iterator<T> position);
 
-        void earse(_iterator<T> first, _iterator<T> last);
+        void erase(_iterator<T> first, _iterator<T> last);
     }
 
     public interface IRawAllocater

@@ -10,25 +10,19 @@ namespace SuperComicLib.Collections
         public readonly T* Ptr;
         public readonly long Length;
 
-#region constructors
+        #region constructors
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public NativeArray(long length)
+        {
+            Ptr = (T*)Marshal.AllocHGlobal((IntPtr)((ulong)length * (uint)sizeof(T)));
+            Length = length;
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeArray(T* hGlobalAllocated_Ptr, long length)
         {
             Ptr = hGlobalAllocated_Ptr;
             Length = length;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeArray(long length, bool initDefault)
-        {
-            if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length));
-
-            Length = length;
-            Ptr = (T*)Marshal.AllocHGlobal((IntPtr)((ulong)length * (uint)sizeof(T)));
-
-            if (initDefault)
-                MemoryBlock.Clear64((byte*)Ptr, (ulong)length * (uint)sizeof(T));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -47,9 +41,9 @@ namespace SuperComicLib.Collections
                     Buffer.MemoryCopy(psrc, Ptr, cb, cb);
                 }
         }
-        #endregion
+#endregion
 
-        #region indexer & property
+#region indexer & property
         public ref T this[long index] => ref Ptr[index];
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -65,6 +59,9 @@ namespace SuperComicLib.Collections
 #region methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeSpan<T> AsSpan() => new NativeSpan<T>(Ptr, Length);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Clear() => MemoryBlock.Clear64((byte*)Ptr, (ulong)Length * (uint)sizeof(T));
 #endregion
 
 #region explicit implement longerfaces

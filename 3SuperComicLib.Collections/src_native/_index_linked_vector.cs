@@ -1,6 +1,5 @@
 ﻿#pragma warning disable IDE1006 // 명명 스타일
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -12,7 +11,31 @@ namespace SuperComicLib.Collections
     {
         private const int NULL_PTR = -1;
 
-        #region common get item method
+        #region common constructor
+        public _index_linked_vector(in _index_linked_vector<T> source) : this(source.size())
+        {
+            var sz = source.size();
+            for (var node = source._head; --sz >= 0;)
+            {
+                p_insert_before(_head, *v_value(node));
+                node = _get(source._head, *v_next(node));
+            }
+        }
+
+        public _index_linked_vector(const_iterator<T> first, const_iterator<T> last) :
+#if X86
+            this((int)(last._ptr - first._ptr))
+#else
+            this(last._ptr - first._ptr)
+#endif
+        {
+            var head = _head;
+            for (var iter = first._ptr; iter != last._ptr; iter++)
+                p_insert_before(head, *iter);
+        }
+#endregion
+
+#region common get item method
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public _index_node<T> first() =>
             _size != 0
@@ -24,9 +47,9 @@ namespace SuperComicLib.Collections
             _size != 0
             ? new _index_node<T>(_get(_ptr, *v_prev(_head)))
             : default;
-        #endregion
+#endregion
 
-        #region common add item method
+#region common add item method
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public _index_node<T> add_last(in T value) => new _index_node<T>(p_insert_before(_head, value));
 
@@ -61,11 +84,11 @@ namespace SuperComicLib.Collections
 
             return new _index_node<T>(result);
         }
-        #endregion
+#endregion
 
-        #region common clear items method
+#region common clear items method
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.NoExcept]
-        public void Clear()
+        public void clear()
         {
             var list_ = _ptr;
 
@@ -82,12 +105,25 @@ namespace SuperComicLib.Collections
                 // reset
                 *v_next(curr) = default;
                 *v_prev(curr) = default;
+                *v_value(curr) = default;
             }
 
             _head = _ptr;
-            _free = default;
+            _free = NULL_PTR;
             _size = default;
         }
-#endregion
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.NoExcept]
+        public void fast_clear()
+        {
+            _head = _ptr;
+            
+            *v_next(_head) = default;
+            *v_prev(_head) = default;
+
+            _free = NULL_PTR;
+            _size = default;
+        }
+        #endregion
     }
 }

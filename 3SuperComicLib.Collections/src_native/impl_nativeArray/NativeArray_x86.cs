@@ -12,23 +12,17 @@ namespace SuperComicLib.Collections
 
         #region constructors
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeArray(T* hGlobalAllocated_Ptr, int length)
+        public NativeArray(int length)
         {
-            Ptr = hGlobalAllocated_Ptr;
+            Ptr = (T*)Marshal.AllocHGlobal(length * sizeof(T));
             Length = length;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeArray(int length, bool initDefault)
+        public NativeArray(T* hGlobalAllocated_Ptr, int length)
         {
-            if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length));
-
+            Ptr = hGlobalAllocated_Ptr;
             Length = length;
-            Ptr = (T*)Marshal.AllocHGlobal(length * sizeof(T));
-
-            if (initDefault)
-                MemoryBlock.Clear32((byte*)Ptr, (uint)length * (uint)sizeof(T));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -47,9 +41,9 @@ namespace SuperComicLib.Collections
                     Buffer.MemoryCopy(psrc, Ptr, cb, cb);
                 }
         }
-        #endregion
+#endregion
 
-        #region indexer & property
+#region indexer & property
         public ref T this[int index] => ref Ptr[index];
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -60,11 +54,14 @@ namespace SuperComicLib.Collections
 
             return ref this[index];
         }
-        #endregion
+#endregion
 
-        #region methods
+#region methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeSpan<T> AsSpan() => new NativeSpan<T>(Ptr, Length);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Clear() => MemoryBlock.Clear32((byte*)Ptr, (uint)Length * (uint)sizeof(T));
         #endregion
 
         #region explicit implement interfaces
@@ -73,9 +70,9 @@ namespace SuperComicLib.Collections
 
         int IRawContainer.size() => Length;
         int IRawContainer.capacity() => Length;
-        #endregion
+#endregion
 
-        #region implement interfaces
+#region implement interfaces
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public RawMemory getMemory() => new RawMemory(Ptr, Length);
 
@@ -84,18 +81,18 @@ namespace SuperComicLib.Collections
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public reverse_iterator<T> rbegin() => new reverse_iterator<T>(Ptr + (Length - 1));
-        #endregion
+#endregion
 
-        #region explicit impl interface
+#region explicit impl interface
         bool IEquatable<NativeArray<T>>.Equals(NativeArray<T> other) => this == other;
-        #endregion
+#endregion
 
-        #region override
+#region override
         public override bool Equals(object obj) => obj is NativeArray<T> other && this == other;
         public override int GetHashCode() => ((IntPtr)Ptr).GetHashCode() ^ Length;
-        #endregion
+#endregion
 
-        #region static members
+#region static members
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool ReferenceEquals(in NativeArray<T> left, in NativeArray<T> right) => left.Ptr == right.Ptr;
 
@@ -105,7 +102,7 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(in NativeArray<T> left, in NativeArray<T> right) =>
             left.Ptr != right.Ptr || left.Length != right.Length;
-        #endregion
+#endregion
     }
 }
 #endif

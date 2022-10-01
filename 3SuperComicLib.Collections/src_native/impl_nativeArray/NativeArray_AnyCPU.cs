@@ -13,23 +13,13 @@ namespace SuperComicLib.Collections
 
         #region constructors
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeArray(int length, bool initDefault)
-        {
-            if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length));
-
-            _length = (void*)length;
-            Ptr = (T*)Marshal.AllocHGlobal(length * sizeof(T));
-
-            if (initDefault)
-                MemoryBlock.Clear32((byte*)Ptr, (uint)length * (uint)sizeof(T));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeArray(T[] source) : this(source?.Length ?? 0, false)
+        public NativeArray(T[] source)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
+
+            Ptr = (T*)Marshal.AllocHGlobal(source.Length * sizeof(T));
+            _length = (void*)source.Length;
 
             if (source.Length > 0)
                 fixed (T* psrc = &source[0])
@@ -40,20 +30,24 @@ namespace SuperComicLib.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeArray(T* hGlobalAllocated_Ptr, int length)
+        public NativeArray(int length)
         {
-            Ptr = hGlobalAllocated_Ptr;
+            Ptr = (T*)Marshal.AllocHGlobal(length * sizeof(T));
             _length = (void*)length;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
         public NativeArray(long length)
         {
-            if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length));
-
+            Ptr = (T*)Marshal.AllocHGlobal((IntPtr)((ulong)length * (uint)sizeof(T)));
             _length = (void*)length;
-            Ptr = (T*)Marshal.AllocHGlobal((IntPtr)(length * (uint)sizeof(T)));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public NativeArray(T* hGlobalAllocated_Ptr, int length)
+        {
+            Ptr = hGlobalAllocated_Ptr;
+            _length = (void*)length;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
@@ -100,6 +94,9 @@ namespace SuperComicLib.Collections
             IntPtr.Size == sizeof(int)
             ? new NativeSpan<T>(Ptr, Length)
             : new NativeSpan<T>(Ptr, LongLength);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Clear() => MemoryBlock.Clear(Ptr, _length, sizeof(T));
         #endregion
 
         #region explicit implement interfaces

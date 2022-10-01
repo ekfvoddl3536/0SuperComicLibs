@@ -9,7 +9,7 @@ namespace SuperComicLib.Collections
 {
     unsafe partial struct _vector<T>
     {
-        #region constructor
+#region constructor
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public _vector(long size) : this(size, default)
         {
@@ -36,9 +36,9 @@ namespace SuperComicLib.Collections
 
             Buffer.MemoryCopy(first._ptr, m_Ptr, len, len);
         }
-        #endregion
+#endregion
 
-        #region indexer & property
+#region indexer & property
         public ref T this[long index] => ref *(m_Ptr + index);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -51,9 +51,9 @@ namespace SuperComicLib.Collections
         public long Count => size();
 
         public long Capacity => capacity();
-        #endregion
+#endregion
 
-        #region set capacity
+#region set capacity
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void reserve(long capacity)
         {
@@ -85,23 +85,23 @@ namespace SuperComicLib.Collections
             m_Last = last;
             m_End = end;
         }
-        #endregion
+#endregion
 
-        #region impl longerface
+#region impl longerface
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long size() => m_Last - m_Ptr;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long capacity() => m_End - m_Ptr;
-        #endregion
+#endregion
 
-        #region interface impl (readonly)
+#region interface impl (readonly)
         ref readonly T IReadOnlyRawContainer<T>.this[long index] => ref this[index];
 
         ref readonly T IReadOnlyRawContainer<T>.at(long index) => ref at(index);
-        #endregion
+#endregion
 
-        #region methods 
+#region methods 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void push_back(in T item)
         {
@@ -145,7 +145,7 @@ namespace SuperComicLib.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void earse(_iterator<T> position)
+        public void erase(_iterator<T> position)
         {
             if (position._ptr - m_Ptr >= size())
                 throw new ArgumentOutOfRangeException(nameof(position));
@@ -159,7 +159,7 @@ namespace SuperComicLib.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void earse(_iterator<T> first, _iterator<T> last)
+        public void erase(_iterator<T> first, _iterator<T> last)
         {
             if (m_Ptr > first._ptr || m_Last < last._ptr || last._ptr < first._ptr)
                 throw new ArgumentOutOfRangeException($"{nameof(first)} or {nameof(last)}");
@@ -171,6 +171,9 @@ namespace SuperComicLib.Collections
 
             m_Last -= (ulong)(last._ptr - first._ptr);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void clear() => MemoryBlock.Clear64((byte*)m_Ptr, (ulong)size() * (uint)sizeof(T));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64LossOfLength]
         public RawMemory getMemory() => new RawMemory(m_Ptr, (int)size());
@@ -197,7 +200,7 @@ namespace SuperComicLib.Collections
             m_Last = last;
             m_End = end;
         }
-        #endregion
+#endregion
     }
 }
 #endif
