@@ -23,7 +23,7 @@
 using System.Runtime.CompilerServices;
 using System.Security;
 
-namespace SuperComicLib.IO
+namespace SuperComicLib
 {
     [SuppressUnmanagedCodeSecurity]
     public static unsafe class SCL_GLOBAL_NativeSpanExtension
