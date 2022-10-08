@@ -1,4 +1,27 @@
-﻿#if X86
+﻿// MIT License
+//
+// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+#if X86
+#pragma warning disable IDE1006 // 명명 스타일
 using System.Runtime.CompilerServices;
 
 namespace SuperComicLib
@@ -39,21 +62,21 @@ namespace SuperComicLib
         public static implicit operator size_t(uint val) => new size_t(val);
 #endregion
 
-        #region offset math (quick)
+#region offset math (quick)
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static size_t operator ++(size_t val) => new size_t(val.value + 1);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static size_t operator --(size_t val) => new size_t(val.value - 1);
-        #endregion
+#endregion
 
-        #region size_t math operation
+#region size_t math operation
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static size_t operator +(size_t left, size_t right) => new size_t(left.value + right.value);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static size_t operator -(size_t left, size_t right) => new size_t(left.value - right.value);
-        #endregion
+#endregion
 
-        #region eq & compare
+#region eq & compare
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(size_t left, size_t right) => left.value == right.value;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

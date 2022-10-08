@@ -1,107 +1,150 @@
-﻿using System;
+﻿// MIT License
+//
+// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+using System;
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace SuperComicLib.IO
 {
-    public unsafe class FastReader : IDisposable
+    public unsafe sealed class FastReader : IDisposable
     {
-        protected Stream ss;
+        private Stream _stream;
+        private byte[] _buffer;
 
-        protected FastReader() { }
+        public FastReader(Stream baseStream)
+        {
+            _stream = baseStream;
+            _buffer = Array.Empty<byte>();
+        }
 
-        public FastReader(Stream baseStream) => ss = baseStream;
-
-        public FastReader(string filepath) => ss = File.Open(filepath, FileMode.Open, FileAccess.Read);
+        public FastReader(string filepath)
+        {
+            _stream = File.Open(filepath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            _buffer = Array.Empty<byte>();
+        }
 
         #region 메서드
-        protected T ReadUnsafe<T>(int length) where T : unmanaged
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static T ReadUnsafe<T>(Stream ss, ref byte[] buf) where T : unmanaged
         {
-            byte[] temp = new byte[length];
-            ss.Read(temp, 0, length);
-            fixed (byte* ptr = temp)
+            if (buf.Length < sizeof(T))
+                // 16 pad
+                buf = new byte[sizeof(T) + ((16 - (sizeof(T) & 0xF)) & 0xF)];
+
+            ss.Read(buf, 0, sizeof(T));
+
+            fixed (byte* ptr = &buf[0])
                 return *(T*)ptr;
         }
 
-        public virtual T ReadTo<T>() where T : unmanaged => ReadUnsafe<T>(sizeof(T));
+        public T ReadTo<T>() where T : unmanaged =>
+            sizeof(T) == 0
+            ? default
+            : ReadUnsafe<T>(_stream, ref _buffer);
 
-        public virtual bool ReadBoolean() => ss.ReadByte() > 0;
+        public bool ReadBoolean() => _stream.ReadByte() > 0;
 
-        public virtual byte ReadUInt8() => (byte)ss.ReadByte();
+        public byte ReadUInt8() => (byte)_stream.ReadByte();
 
-        public virtual sbyte ReadInt8() => (sbyte)ss.ReadByte();
+        public sbyte ReadInt8() => (sbyte)_stream.ReadByte();
 
-        public virtual char ReadChar() => ReadUnsafe<char>(sizeof(char));
+        public char ReadChar() => ReadUnsafe<char>(_stream, ref _buffer);
 
-        public virtual short ReadInt16() => ReadUnsafe<short>(sizeof(short));
+        public short ReadInt16() => ReadUnsafe<short>(_stream, ref _buffer);
 
-        public virtual ushort ReadUInt16() => ReadUnsafe<ushort>(sizeof(ushort));
+        public ushort ReadUInt16() => ReadUnsafe<ushort>(_stream, ref _buffer);
 
-        public virtual int ReadInt32() => ReadUnsafe<int>(sizeof(int));
+        public int ReadInt32() => ReadUnsafe<int>(_stream, ref _buffer);
 
-        public virtual uint ReadUInt32() => ReadUnsafe<uint>(sizeof(uint));
+        public uint ReadUInt32() => ReadUnsafe<uint>(_stream, ref _buffer);
 
-        public virtual float ReadSingle() => ReadUnsafe<float>(sizeof(float));
+        public float ReadSingle() => ReadUnsafe<float>(_stream, ref _buffer);
 
-        public virtual long ReadInt64() => ReadUnsafe<long>(sizeof(long));
+        public long ReadInt64() => ReadUnsafe<long>(_stream, ref _buffer);
 
-        public virtual ulong ReadUInt64() => ReadUnsafe<ulong>(sizeof(ulong));
+        public ulong ReadUInt64() => ReadUnsafe<ulong>(_stream, ref _buffer);
 
-        public virtual double ReadDouble() => ReadUnsafe<double>(sizeof(double));
+        public double ReadDouble() => ReadUnsafe<double>(_stream, ref _buffer);
 
-        public virtual byte[] ReadBytes(int length)
-        {
-            byte[] temp = new byte[length];
-            ss.Read(temp, 0, length);
-            return temp;
-        }
+        public int Read(byte[] buffer, int offset, int count) => _stream.Read(buffer, offset, count);
 
-        public virtual char[] ReadChars(int length)
-        {
-            char[] result = new char[length];
-            fixed (byte* ptr = ReadBytes(length * 2))
-            fixed (char* dst = result)
-            {
-                char* src = (char*)ptr;
-                for (int x = 0; x < length; x++)
-                    dst[x] = src[x];
-            }
-            return result;
-        }
-
-        public virtual string ReadString()
+        public string ReadString()
         {
             int length = ReadInt32();
-            return length == 0 ? string.Empty : new string(ReadChars(length));
+
+            if (length == 0)
+                return string.Empty;
+
+            string str = new string('\0', length);
+            fixed (char* pchars = str)
+            {
+                int bytes = (int)CMath.Min((uint)(length << 1), 16384u);
+
+                var buffer = new byte[bytes];
+                
+                byte* pdest = (byte*)pchars;
+
+                do
+                {
+                    int count = _stream.Read(buffer, 0, (int)CMath.Min((uint)buffer.Length, (uint)length));
+
+                    if (count <= 0)
+                        throw new EndOfStreamException(nameof(FastReader));
+
+                    Marshal.Copy(buffer, 0, (IntPtr)pdest, count);
+                    
+                    pdest += count;
+                    length -= count;
+                } while (length != 0);
+            }
+
+            return str;
         }
         #endregion
 
         #region IDisposable Support
-        private bool disposedValue = false; // 중복 호출을 검색하려면
-
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (_stream != null)
             {
-                ss.Close();
-                ss = null;
-
-                disposedValue = true;
+                _stream.Close();
+                _stream = null;
             }
+
+            if (disposing)
+                _buffer = null;
         }
 
-        // TODO: 위의 Dispose(bool disposing)에 관리되지 않는 리소스를 해제하는 코드가 포함되어 있는 경우에만 종료자를 재정의합니다.
         ~FastReader()
         {
-            // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
             Dispose(false);
         }
 
-        // 삭제 가능한 패턴을 올바르게 구현하기 위해 추가된 코드입니다.
         public void Dispose()
         {
-            // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
             Dispose(true);
-            // TODO: 위의 종료자가 재정의된 경우 다음 코드 줄의 주석 처리를 제거합니다.
             GC.SuppressFinalize(this);
         }
         #endregion

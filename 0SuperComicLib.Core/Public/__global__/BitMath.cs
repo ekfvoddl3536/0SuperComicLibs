@@ -1,4 +1,24 @@
-﻿// https://stackoverflow.com/questions/2709430/count-number-of-bits-in-a-64-bit-long-big-integer
+﻿// MIT License
+//
+// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 using System.Runtime.CompilerServices;
 
@@ -40,32 +60,32 @@ namespace SuperComicLib
         /// Most Significant Bit (최상위 비트)
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int MSB(this int value) => MSB((uint)value);
+        public static int MSB(this int value) => (int)MSB((uint)value);
 
         /// <summary>
         /// Most Significant Bit (최상위 비트)
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int MSB(this uint value)
+        public static uint MSB(this uint value)
         {
             value = SetUnderbits(value);
-            return (int)(value - (value >> 1));
+            return value ^ (value >> 1);
         }
 
         /// <summary>
         /// Most Significant Bit (최상위 비트)
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static long MSB64(this long value) => MSB64((ulong)value);
+        public static long MSB64(this long value) => (long)MSB64((ulong)value);
 
         /// <summary>
         /// Most Significant Bit (최상위 비트)
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static long MSB64(this ulong value)
+        public static ulong MSB64(this ulong value)
         {
             value = SetUnderbits64(value);
-            return (long)(value - (value >> 1));
+            return value ^ (value >> 1);
         }
         #endregion
 
@@ -74,25 +94,25 @@ namespace SuperComicLib
         /// Least Significant Bit (최하위 비트)
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int LSB(this int value) => LSB((uint)value);
+        public static uint LSB(this uint value) => (uint)LSB((int)value);
 
         /// <summary>
         /// Least Significant Bit (최하위 비트)
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int LSB(this uint value) => (int)value & -(int)value;
+        public static int LSB(this int value) => value & -value;
 
         /// <summary>
         /// Least Significant Bit (최하위 비트)
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static long LSB64(this long value) => LSB64((ulong)value);
+        public static ulong LSB64(this ulong value) => (ulong)LSB64((long)value);
 
         /// <summary>
         /// Least Significant Bit (최하위 비트)
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static long LSB64(this ulong value) => (long)value & -(long)value;
+        public static long LSB64(this long value) => value & -value;
         #endregion
 
         #region popcnt

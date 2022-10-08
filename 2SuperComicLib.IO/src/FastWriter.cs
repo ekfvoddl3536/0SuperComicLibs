@@ -1,113 +1,146 @@
-﻿using System;
+﻿// MIT License
+//
+// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace SuperComicLib.IO
 {
-    public unsafe class FastWriter : IDisposable
+    public unsafe sealed class FastWriter : IDisposable
     {
-        protected Stream m_stream;
+        private Stream _stream;
+        private byte[] _buffer;
 
-        protected FastWriter() { }
+        public FastWriter(Stream baseStream)
+        {
+            _stream = baseStream;
+            _buffer = Array.Empty<byte>();
+        }
 
-        public FastWriter(Stream baseStream) => m_stream = baseStream;
+        public FastWriter(string filepath, FileMode mode, FileAccess access)
+        {
+            _stream = File.Open(filepath, mode, access);
+            _buffer = Array.Empty<byte>();
+        }
 
-        public FastWriter(string filepath) => m_stream = File.Open(filepath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-
-        public FastWriter(string filepath, FileMode mode, FileAccess access) => m_stream = File.Open(filepath, mode, access);
+        public FastWriter(string filepath) : this(filepath, FileMode.OpenOrCreate, FileAccess.ReadWrite)
+        {
+        }
 
         #region 메서드
-        protected void WriteUnsafe(byte* ptr, int length)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void WriteUnsafe<T>(Stream ss, ref byte[] buf, T* ptr) where T : unmanaged
         {
-            for (int x = 0; x < length; x++)
-                m_stream.WriteByte(ptr[x]);
+            if (buf.Length < sizeof(T))
+                // 16 pad
+                buf = new byte[sizeof(T) + ((16 - (sizeof(T) & 0xF)) & 0xF)];
+
+            fixed (byte* dst = &buf[0])
+            {
+                *(T*)dst = *ptr;
+
+                ss.Write(buf, 0, sizeof(T));
+            }
         }
 
-        public virtual void Write_c<T>(T value) where T : unmanaged => WriteUnsafe((byte*)&value, sizeof(T));
-
-        public virtual void Write<T>(ref T rvalue) where T : unmanaged
+        public void Write<T>(T value) where T : unmanaged
         {
-            fixed (T* ptr = &rvalue)
-                WriteUnsafe((byte*)ptr, sizeof(T));
+            if (sizeof(T) == 0)
+                return;
+
+            WriteUnsafe(_stream, ref _buffer, &value);
         }
 
-        public virtual void Write(byte[] data) => m_stream.Write(data, 0, data.Length);
-
-        public virtual void Write(byte data) => m_stream.WriteByte(data);
-
-        public virtual void Write(sbyte data) => m_stream.WriteByte(*(byte*)&data);
-
-        public virtual void Write(bool data) => m_stream.WriteByte(data ? (byte)1 : byte.MinValue);
-
-        public virtual void Write(char data) => WriteUnsafe((byte*)&data, sizeof(char));
-
-        public virtual void Write(short data) => WriteUnsafe((byte*)&data, sizeof(short));
-
-        public virtual void Write(ushort data) => WriteUnsafe((byte*)&data, sizeof(ushort));
-
-        public virtual void Write(int data) => WriteUnsafe((byte*)&data, sizeof(int));
-
-        public virtual void Write(uint data) => WriteUnsafe((byte*)&data, sizeof(uint));
-
-        public virtual void Write(long data) => WriteUnsafe((byte*)&data, sizeof(long));
-
-        public virtual void Write(ulong data) => WriteUnsafe((byte*)&data, sizeof(ulong));
-
-        public virtual void Write(float data) => WriteUnsafe((byte*)&data, sizeof(float));
-
-        public virtual void Write(double data) => WriteUnsafe((byte*)&data, sizeof(double));
-
-        public virtual void Write(char[] data)
+        public void Write<T>(T* p_value) where T : unmanaged
         {
-            fixed (char* ptr = data)
-                WriteUnsafe((byte*)ptr, data.Length * sizeof(char));
+            if (sizeof(T) == 0)
+                return;
+
+            WriteUnsafe(_stream, ref _buffer, p_value);
         }
 
-        public virtual void Write(string strdata)
+        public void Write(byte[] data) => _stream.Write(data, 0, data.Length);
+
+        public void Write(byte data) => _stream.WriteByte(data);
+
+        public void Write(sbyte data) => _stream.WriteByte(*(byte*)&data);
+
+        public void Write(bool data) => _stream.WriteByte(data ? (byte)1 : byte.MinValue);
+
+        public void Write(char data) => WriteUnsafe(_stream, ref _buffer, &data);
+
+        public void Write(short data) => WriteUnsafe(_stream, ref _buffer, &data);
+
+        public void Write(ushort data) => WriteUnsafe(_stream, ref _buffer, &data);
+
+        public void Write(int data) => WriteUnsafe(_stream, ref _buffer, &data);
+
+        public void Write(uint data) => WriteUnsafe(_stream, ref _buffer, &data);
+
+        public void Write(long data) => WriteUnsafe(_stream, ref _buffer, &data);
+
+        public void Write(ulong data) => WriteUnsafe(_stream, ref _buffer, &data);
+
+        public void Write(float data) => WriteUnsafe(_stream, ref _buffer, &data);
+
+        public void Write(double data) => WriteUnsafe(_stream, ref _buffer, &data);
+
+        public void Write(string strdata)
         {
             if (string.IsNullOrWhiteSpace(strdata))
                 Write(0);
             else
-            {
-                // char[] arr = strdata.ToCharArray();
-                // Write(arr.Length);
-                // Write(arr);
                 fixed (char* ptr = strdata)
                 {
                     int length = strdata.Length;
+
                     Write(length);
-                    WriteUnsafe((byte*)ptr, length * sizeof(char));
+                    new NativeSpan<char>(ptr, length).CopyToStream(_stream);
                 }
-            }
         }
         #endregion
 
         #region IDisposable Support
-        private bool disposedValue = false; // 중복 호출을 검색하려면
-
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (_stream != null)
             {
-                m_stream.Close();
-                m_stream = null;
-
-                disposedValue = true;
+                _stream.Close();
+                _stream = null;
             }
+
+            if (disposing)
+                _buffer = null;
         }
 
-        // TODO: 위의 Dispose(bool disposing)에 관리되지 않는 리소스를 해제하는 코드가 포함되어 있는 경우에만 종료자를 재정의합니다.
         ~FastWriter()
         {
-            // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
             Dispose(false);
         }
 
-        // 삭제 가능한 패턴을 올바르게 구현하기 위해 추가된 코드입니다.
         public void Dispose()
         {
-            // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
             Dispose(true);
-            // TODO: 위의 종료자가 재정의된 경우 다음 코드 줄의 주석 처리를 제거합니다.
             GC.SuppressFinalize(this);
         }
         #endregion

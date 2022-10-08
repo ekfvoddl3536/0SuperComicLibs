@@ -94,7 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base\NativeClass_T.cs" />
-    <Compile Include="Types\UnsafeCLIMemoryData.cs" />
+    <Compile Include="Types\ObjectRawMemory.cs" />
     <Compile Include="NativeClass.cs" />
     <Compile Include="Base\PointerMethods_T.cs" />
     <Compile Include="Base\NativeStruct_T.cs" />
@@ -104,6 +104,7 @@
     <Compile Include="nheap\NativeInstance_T.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".editorconfig" />
     <None Include="0SuperComicLib.LowLevel.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

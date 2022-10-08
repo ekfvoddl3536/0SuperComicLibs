@@ -1,4 +1,26 @@
-﻿#if AnyCPU
+﻿// MIT License
+//
+// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+#if AnyCPU
 #pragma warning disable IDE1006 // 명명 스타일
 using System;
 using System.Diagnostics.Contracts;
@@ -8,21 +30,21 @@ namespace SuperComicLib
 {
     unsafe partial struct NativeConstSpan<T>
     {
-        public readonly T* Source;
+        internal readonly T* _source;
         private readonly void* _length;
 
-        #region constructors
+#region constructors
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
         public NativeConstSpan(T* source, size_t length)
         {
-            Source = source;
+            _source = source;
             _length = length.value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
         public NativeConstSpan(T* start, T* end)
         {
-            Source = start;
+            _source = start;
             _length = (void*)(end - start);
         }
 
@@ -35,22 +57,22 @@ namespace SuperComicLib
         public NativeConstSpan(const_iterator<T> start, const_iterator<T> end) : this(start._ptr, end._ptr)
         {
         }
-        #endregion
+#endregion
 
-        #region property
-        public ref readonly T this[int index] => ref *(Source + index);
+#region property
+        public ref readonly T this[int index] => ref *(_source + index);
 
         [CodeContracts.X64Only]
-        public ref readonly T this[long index] => ref *(Source + index);
+        public ref readonly T this[long index] => ref *(_source + index);
 
         [CodeContracts.X64LossOfLength]
         public int Length => (int)_length;
 
         [CodeContracts.X64Only]
         public long LongLength => (long)_length;
-        #endregion
+#endregion
 
-        #region def methods
+#region def methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeConstSpan<T> Slice(int startIndex) => Slice(startIndex, Length - startIndex);
 
@@ -60,7 +82,7 @@ namespace SuperComicLib
             if ((uint)(startIndex + length) > (uint)Length)
                 throw new ArgumentOutOfRangeException(nameof(startIndex));
 
-            return new NativeConstSpan<T>(Source + startIndex, length);
+            return new NativeConstSpan<T>(_source + startIndex, length);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -74,7 +96,7 @@ namespace SuperComicLib
             T[] res = new T[len];
 
             fixed (T* pdst = &res[0])
-                MemoryBlock.Memmove(Source, pdst, _length, sizeof(T));
+                MemoryBlock.Memmove(_source, pdst, _length, sizeof(T));
 
             return res;
         }
@@ -84,7 +106,7 @@ namespace SuperComicLib
         {
             if ((ulong)LongLength <= (ulong)dst.LongLength)
             {
-                MemoryBlock.Memmove(Source, dst.Source, _length, sizeof(T));
+                MemoryBlock.Memmove(_source, dst.Source, _length, sizeof(T));
 
                 return true;
             }
@@ -97,51 +119,51 @@ namespace SuperComicLib
         {
             Contract.Requires<ArgumentOutOfRangeException>((ulong)LongLength <= (ulong)dst.LongLength, $"'{nameof(dst)}'");
 
-            MemoryBlock.Memmove(Source, dst.Source, _length, sizeof(T));
+            MemoryBlock.Memmove(_source, dst.Source, _length, sizeof(T));
         }
-        #endregion
+#endregion
 
-        #region impl methods
+#region impl methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref readonly T at(int index)
         {
             Contract.Requires<ArgumentOutOfRangeException>((uint)index < (uint)Length, $"index: {index} / length: {Length}");
-            return ref *(Source + index);
+            return ref *(_source + index);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
         public ref readonly T at(long index)
         {
             Contract.Requires<ArgumentOutOfRangeException>((ulong)index < (ulong)LongLength, $"index: {index} / length: {Length}");
-            return ref *(Source + index);
+            return ref *(_source + index);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
-        public const_iterator<T> begin() => new const_iterator<T>(Source);
+        public const_iterator<T> begin() => new const_iterator<T>(_source);
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
         public const_iterator<T> end() =>
             IntPtr.Size == sizeof(int)
-            ? new const_iterator<T>(Source + Length)
-            : new const_iterator<T>(Source + LongLength);
+            ? new const_iterator<T>(_source + Length)
+            : new const_iterator<T>(_source + LongLength);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
         public const_reverse_iterator<T> rbegin() =>
             IntPtr.Size == sizeof(int)
-            ? new const_reverse_iterator<T>(Source + (Length - 1))
-            : new const_reverse_iterator<T>(Source + (LongLength - 1));
+            ? new const_reverse_iterator<T>(_source + (Length - 1))
+            : new const_reverse_iterator<T>(_source + (LongLength - 1));
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
-        public const_reverse_iterator<T> rend() => new const_reverse_iterator<T>(Source - 1);
-        #endregion
+        public const_reverse_iterator<T> rend() => new const_reverse_iterator<T>(_source - 1);
+#endregion
 
-        #region static members
+#region static members
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(NativeConstSpan<T> left, NativeConstSpan<T> right) =>
-            left.Source == right.Source && left._length == right._length;
+            left._source == right._source && left._length == right._length;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(NativeConstSpan<T> left, NativeConstSpan<T> right) =>
-            left.Source != right.Source || left._length != right._length;
-        #endregion
+            left._source != right._source || left._length != right._length;
+#endregion
     }
 }
 #endif

@@ -131,5 +131,8 @@
       <Name>7SuperComicLib.Reflection</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include=".editorconfig" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

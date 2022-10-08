@@ -1,4 +1,26 @@
-﻿#if X64
+﻿// MIT License
+//
+// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+#if X64
 #pragma warning disable IDE1006 // 명명 스타일
 using System;
 using System.Diagnostics.Contracts;
@@ -11,7 +33,7 @@ namespace SuperComicLib
         public readonly T* Source;
         public readonly long Length;
 
-        #region constructors
+#region constructors
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeSpan(T* source, long length)
         {
@@ -35,13 +57,13 @@ namespace SuperComicLib
         public NativeSpan(_iterator<T> start, _iterator<T> end) : this(start._ptr, end._ptr)
         {
         }
-        #endregion
+#endregion
 
-        #region property
+#region property
         public ref T this[long index] => ref *(Source + index);
-        #endregion
+#endregion
 
-        #region def methods
+#region def methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeSpan<T> Slice(long startIndex) => Slice(startIndex, Length - startIndex);
 
@@ -54,10 +76,10 @@ namespace SuperComicLib
             return new NativeSpan<T>(Source + startIndex, length);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64LossOfLength]
         public T[] ToArray()
         {
-            long len = Length;
+            int len = (int)Length;
 
             if (len <= 0)
                 return Array.Empty<T>();
@@ -66,7 +88,7 @@ namespace SuperComicLib
 
             fixed (T* pdst = &res[0])
             {
-                ulong copysize = (ulong)Length * (uint)sizeof(T);
+                ulong copysize = (uint)len * (uint)sizeof(T);
                 Buffer.MemoryCopy(Source, pdst, copysize, copysize);
             }
 
@@ -101,9 +123,9 @@ namespace SuperComicLib
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear() => MemoryBlock.Clear64((byte*)Source, (ulong)Length * (uint)sizeof(T));
-        #endregion
+#endregion
 
-        #region impl methods
+#region impl methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T at(long index)
         {
@@ -120,9 +142,14 @@ namespace SuperComicLib
         public reverse_iterator<T> rbegin() => new reverse_iterator<T>(Source + (Length - 1));
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public reverse_iterator<T> rend() => new reverse_iterator<T>(Source - 1);
-        #endregion
+#endregion
+        
+#region util methods
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public long capacity() => Length * (uint)sizeof(T);
+#endregion
 
-        #region static members
+#region static members
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(NativeSpan<T> left, NativeSpan<T> right) =>
             left.Source == right.Source && left.Length == right.Length;
@@ -130,7 +157,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(NativeSpan<T> left, NativeSpan<T> right) =>
             left.Source != right.Source || left.Length != right.Length;
-        #endregion
+#endregion
     }
 }
 #endif

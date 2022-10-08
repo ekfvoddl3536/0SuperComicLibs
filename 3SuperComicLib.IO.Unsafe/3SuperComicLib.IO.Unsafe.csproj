@@ -95,8 +95,6 @@
     <Compile Include="pio\_types\Interfaces.cs" />
     <Compile Include="pio\ParallelFileReadWorker.cs" />
     <Compile Include="pio\ParallelFileStream.cs" />
-    <Compile Include="resolvers\structures\Int32x16Table.cs" />
-    <Compile Include="resolvers\Int32x16TableResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
