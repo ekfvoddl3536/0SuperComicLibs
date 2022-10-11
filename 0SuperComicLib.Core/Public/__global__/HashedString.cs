@@ -21,8 +21,9 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib
 {
@@ -36,7 +37,7 @@ namespace SuperComicLib
         [FieldOffset(4)]
         private readonly int length;
 
-        public HashedString(string data)
+        public HashedString([DisallowNull] string data)
         {
             Value = 0;
             hash = data.GetFixedHashcode();
@@ -57,31 +58,24 @@ namespace SuperComicLib
             this.length = length;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator HashedString(string op) => op == null ? default : new HashedString(op);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator long(HashedString str) => str.Value;
 
         public override bool Equals(object obj) => obj != null && Equals(new HashedString(obj.ToString()));
-        public override int GetHashCode() => hash;
-        public override string ToString() => Value.ToString("X");
+        public override int GetHashCode() => hash ^ length;
+        public override string ToString() => $"(H: 0x{hash:X8} // Length: {length})";
+
         public bool Equals(HashedString other) => Value == other.Value;
         public bool Equals(string other) => this == other;
 
         public bool HashcodeEquals(HashedString other) => hash == other.hash;
         public bool HashcodeEquals(int other) => hash == other;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(HashedString a1, HashedString a2) => a1.Value == a2.Value;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(HashedString a1, HashedString a2) => a1.Value != a2.Value;
-
-        #region ex-1
-        public unsafe static HashedString ConvertAll(string first, IEnumerable<string> additionalStrings)
-        {
-#if DEBUG
-            System.Diagnostics.Contracts.Contract.Requires(additionalStrings != null);
-#endif
-
-            int h = first.GetFixedHashcode(additionalStrings, out int len);
-            return new HashedString(h, len);
-        }
-        #endregion
     }
 }

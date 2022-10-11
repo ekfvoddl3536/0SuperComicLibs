@@ -97,7 +97,7 @@ namespace SuperComicLib.IO
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static UnmanagedReadOnlyStream AsUnmanagedStream<T>(this in NativeConstSpan<T> span) where T : unmanaged =>
 #if AnyCPU
-            new UnmanagedReadOnlyStream(span._source, (byte*)span.end()._ptr - (byte*)span.Source);
+            new UnmanagedReadOnlyStream(span._source, (byte*)span.end()._ptr - (byte*)span._source);
 #else
             new UnmanagedReadOnlyStream(span._source, span.Length);
 #endif

@@ -72,7 +72,7 @@ namespace SuperComicLib.Collections
 
             var v = this[raw_index];
             if (v.next < 0 || // deleted node
-                (v.next | v.prev) == 0 && (raw_index != 0 || _size != 1))
+                (v.next | v.prev) == 0 && (uint)raw_index >= (uint)_size)
                 throw new NullReferenceException(nameof(raw_index));
 
             return v;
@@ -200,6 +200,7 @@ namespace SuperComicLib.Collections
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static byte* _get(byte* p, int idx) => p + (8 + sizeof(T)) * idx;
+
         // get, value prev (pivot)
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static byte* _get_vp(byte* p, int idx) => _get(p, idx) + sizeof(int);

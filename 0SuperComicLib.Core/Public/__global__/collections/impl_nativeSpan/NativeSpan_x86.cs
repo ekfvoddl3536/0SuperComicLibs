@@ -61,9 +61,9 @@ namespace SuperComicLib
 
 #region property
         public ref T this[int index] => ref *(Source + index);
-#endregion
+        #endregion
 
-#region def methods
+        #region def methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeSpan<T> Slice(int startIndex) => Slice(startIndex, Length - startIndex);
 
@@ -142,11 +142,11 @@ namespace SuperComicLib
         public reverse_iterator<T> rbegin() => new reverse_iterator<T>(Source + (Length - 1));
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public reverse_iterator<T> rend() => new reverse_iterator<T>(Source - 1);
-#endregion
+        #endregion
 
-#region util methods
+        #region util methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int capacity() => Length * sizeof(T)
+        public int capacity() => Length * sizeof(T);
 #endregion
 
 #region static members

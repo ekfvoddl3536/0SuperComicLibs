@@ -72,7 +72,7 @@ namespace SuperComicLib.Collections
 
             var v = this[raw_index];
             if (v.next < 0 || // deleted node
-                ptr_math.or(v.next, v.prev) == 0 && (raw_index != 0 || _size != 1))
+                ptr_math.or(v.next, v.prev) == 0 && raw_index >= _size)
                 throw new NullReferenceException(nameof(raw_index));
 
             return v;

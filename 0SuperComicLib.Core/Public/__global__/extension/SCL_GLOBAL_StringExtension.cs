@@ -288,71 +288,44 @@ namespace SuperComicLib
             int hash2 = hash1;
 
             fixed (char* src = str)
-                Internal_Hashcode(ref hash1, ref hash2, (int*)src, str.Length);
-
-            return hash1 + hash2 * hashcode_last_c;
-        }
-
-        public static unsafe int GetFixedHashcode(this string str, IEnumerable<string> additionalStrings) =>
-            GetFixedHashcode(str, additionalStrings, out _);
-
-        public static unsafe int GetFixedHashcode(this string str, IEnumerable<string> additionalStrings, out int totalLength)
-        {
-            Contract.Requires(str != null);
-            Contract.Requires(additionalStrings != null);
-
-            int hash1 = hashcode_start_c;
-            int hash2 = hash1;
-
-            fixed (char* src = str)
-                totalLength = Internal_Hashcode(ref hash1, ref hash2, (int*)src, str.Length);
-
-            // too long
-            var iter = additionalStrings.GetEnumerator();
-
-            while (iter.MoveNext())
             {
-                str = iter.Current;
-                fixed (char* src = str)
-                    totalLength += Internal_Hashcode(ref hash1, ref hash2, (int*)src, str.Length);
+                var res = Internal_Hashcode((int*)src, hash1, hash2, str.Length);
+
+                return res.start + res.end * hashcode_last_c;
             }
-
-            iter.Dispose();
-
-            return hash1 + hash2 * hashcode_last_c;
         }
 
         public static unsafe int GetFixedHashcode(this string str, int startidx, int count)
         {
-            if (startidx < 0 ||
-                count < 1 ||
-                startidx + count > str.Length)
-                throw new ArgumentOutOfRangeException();
+            if ((startidx | count) < 0 ||
+                (uint)(startidx + count) > (uint)str.Length)
+                throw new ArgumentOutOfRangeException(nameof(count));
 
             int hash1 = hashcode_start_c;
             int hash2 = hash1;
 
             fixed (char* src = str)
-                Internal_Hashcode(ref hash1, ref hash2, (int*)(src + startidx), count);
+            {
+                var res = Internal_Hashcode((int*)(src + startidx), hash1, hash2, count);
 
-            return hash1 + hash2 * hashcode_last_c;
+                return res.start + res.end * hashcode_last_c;
+            }
         }
 
-        private static unsafe int Internal_Hashcode(ref int hash1, ref int hash2, int* pint, int len)
+        private static unsafe Range Internal_Hashcode(int* pint, int hash1, int hash2, int len)
         {
-            int x = len;
-            while (x > 2)
+            for (int x = len; x > 2; x-= 4)
             {
                 hash1 = ((hash1 << 5) + hash1 + (hash1 >> 27)) ^ pint[0];
                 hash2 = ((hash2 << 5) + hash2 + (hash2 >> 27)) ^ pint[1];
                 pint += 2;
-                x -= 4;
             }
 
-            if (x > 0)
+            // x > 2 = x > 0010, if x=0011 -> x > 2 true -> x > 2 false -> x if > 0? true
+            if ((len & 1) != 0)
                 hash1 = ((hash1 << 5) + hash1 + (hash1 >> 27)) ^ pint[0];
 
-            return len;
+            return new Range(hash1, hash2);
         }
         #endregion
     }

@@ -21,7 +21,9 @@
 // SOFTWARE.
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib
 {
@@ -43,18 +45,16 @@ namespace SuperComicLib
         private readonly int length;
         #endregion
 
-        public LongHashedString(string data)
+        public LongHashedString([DisallowNull] string data)
         {
             Low = High = 0;
             b_hash = Hashcode(data, out g_hash, out compare, length = data.Length);
         }
 
-        public static implicit operator LongHashedString(string op) => op == null ? default : new LongHashedString(op);
-        
         public override bool Equals(object obj) => obj != null && Equals(new LongHashedString(obj.ToString()));
         public override int GetHashCode() => CombineHashCode ^ compare ^ length;
         public unsafe override string ToString() =>
-            $"{length:X} {compare:X8} {g_hash:X8} {b_hash:X8}";
+            $"(Gh: 0x{g_hash:X8} // Bh: 0x{b_hash:X8} // C: 0x{compare:X8} // Length: {length})";
 
         public int CombineHashCode => g_hash + b_hash * 1566083941;
 
@@ -66,9 +66,15 @@ namespace SuperComicLib
         public bool HashcodeEquals(LongHashedString other) => b_hash == other.b_hash;
         public bool HashcodeEquals(int other) => b_hash == other;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator LongHashedString(string op) => op == null ? default : new LongHashedString(op);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(LongHashedString a1, LongHashedString a2) => a1.Low == a2.Low && a1.High == a2.High;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(LongHashedString a1, LongHashedString a2) => a1.Low != a2.Low || a1.High != a2.High;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static unsafe int Hashcode(string data, out int hash1, out int comp, int len)
         {
             comp = 0;
