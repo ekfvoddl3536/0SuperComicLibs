@@ -89,7 +89,12 @@ namespace SuperComicLib.Collections
                 _free = *(long*)_get_vp(_ptr, tidx_);
             }
             else if ((tidx_ = _size) >= capacity()) // no space
-                increaseCapacity(_size);
+            {
+                var baseIndex = _index(baseNode, _ptr);
+
+                increaseCapacity(_size + 1);
+                baseNode = _get(_ptr, baseIndex);
+            }
 
             var list_ = _ptr;
 
