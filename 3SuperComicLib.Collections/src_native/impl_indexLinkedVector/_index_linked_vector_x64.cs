@@ -150,11 +150,11 @@ namespace SuperComicLib.Collections
         private void validate_node(_index_node<T> node)
         {
             long index = _index(node._ptr, _ptr);
-            if ((ulong)index >= (ulong)_size)
+            if ((ulong)index >= (ulong)capacity())
                 throw new ArgumentOutOfRangeException(nameof(node));
 
             if (node.next < 0 ||
-                (node.next | node.prev) == 0 && index != 0)
+                (node.next | node.prev) == 0 && (ulong)index >= (ulong)_size)
                 throw new InvalidOperationException($"Dereference to {nameof(NULL_PTR)}");
         }
 
