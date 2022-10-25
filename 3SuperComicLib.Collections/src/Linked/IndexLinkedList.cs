@@ -28,7 +28,7 @@ using System.Runtime.CompilerServices;
 
 namespace SuperComicLib.Collections
 {
-    // [DebuggerTypeProxy(typeof(IIterableView<>))]
+    [DebuggerTypeProxy(typeof(EnumerableView<>))]
     [DebuggerDisplay("Count = {m_size}")]
     public class IndexLinkedList<T> : ICollection<T>, IReadOnlyCollection<T>, IEnumerable<T>, ILinkedListSlim_Internal<T>
     {

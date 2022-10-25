@@ -23,10 +23,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace SuperComicLib.Collections
 {
+    [DebuggerTypeProxy(typeof(EnumerableView<>))]
+    [DebuggerDisplay("Count = {Count}")]
     public sealed class LoopArray<T> : IEnumerable<T>
     {
         private const int minimum_size = 1;

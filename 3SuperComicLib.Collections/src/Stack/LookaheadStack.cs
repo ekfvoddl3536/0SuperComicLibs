@@ -23,10 +23,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace SuperComicLib.Collections
 {
-    [System.Diagnostics.DebuggerDisplay("Count = {size}")]
+    [DebuggerTypeProxy(typeof(EnumerableView<>))]
+    [DebuggerDisplay("Count = {size}")]
     public class LookaheadStack<T> : IDisposable, ICollection<T>, IStack<T>
     {
         private const int defaultCapacity = 8;

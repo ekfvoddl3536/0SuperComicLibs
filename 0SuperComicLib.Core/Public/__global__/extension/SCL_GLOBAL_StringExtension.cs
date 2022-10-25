@@ -22,8 +22,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib
 {
@@ -282,7 +282,7 @@ namespace SuperComicLib
         #region hashcode
         public static unsafe int GetFixedHashcode(this string str)
         {
-            Contract.Requires(str != null);
+            FastContract.Requires(str != null);
 
             int hash1 = hashcode_start_c;
             int hash2 = hash1;

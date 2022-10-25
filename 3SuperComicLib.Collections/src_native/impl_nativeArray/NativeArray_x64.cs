@@ -32,7 +32,7 @@ namespace SuperComicLib.Collections
         public readonly T* Ptr;
         public readonly long Length;
 
-        #region constructors
+#region constructors
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeArray(long length)
         {

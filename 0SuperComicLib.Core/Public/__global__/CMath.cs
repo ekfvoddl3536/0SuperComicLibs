@@ -20,9 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Security;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib
 {
@@ -93,7 +93,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Flip_s(this int value, int max_include, int state)
         {
-            Contract.Requires(state >= 0 && state <= 1, "invalid state value");
+            FastContract.Requires(state >= 0 && state <= 1, "invalid state value");
             return value - ((value << 1) - max_include) * state;
         }
 
@@ -101,7 +101,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Flip_s(this int value, int min_include, int max_include, int state)
         {
-            Contract.Requires(state >= 0 && state <= 1, "invalid state value");
+            FastContract.Requires(state >= 0 && state <= 1, "invalid state value");
             return value - ((value << 1) - max_include - min_include) * state;
         }
         #endregion

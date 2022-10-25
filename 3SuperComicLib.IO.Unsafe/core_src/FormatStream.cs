@@ -20,10 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using SuperComicLib.CodeContracts;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Text;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib.IO
 {
@@ -38,9 +37,9 @@ namespace SuperComicLib.IO
             where TResult : unmanaged
             where TLocalBuf : unmanaged
         {
-            Contract.Requires(stream != null);
-            Contract.Requires(resolver != null);
-            Contract.Requires(bufferSize > 16);
+            FastContract.Requires(stream != null);
+            FastContract.Requires(resolver != null);
+            FastContract.Requires(bufferSize > 16);
 
             if (encoding == null)
                 encoding = Encoding.Default;

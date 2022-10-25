@@ -23,8 +23,8 @@
 #if X86
 #pragma warning disable IDE1006 // 명명 스타일
 using System;
-using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib
 {
@@ -61,9 +61,9 @@ namespace SuperComicLib
 
 #region property
         public ref T this[int index] => ref *(Source + index);
-        #endregion
+#endregion
 
-        #region def methods
+#region def methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeSpan<T> Slice(int startIndex) => Slice(startIndex, Length - startIndex);
 
@@ -96,7 +96,7 @@ namespace SuperComicLib
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryCopyTo(NativeSpan<T> dst)
+        public bool TryCopyTo(in NativeSpan<T> dst)
         {
             if ((uint)Length <= (uint)dst.Length)
             {
@@ -110,9 +110,9 @@ namespace SuperComicLib
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CopyTo(NativeSpan<T> dst)
+        public void CopyTo(in NativeSpan<T> dst)
         {
-            Contract.Requires<ArgumentOutOfRangeException>((uint)Length <= (uint)dst.Length, $"'{nameof(dst)}'");
+            FastContract.Requires<ArgumentOutOfRangeException>((uint)Length <= (uint)dst.Length, $"'{nameof(dst)}'");
 
             ulong copysize = (uint)Length * (uint)sizeof(T);
             Buffer.MemoryCopy(Source, dst.Source, copysize, copysize);
@@ -129,7 +129,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T at(int index)
         {
-            Contract.Requires<ArgumentOutOfRangeException>((uint)index < (uint)Length, $"index: {index} / length: {Length}");
+            FastContract.Requires<ArgumentOutOfRangeException>((uint)index < (uint)Length, $"index: {index} / length: {Length}");
             return ref *(Source + index);
         }
 
@@ -142,9 +142,9 @@ namespace SuperComicLib
         public reverse_iterator<T> rbegin() => new reverse_iterator<T>(Source + (Length - 1));
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public reverse_iterator<T> rend() => new reverse_iterator<T>(Source - 1);
-        #endregion
+#endregion
 
-        #region util methods
+#region util methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int capacity() => Length * sizeof(T);
 #endregion

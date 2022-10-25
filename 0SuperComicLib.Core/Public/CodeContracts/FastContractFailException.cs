@@ -20,17 +20,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma warning disable IDE1006 // 명명 스타일
 using System;
-using System.Runtime.InteropServices;
 
-namespace SuperComicLib
+namespace SuperComicLib.CodeContracts
 {
-    /// <summary>
-    /// Provides limited nuint operations
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public readonly unsafe partial struct size_t : IEquatable<size_t>, IComparable<size_t>
+    public sealed class FastContractFailException : Exception
     {
+        public FastContractFailException() : base("[SuperComicLib::CodeContracts] Contract Fail") { }
+
+        public FastContractFailException(string message) : base(message) { }
+
+        public FastContractFailException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
     }
 }

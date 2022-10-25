@@ -24,7 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib.Collections
 {
@@ -119,7 +119,7 @@ namespace SuperComicLib.Collections
         #region methods
         public KeyValuePair<TKey, TValue> First()
         {
-            Contract.Requires<IndexOutOfRangeException>(m_head != null);
+            FastContract.Requires<IndexOutOfRangeException>(m_head != null);
 
             ref TTKv temp = ref m_head.m_value;
             return new KeyValuePair<TKey, TValue>(temp.key, temp.value);
@@ -127,7 +127,7 @@ namespace SuperComicLib.Collections
 
         public KeyValuePair<TKey, TValue> Last()
         {
-            Contract.Requires<IndexOutOfRangeException>(m_head != null);
+            FastContract.Requires<IndexOutOfRangeException>(m_head != null);
 
             ref TTKv temp = ref m_head.m_prev.m_value;
             return new KeyValuePair<TKey, TValue>(temp.key, temp.value);
@@ -306,9 +306,9 @@ namespace SuperComicLib.Collections
 
             return vs;
         }
-        #endregion
+#endregion
 
-        #region capacity
+#region capacity
         private void IncreaseCapacity(int newsize)
         {
             if (newsize > maxlen)
@@ -338,9 +338,9 @@ namespace SuperComicLib.Collections
             slots = nslots;
             buckets = nbks;
         }
-        #endregion
+#endregion
 
-        #region item
+#region item
         internal sealed class Slot
         {
             public int hashCode;
@@ -366,14 +366,14 @@ namespace SuperComicLib.Collections
                 this.value = value;
             }
         }
-        #endregion
+#endregion
 
-        #region enumerable
+#region enumerable
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => new KeyValueEnumerator(this);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        #endregion
+#endregion
 
-        #region enumerators
+#region enumerators
         protected abstract class UnivEnumerator<UT> : IEnumerator<UT>
         {
             private LinkedDictionary<TKey, TValue> inst;
@@ -459,9 +459,9 @@ namespace SuperComicLib.Collections
             protected override KeyValuePair<TKey, TValue> Convert(TKey key, TValue value) =>
                 new KeyValuePair<TKey, TValue>(key, value);
         }
-        #endregion
+#endregion
 
-        #region collections
+#region collections
         public sealed class KeyCollection : IEnumerable<TKey>
         {
             private readonly LinkedDictionary<TKey, TValue> inst;
@@ -483,6 +483,6 @@ namespace SuperComicLib.Collections
             public IEnumerator<TValue> GetEnumerator() => new ValueEnumerator(inst);
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
-        #endregion
+#endregion
     }
 }

@@ -23,8 +23,8 @@
 #if AnyCPU
 #pragma warning disable IDE1006 // 명명 스타일
 using System;
-using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib
 {
@@ -34,14 +34,14 @@ namespace SuperComicLib
         private readonly void* _length;
 
 #region constructors
-        [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
+        [MethodImpl(MethodImplOptions.AggressiveInlining), X64Only]
         public NativeSpan(T* source, size_t length)
         {
             Source = source;
             _length = length.value;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
+        [MethodImpl(MethodImplOptions.AggressiveInlining), X64Only]
         public NativeSpan(T* start, T* end)
         {
             Source = start;
@@ -129,7 +129,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyTo(NativeSpan<T> dst)
         {
-            Contract.Requires<ArgumentOutOfRangeException>((ulong)_length <= (ulong)dst._length, $"'{nameof(dst)}'");
+            FastContract.Requires<ArgumentOutOfRangeException>((ulong)_length <= (ulong)dst._length, $"'{nameof(dst)}'");
 
             MemoryBlock.Memmove(Source, dst.Source, _length, sizeof(T));
         }
@@ -145,14 +145,14 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T at(int index)
         {
-            Contract.Requires<ArgumentOutOfRangeException>((uint)index < (uint)_length, $"index: {index} / length: {Length}");
+            FastContract.Requires<ArgumentOutOfRangeException>((uint)index < (uint)_length, $"index: {index} / length: {Length}");
             return ref *(Source + index);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
         public ref T at(long index)
         {
-            Contract.Requires<ArgumentOutOfRangeException>((ulong)index < (ulong)_length, $"index: {index} / length: {Length}");
+            FastContract.Requires<ArgumentOutOfRangeException>((ulong)index < (ulong)_length, $"index: {index} / length: {Length}");
             return ref *(Source + index);
         }
 

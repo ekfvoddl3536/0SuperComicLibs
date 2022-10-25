@@ -148,9 +148,104 @@ namespace SuperComicLib.Collections
             validate_node(node);
             erase_unsafe(node);
         }
-#endregion
+        #endregion
 
-#region private method
+        #region copyTo, toArray
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            if (array == null)
+                throw new ArgumentNullException(nameof(array));
+
+            if ((uint)arrayIndex >= (uint)array.Length)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex));
+
+            fixed (T* p = &array[arrayIndex])
+                if (sizeof(void*) == sizeof(int))
+                {
+                    if (arrayIndex + array.Length < (int)_size.value)
+                        throw new ArgumentOutOfRangeException(nameof(arrayIndex));
+
+                    _internalCopyTo(new NativeSpan<T>(p, array.Length - arrayIndex), _size.value);
+                }
+                else
+                {
+                    if ((long)arrayIndex + array.Length < (long)_size.value)
+                        throw new ArgumentOutOfRangeException(nameof(arrayIndex));
+
+                    _internalCopyTo(new NativeSpan<T>(p, array.Length - arrayIndex), _size.value);
+                }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CopyTo(in NativeSpan<T> dest)
+        {
+            if (sizeof(void*) == sizeof(int))
+                CopyTo(dest, (int)_size.value);
+            else
+                CopyTo(dest, (long)_size.value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CopyTo(in NativeSpan<T> dest, int count)
+        {
+            if (dest.Source == null)
+                throw new ArgumentNullException(nameof(dest));
+
+            if ((uint)dest.Length < (uint)count ||
+                count > (int)_size.value)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            _internalCopyTo(dest, (byte*)count);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
+        public void CopyTo(in NativeSpan<T> dest, long count)
+        {
+            if (dest.Source == null)
+                throw new ArgumentNullException(nameof(dest));
+
+            if ((ulong)dest.LongLength < (ulong)count ||
+                count > (long)_size.value)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            _internalCopyTo(dest, (byte*)count);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T[] ToArray()
+        {
+            var sz = size();
+
+            if (sz == 0)
+                return Array.Empty<T>();
+
+            T[] newArr =
+                (sizeof(void*) == sizeof(int))
+                ? new T[(int)sz.value]
+                : new T[(long)sz.value];
+
+            fixed (T* p = &newArr[0])
+                _internalCopyTo(new NativeSpan<T>(p, sz), sz.value);
+
+            return newArr;
+        }
+        #endregion
+
+        #region private method
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void _internalCopyTo(in NativeSpan<T> dest, byte* count)
+        {
+            T* pdst = dest.Source;
+
+            byte* bp = _ptr;
+            for (byte* p = _head; count-- != null;)
+            {
+                *pdst++ = *v_value(p);
+                p = _get(bp, *v_next(p));
+            }
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void validate_node(_index_node<T> node)
         {

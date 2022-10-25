@@ -23,6 +23,7 @@
 using SuperComicLib.Threading;
 using System;
 using System.Collections.Generic;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib.Collections.Concurrent
 {
@@ -33,7 +34,7 @@ namespace SuperComicLib.Collections.Concurrent
 
         public ConcurrentEnumerator(IEnumerator<T> enumerator)
         {
-            System.Diagnostics.Contracts.Contract.Requires(enumerator != null);
+            FastContract.Requires(enumerator != null);
 
             source = enumerator;
         }

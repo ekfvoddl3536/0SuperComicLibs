@@ -106,9 +106,28 @@ namespace SuperComicLib.Collections
 
             return new _index_node<T>(result);
         }
-#endregion
+        #endregion
 
-#region common clear items method
+        #region common managed/Array method
+#if !AnyCPU
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T[] ToArray()
+        {
+            var sz = _size;
+            if (sz == 0)
+                return Array.Empty<T>();
+
+            T[] newArr = new T[sz];
+
+            fixed (T* p = &newArr[0])
+                _internalCopyTo(new NativeSpan<T>(p, sz), sz);
+
+            return newArr;
+        }
+#endif
+        #endregion
+
+        #region common clear items method
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.NoExcept]
         public void clear()
         {
@@ -146,6 +165,6 @@ namespace SuperComicLib.Collections
             _free = NULL_PTR;
             _size = default;
         }
-        #endregion
+#endregion
     }
 }

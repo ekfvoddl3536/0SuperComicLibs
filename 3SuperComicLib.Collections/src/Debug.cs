@@ -36,4 +36,14 @@ namespace SuperComicLib.Collections
         [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
         public T[] Items => arr;
     }
+
+    internal sealed unsafe class RawContainerView<T> where T : unmanaged
+    {
+        private readonly T[] _items;
+
+        public RawContainerView(IReadOnlyRawContainer<T> inst) => _items = new NativeConstSpan<T>(inst.cbegin(), inst.cend()).ToArray();
+
+        [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+        public T[] Items => _items;
+    }
 }

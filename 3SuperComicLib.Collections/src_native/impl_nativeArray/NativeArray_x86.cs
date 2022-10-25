@@ -32,7 +32,7 @@ namespace SuperComicLib.Collections
         public readonly T* Ptr;
         public readonly int Length;
 
-        #region constructors
+#region constructors
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeArray(int length)
         {
@@ -84,9 +84,9 @@ namespace SuperComicLib.Collections
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear() => MemoryBlock.Clear32((byte*)Ptr, (uint)Length * (uint)sizeof(T));
-        #endregion
+#endregion
 
-        #region explicit implement interfaces
+#region explicit implement interfaces
         ref readonly T IReadOnlyRawContainer<T>.this[int index] => ref this[index];
         ref readonly T IReadOnlyRawContainer<T>.at(int index) => ref at(index);
 

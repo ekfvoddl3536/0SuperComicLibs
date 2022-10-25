@@ -27,6 +27,7 @@ using System.Diagnostics;
 
 namespace SuperComicLib.Collections
 {
+    [DebuggerTypeProxy(typeof(EnumerableView<>))]
     [DebuggerDisplay("Count = {size}")]
     public class LookaheadQueue<T> : IDisposable, IEnumerable<T>
     {
@@ -150,19 +151,16 @@ namespace SuperComicLib.Collections
         #region capacity
         protected void IncreaseCapacity(int nextsize)
         {
-            ref T[] now = ref arr;
             T[] newarr = new T[nextsize];
 
-            int len = size;
-            int x, y;
-            x = y = head;
+            int num = size - head;
+            Array.Copy(arr, head, newarr, 0, num);
 
-            for (int z = 0; z < len;)
-                newarr[z++] = now[(x + y++) % len];
+            Array.Copy(arr, 0, newarr, num, head);
 
             head = 0;
-            tail = len;
-            now = newarr;
+            tail = size;
+            arr = newarr;
         }
         #endregion
 

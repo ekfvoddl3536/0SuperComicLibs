@@ -23,9 +23,9 @@
 #if AnyCPU
 #pragma warning disable IDE1006 // 명명 스타일
 using System;
-using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib.Collections
 {
@@ -78,27 +78,27 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T at(int index)
         {
-            Contract.Requires<ArgumentOutOfRangeException>((uint)index < (uint)size().value, nameof(index));
+            FastContract.Requires<ArgumentOutOfRangeException>((uint)index < (uint)size().value, nameof(index));
             return ref this[index];
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
+        [MethodImpl(MethodImplOptions.AggressiveInlining), X64Only]
         public ref T at(long index)
         {
-            Contract.Requires<ArgumentOutOfRangeException>((ulong)index < (ulong)size().value, nameof(index));
+            FastContract.Requires<ArgumentOutOfRangeException>((ulong)index < (ulong)size().value, nameof(index));
             return ref this[index];
         }
 
-        [CodeContracts.X64LossOfLength]
+        [X64LossOfLength]
         public int Count => (int)size().value;
 
-        [CodeContracts.X64Only]
+        [X64Only]
         public long LongCount => (long)size().value;
 
-        [CodeContracts.X64LossOfLength]
+        [X64LossOfLength]
         public int Capacity => (int)capacity().value;
 
-        [CodeContracts.X64Only]
+        [X64Only]
         public long LongCapacity => (long)capacity().value;
         #endregion
 

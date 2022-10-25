@@ -112,6 +112,7 @@
     <Compile Include="src\List\FreeListPool.cs" />
     <Compile Include="src\Map\KeyValueTable.cs" />
     <Compile Include="src\Map\ValueListMap.cs" />
+    <Compile Include="src\Queue\DoubleQueue.cs" />
     <Compile Include="src_native\extensions\IRawContainer_Extension.cs" />
     <Compile Include="src_native\extensions\items\RawIteratorEnumerator.cs" />
     <Compile Include="src_native\extensions\RawContainerUtility.cs" />
@@ -134,10 +135,8 @@
     <Compile Include="src_native\_index_linked_vector.cs" />
     <Compile Include="src_native\impl_indexLinkedVector\structs\_index_node.cs" />
     <Compile Include="src_native\_vector.cs" />
-    <Compile Include="Utils\ArrayStream.cs" />
     <Compile Include="Types.cs" />
     <Compile Include="src\Arrays.cs" />
-    <Compile Include="src\Linked\UserLinkedValue.cs" />
     <Compile Include="src\Debug.cs" />
     <Compile Include="src\Queue\BarrieredQueue.cs" />
     <Compile Include="src\Queue\LookaheadQueue.cs" />

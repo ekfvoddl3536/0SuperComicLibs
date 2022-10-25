@@ -23,8 +23,8 @@
 #if AnyCPU
 #pragma warning disable IDE1006 // 명명 스타일
 using System;
-using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib
 {
@@ -117,7 +117,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyTo(NativeSpan<T> dst)
         {
-            Contract.Requires<ArgumentOutOfRangeException>((ulong)LongLength <= (ulong)dst.LongLength, $"'{nameof(dst)}'");
+            FastContract.Requires<ArgumentOutOfRangeException>((ulong)LongLength <= (ulong)dst.LongLength, $"'{nameof(dst)}'");
 
             MemoryBlock.Memmove(_source, dst.Source, _length, sizeof(T));
         }
@@ -127,14 +127,14 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref readonly T at(int index)
         {
-            Contract.Requires<ArgumentOutOfRangeException>((uint)index < (uint)Length, $"index: {index} / length: {Length}");
+            FastContract.Requires<ArgumentOutOfRangeException>((uint)index < (uint)Length, $"index: {index} / length: {Length}");
             return ref *(_source + index);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
         public ref readonly T at(long index)
         {
-            Contract.Requires<ArgumentOutOfRangeException>((ulong)index < (ulong)LongLength, $"index: {index} / length: {Length}");
+            FastContract.Requires<ArgumentOutOfRangeException>((ulong)index < (ulong)LongLength, $"index: {index} / length: {Length}");
             return ref *(_source + index);
         }
 

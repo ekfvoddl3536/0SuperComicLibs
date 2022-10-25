@@ -20,11 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using SuperComicLib.Core;
-using SuperComicLib.Threading;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SuperComicLib.Core;
+using SuperComicLib.Threading;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib.Collections.Concurrent
 {
@@ -35,8 +36,8 @@ namespace SuperComicLib.Collections.Concurrent
 
         public void Open(IEnumerable<T> files, int threadCount)
         {
-            System.Diagnostics.Contracts.Contract.Requires(files != null);
-            System.Diagnostics.Contracts.Contract.Requires(threadCount > 0 && threadCount <= Environment.ProcessorCount);
+            FastContract.Requires(files != null);
+            FastContract.Requires(threadCount > 0 && threadCount <= Environment.ProcessorCount);
 
             IEnumerator<T> origin = files.GetEnumerator();
             if (origin == null)

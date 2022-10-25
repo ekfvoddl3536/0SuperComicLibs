@@ -21,7 +21,6 @@
 // SOFTWARE.
 
 #if AnyCPU
-#pragma warning disable IDE1006 // 명명 스타일
 using System;
 using System.Runtime.CompilerServices;
 

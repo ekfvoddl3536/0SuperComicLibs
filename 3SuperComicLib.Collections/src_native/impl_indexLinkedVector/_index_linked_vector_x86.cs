@@ -80,9 +80,9 @@ namespace SuperComicLib.Collections
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int index_of(_index_node<T> node) => _index(node._ptr, _ptr);
-        #endregion
+#endregion
 
-        #region insert
+#region insert
         private byte* p_insert_before(byte* baseNode, in T value)
         {
             int tidx_;
@@ -150,7 +150,52 @@ namespace SuperComicLib.Collections
         }
 #endregion
 
+#region copyTo, toArray
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            if (array == null)
+                throw new ArgumentNullException(nameof(array));
+
+            if ((uint)arrayIndex >= (uint)array.Length ||
+                arrayIndex + array.Length < _size)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex));
+
+            fixed (T* p = &array[arrayIndex])
+                _internalCopyTo(new NativeSpan<T>(p, array.Length - arrayIndex), _size);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CopyTo(in NativeSpan<T> dest) => CopyTo(dest, _size);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CopyTo(in NativeSpan<T> dest, int count)
+        {
+            if (dest.Source == null)
+                throw new ArgumentNullException(nameof(dest));
+
+            if ((uint)dest.Length < (uint)count ||
+                count > _size)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            _internalCopyTo(dest, count);
+        }
+#endregion
+
 #region private method
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void _internalCopyTo(in NativeSpan<T> dest, int count)
+        {
+            T* pdst = dest.Source;
+
+            byte* bp = _ptr;
+            for (byte* p = _head; count-- > 0;)
+            {
+                *pdst++ = *v_value(p);
+                p = _get(bp, *v_next(p));
+            }
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void validate_node(_index_node<T> node)
         {

@@ -150,7 +150,52 @@ namespace SuperComicLib.Collections
         }
 #endregion
 
+#region copyTo, toArray
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            if (array == null)
+                throw new ArgumentNullException(nameof(array));
+
+            if ((uint)arrayIndex >= (uint)array.Length ||
+                (long)arrayIndex + array.Length < _size)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex));
+
+            fixed (T* p = &array[arrayIndex])
+                _internalCopyTo(new NativeSpan<T>(p, array.Length - arrayIndex), _size);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CopyTo(in NativeSpan<T> dest) => CopyTo(dest, _size);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CopyTo(in NativeSpan<T> dest, long count)
+        {
+            if (dest.Source == null)
+                throw new ArgumentNullException(nameof(dest));
+
+            if ((ulong)dest.Length < (ulong)count ||
+                count > _size)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            _internalCopyTo(dest, count);
+        }
+#endregion
+
 #region private method
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void _internalCopyTo(in NativeSpan<T> dest, long count)
+        {
+            T* pdst = dest.Source;
+
+            byte* bp = _ptr;
+            for (byte* p = _head; count-- > 0;)
+            {
+                *pdst++ = *v_value(p);
+                p = _get(bp, *v_next(p));
+            }
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void validate_node(_index_node<T> node)
         {

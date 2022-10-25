@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma warning disable CS0809 // 사용되는 멤버를 재정의하여 사용하지 않음으로 표시
 #pragma warning disable IDE1006 // 명명 스타일
+#pragma warning disable CS0809 // 사용되는 멤버를 재정의하여 사용하지 않음으로 표시
 using System;
 using System.Runtime.CompilerServices;
 

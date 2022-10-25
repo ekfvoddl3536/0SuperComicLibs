@@ -22,6 +22,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib.Threading
 {
@@ -52,7 +53,7 @@ namespace SuperComicLib.Threading
 
         public GROUP_AFFINITY(UIntPtr mask, int group)
         {
-            System.Diagnostics.Contracts.Contract.Requires((uint)group <= (uint)(Environment.ProcessorCount >> 6));
+            FastContract.Requires((uint)group <= (uint)(Environment.ProcessorCount >> 6));
 
             this.mask = mask;
             this.group = group;

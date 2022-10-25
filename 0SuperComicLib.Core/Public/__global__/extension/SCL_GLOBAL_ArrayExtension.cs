@@ -21,8 +21,8 @@
 // SOFTWARE.
 
 using System;
-using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib
 {
@@ -52,7 +52,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyTo<T>(this T[] source, int index, in NativeSpan<T> dest, int count) where T : unmanaged
         {
-            Contract.Requires(source != null);
+            FastContract.Requires(source != null);
 
             if ((uint)source.Length < (uint)(index + count))
                 throw new ArgumentOutOfRangeException(nameof(index));

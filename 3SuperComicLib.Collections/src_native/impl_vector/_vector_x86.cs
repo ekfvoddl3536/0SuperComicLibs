@@ -23,9 +23,9 @@
 #if X86
 #pragma warning disable IDE1006 // 명명 스타일
 using System;
-using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib.Collections
 {
@@ -67,7 +67,7 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T at(int index)
         {
-            Contract.Requires<ArgumentOutOfRangeException>((uint)index < (uint)size(), nameof(index));
+            FastContract.Requires<ArgumentOutOfRangeException>((uint)index < (uint)size(), nameof(index));
             return ref this[index];
         }
 

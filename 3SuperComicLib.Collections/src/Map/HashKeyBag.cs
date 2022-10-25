@@ -27,6 +27,7 @@ using System.Diagnostics;
 
 namespace SuperComicLib.Collections
 {
+    [DebuggerTypeProxy(typeof(EnumerableView<int>))]
     [DebuggerDisplay("Count = {m_count}")]
     public class HashKeyBag<T> : IEnumerable<int>
     {

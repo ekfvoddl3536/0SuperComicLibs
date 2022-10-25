@@ -217,15 +217,6 @@ namespace SuperComicLib.Collections
         void erase(_iterator<T> first, _iterator<T> last);
     }
 
-    public interface IRawAllocater
-    {
-        bool IsPersistent { get; }
-
-        IntPtr stdAlloc(int cb, bool initDefault);
-
-        void stdFree(IntPtr ptr);
-    }
-
     internal interface IByReferenceIndexer_Internal<T>
     {
         ref T ByRefValue(int index);

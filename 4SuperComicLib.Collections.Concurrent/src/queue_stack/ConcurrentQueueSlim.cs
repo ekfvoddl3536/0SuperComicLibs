@@ -128,7 +128,7 @@ namespace SuperComicLib.Collections
             private ConcurrentQueueSlim<T> inst;
             private Node now;
             private T current;
-            private int version;
+            private readonly int version;
 
             public Internal_Enumerator(ConcurrentQueueSlim<T> inst)
             {

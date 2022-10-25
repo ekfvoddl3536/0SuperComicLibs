@@ -192,20 +192,6 @@ namespace SuperComicLib
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Block4096* __clear16m(Block2048k* pdst, size_t count)
-        {
-            for (byte* i = (byte*)count.value; i-- != null;)
-            {
-                *pdst++ = default; *pdst++ = default;
-                *pdst++ = default; *pdst++ = default;
-                *pdst++ = default; *pdst++ = default;
-                *pdst++ = default; *pdst++ = default;
-            }
-
-            return (Block4096*)pdst;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Clear32(byte* dest, uint sizeInBytes)
         {
             var ptr64k = (Block4096*)dest;
@@ -234,6 +220,20 @@ namespace SuperComicLib
         }
 
 #if AnyCPU || X64
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Block4096* __clear16m(Block2048k* pdst, ulong count)
+        {
+            for (var i = count; i-- != 0;)
+            {
+                *pdst++ = default; *pdst++ = default;
+                *pdst++ = default; *pdst++ = default;
+                *pdst++ = default; *pdst++ = default;
+                *pdst++ = default; *pdst++ = default;
+            }
+
+            return (Block4096*)pdst;
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Clear64(byte* dest, ulong sizeInBytes)
         {

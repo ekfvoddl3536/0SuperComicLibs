@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib.Collections
 {
@@ -63,10 +64,8 @@ namespace SuperComicLib.Collections
 
         public static IEnumerable<TOut> FastConvertAll<TIn, TOut>(this IEnumerable<TIn> collection, Converter<TIn, TOut> converter)
         {
-#if DEBUG
-            System.Diagnostics.Contracts.Contract.Requires(collection != null);
-            System.Diagnostics.Contracts.Contract.Requires(converter != null);
-#endif
+            FastContract.Requires(collection != null);
+            FastContract.Requires(converter != null);
             return new EnumerableConvert<TIn, TOut>(collection, converter);
         }
 

@@ -494,7 +494,7 @@ namespace SuperComicLib.Collections
 
         private sealed class SlotUpdater : IHashCodeUpdater<T>
         {
-            private Slot target;
+            private readonly Slot target;
             private int old_hashcode;
 
             public SlotUpdater(Slot target)

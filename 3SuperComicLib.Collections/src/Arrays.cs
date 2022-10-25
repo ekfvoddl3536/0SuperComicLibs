@@ -91,5 +91,25 @@ namespace SuperComicLib.Collections
             const ulong MaxArrayLength = 0x7FEF_FFFF_FFFF; // 48 bits
             return (long)CMath.Min((ulong)oldSize << 1, MaxArrayLength);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void QueueMoveNext(ref int index, int length)
+        {
+            int tmp = index + 1;
+            if (tmp == length)
+                tmp = 0;
+
+            index = tmp;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void QueueMovePrev(ref int index, int length)
+        {
+            int tmp = index - 1;
+            if (tmp < 0)
+                tmp += length;
+
+            index = tmp;
+        }
     }
 }

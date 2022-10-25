@@ -89,6 +89,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Public\CodeContracts\Attributes.cs" />
+    <Compile Include="Public\CodeContracts\FastContract.cs" />
+    <Compile Include="Public\CodeContracts\FastContractFailException.cs" />
     <Compile Include="Public\CodeContracts\NoExceptAttribute.cs" />
     <Compile Include="Public\CodeContracts\ValidRangeAttribute.cs" />
     <Compile Include="Public\Core\IntHash.cs" />

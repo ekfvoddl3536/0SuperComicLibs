@@ -22,6 +22,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib
 {
@@ -31,15 +32,15 @@ namespace SuperComicLib
 
         public BitArray(BitArray other)
         {
-            System.Diagnostics.Contracts.Contract.Requires(other.Values != null);
-            System.Diagnostics.Contracts.Contract.Requires(other.Values.Length > 0);
+            FastContract.Requires(other.Values != null);
+            FastContract.Requires(other.Values.Length > 0);
             
             Values = (uint[])other.Values.Clone();
         }
 
         public BitArray(int uintArray_size)
         {
-            System.Diagnostics.Contracts.Contract.Requires(uintArray_size > 0);
+            FastContract.Requires(uintArray_size > 0);
 
             Values = new uint[(int)CMath.Max((uint)uintArray_size, 1u)];
         }
