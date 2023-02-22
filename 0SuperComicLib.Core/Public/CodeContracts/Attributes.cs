@@ -75,24 +75,50 @@ namespace SuperComicLib.CodeContracts
     /// <summary>
     /// Need 64-bit Processor, 64-bit OS
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Constructor, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Constructor, AllowMultiple = false, Inherited = false)]
     public sealed class X64OnlyAttribute : Attribute { }
 
     /// <summary>
     /// It convert 64-bit integer (QWORD) to 32-bit integer (DWORD).
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Constructor, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Constructor, AllowMultiple = false, Inherited = false)]
     public sealed class X64LossOfLengthAttribute : Attribute { }
 
     /// <summary>
     /// This functional or <see langword="class"/>, <see langword="struct"/>, <see langword="interface"/>, API is development version
     /// </summary>
-    [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = false)]
     public sealed class DevReleaseAttribute : Attribute { }
 
     /// <summary>
-    /// This struct must be passed using the keywords <see langword="ref"/> or <see langword="in"/>
+    /// A method or property where this property is declared assumes that all input arguments are valid. 
+    /// <br/>
+    /// All argument checking is disabled.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Struct, AllowMultiple = false, Inherited = true)]
-    public sealed class ParamRefAttribute : Attribute { }
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+    public sealed class AssumeInputsValidAttribute : Attribute { }
+
+    /// <summary>
+    /// A method or property where this property is declared assumes that all fields and states of the object is valid.
+    /// <br/>
+    /// All field and state checking is disabled.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+    public sealed class AssumeOperationValidAttribute : Attribute { }
+
+    /// <summary>
+    /// Fields or arguments declared with this attribute do not call <see cref="IDisposable.Dispose"/>.
+    /// <br/>
+    /// If necessary, do it after the end of using the object or after the end of the method.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
+    public sealed class KeepAliveAttribute : Attribute { }
+
+    /// <summary>
+    /// Indicates that a method has no overhead.
+    /// <br/>
+    /// Does not call any other overloaded methods.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+    public sealed class NoOverheadAttribute : Attribute { }
 }

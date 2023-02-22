@@ -51,12 +51,13 @@ namespace SuperComicLib.Runtime
         /// </summary>
         public readonly nint nbp;
 
-#pragma warning disable CS1591
+        /// <summary>
+        /// Get register values. (Hex)
+        /// </summary>
         public override string ToString() =>
             sizeof(nint) == sizeof(int)
             ? FormatString('E', "X8")
             : FormatString('R', "X16");
-#pragma warning restore CS1591  // 공개된 형식 또는 멤버에 대한 XML 주석이 없습니다.
 
         #region ToSring help private static method
         private string FormatString(char prefix, string format) =>

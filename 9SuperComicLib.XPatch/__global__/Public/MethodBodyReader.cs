@@ -104,12 +104,10 @@ namespace SuperComicLib.XPatch
                                 {
                                     buf.operand = mod.ResolveMethod(token);
                                 }
-#pragma warning disable CA1031 // Do not catch general exception types
                                 catch
                                 {
                                     buf.operand = mod.ResolveMember(token);
                                 }
-#pragma warning restore CA1031
                             }
                             break;
 
@@ -126,12 +124,10 @@ namespace SuperComicLib.XPatch
                                 {
                                     buf.operand = mod.ResolveType(token);
                                 }
-#pragma warning disable CA1031 // Do not catch general exception types
                                 catch
                                 {
                                     buf.operand = token;
                                 }
-#pragma warning restore CA1031
                             }
                             break;
 

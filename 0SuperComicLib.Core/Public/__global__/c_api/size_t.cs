@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#pragma warning disable IDE0079 // 불필요한 비표시 오류
 #pragma warning disable IDE1006 // 명명 스타일
 using System;
 using System.Runtime.InteropServices;

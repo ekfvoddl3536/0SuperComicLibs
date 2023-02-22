@@ -52,21 +52,6 @@ namespace SuperComicLib.Collections
         void Reset();
     }
 
-    public interface IArrayStream<T> : IDisposable
-    {
-        bool EndOfStream { get; }
-        int Length { get; }
-        int Position { get; set; }
-        T Read();
-        Memory<T> Read(int count);
-        T Peek();
-        Memory<T> Peek(int count);
-        void Reset();
-        void Move();
-        void Move(int count);
-        bool CanRead(int count);
-    }
-
     public interface ILongHashedList<T> : IDisposable, IEnumerable<T>
     {
         int Count { get; }
@@ -100,7 +85,7 @@ namespace SuperComicLib.Collections
         IEnumerable<T> Values { get; }
     }
 
-    public interface IStack<T> : IDisposable, IEnumerable<T>
+    public interface IStack<T> : IEnumerable<T>
     {
         int Count { get; }
         int Capacity { get; }
@@ -116,23 +101,19 @@ namespace SuperComicLib.Collections
 
     public interface IUniObserver
     {
-        bool IsNotUpdated { get; }
-
         bool IsUpdated { get; }
 
-        bool IsAdded { get; }
+        void ChangeObserveTarget(object target);
 
-        bool IsRemoved { get; }
-
-        bool IsDisposed { get; }
-
-        void Observe(object target);
-
-        void Update();
+        void UpdateToLatest();
     }
 
     public interface ICountObserver : IUniObserver
     {
+        bool IsAdded { get; }
+
+        bool IsRemoved { get; }
+
         int Count { get; }
     }
 
@@ -227,5 +208,24 @@ namespace SuperComicLib.Collections
         int GetNextNode(int node);
 
         int GetPrevNode(int node);
+    }
+
+    public interface IFailableEnumerator<T> : IEnumerator<T>
+    {
+        bool IsFailed { get; }
+    }
+
+    public interface IMapEntryEnumerator<TKey, TValue> : IFailableEnumerator<ValueTuple<TKey, TValue>>
+    {
+    }
+
+    public interface IReverseEnumerable<T> : IEnumerable<T>
+    {
+        IEnumerator<T> GetReverseEnumerator();
+    }
+
+    public interface IVersionControlledCollection
+    {
+        int LatestVersion { get; }
     }
 }

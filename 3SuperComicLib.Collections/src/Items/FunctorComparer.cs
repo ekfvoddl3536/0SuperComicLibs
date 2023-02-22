@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,17 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Text;
+using System;
+using System.Collections.Generic;
 
-namespace SuperComicLib.Text
+namespace SuperComicLib.Collections
 {
-    /// <summary>
-    /// with out BOM (byte order mask) encoding
-    /// </summary>
-    public static class BOMEncoding
+    public sealed class FunctorComparer<T> : IComparer<T>
     {
-        public static readonly Encoding UTF8 = new UTF8Encoding(false, false);
-        public static readonly Encoding Unicode = new UnicodeEncoding(false, false, false);
-        public static readonly Encoding BigEndianUnicode = new UnicodeEncoding(true, false, false);
+        public readonly Comparison<T> comparison;
+
+        public FunctorComparer(Comparison<T> comparison) => this.comparison = comparison;
+
+        public int Compare(T x, T y) => comparison.Invoke(x, y);
     }
 }

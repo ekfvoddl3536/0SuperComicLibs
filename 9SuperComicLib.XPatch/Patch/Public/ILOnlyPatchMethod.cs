@@ -35,8 +35,8 @@ namespace SuperComicLib.XPatch
 
         private static readonly Type p1t = typeof(P1), p2t = typeof(P2);
 
-        private P1 v1;
-        private P2 v2;
+        private readonly P1 v1;
+        private readonly P2 v2;
 
         public ILOnlyPatchMethod(MethodInfo info) : base(info)
         {
@@ -72,13 +72,6 @@ namespace SuperComicLib.XPatch
             }
             else
                 return v2.Invoke(il, original, offset, hasReturn, isValuetype);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            v1 = null;
-            v2 = null;
-            base.Dispose(disposing);
         }
     }
 }

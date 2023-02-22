@@ -46,7 +46,7 @@ namespace SuperComicLib.CodeContracts
         {
             if (!conditional)
             {
-                Debug.Fail("Empty Message");
+                Debug.Fail(nameof(FastContract) + "." + nameof(Requires) + "(bool) Fail. (Empty Message)");
                 throw new FastContractFailException();
             }
         }

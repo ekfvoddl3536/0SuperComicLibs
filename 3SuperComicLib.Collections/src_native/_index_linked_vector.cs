@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 
 namespace SuperComicLib.Collections
 {
-    [StructLayout(LayoutKind.Sequential), CodeContracts.ParamRef]
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe partial struct _index_linked_vector<T> : IDisposable
         where T : unmanaged
     {
@@ -165,6 +165,6 @@ namespace SuperComicLib.Collections
             _free = NULL_PTR;
             _size = default;
         }
-#endregion
+        #endregion
     }
 }

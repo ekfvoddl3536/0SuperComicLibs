@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SuperComicLib.Reflection</RootNamespace>
     <AssemblyName>7SuperComicLib.Reflection</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -94,8 +94,6 @@
     <Compile Include="src\emit\ILBuffer.cs" />
     <Compile Include="src\emit\ILBufferBase.cs" />
     <Compile Include="src\emit\PublicLabel.cs" />
-    <Compile Include="src\PTypeInfo.cs" />
-    <Compile Include="src\RuntimeTypeInfo.cs" />
     <Compile Include="src\__fastCaller__\Attributes.cs" />
     <Compile Include="src\__fastCaller__\ClassWrapper.cs" />
   </ItemGroup>

@@ -20,8 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Runtime.CompilerServices;
 using System.Security;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib
 {
@@ -47,5 +49,55 @@ namespace SuperComicLib
 #else
             new NativeConstSpan<TTo>((TTo*)@this._source, (TTo*)(@this._source + @this.Length));
 #endif
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength]
+        public static void CopyTo<T>(this in NativeSpan<T> source, in Memory<T> destination) where T : unmanaged
+        {
+            if (source.Source == null) 
+                throw new ArgumentNullException(nameof(source));
+
+            if (destination._source == null) 
+                throw new ArgumentNullException(nameof(destination));
+
+            if ((destination._start | destination.Length) < 0 ||
+                (uint)(destination._start + destination.Length) > (uint)destination._source.Length ||
+                (uint)source.Length > (uint)destination.Length)
+                throw new ArgumentOutOfRangeException(nameof(destination));
+
+            CopyTo_unsafe(source, destination);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength, AssumeInputsValid]
+        public static void CopyTo_unsafe<T>([DisallowNull, ValidRange] this in NativeSpan<T> source, [DisallowNull, ValidRange] in Memory<T> destination) where T : unmanaged
+        {
+            ulong sz = (uint)source.Length * (uint)sizeof(T);
+            fixed (T* pdst = &destination[0])
+                Buffer.MemoryCopy(source.Source, pdst, sz, sz);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength]
+        public static void CopyTo<T>(this in NativeConstSpan<T> source, in Memory<T> destination) where T : unmanaged
+        {
+            if (source._source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (destination._source == null)
+                throw new ArgumentNullException(nameof(destination));
+
+            if ((destination._start | destination.Length) < 0 ||
+                (uint)(destination._start + destination.Length) > (uint)destination._source.Length ||
+                (uint)source.Length > (uint)destination.Length)
+                throw new ArgumentOutOfRangeException(nameof(destination));
+
+            CopyTo_unsafe(source, destination);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength, AssumeInputsValid]
+        public static void CopyTo_unsafe<T>([DisallowNull, ValidRange] this in NativeConstSpan<T> source, [DisallowNull, ValidRange] in Memory<T> destination) where T : unmanaged
+        {
+            ulong sz = (uint)source.Length * (uint)sizeof(T);
+            fixed (T* pdst = &destination[0])
+                Buffer.MemoryCopy(source._source, pdst, sz, sz);
+        }
     }
 }

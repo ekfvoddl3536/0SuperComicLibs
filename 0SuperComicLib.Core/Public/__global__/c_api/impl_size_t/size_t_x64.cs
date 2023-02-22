@@ -21,7 +21,6 @@
 // SOFTWARE.
 
 #if X64
-#pragma warning disable IDE1006 // 명명 스타일
 using System.Runtime.CompilerServices;
 
 namespace SuperComicLib

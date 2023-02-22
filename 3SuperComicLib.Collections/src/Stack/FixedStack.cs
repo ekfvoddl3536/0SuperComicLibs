@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@ namespace SuperComicLib.Collections
     [System.Diagnostics.DebuggerDisplay("Count = {size}")]
     public sealed class FixedStack<T> : IEnumerable<T>, IStack<T>
     {
-        private T[] arr;
+        private readonly T[] arr;
         private int cnt;
 
         public FixedStack(int initsize) => arr = new T[initsize];
@@ -68,25 +68,11 @@ namespace SuperComicLib.Collections
 
         public void Clear()
         {
-            int x = cnt;
-            while (--x >= 0)
-                arr[x] = default;
-
+            Array.Clear(arr, 0, cnt);
             cnt = 0;
         }
 
-        public IEnumerator<T> GetEnumerator() => arr.Slice(0, cnt).GetEnumerator();
-
+        public IEnumerator<T> GetEnumerator() => new ArrayReverseEnumerator<T>(arr, 0, cnt);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        public void Dispose()
-        {
-            if (arr != null)
-            {
-                Clear();
-                arr = null;
-            }
-            GC.SuppressFinalize(this);
-        }
     }
 }

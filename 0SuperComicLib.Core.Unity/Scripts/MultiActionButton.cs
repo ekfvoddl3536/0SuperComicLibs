@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace SuperComicWorld
 {
-    public class MultiActionButton : SCScriptBase, IPointerClickHandler
+    public class MultiActionButton : SCMonoBehaviour, IPointerClickHandler
     {
         [Flags]
         public enum Mode

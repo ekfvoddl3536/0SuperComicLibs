@@ -79,6 +79,37 @@
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseAny64|AnyCPU'">
+    <OutputPath>bin\ReleaseAny64\</OutputPath>
+    <DefineConstants>TRACE;X64</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseAny64|x64'">
+    <OutputPath>bin\x64\ReleaseAny64\</OutputPath>
+    <DefineConstants>TRACE;X64</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseAny64|x86'">
+    <OutputPath>bin\x86\ReleaseAny64\</OutputPath>
+    <DefineConstants>TRACE;X86</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -97,6 +128,7 @@
     <Compile Include="Public\Core\PRNG.cs" />
     <Compile Include="Public\Core\Share.cs" />
     <Compile Include="Public\IO\extension\GLOBAL_SuperComicLibCore_IO_NativeSpanExtension.cs" />
+    <Compile Include="Public\__global__\extension\SCL_GLOBAL_MemoryExtension.cs" />
     <Compile Include="Public\__global__\extension\SCL_GLOBAL_NativeSpanExtension.cs" />
     <Compile Include="Public\IO\extension\GLOBAL_SuperComicLibCore_IO_UnmanagedStreamExtension.cs" />
     <Compile Include="Public\IO\UnmanagedReadOnlyStream.cs" />
@@ -153,10 +185,11 @@
     <Compile Include="Public\__global__\extension\SCL_GLOBAL_StringExtension.cs" />
     <Compile Include="Public\__global__\HashedString.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Public\Text\BOMEncoding.cs" />
+    <Compile Include="Public\Text\NoBOMEncoding.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

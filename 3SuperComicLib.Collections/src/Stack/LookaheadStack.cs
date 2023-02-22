@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@ namespace SuperComicLib.Collections
 {
     [DebuggerTypeProxy(typeof(EnumerableView<>))]
     [DebuggerDisplay("Count = {size}")]
-    public class LookaheadStack<T> : IDisposable, ICollection<T>, IStack<T>
+    public class LookaheadStack<T> : ICollection<T>, IStack<T>
     {
         private const int defaultCapacity = 8;
 
@@ -77,8 +77,11 @@ namespace SuperComicLib.Collections
 
         public T Pop()
         {
-            T result = arr[--size];
-            arr[size] = default;
+            ref T item = ref arr[--size];
+
+            T result = item;
+            item = default;
+
             return result;
         }
 
@@ -169,8 +172,7 @@ namespace SuperComicLib.Collections
         }
 
         #region eunmerable
-        public IEnumerator<T> GetEnumerator() => ((IEnumerable<T>)arr).GetEnumerator();
-
+        public IEnumerator<T> GetEnumerator() => new ArrayReverseEnumerator<T>(arr, 0, size);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #region interface
@@ -182,20 +184,6 @@ namespace SuperComicLib.Collections
 
         bool ICollection<T>.Remove(T item) => false;
         #endregion
-        #endregion
-
-        #region dispose
-        protected virtual void Dispose(bool disposing)
-        {
-            arr = null;
-            size = 0;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
         #endregion
     }
 }

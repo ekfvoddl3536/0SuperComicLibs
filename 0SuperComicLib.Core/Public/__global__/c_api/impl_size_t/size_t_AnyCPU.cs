@@ -26,6 +26,7 @@ using System.Runtime.CompilerServices;
 
 namespace SuperComicLib
 {
+#pragma warning disable IDE1006 // 명명 스타일
     unsafe partial struct size_t
     {
         public readonly byte* value;

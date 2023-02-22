@@ -53,7 +53,7 @@ namespace SuperComicLib
         {
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
+        [MethodImpl(MethodImplOptions.AggressiveInlining), X64Only]
         public NativeSpan(_iterator<T> start, _iterator<T> end) : this(start._ptr, end._ptr)
         {
         }
@@ -62,13 +62,13 @@ namespace SuperComicLib
 #region property
         public ref T this[int index] => ref *(Source + index);
 
-        [CodeContracts.X64Only]
+        [X64Only]
         public ref T this[long index] => ref *(Source + index);
 
-        [CodeContracts.X64LossOfLength]
+        [X64LossOfLength]
         public int Length => (int)_length;
 
-        [CodeContracts.X64Only]
+        [X64Only]
         public long LongLength => (long)_length;
 #endregion
 
@@ -85,10 +85,10 @@ namespace SuperComicLib
             return new NativeSpan<T>(Source + startIndex, length);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
+        [MethodImpl(MethodImplOptions.AggressiveInlining), X64Only]
         public NativeSpan<T> Slice(long startIndex) => Slice(startIndex, Length - startIndex);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
+        [MethodImpl(MethodImplOptions.AggressiveInlining), X64Only]
         public NativeSpan<T> Slice(long startIndex, long length)
         {
             if ((ulong)(startIndex + length) > (ulong)_length)
@@ -149,7 +149,7 @@ namespace SuperComicLib
             return ref *(Source + index);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64Only]
+        [MethodImpl(MethodImplOptions.AggressiveInlining), X64Only]
         public ref T at(long index)
         {
             FastContract.Requires<ArgumentOutOfRangeException>((ulong)index < (ulong)_length, $"index: {index} / length: {Length}");

@@ -19,8 +19,7 @@ namespace SuperComicLib.Runtime
         #endregion
 
         #region constructor
-        [ModuleInitializer]
-        internal static void InitMe()
+        static RuntimeAsm()
         {
             nint p = CodeRegion.Alloc(32);
 
@@ -44,8 +43,7 @@ namespace SuperComicLib.Runtime
                 *(ulong*)(p + 0x10) = 0xC3_02_41_89;
             }
 
-            fixed (void* fp = &JmpHere)
-                *(nint*)fp = p;
+            JmpHere = (delegate*<nint, void>)p;
         }
         #endregion
 

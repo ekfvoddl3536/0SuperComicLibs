@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 
 namespace SuperComicLib.Collections
 {
-    [StructLayout(LayoutKind.Sequential), CodeContracts.ParamRef]
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe partial struct _vector<T> : IRawList<T>, IReadOnlyRawContainer<T>, IDisposable
         where T : unmanaged
     {

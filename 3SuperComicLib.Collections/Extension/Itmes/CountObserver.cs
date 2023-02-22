@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections;
 
 namespace SuperComicLib.Collections
@@ -36,19 +35,13 @@ namespace SuperComicLib.Collections
             prev_cnt = collection.Count;
         }
 
-        public bool IsNotUpdated => prev_cnt == collection.Count;
         public bool IsUpdated => prev_cnt != collection.Count;
         public bool IsAdded => prev_cnt < collection.Count;
         public bool IsRemoved => prev_cnt > collection.Count;
-        public bool IsDisposed => false;
         public int Count => collection.Count;
 
-        public void Observe(object target)
+        public void ChangeObserveTarget(object target)
         {
-#if DEBUG
-            if (target == null)
-                throw new ArgumentNullException(nameof(target));
-#endif
             if (target is ICollection col)
             {
                 collection = col;
@@ -56,6 +49,6 @@ namespace SuperComicLib.Collections
             }
         }
 
-        public void Update() => prev_cnt = collection.Count;
+        public void UpdateToLatest() => prev_cnt = collection.Count;
     }
 }

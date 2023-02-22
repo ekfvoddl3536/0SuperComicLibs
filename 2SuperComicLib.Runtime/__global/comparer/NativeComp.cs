@@ -21,7 +21,6 @@
 // SOFTWARE.
 
 using SuperComicLib.LowLevel;
-using System;
 
 namespace SuperComicLib.Runtime
 {

@@ -45,7 +45,7 @@ namespace SuperComicLib.DataObject
 
         public static void Parse(string filepath, Type t)
         {
-            StreamReader sr = new StreamReader(File.OpenRead(filepath), BOMEncoding.UTF8);
+            StreamReader sr = new StreamReader(File.OpenRead(filepath), NoBOMEncoding.UTF8);
 
             string header = sr.ReadLine();
             if (header == aligned)
@@ -58,7 +58,7 @@ namespace SuperComicLib.DataObject
 
         public static void SaveAll(string filepath, Type t)
         {
-            StreamWriter wr = new StreamWriter(File.Create(filepath), BOMEncoding.UTF8);
+            StreamWriter wr = new StreamWriter(File.Create(filepath), NoBOMEncoding.UTF8);
 
             wr.WriteLine(aligned);
             foreach (FieldInfo fd in t.GetFields(stbflag))
@@ -72,7 +72,7 @@ namespace SuperComicLib.DataObject
 
         public static void Save(string filepath, string fieldName, Type t)
         {
-            StreamWriter wr = new StreamWriter(File.OpenWrite(filepath), BOMEncoding.UTF8);
+            StreamWriter wr = new StreamWriter(File.OpenWrite(filepath), NoBOMEncoding.UTF8);
             wr.BaseStream.Seek(0, SeekOrigin.End);
             wr.WriteLine(unaligned);
 

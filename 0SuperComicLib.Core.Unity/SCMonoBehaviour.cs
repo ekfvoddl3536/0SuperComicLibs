@@ -1,7 +1,7 @@
 ﻿#region LICENSE
 /* MIT License
  * 
- * Copyright (c) 2021 SuperComic <ekfvoddl3535@naver.com>
+ * Copyright (c) 2021-2023 SuperComic <ekfvoddl3535@naver.com>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,26 +25,20 @@
 
 namespace SuperComicWorld
 {
-    public abstract class SCMonoBehaviour : SCScriptBase
+    public abstract class SCMonoBehaviour : UnityEngine.MonoBehaviour
     {
-        protected virtual void OnDisable()
+        [MarkEmptyMethodBody]
+        protected virtual void Awake()
         {
         }
 
-        protected virtual void OnEnable()
-        {
-
-        }
-
-        protected virtual void Update()
+        [MarkEmptyMethodBody]
+        protected virtual void Start()
         {
         }
 
-        protected virtual void LateUpdate()
-        {
-        }
-
-        protected virtual void Reset()
+        [MarkEmptyMethodBody]
+        protected virtual void OnDestroy()
         {
         }
     }

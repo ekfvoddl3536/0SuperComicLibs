@@ -67,7 +67,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeSpan<T> Slice(long startIndex) => Slice(startIndex, Length - startIndex);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead]
         public NativeSpan<T> Slice(long startIndex, long length)
         {
             if ((ulong)(startIndex + length) > (ulong)Length)
@@ -76,7 +76,7 @@ namespace SuperComicLib
             return new NativeSpan<T>(Source + startIndex, length);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64LossOfLength]
+        [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength]
         public T[] ToArray()
         {
             int len = (int)Length;

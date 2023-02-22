@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace SuperComicLib.Runtime
 {
@@ -26,8 +25,7 @@ namespace SuperComicLib.Runtime
         /// </summary>
         public static readonly delegate*<RegisterValue> Capture64Ex; // r8 ~ r15 (x64 only)
 
-        [ModuleInitializer]
-        internal static void Init()
+        static Register()
         {
             nint v = CodeRegion.Alloc(128);
 

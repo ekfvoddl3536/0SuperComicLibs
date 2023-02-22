@@ -29,9 +29,7 @@ namespace SuperComicLib
     {
         public static void DeleteAll<T>(ref T[] _arr) where T : class
         {
-            for (int x = _arr.Length - 1; x >= 0; x--)
-                _arr[x] = null;
-
+            Array.Clear(_arr, 0, _arr.Length);
             _arr = null;
         }
 

@@ -281,18 +281,6 @@ namespace SuperComicLib.LowLevel
                 Internal_WriteMem(t, psrc, &tr, (uint)dest_startOffset, (uint)size);
         }
 
-        [Obsolete("Use Buffer.MemoryCopy instead", true)]
-        public static void Memcpy(IntPtr srcPtr, int srcOffset, IntPtr dstPtr, int dstOffset, int count) =>
-            throw new NotImplementedException();
-
-        [Obsolete("Use Buffer.MemoryCopy instead", true)]
-        public static void Memcpy(void* src, uint srcOffset, void* dest, uint dstOffset, uint count) =>
-            throw new NotImplementedException();
-
-        [Obsolete("Use Buffer.MemoryCopy instead", true)]
-        public static void Memcpyff(byte* src, uint srcOffset, byte* dst, uint dstOffset, uint count) =>
-            throw new NotImplementedException();
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int CompareTo<T>(ref T left, ref T right) where T : struct => Internal_MemCompareTo_Un_S(ref left, ref right);
 

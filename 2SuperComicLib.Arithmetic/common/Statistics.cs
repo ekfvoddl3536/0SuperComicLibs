@@ -21,14 +21,13 @@
 // SOFTWARE.
 
 using System;
-using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
 namespace SuperComicLib.Arithmetic
 {
     public static class Statistics
     {
-        [Pure, MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double NormalDistribution(double x, double mean, double stddev)
         {
             double temp = Math.Pow(stddev, 2);

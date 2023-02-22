@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#pragma warning disable IDE1006
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,7 +29,6 @@ using System.Runtime.CompilerServices;
 
 namespace SuperComicLib
 {
-    [CodeContracts.ParamRef]
     public readonly struct Memory<T> : IList<T>, IReadOnlyList<T>, IEquatable<Memory<T>>
     {
         public readonly T[] _source;
@@ -58,7 +58,7 @@ namespace SuperComicLib
 
         #region methods (at, slice, copy, +ToArray)
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T At(int index)
+        public ref T at(int index)
         {
             if ((uint)index >= (uint)Length)
                 throw new ArgumentOutOfRangeException(nameof(index));
@@ -135,7 +135,7 @@ namespace SuperComicLib
 
         #region interface impl (explicit)
         #region IList<T>
-        T IList<T>.this[int index] { get => At(index); set => At(index) = value; }
+        T IList<T>.this[int index] { get => at(index); set => at(index) = value; }
         void IList<T>.Insert(int index, T item) => throw new NotSupportedException("FixedSizeCollection");
         void IList<T>.RemoveAt(int index) => throw new NotSupportedException("FixedSizeCollection");
         int ICollection<T>.Count => Length;
@@ -146,7 +146,7 @@ namespace SuperComicLib
         #endregion
 
         #region IReadOnlyList<T>
-        T IReadOnlyList<T>.this[int index] => At(index);
+        T IReadOnlyList<T>.this[int index] => at(index);
         int IReadOnlyCollection<T>.Count => Length;
         #endregion
 

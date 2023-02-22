@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SuperComicLib.Collections</RootNamespace>
     <AssemblyName>3SuperComicLib.Collections</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -105,11 +105,43 @@
     <Compile Include="Extension\Itmes\ReadOnlyRawContainerWrapper.cs" />
     <Compile Include="Extension\StackExtension.cs" />
     <Compile Include="Extension\Itmes\StackPopEnumerable.cs" />
+    <Compile Include="Extension_s2\IVersionControlledCollectionExtension.cs" />
+    <Compile Include="Extension_s2\public_items\AppendableItemEnumerator.cs" />
+    <Compile Include="Extension_s2\IMapEntryEnumeratorExtension.cs" />
+    <Compile Include="Extension_s2\Items\EnumerableTypeConverterBase.cs" />
+    <Compile Include="Extension_s2\Items\KeySelectEnumerable_KVPair.cs" />
+    <Compile Include="Extension_s2\Items\KeySelectEnumerable_Tuple.cs" />
+    <Compile Include="Extension_s2\Items\KeySelectEnumerable_ValueTuple.cs" />
+    <Compile Include="Extension_s2\Items\MapEntryEnumerable_KVPair.cs" />
+    <Compile Include="Extension_s2\Items\MapEntryEnumerable_Pair.cs" />
+    <Compile Include="Extension_s2\Items\MapEntryEnumerable_Tuple.cs" />
+    <Compile Include="Extension_s2\Items\MapEntryEnumerable_ValueTuple.cs" />
+    <Compile Include="Extension_s2\Items\MapEntryEnumeratorTypeWrapper.cs" />
+    <Compile Include="Extension_s2\Items\ValueSelectEnumerable_KVPair.cs" />
+    <Compile Include="Extension_s2\Items\ValueSelectEnumerable_Tuple.cs" />
+    <Compile Include="Extension_s2\Items\ValueSelectEnumerable_ValueTuple.cs" />
+    <Compile Include="Extension_s2\public_items\MergeMax4Enumerator.cs" />
+    <Compile Include="Extension_s2\items_part2\SuperComic_DistinctByEnumerator.cs" />
+    <Compile Include="Extension_s2\items_part2\SuperComic_DistinctEnumerator.cs" />
+    <Compile Include="Extension_s2\items_part2\SuperComic_EnumeratorBaseImpl.cs" />
+    <Compile Include="Extension_s2\items_part2\SuperComic_WhereEnumeratorA00.cs" />
+    <Compile Include="Extension_s2\items_part2\SuperComic_WhereEnumeratorB11.cs" />
+    <Compile Include="Extension_s2\items_part2\SuperComic_VersionBasedReadOnlyEnumerator.cs" />
+    <Compile Include="src\Items\ArrayEnumerator.cs" />
+    <Compile Include="src\Items\VersionControlledArrayEnumerator.cs" />
+    <Compile Include="src\Items\VersionControlledArrayReverseEnumerator.cs" />
+    <Compile Include="src\Linked\SingleLinkedNode.cs" />
+    <Compile Include="Extension_s2\SystemCollectionGenericExtension.cs" />
+    <Compile Include="Extension_s2\SystemCollectionsGenericEnumerator.cs" />
+    <Compile Include="Extension_s2\SystemCollectionsGenericIEnumeratorExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Linked\IndexLinkedList.cs" />
     <Compile Include="src\Linked\NodeIndex.cs" />
+    <Compile Include="src\Items\ArrayReverseEnumerator.cs" />
     <Compile Include="src\List\FixedList.cs" />
     <Compile Include="src\List\FreeListPool.cs" />
+    <Compile Include="src\Items\FunctorComparer.cs" />
+    <Compile Include="src\List\UnsafeList.cs" />
     <Compile Include="src\Map\KeyValueTable.cs" />
     <Compile Include="src\Map\ValueListMap.cs" />
     <Compile Include="src\Queue\DoubleQueue.cs" />
@@ -160,5 +192,6 @@
   <ItemGroup>
     <None Include=".editorconfig" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

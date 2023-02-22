@@ -203,11 +203,8 @@ namespace SuperComicLib.XPatch
         {
             if (method != null)
             {
-                ClsArray.DisposeAll(ref prefixes);
-                ClsArray.DisposeAll(ref postfixes);
-                
-                if (replace != null)
-                    replace.Dispose();
+                prefixes.Clear();
+                postfixes.Clear();
 
                 method = null;
                 replace = null;

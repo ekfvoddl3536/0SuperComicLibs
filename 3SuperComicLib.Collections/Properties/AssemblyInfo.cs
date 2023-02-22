@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("3SuperComicLib.Collections")]
-[assembly: AssemblyCopyright("Copyright © 2020-2022. SuperComic (ekfvoddl3535@naver.com). All rights reserved.")]
+[assembly: AssemblyCopyright("Copyright © 2020-2023. SuperComic (ekfvoddl3535@naver.com). All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

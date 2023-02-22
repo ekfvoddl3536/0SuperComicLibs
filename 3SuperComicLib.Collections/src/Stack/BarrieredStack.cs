@@ -88,15 +88,5 @@ namespace SuperComicLib.Collections
 
             return vs;
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (barrier != null)
-            {
-                barrier.Clear();
-                barrier = null;
-            }
-            base.Dispose(disposing);
-        }
     }
 }

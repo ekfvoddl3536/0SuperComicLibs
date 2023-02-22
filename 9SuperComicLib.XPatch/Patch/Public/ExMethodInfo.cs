@@ -30,7 +30,7 @@ using SuperComicLib.Runtime;
 
 namespace SuperComicLib.XPatch
 {
-    public class ExMethodInfo : IDisposable
+    public class ExMethodInfo
     {
         public MethodInfo patching;
         public string[] toNames;
@@ -116,24 +116,5 @@ namespace SuperComicLib.XPatch
 
             return patching.ReturnType == CTypes.BOOL_T;
         }
-
-        #region IDisposable Support
-        protected virtual void Dispose(bool disposing)
-        {
-            if (patching != null)
-            {
-                ClsArray.DeleteAll(ref toNames);
-                ClsArray.DeleteAll(ref toTypes);
-
-                patching = null;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        #endregion
     }
 }
