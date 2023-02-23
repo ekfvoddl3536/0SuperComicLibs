@@ -150,5 +150,25 @@ namespace SuperComicLib.RuntimeMemoryMarshals
 
             return new NativeInstance<T>(ptr);
         }
+
+        /// <summary>
+        /// Creates a uninitialized string in unmanaged memory.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid, MonoRuntimeNotSupported]
+        public static StringRef GetUninitializedString([ValidRange] int length)
+        {
+            var tSz = (length << 1) + sizeof(void*) * 3 + sizeof(char);
+
+            // align
+            tSz = (tSz + (sizeof(void*) - 1)) & -sizeof(void*);
+
+            var ptr = (IntPtr*)Marshal.AllocHGlobal(tSz);
+
+            ptr[0] = IntPtr.Zero;
+            ptr[1] = typeof(string).TypeHandle.Value;
+            *(int*)(ptr + 2) = length;
+
+            return new StringRef(ptr);
+        }
     }
 }

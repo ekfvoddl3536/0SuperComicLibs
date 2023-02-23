@@ -93,6 +93,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="extensions\ArrayRefExtension.cs" />
+    <Compile Include="extensions\ArrayUnsafeGetElementReferenceManagedExtension.cs" />
+    <Compile Include="src\StringRef.cs" />
     <Compile Include="_dataClasses\cgcref_t.cs" />
     <Compile Include="_dataClasses\gcref_t.cs" />
     <Compile Include="_dataClasses\_classDataRef.cs" />

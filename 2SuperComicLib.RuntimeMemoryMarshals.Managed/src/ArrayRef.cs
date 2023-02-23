@@ -80,7 +80,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
 
         #region indexer
         /// <summary>
-        /// Same as: <see cref="P:System.Collections.ArrayList.Item(System.Int32)"/>.
+        /// Same as: <see cref="System.Collections.Generic.List{T}.this[int]"/>.
         /// but, it does not perform validation, such as range checking. API for high-performance scenarios.
         /// </summary>
         public ref T this[[ValidRange] int index]
@@ -90,7 +90,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         }
 
         /// <summary>
-        /// Same as: <see cref="P:System.Collections.ArrayList.Item(System.Int32)"/>.
+        /// Same as: <see cref="System.Collections.Generic.List{T}.this[int]"/>.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
         public ref T at(int index)
