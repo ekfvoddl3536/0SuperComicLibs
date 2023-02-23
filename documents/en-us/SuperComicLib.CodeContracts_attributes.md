@@ -24,21 +24,78 @@
 ### AllowEmptyArray
 `Array` or `string` marked with this attribute can be `zero-length`.  
 Defaults to `AllowNull` unless used with `AllowNull` or `DisallowNull` attribute.  
+  
+```csharp
+using System;
+using SuperComicLib.CodeContracts;
+
+public static class AllowEmptyArrayExample
+{
+	public static void SetName([AllowEmptyArray] string name)
+	{
+		// Since there is no 'DisallowNull', it is assumed to be 'AllowNull'.
+		// Therefore, cannot throw an exception when 'null'.
+		if (name == null)
+			name = string.Empty;
+		
+		// 'name.Length' can be 'zero-length'
+		Foo(name, name.Length);
+	}
+}
+```
 
 ### AllowNull
 `Arguments` or `fields` marked with this attribute are `nullable`.   
 By default, it should be used for `nullable` types, but when used for `non-nullable` types, the `default` value is considered acceptable.  
+  
+```csharp
+using System;
+using SuperComicLib.CodeContracts;
+
+public static class AllowNullExample
+{
+	public static void SetName([AllowNull] int[] values)
+	{
+		// There is no assumption that an empty array is allowed,
+		// so an exception may be thrown in this case.
+		if (values.Length == 0)
+			throw new ArgumentOutOfRangeException(...);
+
+		Foo(values[0]);
+	}
+}
+```
 
 ### AssumeInputsValid
 Assumed that the argument values are valid.  
 By default, it means no validation (null checking, index bounds checking, etc.) for all arguments.  
-For `high-performance` scenarios.
+For `high-performance` scenarios.  
+  
+```csharp
+// Assumes the validity of a wide range of arguments.
+// This attribute only applies to arguments declared as
+// Disallow[...] or ValidRange.
+[AssumeInputsValid]
+public void EnumerateFiles(
+	[DisallowNull] IEnumerable<string> files,
+	[DisallowNullOrEmpty] byte[] buffer,
+	[ValidRange] int bufferIndex,
+	[ValidRange(1)] int count,
+	// This argument is not affected by 'AssumeInputsValid'.
+	// null and zero-length are allowed.
+	[AllowNull, AllowEmptyArray] string writeMode)
+{	
+	foreach (string item in files)
+		...
+}
+```
 
 ### AssumeOperationValid
 Assume that the object's state (field data) is valid.  
 To reduce confusion, this attribute only considers the state of the object's instance fields of the declared `method` or `property`.  
 ***Does not contain the state of external objects.***  
 For `high-performance` scenarios.  
+  
   
 Examples of **incorrect usage**:
 ```csharp
