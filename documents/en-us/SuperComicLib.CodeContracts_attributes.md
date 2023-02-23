@@ -128,6 +128,12 @@ public static void Foo_keepAlive([KeepAlive] Stream stream)
 ### NoExcept
 Indicates that does not throw exceptions.  
 Includes any exceptions that could potentially occur.  
+  
+Constructors list:
+| Signature | Description |
+| :------- | :--------- |
+| `()` | No exceptions of any kind are thrown. |
+| `(params System.Type[])` | Only the specified exception types are not thrown. |
 
 ### NoOverhead
 Indicates not to call other methods declared with the same name.  
