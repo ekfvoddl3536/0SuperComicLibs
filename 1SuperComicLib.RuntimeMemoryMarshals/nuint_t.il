@@ -455,16 +455,6 @@
         ret
     }
 
-    .method public hidebysig specialname static valuetype SuperComicLib.nuint_t op_Explicit(valuetype ['0SuperComicLib.Core']SuperComicLib.size_t a) cil managed aggressiveinlining
-    {
-        .maxstack 1
-
-        ldarga.s 0
-        call !!1& SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<valuetype ['0SuperComicLib.Core']SuperComicLib.size_t, valuetype SuperComicLib.nuint_t>(!!0&)
-        ldobj SuperComicLib.nuint_t
-        ret
-    }
-
     .method public hidebysig specialname static valuetype SuperComicLib.nuint_t op_Explicit(int32 a) cil managed aggressiveinlining
     {
         .maxstack 1
@@ -641,16 +631,6 @@
 
         ldarg.0
         ldfld native uint SuperComicLib.nuint_t::_value
-        ret
-    }
-
-    .method public hidebysig specialname static valuetype ['0SuperComicLib.Core']SuperComicLib.size_t op_Explicit(valuetype SuperComicLib.nuint_t a) cil managed aggressiveinlining
-    {
-        .maxstack 1
-
-        ldarg.0
-        ldfld native uint SuperComicLib.nuint_t::_value
-        newobj instance void ['0SuperComicLib.Core']SuperComicLib.size_t::.ctor(void*)
         ret
     }
 

@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,12 +34,19 @@ namespace SuperComicLib.IO
         protected byte* _source;
         protected long _length;
         protected long _position;
+        protected bool b_writable;
 
-        public UnmanagedStream([DisallowNull] void* pointer, long bytesLength) => Reset(pointer, bytesLength);
+        public UnmanagedStream([DisallowNull] void* pointer, long bytesLength, bool writable = true)
+        {
+            _source = (byte*)pointer;
+            _length = bytesLength;
+            _position = 0;
+            b_writable = writable;
+        }
 
         #region property impl + property
         public override bool CanTimeout => false;
-        public override bool CanWrite => true;
+        public override bool CanWrite => b_writable;
         public override bool CanRead => true;
         public override bool CanSeek => true;
         public override sealed long Length => _length;
@@ -70,6 +77,9 @@ namespace SuperComicLib.IO
 
         public override void WriteByte(byte value)
         {
+            if (!b_writable)
+                throw new InvalidOperationException("ReadOnly stream");
+
             if ((ulong)_position >= (ulong)_length)
                 throw new EndOfStreamException(nameof(UnmanagedStream));
 
@@ -107,17 +117,20 @@ namespace SuperComicLib.IO
 
         public override sealed int Read(byte[] buffer, int offset, int count)
         {
-            ref long position = ref _position;
+            long position = _position;
 
             count = (int)CMath.Min((ulong)(_length - position), (uint)count);
             Marshal.Copy((IntPtr)(_source + position), buffer, offset, count);
-            position += (uint)count;
+            _position += (uint)count;
 
             return count;
         }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
+            if (!b_writable)
+                throw new InvalidOperationException("ReadOnly stream");
+
             long position = _position;
 
             if ((ulong)(_length - position) < (uint)count)
@@ -129,7 +142,7 @@ namespace SuperComicLib.IO
         #endregion
 
         #region +native span
-        internal protected virtual long Read(byte* buffer_begin, byte* buffer_end)
+        public virtual long Read(byte* buffer_begin, byte* buffer_end)
         {
             ref long position = ref _position;
 
@@ -140,8 +153,11 @@ namespace SuperComicLib.IO
             return (long)sizeInBytes;
         }
 
-        internal protected virtual void Write(byte* buffer_begin, byte* buffer_end)
+        public virtual void Write(byte* buffer_begin, byte* buffer_end)
         {
+            if (!b_writable)
+                throw new InvalidOperationException("ReadOnly stream");
+
             long position = _position;
 
             ulong sizeInBytes = (ulong)(buffer_end - buffer_begin);

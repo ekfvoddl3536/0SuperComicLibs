@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,9 +23,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SuperComicLib.Core;
 using SuperComicLib.Threading;
 using SuperComicLib.CodeContracts;
+using System.Runtime.CompilerServices;
 
 namespace SuperComicLib.Collections.Concurrent
 {
@@ -39,16 +39,13 @@ namespace SuperComicLib.Collections.Concurrent
             FastContract.Requires(files != null);
             FastContract.Requires(threadCount > 0 && threadCount <= Environment.ProcessorCount);
 
-            IEnumerator<T> origin = files.GetEnumerator();
-            if (origin == null)
-                throw new ArgumentNullException($"{nameof(files)}.{nameof(files.GetEnumerator)}() --> null");
-
+            var origin = files.GetEnumerator() ?? throw new ArgumentNullException($"{nameof(files)}.{nameof(files.GetEnumerator)}() --> null");
             OnBeginEnumerate(threadCount);
 
-            ConcurrentEnumerator<T> vs = new ConcurrentEnumerator<T>(origin);
-            Share<VolatileInt32> token = new Share<VolatileInt32>(default);
+            var vs = new ConcurrentEnumerator<T>(origin);
+            var token = new StrongBox<VolatileInt32>(default);
 
-            Action[] methods = new Action[threadCount];
+            var methods = new Action[threadCount];
             for (int x = 0; x < threadCount; x++)
                 methods[x] = new Worker(this, vs, token, x).Run;
 
@@ -99,13 +96,13 @@ namespace SuperComicLib.Collections.Concurrent
         {
             public readonly ParallelEnumerate<T> owner;
             public readonly ConcurrentEnumerator<T> vs;
-            public readonly Share<VolatileInt32> tokenSrc;
+            public readonly StrongBox<VolatileInt32> tokenSrc;
             public readonly int thread_idx;
 
             public Worker(
                 ParallelEnumerate<T> owner,
                 ConcurrentEnumerator<T> vs,
-                Share<VolatileInt32> tokenSrc,
+                StrongBox<VolatileInt32> tokenSrc,
                 int thread_idx)
             {
                 this.owner = owner;

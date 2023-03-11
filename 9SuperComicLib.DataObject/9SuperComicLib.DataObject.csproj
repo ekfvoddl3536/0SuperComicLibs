@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SuperComicLib</RootNamespace>
     <AssemblyName>9SuperComicLib.DataObject</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -96,9 +96,13 @@
       <Project>{1674b047-ca4c-44a1-9d39-211e38c800dc}</Project>
       <Name>0SuperComicLib.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\2SuperComicLib.IO\2SuperComicLib.IO.csproj">
+    <ProjectReference Include="..\0SuperComicLib.Text\1SuperComicLib.Text.csproj">
+      <Project>{0af049d3-d6b3-4461-a768-83c9491d3da9}</Project>
+      <Name>1SuperComicLib.Text</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\2SuperComicLib.IO\3SuperComicLib.IO.csproj">
       <Project>{18922299-c168-493f-b57f-67f0eda4cc24}</Project>
-      <Name>2SuperComicLib.IO</Name>
+      <Name>3SuperComicLib.IO</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

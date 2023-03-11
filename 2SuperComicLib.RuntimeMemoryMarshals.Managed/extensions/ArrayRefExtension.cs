@@ -20,7 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma warning disable CS1591
 using System.Runtime.CompilerServices;
 using System.Security;
 
@@ -33,7 +32,22 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Convert to <see cref="NativeSpan{T}"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NativeSpan<T> AsSpan<T>(this in ArrayRef<T> @this) where T : unmanaged =>
-            new NativeSpan<T>((T*)(@this._pLength + sizeof(void*)), @this.Length);
+        public static NativeSpan<T> AsSpan<T>(this in arrayref<T> @this) where T : unmanaged =>
+            new NativeSpan<T>((T*)@this.GetDataPointer(), @this.Length);
+
+        /// <summary>
+        /// Convert to <see cref="NativeSpan{T}"/>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static NativeSpan<T> AsSpan<T>(this in arrayrefSegment<T> @this) where T : unmanaged =>
+            new NativeSpan<T>((T*)@this._source.GetDataPointer() + @this._start, @this.Length);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static arrayrefSegment<T> Slice<T>(this in arrayref<T> @this, int startIndex, int count) where T : unmanaged =>
+            new arrayrefSegment<T>(@this, startIndex, count);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static arrayrefSegment<T> Slice<T>(this in arrayref<T> @this, int startIndex) where T : unmanaged =>
+            new arrayrefSegment<T>(@this, startIndex);
     }
 }

@@ -28,7 +28,8 @@ using System.Runtime.InteropServices;
 namespace SuperComicLib
 {
     /// <summary>
-    /// <see langword="native int"/> for the .NET Framework
+    /// <see langword="native int"/> for the .NET Framework<para/>
+    /// If need <c>T* + <see cref="nint_t"/></c> operation, use <c>T* + (<see langword="long"/>)<see cref="nint_t"/></c>
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public readonly struct nint_t : IComparable<nint_t>, IEquatable<nint_t>
@@ -107,8 +108,6 @@ namespace SuperComicLib
         public static implicit operator nint_t(IntPtr a) => throw new PlatformNotSupportedException();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator nint_t(UIntPtr a) => throw new PlatformNotSupportedException();
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static explicit operator nint_t(size_t a) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator nint_t(bool a) => throw new PlatformNotSupportedException();
@@ -150,17 +149,10 @@ namespace SuperComicLib
         public static implicit operator IntPtr(nint_t a) => throw new PlatformNotSupportedException();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator UIntPtr(nint_t a) => throw new PlatformNotSupportedException();
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static explicit operator size_t(nint_t a) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe explicit operator void*(nint_t a) => throw new PlatformNotSupportedException();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe explicit operator nint_t(void* a) => throw new PlatformNotSupportedException();
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe explicit operator nuint_t(nint_t a) => throw new PlatformNotSupportedException();
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe explicit operator nint_t(nuint_t a) => throw new PlatformNotSupportedException();
     }
 }

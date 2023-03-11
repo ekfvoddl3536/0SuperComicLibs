@@ -42,5 +42,29 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public static ref T refdata_dotnet<T>(this T[] array, uint index) => ref array.refdata_dotnet((IntPtr)index);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T refdata_mono<T>(this T[] array, uint index) => ref array.refdata_mono((IntPtr)index);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref T refdata<T>(this T[] array) =>
+            ref JITPlatformEnvironment.IsRunningOnMono
+            ? ref array.refdata_mono()
+            : ref array.refdata_dotnet();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref T refdata<T>(this T[] array, IntPtr index) =>
+            ref JITPlatformEnvironment.IsRunningOnMono
+            ? ref array.refdata_mono(index)
+            : ref array.refdata_dotnet(index);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref T refdata<T>(this T[] array, int index) =>
+            ref JITPlatformEnvironment.IsRunningOnMono
+            ? ref refdata_mono(array, index)
+            : ref refdata_dotnet(array, index);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref T refdata<T>(this T[] array, uint index) =>
+            ref JITPlatformEnvironment.IsRunningOnMono
+            ? ref refdata_mono(array, index)
+            : ref refdata_dotnet(array, index);
     }
 }

@@ -1,4 +1,5 @@
-﻿// MIT License
+﻿
+// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
@@ -20,8 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma warning disable CS1591
 using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using SuperComicLib.CodeContracts;
@@ -39,11 +40,6 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         #region constructor
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal NativeInstance(IntPtr* _Ptr) => this._Ptr = (byte*)_Ptr;
-        #endregion
-
-        #region indexer
-        [Obsolete("Use 'GetDataReference(int)' instead", true)]
-        public ref byte this[int offset] => throw new NotSupportedException("Use 'GetDataReference(int)' instaed");
         #endregion
 
         #region property
@@ -73,7 +69,12 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// </summary>
         #region get data reference
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid, AssumeInputsValid]
-        public ref byte GetDataReference([ValidRange] int byteOffset) => ref _Ptr[byteOffset + (sizeof(void*) << 1)];
+        public ref byte GetDataReference([ValidRange] int byteOffset)
+        {
+            DEBUG_NULL_CHECK(this);
+
+            return ref _Ptr[byteOffset + (sizeof(void*) << 1)];
+        }
 
         /// <summary>
         /// Gets a field area memory reference at the specified byte offset.
@@ -81,6 +82,8 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
         public ref byte GetDataReference_at(int byteOffset)
         {
+            DEBUG_NULL_CHECK(this);
+
             if ((uint)byteOffset >= (uint)Size)
                 throw new ArgumentOutOfRangeException(nameof(byteOffset));
 
@@ -93,8 +96,10 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
         public NativeSpan<byte> GetDataReferenceAsSpan()
         {
+            DEBUG_NULL_CHECK(this);
+
             var tmp = _Ptr + sizeof(void*);
-            return new NativeSpan<byte>(tmp + sizeof(void*), _Ptr + NativeClass.InstanceSizeOf(*(IntPtr*)tmp));
+            return new NativeSpan<byte>(tmp + sizeof(void*), NativeClass.InstanceSizeOf(*(IntPtr*)tmp));
         }
         #endregion
 
@@ -105,8 +110,12 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// It does not perform validation, such as range checking. API for high-performance scenarios.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid, AssumeInputsValid]
-        public TUnmanaged* GetDataPointer<TUnmanaged>([ValidRange] int byteOffset) where TUnmanaged : unmanaged =>
-            (TUnmanaged*)(_Ptr + byteOffset + (sizeof(void*) << 1));
+        public TUnmanaged* GetDataPointer<TUnmanaged>([ValidRange] int byteOffset) where TUnmanaged : unmanaged
+        {
+            DEBUG_NULL_CHECK(this);
+
+            return (TUnmanaged*)(_Ptr + byteOffset + (sizeof(void*) << 1));
+        }
 
         /// <summary>
         /// Gets a field area memory pointer at the specified byte offset.
@@ -142,6 +151,9 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid, AssumeInputsValid]
         public void CopyTo_unsafe([DisallowNull] NativeInstance<T> other)
         {
+            DEBUG_NULL_CHECK(this);
+            DEBUG_NULL_CHECK(other);
+
             ulong sz = (uint)Size;
             Buffer.MemoryCopy(_Ptr + (sizeof(void*) << 1), other._Ptr + (sizeof(void*) << 1), sz, sz);
         }
@@ -177,6 +189,8 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid, NoOverhead]
         public int CopyTo(int index, [AllowNull] byte[] array, int arrayIndex, int count)
         {
+            DEBUG_NULL_CHECK(this);
+
             if (array == null || (arrayIndex | count) < 0)
                 return 0;
 
@@ -198,8 +212,12 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// </summary>
         /// <returns>The number of bytes copied.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid, AssumeInputsValid]
-        public void CopyTo_unsafe([ValidRange] int index, [DisallowNull] byte[] array, [ValidRange] int arrayIndex, [ValidRange] int count) => 
+        public void CopyTo_unsafe([ValidRange] int index, [DisallowNull] byte[] array, [ValidRange] int arrayIndex, [ValidRange] int count)
+        {
+            DEBUG_NULL_CHECK(this);
+
             Marshal.Copy((IntPtr)(_Ptr + index + (sizeof(void*) << 1)), array, arrayIndex, count);
+        }
         #endregion
         #endregion
 
@@ -208,7 +226,12 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Clear the instance data to 0 (zero).
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
-        public void Clear() => Unsafe.InitBlockUnaligned(_Ptr + (sizeof(void*) << 1), 0, (uint)Size);
+        public void Clear()
+        {
+            DEBUG_NULL_CHECK(this);
+
+            Unsafe.InitBlockUnaligned(_Ptr + (sizeof(void*) << 1), 0, (uint)Size);
+        }
         #endregion
 
         #region override
@@ -225,7 +248,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public void Dispose() => Marshal.FreeHGlobal((IntPtr)_Ptr);
         #endregion
 
-        #region static
+        #region operator
         /// <summary>
         /// Compares two <see cref="NativeInstance{T}"/> for equality.
         /// <br/>
@@ -240,6 +263,15 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(NativeInstance<T> left, NativeInstance<T> right) => left._Ptr != right._Ptr;
+        #endregion
+
+        #region helper
+        [Conditional("DEBUG")]
+        internal static void DEBUG_NULL_CHECK(NativeInstance<T> value)
+        {
+            if (value._Ptr == null)
+                throw new NullReferenceException(nameof(value));
+        }
         #endregion
     }
 }

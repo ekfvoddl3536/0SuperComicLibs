@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -59,63 +60,13 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public static int InstanceSizeOf([DisallowNull, ValidRange] IntPtr typeHandle) => *((int*)typeHandle + 1);
 
         /// <summary>
-        /// Allocates in unmanaged memory, using the memory layout of managed array.
-        /// <br/>
-        /// The current runtime is auto-detected. Avoid using this method if know fixed runtime information.
-        /// </summary>
-        /// <param name="length">It is not recommended to use this method if the size is 0 (zero).</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ArrayRef<T> GetUninitializedUnmanagedArray<T>(int length) =>
-            JITPlatformEnvironment.IsRunningOnMono
-            ? GetUninitializedUnmanagedArray_mono<T>(length)
-            : GetUninitializedUnmanagedArray_dotnet<T>(length);
-
-        /// <summary>
-        /// Allocates in unmanaged memory, using the memory layout of dotnet (CoreCLR) managed array.
-        /// </summary>
-        /// <param name="length">It is not recommended to use this method if the size is 0 (zero).</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
-        public static ArrayRef<T> GetUninitializedUnmanagedArray_dotnet<T>(int length)
-        {
-            var sz = (nint_t)length * Unsafe.SizeOf<T>() + sizeof(void*) * 3;
-
-            var ptr = (IntPtr*)Marshal.AllocHGlobal((IntPtr)sz);
-
-            ptr[0] = IntPtr.Zero;
-            ptr[1] = typeof(T[]).TypeHandle.Value;
-            ptr[2] = (IntPtr)(uint)length;
-
-            return new ArrayRef<T>(ptr + 1, ptr + 2);
-        }
-
-        /// <summary>
-        /// Allocates in unmanaged memory, using the memory layout of mono (MonoRuntime) managed array.
-        /// </summary>
-        /// <param name="length">It is not recommended to use this method if the size is 0 (zero).</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ArrayRef<T> GetUninitializedUnmanagedArray_mono<T>(int length)
-        {
-            var sz = (nint_t)length * Unsafe.SizeOf<T>() + sizeof(void*) * 4;
-
-            var ptr = (IntPtr*)Marshal.AllocHGlobal((IntPtr)sz);
-
-            ptr[0] = *(IntPtr*)ILUnsafe.AsPointer(Array.Empty<T>());
-            ptr[1] = IntPtr.Zero;
-            ptr[2] = IntPtr.Zero;
-            ptr[3] = (IntPtr)(uint)length;
-
-            return new ArrayRef<T>(ptr, ptr + 3);
-        }
-
-        /// <summary>
         /// Creates a managed object in unmanaged memory.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
         public static NativeInstance<T> Alloc<T>()
         {
             var type = typeof(T);
-            if (type.IsArray)
-                return default;
+            DEBUG_TYPE_VALIDATION(type);
 
             var tHnd = type.TypeHandle.Value;
 
@@ -130,12 +81,12 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <summary>
         /// Creates an initialized managed object in unmanaged memory.
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
         public static NativeInstance<T> AllocZeroed<T>()
         {
             var type = typeof(T);
-            if (type.IsArray)
-                return default;
+            DEBUG_TYPE_VALIDATION(type);
 
             var tHnd = type.TypeHandle.Value;
 
@@ -146,29 +97,19 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             ptr[0] = IntPtr.Zero;
             ptr[1] = tHnd;
 
-            Unsafe.InitBlockUnaligned(ptr + 2, 0, (uint)tSz);
+            Unsafe.InitBlockUnaligned(ptr + 2, 0, (uint)(tSz - (sizeof(void*) << 1)));
 
             return new NativeInstance<T>(ptr);
         }
 
-        /// <summary>
-        /// Creates a uninitialized string in unmanaged memory.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid, MonoRuntimeNotSupported]
-        public static StringRef GetUninitializedString([ValidRange] int length)
+        [Conditional("DEBUG")]
+        private static void DEBUG_TYPE_VALIDATION(Type v)
         {
-            var tSz = (length << 1) + sizeof(void*) * 3 + sizeof(char);
-
-            // align
-            tSz = (tSz + (sizeof(void*) - 1)) & -sizeof(void*);
-
-            var ptr = (IntPtr*)Marshal.AllocHGlobal(tSz);
-
-            ptr[0] = IntPtr.Zero;
-            ptr[1] = typeof(string).TypeHandle.Value;
-            *(int*)(ptr + 2) = length;
-
-            return new StringRef(ptr);
+            if (v.IsArray ||
+                v.IsPointer || v.IsByRef ||
+                v.IsInterface || v.IsEnum ||
+                v.IsPrimitive || v == typeof(string))
+                throw new InvalidOperationException($"'{v.FullName}' is not allowed.");
         }
     }
 }

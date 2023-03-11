@@ -119,16 +119,9 @@ namespace SuperComicLib.Collections
 
     public interface IRawContainer
     {
-#if AnyCPU
-        size_t size();
-        size_t capacity();
-#elif X86
-        int size();
-        int capacity();
-#else
-        long size();
-        long capacity();
-#endif
+        nint_t size();
+        nint_t capacity();
+
         [CodeContracts.X64LossOfLength]
         RawMemory getMemory();
     }
@@ -136,16 +129,8 @@ namespace SuperComicLib.Collections
     public interface IReadOnlyRawContainer<T> : IRawContainer
         where T : unmanaged
     {
-#if AnyCPU
-        ref readonly T this[size_t index] { get; }
-        ref readonly T at(size_t index);
-#elif X86
-        ref readonly T this[int index] { get; }
-        ref readonly T at(int index);
-#else
-        ref readonly T this[long index] { get; }
-        ref readonly T at(long index);
-#endif
+        ref readonly T this[nint_t index] { get; }
+        ref readonly T at(nint_t index);
 
         const_iterator<T> cbegin();
         const_iterator<T> cend();
@@ -157,16 +142,8 @@ namespace SuperComicLib.Collections
     public interface IRawContainer<T> : IRawContainer
         where T : unmanaged
     {
-#if AnyCPU
-        ref T this[size_t index] { get; }
-        ref T at(size_t index);
-#elif X86
-        ref T this[int index] { get; }
-        ref T at(int index);
-#else
-        ref T this[long index] { get; }
-        ref T at(long index);
-#endif
+        ref T this[nint_t index] { get; }
+        ref T at(nint_t index);
 
         _iterator<T> begin();
         _iterator<T> end();
@@ -182,16 +159,8 @@ namespace SuperComicLib.Collections
 
         T pop_back();
 
-#if AnyCPU
-        void insert(size_t index, in T item);
-        bool removeAt(size_t index);
-#elif X86
-        void insert(int index, in T item);
-        bool removeAt(int index);
-#else
-        void insert(long index, in T item);
-        bool removeAt(long index);
-#endif
+        void insert(nint_t index, in T item);
+        bool removeAt(nint_t index);
 
         void erase(_iterator<T> position);
 

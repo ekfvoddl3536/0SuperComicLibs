@@ -122,11 +122,7 @@ namespace SuperComicLib.IO
 
                 int pos;
                 fixed (byte* ptr = &encarr[0])
-#if AnyCPU || X86
-                    pos = encoding_.GetChars(ptr, readcnt, buf.Ptr, buf.Length);
-#else
                     pos = encoding_.GetChars(ptr, readcnt, buf.Ptr, (int)buf.Length);
-#endif
 
                 if (Calli(inst, &local_buf, &local_res, pos))
                     return local_res;

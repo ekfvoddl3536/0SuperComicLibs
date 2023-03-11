@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -51,11 +51,12 @@ namespace SuperComicLib
             Value = value;
         }
 
-        internal HashedString(int hash, int length)
+        public HashedString(int hash1, int hash2)
         {
             Value = 0;
-            this.hash = hash;
-            this.length = length;
+            
+            hash = hash1;
+            length = hash2;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SuperComicLib.RuntimeMemoryMarshals;
 
 namespace SuperComicLib.Collections
 {
@@ -33,7 +34,7 @@ namespace SuperComicLib.Collections
         public static long EnumerateToEnd<T>(this IEnumerator<T> @this, NativeSpan<T> buffer) where T : unmanaged
         {
             var vsi = buffer.Source;
-            var vdi = buffer.Source + buffer.Length;
+            var vdi = buffer.Source + (long)buffer.Length;
 
             while (vsi != vdi && @this.MoveNext())
                 *vsi++ = @this.Current;

@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,6 @@
 
 using System;
 using System.Runtime.CompilerServices;
-using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib
 {
@@ -35,37 +34,6 @@ namespace SuperComicLib
                 throw new ArgumentNullException(nameof(startIndex));
 
             return new Memory<T>(source, startIndex, count);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyTo<T>(this T[] source, in NativeSpan<T> dest) where T : unmanaged =>
-            CopyTo(source, 0, dest, source.Length);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyTo<T>(this T[] source, int index, in NativeSpan<T> dest) where T : unmanaged =>
-            CopyTo(source, index, dest, source.Length - index);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyTo<T>(this T[] source, in NativeSpan<T> dest, int count) where T : unmanaged => 
-            CopyTo(source, 0, dest, count);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyTo<T>(this T[] source, int index, in NativeSpan<T> dest, int count) where T : unmanaged
-        {
-            FastContract.Requires(source != null);
-
-            if ((uint)source.Length < (uint)(index + count))
-                throw new ArgumentOutOfRangeException(nameof(index));
-
-            if ((uint)dest.Length < (uint)count)
-                throw new ArgumentOutOfRangeException(nameof(count));
-
-            if (source.Length > 0)
-                fixed (T* ptr = &source[0])
-                {
-                    ulong sizeInBytes = (uint)count * (uint)sizeof(T);
-                    Buffer.MemoryCopy(ptr + index, dest.Source, sizeInBytes, sizeInBytes);
-                }
         }
     }
 }

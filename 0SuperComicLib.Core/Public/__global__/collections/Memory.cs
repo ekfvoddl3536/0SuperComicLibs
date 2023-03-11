@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,7 @@ namespace SuperComicLib
         public readonly int Length;
 
         #region constructors
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Memory(T[] source, int startIndex, int length)
         {
             _source = source;
@@ -43,17 +44,41 @@ namespace SuperComicLib
             Length = length;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Memory(T[] source, int startIndex) : this(source, startIndex, source.Length - startIndex)
         {
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Memory(T[] source) : this(source, 0, source.Length)
         {
         }
         #endregion
 
         #region property
-        public ref T this[int index] => ref _source[_start + index];
+        public ref T this[int index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ref _source[_start + index];
+        }
+
+        public bool IsValid
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => !IsNull && !IsIndexOutOfRange;
+        }
+
+        public bool IsNull
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => _source == null;
+        }
+
+        public bool IsIndexOutOfRange
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => (_start | Length) < 0 || (uint)(_start + Length) > _source.Length;
+        }
         #endregion
 
         #region methods (at, slice, copy, +ToArray)
@@ -70,12 +95,12 @@ namespace SuperComicLib
         public Memory<T> Slice(int startIndex) => Slice(startIndex, Length - startIndex);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Memory<T> Slice(int startIndex, int length)
+        public Memory<T> Slice(int startIndex, int count)
         {
-            if ((uint)(startIndex + length) > (uint)Length)
-                throw new ArgumentOutOfRangeException($"'{nameof(startIndex)}' and '{nameof(length)}'");
+            if ((uint)(startIndex + count) > (uint)Length)
+                throw new ArgumentOutOfRangeException($"'{nameof(startIndex)}' and '{nameof(count)}'");
 
-            return new Memory<T>(_source, _start + startIndex, length);
+            return new Memory<T>(_source, _start + startIndex, count);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -175,11 +200,11 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(in Memory<T> left, in Memory<T> right) =>
             left._source == right._source &&
-            ((left._start - right._start) | (left.Length - right.Length)) == 0;
+            ((left._start ^ right._start) | (left.Length ^ right.Length)) == 0;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(in Memory<T> left, in Memory<T> right) =>
             left._source != right._source ||
-            ((left._start - right._start) | (left.Length - right.Length)) != 0;
+            ((left._start ^ right._start) | (left.Length ^ right.Length)) != 0;
         #endregion
     }
 }

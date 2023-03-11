@@ -1,4 +1,5 @@
-﻿// MIT License
+﻿
+// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
@@ -20,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma warning disable CS1591
 using System;
 using System.Runtime.CompilerServices;
 using System.Security;
@@ -32,18 +32,18 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     public static unsafe class SUPERCOMICLIB_CORE__MemoryExtension
     {
         /// <summary>
-        /// Creates a new <see cref="ArrayRef{T}"/> and, copies the element data of the specified range.
+        /// Creates a new <see cref="arrayref{T}"/> and, copies the element data of the specified range.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid]
-        public static ArrayRef<T> ToArrayUnmanaged<T>([DisallowNull, ValidRange] this in Memory<T> @this) =>
+        public static arrayref<T> ToArrayUnmanaged<T>([DisallowNull, ValidRange] this in Memory<T> @this) =>
             JITPlatformEnvironment.IsRunningOnMono
             ? ToArrayUnmanaged_mono(@this)
             : ToArrayUnmanaged_dotnet(@this);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid, MonoRuntimeNotSupported]
-        public static ArrayRef<T> ToArrayUnmanaged_dotnet<T>([DisallowNull, ValidRange] this in Memory<T> @this)
+        public static arrayref<T> ToArrayUnmanaged_dotnet<T>([DisallowNull, ValidRange] this in Memory<T> @this)
         {
-            var res = NativeClass.GetUninitializedUnmanagedArray_dotnet<T>(@this.Length);
+            var res = arrayref<T>.newf_dotnet(@this.Length);
 
             var dst = res.AsManaged();
             Array.Copy(@this._source, @this._start, dst, 0, @this.Length);
@@ -52,9 +52,9 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid]
-        public static ArrayRef<T> ToArrayUnmanaged_mono<T>([DisallowNull, ValidRange] this in Memory<T> @this)
+        public static arrayref<T> ToArrayUnmanaged_mono<T>([DisallowNull, ValidRange] this in Memory<T> @this)
         {
-            var res = NativeClass.GetUninitializedUnmanagedArray_mono<T>(@this.Length);
+            var res = arrayref<T>.newf_mono(@this.Length);
 
             var dst = res.AsManaged();
             Array.Copy(@this._source, @this._start, dst, 0, @this.Length);

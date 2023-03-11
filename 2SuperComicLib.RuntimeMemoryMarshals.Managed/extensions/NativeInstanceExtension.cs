@@ -1,4 +1,5 @@
-﻿// MIT License
+﻿
+// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
@@ -20,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma warning disable CS1591
 using System.Runtime.CompilerServices;
 using System.Security;
 
@@ -30,10 +30,41 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     public static unsafe class NativeInstanceExtension
     {
         /// <summary>
+        /// Get class reference -OR- read struct data by value
+        /// <br/>
+        /// Do not use this method if you know whether the <typeparamref name="T"/> is a class or a struct.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
+        public static T GetValueAutomaticReferenceOrByValue<T>(this in NativeInstance<T> @this)
+        {
+            if (typeof(T).IsClass)
+            {
+                byte* t0 = @this._Ptr + sizeof(void*);
+                return Unsafe.As<byte, T>(ref Unsafe.AsRef<byte>(&t0));
+            }
+            else
+                return Unsafe.AsRef<T>(@this._Ptr + (sizeof(void*) << 1));
+        }
+
+        /// <summary>
+        /// Set value direct (class type is not allowed)
+        /// <br/>
+        /// Cannot be used when generic type <typeparamref name="T"/> is a class type.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
+        public static void SetValueDirectByValue<T>(this in NativeInstance<T> @this, in T value)
+        {
+            if (typeof(T).IsClass)
+                throw new System.InvalidOperationException("class type is not allowed.");
+
+            Unsafe.AsRef<T>(@this._Ptr + (sizeof(void*) << 1)) = value;
+        }
+
+        /// <summary>
         /// Get class reference
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
-        public static T Value<T>(this in NativeInstance<T> @this) where T : class => 
+        public static T Value<T>(this in NativeInstance<T> @this) where T : class =>
             ILUnsafe.AsClass<T>(@this._Ptr + sizeof(void*));
 
         /// <summary>
@@ -78,7 +109,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Directly references the managed structure data of this <see cref="NativeInstance{T}"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
-        public static ref T DirectValue<T>(this in NativeInstance<T> @this) where T : struct => 
+        public static ref T DirectValue<T>(this in NativeInstance<T> @this) where T : struct =>
             ref Unsafe.AsRef<T>(@this._Ptr + (sizeof(void*) << 1));
 
         /// <summary>
@@ -87,8 +118,8 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Use in some scenarios where a reference to data must be passed without the <see langword="ref"/> keyword.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
-        public static gcref_t<T> AsUnmanagedGCReference<T>(this in NativeInstance<T> @this) where T : struct => 
-            new gcref_t<T>(@this._Ptr + (sizeof(void*) << 1));
+        public static varef_t<T> AsUnmanagedGCReference<T>(this in NativeInstance<T> @this) where T : struct =>
+            new varef_t<T>(@this._Ptr + (sizeof(void*) << 1));
 
         /// <summary>
         /// Gets a read-only reference to the managed structure data of this <see cref="NativeInstance{T}"/>
@@ -96,7 +127,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Use in some scenarios where a read-only reference to data must be passed without the <see langword="ref"/> keyword.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
-        public static cgcref_t<T> AsUnmanagedReadOnlyGCReference<T>(this in NativeInstance<T> @this) where T : struct =>
-            new cgcref_t<T>(@this._Ptr + (sizeof(void*) << 1));
+        public static cvaref<T> AsUnmanagedReadOnlyGCReference<T>(this in NativeInstance<T> @this) where T : struct =>
+            new cvaref<T>(@this._Ptr + (sizeof(void*) << 1));
     }
 }

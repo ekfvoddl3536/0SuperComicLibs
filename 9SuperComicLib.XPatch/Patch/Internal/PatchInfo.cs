@@ -48,7 +48,7 @@ namespace SuperComicLib.XPatch
             ParameterInfo[] parameters = method.GetParameters();
             List<Type> argTypes = new List<Type>();
 
-            bool hasReturn = retType != CTypes.VOID_T;
+            bool hasReturn = retType != typeof(void);
 
             bool hasRetBuf;
             bool isvalue;
@@ -64,7 +64,7 @@ namespace SuperComicLib.XPatch
                 hasRetBuf = NativeThisPointer.NeedsPointerFix(retType);
                 if (hasRetBuf)
                 {
-                    argTypes.Add(CTypes.INTPTR_T);
+                    argTypes.Add(typeof(IntPtr));
 
                     // [0] = instance
                     // [1] = buffer
@@ -92,14 +92,14 @@ namespace SuperComicLib.XPatch
             // 만약 이게 안되면, by ref를 지원하지 말자
             // A: 그리고 됨
             if (hasReturn && retType.IsNative())
-                retType = CTypes.INTPTR_T;
+                retType = typeof(IntPtr);
 
             string methodname = method.GetMethodName(prefixes.Count + postfixes.Count, replace != null);
             DynamicMethod dm = new DynamicMethod(
                 methodname,
                 MethodAttributes.Public | MethodAttributes.Static,
                 CallingConventions.Standard,
-                hasRetBuf ? CTypes.VOID_T : retType,
+                hasRetBuf ? typeof(void) : retType,
                 argTypes.ToArray(),
                 method.DeclaringType,
                 true);
@@ -128,7 +128,7 @@ namespace SuperComicLib.XPatch
                 if (iter.Current.GenerateCode(il, method, parameters, offset, hasReturn, hasRetBuf, isvalue))
                 {
                     if (callOriginal == null)
-                        callOriginal = il.DeclareLocal(CTypes.BOOL_T);
+                        callOriginal = il.DeclareLocal(typeof(bool));
 
                     il.Emit_Stloc(callOriginal.LocalIndex);
                 }

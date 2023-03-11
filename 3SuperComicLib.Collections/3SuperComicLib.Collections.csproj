@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;AnyCPU</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -28,7 +28,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;AnyCPU</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -36,7 +36,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;X64</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -46,7 +46,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;X64</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -58,7 +58,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;X86</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -67,7 +67,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;X86</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -148,15 +148,6 @@
     <Compile Include="src_native\extensions\IRawContainer_Extension.cs" />
     <Compile Include="src_native\extensions\items\RawIteratorEnumerator.cs" />
     <Compile Include="src_native\extensions\RawContainerUtility.cs" />
-    <Compile Include="src_native\impl_indexLinkedVector\_index_linked_vector_AnyCPU.cs" />
-    <Compile Include="src_native\impl_indexLinkedVector\_index_linked_vector_x64.cs" />
-    <Compile Include="src_native\impl_indexLinkedVector\_index_linked_vector_x86.cs" />
-    <Compile Include="src_native\impl_nativeArray\NativeArray_AnyCPU.cs" />
-    <Compile Include="src_native\impl_nativeArray\NativeArray_x64.cs" />
-    <Compile Include="src_native\impl_nativeArray\NativeArray_x86.cs" />
-    <Compile Include="src_native\impl_vector\_vector_AnyCPU.cs" />
-    <Compile Include="src_native\impl_vector\_vector_x64.cs" />
-    <Compile Include="src_native\impl_vector\_vector_x86.cs" />
     <Compile Include="src_native\NativeArray.cs" />
     <Compile Include="src\List\ValuePairTable.cs" />
     <Compile Include="src\Map\HashKeyBag.cs" />
@@ -165,7 +156,7 @@
     <Compile Include="src_gcsafe\LoopArray.cs" />
     <Compile Include="src_native\RawMemory.cs" />
     <Compile Include="src_native\_index_linked_vector.cs" />
-    <Compile Include="src_native\impl_indexLinkedVector\structs\_index_node.cs" />
+    <Compile Include="src_native\structs\_index_node.cs" />
     <Compile Include="src_native\_vector.cs" />
     <Compile Include="Types.cs" />
     <Compile Include="src\Arrays.cs" />
@@ -187,6 +178,14 @@
     <ProjectReference Include="..\0SuperComicLib.Core\0SuperComicLib.Core.csproj">
       <Project>{1674b047-ca4c-44a1-9d39-211e38c800dc}</Project>
       <Name>0SuperComicLib.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\1SuperComicLib.RuntimeMemoryMarshals\1SuperComicLib.RuntimeMemoryMarshals.csproj">
+      <Project>{9e0aa77b-6756-47c4-98b2-268e42f606d2}</Project>
+      <Name>1SuperComicLib.RuntimeMemoryMarshals</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\2SuperComicLib.RuntimeMemoryMarshals.Managed\2SuperComicLib.RuntimeMemoryMarshals.Managed.csproj">
+      <Project>{00d2f710-5ab8-4be5-b698-8dfa7ca930f2}</Project>
+      <Name>2SuperComicLib.RuntimeMemoryMarshals.Managed</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

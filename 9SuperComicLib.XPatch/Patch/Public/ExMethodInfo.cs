@@ -110,11 +110,11 @@ namespace SuperComicLib.XPatch
             }
             il.Emit(OpCodes.Call, patching);
 
-            if (patching.ReturnType != CTypes.VOID_T && patching.ReturnType != CTypes.BOOL_T)
+            if (patching.ReturnType != typeof(void) && patching.ReturnType != typeof(bool))
                 // 패치 메소드의 반환은 void 또는 bool이어야 합니다
                 throw new InvalidOperationException("Return type of the patch method must be void or bool");
 
-            return patching.ReturnType == CTypes.BOOL_T;
+            return patching.ReturnType == typeof(bool);
         }
     }
 }

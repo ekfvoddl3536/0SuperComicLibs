@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2020-2023. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,63 +20,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using SuperComicLib.LowLevel;
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using SuperComicLib.RuntimeMemoryMarshals;
 
 namespace SuperComicLib.Runtime
 {
-    internal sealed class NativeComp<T> : FastComparer<T>
-        where T : struct
+    internal sealed unsafe class NativeComp<T> : LazyComparer<T>
     {
-        public override bool EqualsAB(T left, T right) => NativeClass.CompareTo(ref left, ref right) == 0;
+        public override int Compare(T x, T y)
+        {
+            var sz = Unsafe.SizeOf<T>();
+            
+            var p1 = (nint_t*)((byte*)Unsafe.AsPointer(ref x) + sz);
+            var p2 = (nint_t*)((byte*)Unsafe.AsPointer(ref y) + sz);
 
-        public override bool Greater(T left, T right) => NativeClass.CompareTo(ref left, ref right) > 0;
+            var shift = (sizeof(void*) >> 2) + 1;
+            for (var i = sz >> shift; i != 0; --i)
+            {
+                var cmp = *p1-- - *p2--;
 
-        public override bool GreatOrEquals(T left, T right) => NativeClass.CompareTo(ref left, ref right) >= 0;
+                if (cmp != 0)
+                    return 1 - (ILUnsafe.ConvI4(cmp < 0) << 1);
+            }
 
-        public override bool Lesser(T left, T right) => NativeClass.CompareTo(ref left, ref right) < 0;
+            var p1b = (byte*)p1;
+            var p2b = (byte*)p2;
+            for (var i = sz & (sizeof(void*) - 1); i !=0; --i)
+            {
+                var cmp = *p1b-- - *p2b--;
 
-        public override bool LessOrEquals(T left, T right) => NativeClass.CompareTo(ref left, ref right) <= 0;
-    }
+                if (cmp != 0)
+                    return 1 - (ILUnsafe.ConvI4(cmp < 0) << 1);
+            }
 
-    internal sealed class ObjectNativeComparer<T> : FastComparer<T>
-    {
-        public override bool EqualsAB(T left, T right) => ReferenceEquals(left, right);
-
-        public override bool Greater(T left, T right) => NativeClass.ReferenceCompare(left, right) > 0;
-
-        public override bool GreatOrEquals(T left, T right) => NativeClass.ReferenceCompare(left, right) >= 0;
-
-        public override bool Lesser(T left, T right) => NativeClass.ReferenceCompare(left, right) < 0;
-
-        public override bool LessOrEquals(T left, T right) => NativeClass.ReferenceCompare(left, right) <= 0;
-    }
-
-    internal sealed class NullableNativeComparer<T> : FastComparer<T?>
-        where T : struct
-    {
-        public override bool EqualsAB(T? left, T? right) =>
-            left.HasValue
-            ? right.HasValue && NativeClass.CompareTo(left.Value, right.Value) == 0
-            : right.HasValue == false;
-
-        public override bool Greater(T? left, T? right) =>
-            left.HasValue
-            ? right.HasValue && NativeClass.CompareTo(left.Value, right.Value) > 0
-            : right.HasValue == false;
-
-        public override bool GreatOrEquals(T? left, T? right) =>
-            left.HasValue
-            ? right.HasValue && NativeClass.CompareTo(left.Value, right.Value) >= 0
-            : right.HasValue == false;
-
-        public override bool Lesser(T? left, T? right) =>
-            left.HasValue
-            ? right.HasValue && NativeClass.CompareTo(left.Value, right.Value) < 0
-            : right.HasValue == false;
-
-        public override bool LessOrEquals(T? left, T? right) =>
-            left.HasValue
-            ? right.HasValue && NativeClass.CompareTo(left.Value, right.Value) <= 0
-            : right.HasValue == false;
+            return 0;
+        }
     }
 }

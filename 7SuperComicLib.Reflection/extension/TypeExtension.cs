@@ -10,7 +10,7 @@ namespace SuperComicLib.Runtime
         public static bool IsNative(this Type type) => type.IsByRef || type.IsPointer;
 
         public static bool IsStruct(this Type type) =>
-            type.IsValueType && type.IsPrimitive == false && type.IsEnum == false && type != CTypes.VOID_T;
+            type.IsValueType && type.IsPrimitive == false && type.IsEnum == false && type != typeof(void);
 
         #region unmanaged
         public static bool IsUnmanaged_unsafe(this Type type)
@@ -127,10 +127,10 @@ namespace SuperComicLib.Runtime
 
         #region 비트
         public static MethodInfo Op_LShift(this Type type) =>
-            FMeth(type, type, CTypes.INT_T, opLS);
+            FMeth(type, type, typeof(int), opLS);
 
         public static MethodInfo Op_RShift(this Type type) =>
-            FMeth(type, type, CTypes.INT_T, opRS);
+            FMeth(type, type, typeof(int), opRS);
         #endregion
 
         private static MethodInfo GetSpMethod(this Type type, Type returnType, Type parameterType, string name)

@@ -24,21 +24,207 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using SuperComicLib.CodeContracts;
+using SuperComicLib.RuntimeMemoryMarshals;
 
 namespace SuperComicLib.Collections
 {
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct _vector<T> : IRawList<T>, IReadOnlyRawContainer<T>, IDisposable
+    public unsafe struct _vector<T> : IRawList<T>, IReadOnlyRawContainer<T>, IDisposable
         where T : unmanaged
     {
         private T* m_Ptr;
         private T* m_Last;
         private T* m_End;
 
-        #region common constructor
+        #region constructor
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public _vector(in _vector<T> source) : this(source.cbegin(), source.cend())
         {
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public _vector(nint_t size) : this(size, default)
+        {
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public _vector(nint_t size, in T val)
+        {
+            m_Ptr = (T*)MemoryBlock.Memalloc(size, sizeof(T));
+            m_Last = m_Ptr + (long)size;
+            m_End = m_Last;
+
+            MemoryBlock.Memset(m_Ptr, size, val);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public _vector(const_iterator<T> first, const_iterator<T> last)
+        {
+            var len = (nint_t)last._ptr - (nint_t)first._ptr;
+
+            m_Ptr = (T*)Marshal.AllocHGlobal((IntPtr)len);
+            m_Last = (T*)(byte*)m_Ptr + (long)len;
+            m_End = m_Last;
+
+            MemoryBlock.Memmove(first._ptr, m_Ptr, (nuint_t)len);
+        }
+        #endregion
+
+        #region indexer & property
+        public ref T this[nint_t index] => ref *(m_Ptr + (long)index);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref T at(nint_t index)
+        {
+            ArgValidateHelper.ThrowIfIndexOutOfRange(index, size());
+            return ref this[index];
+        }
+
+        public nint_t Count => size();
+
+        public nint_t Capacity => capacity();
+        #endregion
+
+        #region impl interface -1-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public nint_t size() => m_Last - m_Ptr;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public nint_t capacity() => m_End - m_Ptr;
+        #endregion
+
+        #region impl interface -2-
+        ref readonly T IReadOnlyRawContainer<T>.this[nint_t index] => ref this[index];
+
+        ref readonly T IReadOnlyRawContainer<T>.at(nint_t index) => ref at(index);
+        #endregion
+
+        #region methods 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void push_back(in T item)
+        {
+            reserve(m_Last - m_Ptr + 1);
+
+            *m_Last++ = item;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void insert(nint_t index, in T item)
+        {
+            if (index >= size())
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            reserve(size() + 1);
+
+            T* src = m_Ptr + (long)index;
+            T* dst = src + 1;
+
+            MemoryBlock.Memmove(src, dst, (nuint_t)((byte*)m_Last - (byte*)dst));
+
+            *src = item;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool removeAt(nint_t index)
+        {
+            if (index >= size())
+                return false;
+
+            T* dst = m_Ptr + (long)index;
+            T* src = dst + 1;
+
+            MemoryBlock.Memmove(src, dst, (nuint_t)((byte*)m_Last - (byte*)src));
+
+            m_Last--;
+
+            return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void erase(_iterator<T> position)
+        {
+            if (position._ptr - m_Ptr >= size())
+                throw new ArgumentOutOfRangeException(nameof(position));
+
+            T* dst = position._ptr + 1;
+
+            MemoryBlock.Memmove(dst, position._ptr, (nuint_t)((byte*)m_Last - (byte*)dst));
+
+            m_Last--;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void erase(_iterator<T> first, _iterator<T> last)
+        {
+            if (m_Ptr > first._ptr || m_Last < last._ptr || last._ptr < first._ptr)
+                throw new ArgumentOutOfRangeException($"{nameof(first)} or {nameof(last)}");
+
+            T* dst = last._ptr + 1;
+
+            MemoryBlock.Memmove(dst, first._ptr, (nuint_t)((byte*)m_Last - (byte*)dst));
+
+            m_Last -= last._ptr - first._ptr;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void clear() => MemoryBlock.Clear(m_Ptr, size(), sizeof(T));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength]
+        public RawMemory getMemory() => new RawMemory(m_Ptr, (int)size());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void _increaseCapacity(nint_t min_size)
+        {
+            var old_cnt = size();
+            var old_capa = capacity();
+
+            var new_capa = (nint_t)CMathi.Max((nuint_t)old_capa << 1, 4u);
+            new_capa = (nint_t)CMathi.Max((nuint_t)new_capa, (nuint_t)min_size);
+
+            T* dst = (T*)MemoryBlock.Memalloc(new_capa, sizeof(T));
+            T* last = dst + (long)old_cnt;
+            T* end = dst + (long)new_capa;
+
+            MemoryBlock.Memmove(m_Ptr, dst, old_cnt, sizeof(T));
+
+            Marshal.FreeHGlobal((IntPtr)m_Ptr);
+
+            m_Ptr = dst;
+            m_Last = last;
+            m_End = end;
+        }
+        #endregion
+
+        #region set capacity
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void reserve(nint_t capacity)
+        {
+            if (m_Ptr + (long)capacity > m_End)
+                _increaseCapacity(capacity);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void resize(nint_t capacity)
+        {
+            var cnt = size();
+            var n = capacity;
+
+            var cpyCnt = (nint_t)CMathi.Min((nuint_t)cnt, (nuint_t)n);
+
+            T* dst = (T*)Marshal.AllocHGlobal((IntPtr)(n * (uint)sizeof(T)));
+            T* last = dst + (long)cpyCnt;
+            T* end = dst + (long)n;
+
+            if (n > cnt)
+                MemoryBlock.Clear(last, n - cnt, sizeof(T));
+
+            MemoryBlock.Memmove(m_Ptr, dst, cpyCnt, sizeof(T));
+
+            Marshal.FreeHGlobal((IntPtr)m_Ptr);
+
+            m_Ptr = dst;
+            m_Last = last;
+            m_End = end;
         }
         #endregion
 
@@ -64,7 +250,7 @@ namespace SuperComicLib.Collections
         public const_reverse_iterator<T> crend() => rend();
         #endregion
 
-        #region common collection control method
+        #region collection control method
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T pop_back() =>
             m_Ptr == m_Last

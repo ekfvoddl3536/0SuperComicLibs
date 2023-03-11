@@ -99,7 +99,7 @@ namespace SuperComicLib.XPatch
 
             ParameterInfo p = m_compileMeth.GetParameters()[0];
             // _CompileMethod(IntPtr)
-            if (p.ParameterType.IsAssignableFrom(CTypes.INTPTR_T))
+            if (p.ParameterType.IsAssignableFrom(typeof(IntPtr)))
             {
                 m_compileMeth.Invoke(null, new object[1] { handle.Value });
                 return handle.GetFunctionPointer();

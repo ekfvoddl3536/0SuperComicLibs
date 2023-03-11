@@ -115,6 +115,12 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref readonly T Add<T>(in T source, int elementOffset) => throw new PlatformNotSupportedException();
 
+        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        // public static T* Add<T>(T* source, nint_t index) where T : unmanaged => throw new PlatformNotSupportedException();
+        // 
+        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        // public static T* Sub<T>(T* source, nint_t index) where T : unmanaged => throw new PlatformNotSupportedException();
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ConvI4(bool value) => throw new PlatformNotSupportedException();
     }

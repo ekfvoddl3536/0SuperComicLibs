@@ -445,16 +445,6 @@
         ret
     }
 
-    .method public hidebysig specialname static valuetype SuperComicLib.nint_t op_Explicit(valuetype ['0SuperComicLib.Core']SuperComicLib.size_t a) cil managed aggressiveinlining
-    {
-        .maxstack 1
-
-        ldarga.s 0
-        call !!1& SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<valuetype ['0SuperComicLib.Core']SuperComicLib.size_t, valuetype SuperComicLib.nint_t>(!!0&)
-        ldobj SuperComicLib.nint_t
-        ret
-    }
-
     .method public hidebysig specialname static valuetype SuperComicLib.nint_t op_Implicit(bool a) cil managed aggressiveinlining
     {
         .maxstack 1
@@ -626,16 +616,6 @@
         ret
     }
 
-    .method public hidebysig specialname static valuetype ['0SuperComicLib.Core']SuperComicLib.size_t op_Explicit(valuetype SuperComicLib.nint_t a) cil managed aggressiveinlining
-    {
-        .maxstack 1
-
-        ldarg.0
-        ldfld native int SuperComicLib.nint_t::_value
-        newobj instance void ['0SuperComicLib.Core']SuperComicLib.size_t::.ctor(void*)
-        ret
-    }
-
     .method public hidebysig specialname static void* op_Explicit(valuetype SuperComicLib.nint_t a) cil managed aggressiveinlining
     {
         .maxstack 1
@@ -651,26 +631,6 @@
 
         ldarg.0
         call valuetype SuperComicLib.nint_t SuperComicLib.nint_t::op_Implicit(native int)
-        ret
-    }
-
-    .method public hidebysig specialname static valuetype SuperComicLib.nuint_t op_Explicit(valuetype SuperComicLib.nint_t a) cil managed aggressiveinlining
-    {
-        .maxstack 1
-
-        ldarga.s 0
-        call !!1& SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<valuetype SuperComicLib.nint_t, valuetype SuperComicLib.nuint_t>(!!0&)
-        ldobj valuetype SuperComicLib.nuint_t
-        ret
-    }
-
-    .method public hidebysig specialname static valuetype SuperComicLib.nint_t op_Explicit(valuetype SuperComicLib.nuint_t a) cil managed aggressiveinlining
-    {
-        .maxstack 1
-
-        ldarga.s 0
-        call !!1& SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<valuetype SuperComicLib.nuint_t, valuetype SuperComicLib.nint_t>(!!0&)
-        ldobj valuetype SuperComicLib.nint_t
         ret
     }
 } // end of 'nint_t'

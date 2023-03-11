@@ -107,8 +107,6 @@ namespace SuperComicLib
         public static explicit operator nuint_t(IntPtr a) => throw new PlatformNotSupportedException();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator nuint_t(UIntPtr a) => throw new PlatformNotSupportedException();
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static explicit operator nuint_t(size_t a) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator nuint_t(bool a) => throw new PlatformNotSupportedException();
@@ -155,8 +153,6 @@ namespace SuperComicLib
         public static explicit operator IntPtr(nuint_t a) => throw new PlatformNotSupportedException();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator UIntPtr(nuint_t a) => throw new PlatformNotSupportedException();
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static explicit operator size_t(nuint_t a) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe explicit operator void*(nuint_t a) => throw new PlatformNotSupportedException();

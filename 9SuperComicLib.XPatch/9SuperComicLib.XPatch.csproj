@@ -122,10 +122,6 @@
       <Project>{1674b047-ca4c-44a1-9d39-211e38c800dc}</Project>
       <Name>0SuperComicLib.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\0SuperComicLib.LowLevel\0SuperComicLib.LowLevel.csproj">
-      <Project>{767db295-227d-484b-b903-d3f6391e7ad1}</Project>
-      <Name>0SuperComicLib.LowLevel</Name>
-    </ProjectReference>
     <ProjectReference Include="..\7SuperComicLib.Reflection\7SuperComicLib.Reflection.csproj">
       <Project>{79c44ec8-246d-4827-aa48-1a9bb58b32ff}</Project>
       <Name>7SuperComicLib.Reflection</Name>

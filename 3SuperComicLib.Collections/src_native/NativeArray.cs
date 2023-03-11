@@ -23,21 +23,96 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using SuperComicLib.RuntimeMemoryMarshals;
 
 namespace SuperComicLib.Collections
 {
     [StructLayout(LayoutKind.Sequential)]
-    public readonly unsafe partial struct NativeArray<T> : IDisposable, IRawContainer<T>, IReadOnlyRawContainer<T>, IEquatable<NativeArray<T>>
+    public readonly unsafe struct NativeArray<T> : IDisposable, IRawContainer<T>, IReadOnlyRawContainer<T>, IEquatable<NativeArray<T>>
         where T : unmanaged
     {
+        public readonly T* Ptr;
+        public readonly nint_t Length;
+
+        #region constructors
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public NativeArray(nint_t length)
+        {
+            Ptr = (T*)MemoryBlock.Memalloc(length, sizeof(T));
+            Length = length;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public NativeArray(T* hGlobalAllocated_Ptr, nint_t length)
+        {
+            Ptr = hGlobalAllocated_Ptr;
+            Length = length;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public NativeArray(T[] source)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            // don't MOVSXD r64/r32
+            Length = (nint_t)(uint)source.Length;
+
+            var sz = (nuint_t)Length * (uint)sizeof(T);
+            Ptr = (T*)Marshal.AllocHGlobal((IntPtr)sz);
+
+            if (source.Length > 0)
+                fixed (T* psrc = &source[0])
+                    MemoryBlock.Memmove(psrc, Ptr, sz);
+        }
+        #endregion
+
+        #region indexer & property
+        public ref T this[nint_t index] => ref *(Ptr + (long)index);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref T at(nint_t index)
+        {
+            ArgValidateHelper.ThrowIfIndexOutOfRange(index, Length);
+            return ref this[index];
+        }
+        #endregion
+
+        #region methods
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public NativeSpan<T> AsSpan() => new NativeSpan<T>(Ptr, Length);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Clear() => MemoryBlock.Clear(Ptr, Length, sizeof(T));
+        #endregion
+
+        #region explicit implement longerfaces
+        ref readonly T IReadOnlyRawContainer<T>.this[nint_t index] => ref this[index];
+        ref readonly T IReadOnlyRawContainer<T>.at(nint_t index) => ref at(index);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public nint_t capacity() => Length;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public nint_t size() => Length;
+        #endregion
+
+        #region implement -2-
+        [MethodImpl(MethodImplOptions.AggressiveInlining), CodeContracts.X64LossOfLength]
+        public RawMemory getMemory() => new RawMemory(Ptr, (int)Length);
+
+        bool IEquatable<NativeArray<T>>.Equals(NativeArray<T> other) => this == other;
+        #endregion
+
         #region iterator
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public _iterator<T> begin() => new _iterator<T>(Ptr);
-        // !== end()는 따로 구현
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public _iterator<T> end() => new _iterator<T>(Ptr + (long)Length);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public reverse_iterator<T> rbegin() => new reverse_iterator<T>(Ptr + (long)Length - 1);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public reverse_iterator<T> rend() => new reverse_iterator<T>(Ptr - 1);
-        // !== rbegin()은 따로 구현
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public const_iterator<T> cbegin() => begin();
@@ -50,7 +125,27 @@ namespace SuperComicLib.Collections
         public const_reverse_iterator<T> crend() => rend();
         #endregion
 
+        #region override
+        public override bool Equals(object obj) => obj is NativeArray<T> other && this == other;
+        public override int GetHashCode() => ((IntPtr)Ptr).GetHashCode() ^ Length.GetHashCode();
+        #endregion
+
+        #region dispose
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Dispose() => Marshal.FreeHGlobal((IntPtr)Ptr);
+        #endregion
+
+        #region static members
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool ReferenceEquals(in NativeArray<T> left, in NativeArray<T> right) => left.Ptr == right.Ptr;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator ==(in NativeArray<T> left, in NativeArray<T> right) =>
+            CMathi.CXOR(left.Ptr, right.Ptr, left.Length, right.Length) == 0;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator !=(in NativeArray<T> left, in NativeArray<T> right) =>
+            CMathi.CXOR(left.Ptr, right.Ptr, left.Length, right.Length) != 0;
+        #endregion
     }
 }
