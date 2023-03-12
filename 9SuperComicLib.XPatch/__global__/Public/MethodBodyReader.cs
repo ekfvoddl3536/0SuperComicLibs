@@ -48,7 +48,7 @@ namespace SuperComicLib.XPatch
 
             m_buffers = new List<ILBuffer>();
 
-            this.method = 
+            this.method =
                 isDynamicMethod
                 ? new RTDynamicMethodInfo(method as DynamicMethod)
                 : method;

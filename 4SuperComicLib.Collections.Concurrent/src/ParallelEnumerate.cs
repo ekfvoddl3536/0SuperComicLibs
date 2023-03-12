@@ -22,10 +22,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using SuperComicLib.Threading;
-using SuperComicLib.CodeContracts;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using SuperComicLib.CodeContracts;
+using SuperComicLib.Threading;
 
 namespace SuperComicLib.Collections.Concurrent
 {

@@ -28,7 +28,7 @@ namespace SuperComicLib.Collections
     {
         private Stack<int> barrier;
 
-        public BarrieredQueue() : this (null)
+        public BarrieredQueue() : this(null)
         {
         }
 
@@ -57,7 +57,7 @@ namespace SuperComicLib.Collections
 
         public override T[] ToArray()
         {
-            loop:
+        loop:
             if (barrier.Count > 0)
             {
                 int ncnt = size - barrier.Pop();

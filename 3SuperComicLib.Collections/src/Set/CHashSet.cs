@@ -510,7 +510,7 @@ namespace SuperComicLib.Collections
                 int temp = target.value.GetHashCode() & bitmask;
 
                 target.hashCode = temp;
-                old_hashcode = temp; 
+                old_hashcode = temp;
             }
 
             public int GetNewHashCode() => target.value.GetHashCode() & bitmask;

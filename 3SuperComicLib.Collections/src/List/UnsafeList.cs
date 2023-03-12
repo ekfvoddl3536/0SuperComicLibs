@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -52,7 +51,7 @@ namespace SuperComicLib.Collections
 
         public UnsafeList(int initial_capacity)
         {
-            if (initial_capacity < 0) 
+            if (initial_capacity < 0)
                 throw new ArgumentOutOfRangeException(nameof(initial_capacity));
 
             _array = initial_capacity == 0 ? Array.Empty<T>() : new T[initial_capacity];
@@ -79,7 +78,7 @@ namespace SuperComicLib.Collections
             get => _array.Length;
             set
             {
-                if (value < _size) 
+                if (value < _size)
                     throw new ArgumentOutOfRangeException(nameof(value));
 
                 SetCapacityAlign4_Core(value);
@@ -185,7 +184,7 @@ namespace SuperComicLib.Collections
             if (memory._source == null)
                 throw new ArgumentNullException(nameof(memory));
 
-            if (memory._start < 0 || 
+            if (memory._start < 0 ||
                 memory.Length < 0 ||
                 (uint)(memory._start + memory.Length) > (uint)memory._source.Length)
                 throw new ArgumentOutOfRangeException(nameof(memory));
@@ -228,7 +227,7 @@ namespace SuperComicLib.Collections
 
         public void InsertRange(int index, IEnumerable<T> collection)
         {
-            if (collection == null) 
+            if (collection == null)
                 throw new ArgumentNullException(nameof(collection));
 
             if ((uint)index > (uint)_size)
@@ -324,7 +323,7 @@ namespace SuperComicLib.Collections
         public int BinarySearch([AllowNull] T item, [AllowNull] IComparer<T> comparer) =>
             Array.BinarySearch(_array, 0, _size, item, comparer ?? Comparer<T>.Default);
 
-        public int BinarySearch(int index, int count,  [AllowNull] T item, [AllowNull] IComparer<T> comparer)
+        public int BinarySearch(int index, int count, [AllowNull] T item, [AllowNull] IComparer<T> comparer)
         {
             if ((uint)index >= (uint)_size)
                 throw new ArgumentOutOfRangeException(nameof(index));
@@ -336,7 +335,7 @@ namespace SuperComicLib.Collections
         }
 
         [AssumeInputsValid]
-        public int BinarySearch_Core([ValidRange] int index, [ValidRange] int count, [AllowNull] T item, [DisallowNull] IComparer<T> comparer) => 
+        public int BinarySearch_Core([ValidRange] int index, [ValidRange] int count, [AllowNull] T item, [DisallowNull] IComparer<T> comparer) =>
             Array.BinarySearch(_array, index, count, item, comparer);
         #endregion
 
@@ -612,7 +611,7 @@ namespace SuperComicLib.Collections
         public UnsafeList<TOut> ConvertAll_Core<TOut>([DisallowNull] Converter<T, TOut> converter)
         {
             var res = new UnsafeList<TOut>(_size);
-            
+
             var dst = res._array;
             var src = _array;
             for (int si = 0; si < dst.Length; ++si)
@@ -645,7 +644,7 @@ namespace SuperComicLib.Collections
             int align4 = (capacity + ALIGN) & ~ALIGN;
 
             var ns = new T[align4];
-            
+
             Array.Copy(_array, ns, _size);
 
             _array = ns;
@@ -913,14 +912,14 @@ namespace SuperComicLib.Collections
 
         public void Sort(Comparison<T> comparison)
         {
-            if (comparison == null) 
+            if (comparison == null)
                 throw new ArgumentNullException(nameof(comparison));
 
             Sort_Core(0, _size, new FunctorComparer<T>(comparison));
         }
 
         [AssumeInputsValid, MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Sort_Core([ValidRange] int index, [ValidRange] int count, [DisallowNull] IComparer<T> comparer) => 
+        public void Sort_Core([ValidRange] int index, [ValidRange] int count, [DisallowNull] IComparer<T> comparer) =>
             Array.Sort(_array, index, count, comparer);
 
         public T[] ToArray()
@@ -948,7 +947,7 @@ namespace SuperComicLib.Collections
 
         public bool TrueForAll(Predicate<T> predicate)
         {
-            if (predicate == null) 
+            if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
 
             return TrueForAll_Core(predicate);

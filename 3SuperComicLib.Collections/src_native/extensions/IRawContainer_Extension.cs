@@ -27,10 +27,10 @@ namespace SuperComicLib.Collections
 {
     public static unsafe class IRawContainer_Extension
     {
-        public static void CopyTo<T>(this IRawContainer<T> source, IRawContainer<T> dest) where T : unmanaged => 
+        public static void CopyTo<T>(this IRawContainer<T> source, IRawContainer<T> dest) where T : unmanaged =>
             new NativeSpan<T>(source.begin(), source.end()).CopyTo(new NativeSpan<T>(dest.begin(), dest.end()));
 
-        public static void CopyTo<T>(this IRawContainer<T> source, int src_start_index, IRawContainer<T> dest, int dst_start_index, int count) 
+        public static void CopyTo<T>(this IRawContainer<T> source, int src_start_index, IRawContainer<T> dest, int dst_start_index, int count)
             where T : unmanaged
         {
             var src = new NativeSpan<T>(source.begin() + src_start_index, source.end()).Slice(0, count);
@@ -39,7 +39,7 @@ namespace SuperComicLib.Collections
             src.CopyTo(dst);
         }
 
-        public static T[] ToArray<T>(this IRawContainer<T> source) where T : unmanaged => 
+        public static T[] ToArray<T>(this IRawContainer<T> source) where T : unmanaged =>
             new NativeSpan<T>(source.begin(), source.end()).ToArray();
 
         public static IEnumerator<T> GetEnumerator<T>(this IRawContainer<T> source) where T : unmanaged => new RawIteratorEnumerator<T>(source);
@@ -76,11 +76,11 @@ namespace SuperComicLib.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NativeSpan<T> AsSpan<T>(this IRawContainer<T> source) where T : unmanaged => 
+        public static NativeSpan<T> AsSpan<T>(this IRawContainer<T> source) where T : unmanaged =>
             new NativeSpan<T>(source.begin(), source.end());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NativeConstSpan<T> AsConstSpan<T>(this IReadOnlyRawContainer<T> source) where T : unmanaged => 
+        public static NativeConstSpan<T> AsConstSpan<T>(this IReadOnlyRawContainer<T> source) where T : unmanaged =>
             new NativeConstSpan<T>(source.cbegin(), source.cend());
     }
 }

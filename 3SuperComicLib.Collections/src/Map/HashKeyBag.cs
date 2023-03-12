@@ -53,7 +53,7 @@ namespace SuperComicLib.Collections
         {
             int hashcode = value.GetHashCode();
             int key = hashcode % m_buckets.Length;
-            
+
             if (m_buckets[key] != 0) // not empty
                 return false;
 
@@ -64,15 +64,15 @@ namespace SuperComicLib.Collections
             return true;
         }
 
-        public bool Contains(T value) => 
+        public bool Contains(T value) =>
             IndexOf(value) > 0;
 
         public int IndexOf(T value)
         {
             int key = value.GetHashCode() % m_buckets.Length;
             return
-                m_buckets[key] != 0 
-                ? key 
+                m_buckets[key] != 0
+                ? key
                 : -1;
         }
 

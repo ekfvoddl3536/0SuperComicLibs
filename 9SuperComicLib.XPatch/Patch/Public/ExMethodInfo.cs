@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using SuperComicLib.Core;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -93,9 +92,9 @@ namespace SuperComicLib.XPatch
                     ParameterInfo param = parameters.FirstOrDefault(t =>
                     {
                         string now = toNames[idx];
-                        return 
-                            now.StartsWith("param_") 
-                            ? now.Remove(0, 5) == t.Name 
+                        return
+                            now.StartsWith("param_")
+                            ? now.Remove(0, 5) == t.Name
                             : now == t.Name;
                     });
 

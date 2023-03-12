@@ -52,7 +52,7 @@ namespace SuperComicLib.CodeContracts
             if (_desc != null)
                 return _desc;
 
-            string 
+            string
                 min_str,
                 max_str;
 
@@ -87,7 +87,7 @@ namespace SuperComicLib.CodeContracts
         {
             Include_Minimum = include_minimum;
             _maximum = maximum;
-            _type = 
+            _type =
                 (include_maximum_value ? RangeType.ModeFlag_IncludeMax : RangeType.Min_to_Max) |
                 (isUnsigned ? RangeType.ModeFlag_Unsigned : 0);
         }
@@ -107,7 +107,7 @@ namespace SuperComicLib.CodeContracts
         public ValidRangeAttribute(long include_minimum, long maximum, bool include_maximum_value = false) : this((UIntPtr)include_minimum, (UIntPtr)maximum, include_maximum_value, false) { }
 
         public ValidRangeAttribute(ulong include_minimum, ulong maximum, bool include_maximum_value = false) : this((UIntPtr)include_minimum, (UIntPtr)maximum, include_maximum_value, true) { }
-        
+
         public ValidRangeAttribute(string custom_range_description) => _desc = custom_range_description;
 
         public ValidRangeAttribute() : this(UIntPtr.Zero, false) { }

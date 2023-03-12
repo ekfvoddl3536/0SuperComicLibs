@@ -54,7 +54,7 @@ namespace SuperComicLib
         public HashedString(int hash1, int hash2)
         {
             Value = 0;
-            
+
             hash = hash1;
             length = hash2;
         }

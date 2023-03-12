@@ -103,7 +103,7 @@ namespace SuperComicLib.Arithmetic
         {
             bool allocated = false;
 
-            loop:
+        loop:
             // 상위 비트가 0일때 시작할 index를 보정하는 작업
             int x = count;
             uint temp = v[count - 1];
@@ -116,7 +116,7 @@ namespace SuperComicLib.Arithmetic
                 sb.Append('0');
                 return;
             }
-            
+
             if (signed && temp >= 0x8000_0000)
             {
                 signed = false;
@@ -240,7 +240,7 @@ namespace SuperComicLib.Arithmetic
             ulong uuTemp = (ulong)values[--count] - sub[count];
             values[count] = (uint)uuTemp;
             uint borrow = (uint)-(int)(uuTemp >> 32);
-            
+
             while (--count >= 0)
             {
                 uuTemp = (ulong)values[count] - sub[count] - borrow;
@@ -315,7 +315,7 @@ namespace SuperComicLib.Arithmetic
 
             for (; si > 0; si--, di--)
                 value[di] =
-                    (value[si] << lsh) | 
+                    (value[si] << lsh) |
                     (value[si - 1] >> rsh);
 
             value[di] = value[si] << lsh;
@@ -664,7 +664,7 @@ namespace SuperComicLib.Arithmetic
             {
                 raw |= (uint)value[x] & ((1u << y) - 1);
                 if (--x >= 0)
-                    raw |= (uint)(value[x] >> (41 + y)) & ((1u << (23 - y)) -1);
+                    raw |= (uint)(value[x] >> (41 + y)) & ((1u << (23 - y)) - 1);
             }
             else
                 raw |= (uint)(value[x] >> (y - 23)) & 0x7F_FFFF;
@@ -720,7 +720,7 @@ namespace SuperComicLib.Arithmetic
             while (k == 0 && --count >= 0)
                 k = left[count].CompareTo(right[count]);
 
-            return 
+            return
                 neg
                 ? -k
                 : k;

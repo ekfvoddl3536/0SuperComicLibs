@@ -205,7 +205,7 @@ namespace SuperComicLib
         /// Indirect call <see cref="Buffer.MemoryCopy(void*, void*, ulong, ulong)"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead]
-        public static void Memmove(void* src, void* dst, nuint_t sizeInBytes) => 
+        public static void Memmove(void* src, void* dst, nuint_t sizeInBytes) =>
             Buffer.MemoryCopy(src, dst, (ulong)sizeInBytes, (ulong)sizeInBytes);
 
         /// <summary>

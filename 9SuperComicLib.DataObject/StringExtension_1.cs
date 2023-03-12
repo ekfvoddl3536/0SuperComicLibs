@@ -20,9 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using static SuperComicLib.DataObject_Helper;
+
 namespace SuperComicLib
 {
-    using static DataObject_Helper;
     public static class StringExtension_1
     {
 

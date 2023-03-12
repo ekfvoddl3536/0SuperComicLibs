@@ -107,9 +107,9 @@ namespace SuperComicLib.Collections
             Interlocked.Exchange(ref m_barrier, 0);
         }
 
-        public T Dequeue() => 
-            TryDequeue(out T result) 
-            ? result 
+        public T Dequeue() =>
+            TryDequeue(out T result)
+            ? result
             : throw new InvalidOperationException("empty list");
 
         private sealed class Node

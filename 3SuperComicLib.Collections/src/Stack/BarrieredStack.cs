@@ -33,7 +33,7 @@ namespace SuperComicLib.Collections
         {
         }
 
-        public BarrieredStack(T[] source) : base(source) => 
+        public BarrieredStack(T[] source) : base(source) =>
             barrier = new Stack<int>();
 
         public BarrieredStack(int initalCapacity) : base(initalCapacity) =>

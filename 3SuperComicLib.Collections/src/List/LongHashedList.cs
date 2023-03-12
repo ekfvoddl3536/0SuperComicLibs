@@ -383,7 +383,7 @@ namespace SuperComicLib.Collections
             private LongHashedList<T> inst;
             private int index;
             private uint version;
-            private long current; 
+            private long current;
 
             public KeyEnumerator(LongHashedList<T> inst)
             {

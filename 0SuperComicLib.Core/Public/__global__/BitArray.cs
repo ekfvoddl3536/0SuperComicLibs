@@ -34,7 +34,7 @@ namespace SuperComicLib
         {
             FastContract.Requires(other.Values != null);
             FastContract.Requires(other.Values.Length > 0);
-            
+
             Values = (uint[])other.Values.Clone();
         }
 
@@ -63,7 +63,7 @@ namespace SuperComicLib
                 ref uint k = ref Values[bitPosition >> 5];
 
                 uint _set = 1u << (bitPosition & 0x1F);
-                
+
                 k ^= (k & _set) ^ _set;
             }
         }
@@ -73,7 +73,7 @@ namespace SuperComicLib
         public void SetAll(bool value)
         {
             uint val = (uint)~((*(byte*)&value & 1) - 1);
-            
+
             var arr = Values;
             for (int i = arr.Length; --i >= 0;)
                 arr[i] = val;
@@ -207,7 +207,7 @@ namespace SuperComicLib
             return hashCode;
         }
 
-        public override bool Equals(object obj) => 
+        public override bool Equals(object obj) =>
             obj is BitArray other && Equals(other);
         #endregion
 

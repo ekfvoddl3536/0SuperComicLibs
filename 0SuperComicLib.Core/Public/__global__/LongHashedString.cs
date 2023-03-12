@@ -78,29 +78,29 @@ namespace SuperComicLib
         private static unsafe int Hashcode(string data, out int hash1, out int comp, int len)
         {
             comp = 0;
-            
+
             hash1 = (5381 << 16) + 5381;
             int hash2 = hash1;
-            
+
             fixed (char* src = data)
             {
                 int* pint = (int*)src;
-                
+
                 while (len > 2)
                 {
                     hash1 = ((hash1 << 5) + hash1 + (hash1 >> 27)) ^ pint[0];
                     hash2 = ((hash2 << 5) + hash2 + (hash2 >> 27)) ^ pint[1];
 
                     comp = (hash2 - hash1) ^ comp;
-                    
+
                     pint += 2;
                     len -= 4;
                 }
-                
+
                 if (len > 0)
                     hash1 = ((hash1 << 5) + hash1 + (hash1 >> 27)) ^ *pint;
             }
-            
+
             return hash2;
         }
     }

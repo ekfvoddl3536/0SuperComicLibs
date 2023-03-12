@@ -90,7 +90,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// </summary>
         /// <returns><see cref="CapturedArrayref{T}"/> that can later perform a restore of the unique data of the <see cref="arrayref{T}"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static CapturedArrayref<T> Capture<T>(this in arrayref<T> @this) => 
+        public static CapturedArrayref<T> Capture<T>(this in arrayref<T> @this) =>
             new CapturedArrayref<T>(@this);
 
         /// <summary>

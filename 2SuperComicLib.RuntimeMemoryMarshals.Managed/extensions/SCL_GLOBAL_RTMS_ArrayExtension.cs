@@ -21,9 +21,9 @@
 // SOFTWARE.
 
 
-using SuperComicLib.CodeContracts;
-using System.Runtime.CompilerServices;
 using System;
+using System.Runtime.CompilerServices;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib
 {

@@ -32,7 +32,7 @@ namespace SuperComicLib.Arithmetic
             return (uint)(result >> 32);
         }
 
-        public static uint CarrySum(ref uint current, uint carry) => 
+        public static uint CarrySum(ref uint current, uint carry) =>
             (uint)(((ulong)current + carry) >> 32);
 
         public static uint CarryMul(ref uint current, uint mul, uint carry)

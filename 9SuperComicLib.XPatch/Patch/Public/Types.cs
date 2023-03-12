@@ -56,9 +56,9 @@ namespace SuperComicLib.XPatch
                     ? DeclaringType.GetMethod(MethodName, Helper.flag1)
                     : DeclaringType.GetMethod(MethodName, Helper.flag1, null, ArgumentTypes, null);
 
-            return 
-                meth.IsGenericMethod && GenericArguments != null && GenericArguments.Length > 0 
-                ? meth.MakeGenericMethod(GenericArguments) 
+            return
+                meth.IsGenericMethod && GenericArguments != null && GenericArguments.Length > 0
+                ? meth.MakeGenericMethod(GenericArguments)
                 : meth;
         }
 
@@ -104,7 +104,7 @@ namespace SuperComicLib.XPatch
         public TargetMethodInfo(MethodBase oldMethod, MethodInfo newMethod) : this(oldMethod, newMethod, PatchMode.Replace) { }
 
         internal bool IsReady() =>
-            oldMethod == null || 
+            oldMethod == null ||
             newMethod == null ||
             mode == PatchMode.None;
 

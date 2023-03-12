@@ -235,7 +235,7 @@ namespace SuperComicLib.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public _index_node<T> add_after_unsafe(_index_node<T> node, in T value) => 
+        public _index_node<T> add_after_unsafe(_index_node<T> node, in T value) =>
             new _index_node<T>(p_insert_before(_get(_ptr, node.next), value));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -294,7 +294,7 @@ namespace SuperComicLib.Collections
         public void fast_clear()
         {
             _head = _ptr;
-            
+
             *v_next(_head) = default;
             *v_prev(_head) = default;
 

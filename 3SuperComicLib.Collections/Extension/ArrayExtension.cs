@@ -88,7 +88,7 @@ namespace SuperComicLib.Collections
         }
 
         public static IEnumeratorPair<T1, T2> MakePair<T1, T2>(this T1[] array, T2[] other) =>
-            array.Length == other.Length 
+            array.Length == other.Length
             ? new EnumerablePair<T1, T2>(array, other, other.Length)
             : null;
 

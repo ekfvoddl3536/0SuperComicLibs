@@ -54,7 +54,7 @@ namespace SuperComicLib.Collections
         private IStack<T> v;
         private T current;
 
-        public StackPopEnumerable(Stack<T> s) => 
+        public StackPopEnumerable(Stack<T> s) =>
             v = new IStackWrapper<T>(s);
 
         public StackPopEnumerable(IStack<T> s) =>

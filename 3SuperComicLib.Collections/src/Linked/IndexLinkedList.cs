@@ -178,7 +178,7 @@ namespace SuperComicLib.Collections
 
             list_[target_.next].prev = target_.prev;
             list_[target_.prev].next = target_.next;
-            
+
             // clear
             target_.value = default;
 

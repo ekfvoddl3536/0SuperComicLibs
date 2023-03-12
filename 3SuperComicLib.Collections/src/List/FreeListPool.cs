@@ -29,8 +29,8 @@ namespace SuperComicLib.Collections
         private static readonly Queue<List<T>> freeLists = new Queue<List<T>>();
 
         public static List<T> GetOrCreate() =>
-            freeLists.Count > 0 
-            ? freeLists.Dequeue() 
+            freeLists.Count > 0
+            ? freeLists.Dequeue()
             : new List<T>();
 
         public static void Return(List<T> list)

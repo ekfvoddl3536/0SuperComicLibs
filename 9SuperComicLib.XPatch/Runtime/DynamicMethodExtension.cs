@@ -21,15 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using SuperComicLib.Core;
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using static SuperComicLib.XPatch.Helper;
 
 namespace SuperComicLib.XPatch
 {
-    using static Helper;
     public static class DynamicMethodExtension
     {
         private static readonly MethodInfo m_compileMeth = typeof(RuntimeHelpers).GetMethod("_CompileMethod", mflag1);

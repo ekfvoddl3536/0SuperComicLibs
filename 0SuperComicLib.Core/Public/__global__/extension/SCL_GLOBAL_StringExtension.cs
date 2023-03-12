@@ -314,7 +314,7 @@ namespace SuperComicLib
 
         private static unsafe Range Internal_Hashcode(int* pint, int hash1, int hash2, int len)
         {
-            for (int x = len; x > 2; x-= 4)
+            for (int x = len; x > 2; x -= 4)
             {
                 hash1 = ((hash1 << 5) + hash1 + (hash1 >> 27)) ^ pint[0];
                 hash2 = ((hash2 << 5) + hash2 + (hash2 >> 27)) ^ pint[1];

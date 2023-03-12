@@ -18,7 +18,7 @@ namespace SuperComicLib.Collections
 
         #region ienumerator -> map entry
         public static IMapEntryEnumerator<TKey, TValue> AsMapEntryEnumerator<TKey, TValue>(this IEnumerator<Tuple<TKey, TValue>> @this) =>
-            @this is MapEntryEnumeratorTypeWrapper<TKey, TValue> cc 
+            @this is MapEntryEnumeratorTypeWrapper<TKey, TValue> cc
             ? cc._innerEnumerator
             : new MapEntryEnumerable_Tuple<TKey, TValue>(@this);
         public static IMapEntryEnumerator<TKey, TValue> AsMapEntryEnumerator<TKey, TValue>(this IEnumerator<ValueTuple<TKey, TValue>> @this) =>
