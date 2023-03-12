@@ -128,7 +128,6 @@
     <Compile Include="Public\CodeContracts\NoExceptAttribute.cs" />
     <Compile Include="Public\CodeContracts\ValidRangeAttribute.cs" />
     <Compile Include="Public\Core\IntHash.cs" />
-    <Compile Include="Public\IO\UnmanagedStream.cs" />
     <Compile Include="Public\__global__\BitMath.cs" />
     <Compile Include="Public\__global__\BitArray.cs" />
     <Compile Include="Public\__global__\collections\ConstMemory.cs" />

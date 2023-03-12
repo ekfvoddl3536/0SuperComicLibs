@@ -84,6 +84,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="extensions\GLOBAL_SuperComicLib_IO_StreamExtension_MemoryExtension.cs" />
     <Compile Include="extensions\StreamReaderExtension.cs" />
     <Compile Include="extensions\GLOBAL_SuperComicLibCore_IO_NativeSpanExtension.cs" />
     <Compile Include="extensions\GLOBAL_SuperComicLibCore_IO_UnmanagedStreamExtension.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\StringStream.cs" />
     <Compile Include="src\StringStreamOptions.cs" />
+    <Compile Include="src\UnmanagedStream.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\0SuperComicLib.Core\0SuperComicLib.Core.csproj">

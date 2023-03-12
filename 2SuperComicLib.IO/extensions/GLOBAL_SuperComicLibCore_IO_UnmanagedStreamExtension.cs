@@ -65,8 +65,8 @@ namespace SuperComicLib.IO
 
             while (!source.EndOfStream)
             {
-                source.Read(temp_buffer.Source, buffer_end);
-                dest.Write(temp_buffer.Source, buffer_end);
+                var read = source.Read(temp_buffer.Source, buffer_end);
+                dest.Write(temp_buffer.Source, temp_buffer.Source + read);
             }
 
             return true;
