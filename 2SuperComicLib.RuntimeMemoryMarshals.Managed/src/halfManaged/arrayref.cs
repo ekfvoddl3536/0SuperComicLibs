@@ -41,7 +41,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
 
         #region constructor
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal arrayref(IntPtr* pClass, IntPtr* pLength)
+        internal arrayref(void* pClass, void* pLength)
         {
             _pClass = (byte*)pClass;
             _pLength = (byte*)pLength;
@@ -105,6 +105,12 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid, X64Only]
             get => *(long*)_pLength;
         }
+
+        /// <summary>
+        /// Get the length of an array as a <see cref="nuint_t"/>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
+        public nuint_t size() => *(nuint_t*)_pLength;
         #endregion
 
         #region indexer

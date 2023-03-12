@@ -34,14 +34,20 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static NativeSpan<TTo> Cast<TFrom, TTo>(this in NativeSpan<TFrom> @this)
             where TFrom : unmanaged
-            where TTo : unmanaged =>
-            new NativeSpan<TTo>((TTo*)@this.Source, (TTo*)(@this.Source + (long)@this.Length));
+            where TTo : unmanaged
+        {
+            var len_u = (nuint_t)@this.Length * (uint)sizeof(TFrom) / (uint)sizeof(TTo);
+            return new NativeSpan<TTo>((TTo*)@this.Source, (nint_t)len_u);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static NativeConstSpan<TTo> Cast<TFrom, TTo>(this in NativeConstSpan<TFrom> @this)
             where TFrom : unmanaged
-            where TTo : unmanaged =>
-            new NativeConstSpan<TTo>((TTo*)@this._source, (TTo*)(@this._source + (long)@this.Length));
+            where TTo : unmanaged
+        {
+            var len_u = (nuint_t)@this.Length * (uint)sizeof(TFrom) / (uint)sizeof(TTo);
+            return new NativeConstSpan<TTo>((TTo*)@this._source, (nint_t)len_u);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength]
         public static void CopyTo<T>(this in NativeSpan<T> source, in Memory<T> destination) where T : unmanaged

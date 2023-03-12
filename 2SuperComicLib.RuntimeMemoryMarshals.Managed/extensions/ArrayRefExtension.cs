@@ -20,8 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Runtime.CompilerServices;
 using System.Security;
+using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
@@ -49,5 +51,47 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static arrayrefSegment<T> Slice<T>(this in arrayref<T> @this, int startIndex) where T : unmanaged =>
             new arrayrefSegment<T>(@this, startIndex);
+
+        /// <summary>
+        /// Returns a virtually casted semi-managed array.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static arrayrefSegment<TTo> Cast<TFrom, TTo>(this in arrayrefSegment<TFrom> @this)
+        {
+            ref readonly var source = ref @this._source;
+
+            var convert = new arrayref<TTo>(source._pClass, source._pLength);
+
+            var idx_i4 = @this._start * Unsafe.SizeOf<TFrom>() / Unsafe.SizeOf<TTo>();
+            var len_i4 = @this.Length * Unsafe.SizeOf<TFrom>() / Unsafe.SizeOf<TTo>();
+
+            return new arrayrefSegment<TTo>(convert, idx_i4, len_i4);
+        }
+
+        /// <summary>
+        /// Returns a virtually casted semi-managed array.<para/>
+        /// This method does not modify the <see cref="arrayref{T}.Length"/> of the original <see cref="arrayref{T}"/>.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength]
+        public static arrayrefSegment<TTo> Cast<TFrom, TTo>(this in arrayref<TFrom> @this)
+        {
+            var convert = new arrayref<TTo>(@this._pClass, @this._pLength);
+            var len_u = @this.size() * (uint)Unsafe.SizeOf<TFrom>() / (uint)Unsafe.SizeOf<TTo>();
+
+            return new arrayrefSegment<TTo>(convert, 0, (int)len_u);
+        }
+
+        /// <summary>
+        /// Returns a casted semi-managed array.<para/>
+        /// This method modifies the <see cref="arrayref{T}.Length"/> of the original <see cref="arrayref{T}"/>.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength]
+        public static arrayref<TTo> CastDirect<TFrom, TTo>(this in arrayref<TFrom> @this)
+        {
+            var len_u = @this.size() * (uint)Unsafe.SizeOf<TFrom>() / (uint)Unsafe.SizeOf<TTo>();
+            *(int*)@this._pLength = (int)len_u;
+
+            return new arrayref<TTo>(@this._pClass, @this._pLength);
+        }
     }
 }

@@ -32,6 +32,17 @@
     
     .field private initonly native uint _value
 
+    // .ctor
+    .method private hidebysig specialname rtspecialname instance void  .ctor(void* x) cil managed aggressiveinlining
+    {
+        .maxstack 2
+
+        ldarg.0
+        ldarg.1
+        stfld native uint SuperComicLib.nuint_t::_value
+        ret
+    }
+
     .method public hidebysig newslot virtual final instance bool  Equals(valuetype SuperComicLib.nuint_t other) cil managed aggressiveinlining
     {
         .maxstack 2
@@ -439,9 +450,8 @@
     {
         .maxstack 1
 
-        ldarga.s 0
-        call !!1& SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<native int, valuetype SuperComicLib.nuint_t>(!!0&)
-        ldobj SuperComicLib.nuint_t
+        ldarg.0
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -449,9 +459,8 @@
     {
         .maxstack 1
 
-        ldarga.s 0
-        call !!1& SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<native uint, valuetype SuperComicLib.nuint_t>(!!0&)
-        ldobj SuperComicLib.nuint_t
+        ldarg.0
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -601,8 +610,9 @@
     {
         .maxstack 1
 
-        ldarga.s 0
-        ldobj SuperComicLib.nint_t
+        ldarg.0
+        ldfld native uint SuperComicLib.nuint_t::_value
+        newobj instance void SuperComicLib.nint_t::.ctor(void*)
         ret
     }
 
@@ -610,8 +620,9 @@
     {
         .maxstack 1
 
-        ldarga.s 0
-        ldobj SuperComicLib.nuint_t
+        ldarg.0
+        ldfld native int SuperComicLib.nint_t::_value
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
