@@ -21,7 +21,7 @@ Series of libraries that can be used universally for various development.
   
 **Note**: Projects targeting `.NET 5+` cannot be built this way.  
 
-## Method 2
+## Method 2 (_recommend_)
 1. Visit the [Release page](https://github.com/ekfvoddl3536/0SuperComicLibs/releases).
 2. Download the result attached to `Assets` of the latest version tag.
   
