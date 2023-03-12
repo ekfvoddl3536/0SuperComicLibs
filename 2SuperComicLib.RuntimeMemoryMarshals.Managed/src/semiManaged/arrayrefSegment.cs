@@ -33,7 +33,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     /// <summary>
     /// Represents a subarray of the original <see cref="arrayref{T}"/>
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 16)]
     public readonly unsafe struct arrayrefSegment<T> : IEquatable<arrayrefSegment<T>>, IList<T>, IReadOnlyList<T>
     {
         public readonly arrayref<T> _source;

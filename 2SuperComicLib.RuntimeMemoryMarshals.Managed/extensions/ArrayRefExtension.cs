@@ -23,7 +23,6 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Security;
-using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
@@ -53,45 +52,53 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             new arrayrefSegment<T>(@this, startIndex);
 
         /// <summary>
-        /// Returns a virtually casted semi-managed array.
+        /// Returns a casted semi-managed array.<para/>
+        /// This method modifies the values of the original <see cref="arrayref{T}"/> without making a copy.<br/>
+        /// Therefore, do not use the original <see cref="arrayref{T}"/> after calling this method.<para/>
+        /// To avoid <see cref="arrayref{T}.Length"/> loss, back up by calling <see cref="Capture{T}(in arrayref{T})"/> before calling this method.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static arrayrefSegment<TTo> Cast<TFrom, TTo>(this in arrayrefSegment<TFrom> @this)
+        public static arrayref<TTo> CastDirect<TFrom, TTo>(this in arrayref<TFrom> @this)
         {
-            ref readonly var source = ref @this._source;
+            *(IntPtr*)@this._pClass = *(IntPtr*)ILUnsafe.AsPointer(Array.Empty<TTo>());
 
-            var convert = new arrayref<TTo>(source._pClass, source._pLength);
+            var len_u = @this.size() * (uint)Unsafe.SizeOf<TFrom>() / (uint)Unsafe.SizeOf<TTo>();
+            *(nuint_t*)@this._pLength = len_u;
+
+            return new arrayref<TTo>(@this._pClass, @this._pLength);
+        }
+
+        /// <summary>
+        /// Returns a casted semi-managed array segment.<para/>
+        /// This method modifies the values of the original <see cref="arrayref{T}"/> without making a copy.<br/>
+        /// Therefore, do not use the original <see cref="arrayrefSegment{T}"/> after calling this method.<para/>
+        /// To avoid loss of unique data of <see cref="arrayrefSegment{T}"/>, back up by calling <see cref="Capture{T}(in arrayrefSegment{T})"/> before calling this method.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static arrayrefSegment<TTo> CastDirect<TFrom, TTo>(this in arrayrefSegment<TFrom> @this)
+        {
+            var resref = @this._source.CastDirect<TFrom, TTo>();
 
             var idx_i4 = @this._start * Unsafe.SizeOf<TFrom>() / Unsafe.SizeOf<TTo>();
             var len_i4 = @this.Length * Unsafe.SizeOf<TFrom>() / Unsafe.SizeOf<TTo>();
 
-            return new arrayrefSegment<TTo>(convert, idx_i4, len_i4);
+            return new arrayrefSegment<TTo>(resref, idx_i4, len_i4);
         }
 
         /// <summary>
-        /// Returns a virtually casted semi-managed array.<para/>
-        /// This method does not modify the <see cref="arrayref{T}.Length"/> of the original <see cref="arrayref{T}"/>.
+        /// Save the unique data of the current <see cref="arrayref{T}"/> for later restoration.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength]
-        public static arrayrefSegment<TTo> Cast<TFrom, TTo>(this in arrayref<TFrom> @this)
-        {
-            var convert = new arrayref<TTo>(@this._pClass, @this._pLength);
-            var len_u = @this.size() * (uint)Unsafe.SizeOf<TFrom>() / (uint)Unsafe.SizeOf<TTo>();
-
-            return new arrayrefSegment<TTo>(convert, 0, (int)len_u);
-        }
+        /// <returns><see cref="CapturedArrayref{T}"/> that can later perform a restore of the unique data of the <see cref="arrayref{T}"/>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static CapturedArrayref<T> Capture<T>(this in arrayref<T> @this) => 
+            new CapturedArrayref<T>(@this);
 
         /// <summary>
-        /// Returns a casted semi-managed array.<para/>
-        /// This method modifies the <see cref="arrayref{T}.Length"/> of the original <see cref="arrayref{T}"/>.
+        /// Save the unique data of the current <see cref="arrayrefSegment{T}"/> for later restoration.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength]
-        public static arrayref<TTo> CastDirect<TFrom, TTo>(this in arrayref<TFrom> @this)
-        {
-            var len_u = @this.size() * (uint)Unsafe.SizeOf<TFrom>() / (uint)Unsafe.SizeOf<TTo>();
-            *(int*)@this._pLength = (int)len_u;
-
-            return new arrayref<TTo>(@this._pClass, @this._pLength);
-        }
+        /// <returns><see cref="CapturedArrayrefSegment{T}"/> that can later perform a restore of the unique data of the <see cref="arrayrefSegment{T}"/>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static CapturedArrayrefSegment<T> Capture<T>(this in arrayrefSegment<T> @this) =>
+            new CapturedArrayrefSegment<T>(@this);
     }
 }

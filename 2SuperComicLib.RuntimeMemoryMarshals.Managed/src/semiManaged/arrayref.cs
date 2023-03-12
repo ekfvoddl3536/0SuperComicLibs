@@ -304,7 +304,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         internal static void newf_setHeader_dotnet(IntPtr* ptr, int length)
         {
             ptr[0] = IntPtr.Zero;
-            ptr[1] = typeof(T).TypeHandle.Value;
+            ptr[1] = *(IntPtr*)ILUnsafe.AsPointer(Array.Empty<T>());
             ptr[2] = (IntPtr)(uint)length;
         }
 

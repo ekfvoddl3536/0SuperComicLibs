@@ -100,12 +100,14 @@
   <ItemGroup>
     <Compile Include="extensions\ArrayRefExtension.cs" />
     <Compile Include="extensions\ArrayUnsafeGetElementReferenceManagedExtension.cs" />
+    <Compile Include="src\semiManaged\CapturedArrayrefSegment.cs" />
+    <Compile Include="src\semiManaged\CapturedArrayref.cs" />
     <Compile Include="extensions\SCL_GLOBAL_MemoryExtension.cs" />
     <Compile Include="extensions\SCL_GLOBAL_NativeSpanExtension.cs" />
     <Compile Include="extensions\SCL_GLOBAL_NativeSpan_NativeConstSpan_MEMORYEXTENSION.GLOBALIZATION.cs" />
     <Compile Include="extensions\SCL_GLOBAL_NativeSpan_NativeConstSpan_MEMORYEXTENSION.TRIM.cs" />
     <Compile Include="extensions\SCL_GLOBAL_RTMS_ArrayExtension.cs" />
-    <Compile Include="src\halfManaged\arrayrefSegment.cs" />
+    <Compile Include="src\semiManaged\arrayrefSegment.cs" />
     <Compile Include="src\math\CMathi.cs" />
     <Compile Include="src\__scl\MemoryBlock.cs" />
     <Compile Include="src\__scl\ArgValidate.cs" />
@@ -115,7 +117,7 @@
     <Compile Include="src\__scl\iters\_iterator.cs" />
     <Compile Include="src\__scl\NativeConstSpan.cs" />
     <Compile Include="src\__scl\NativeSpan.cs" />
-    <Compile Include="src\halfManaged\stringref.cs" />
+    <Compile Include="src\semiManaged\stringref.cs" />
     <Compile Include="src\__scl\NativeSpanHelper.cs" />
     <Compile Include="_dataClasses\cvaref.cs" />
     <Compile Include="_dataClasses\varef_t.cs" />
@@ -126,7 +128,7 @@
     <Compile Include="extensions\NativeInstanceExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LowLevel\PubMethodTable.cs" />
-    <Compile Include="src\halfManaged\arrayref.cs" />
+    <Compile Include="src\semiManaged\arrayref.cs" />
     <Compile Include="src\attributes\MonoRuntimeNotSupportedAttribute.cs" />
     <Compile Include="src\JITPlatformEnvironment.cs" />
   </ItemGroup>
