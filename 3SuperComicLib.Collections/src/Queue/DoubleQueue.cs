@@ -24,10 +24,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using static SuperComicLib.Collections.Arrays;
 
 namespace SuperComicLib.Collections
 {
+    using static Arrays;
+
     [DebuggerTypeProxy(typeof(EnumerableView<>))]
     [DebuggerDisplay("Count = {Count}")]
     public sealed class DoubleQueue<T> : IEnumerable<T>, IReadOnlyCollection<T>, ICollection

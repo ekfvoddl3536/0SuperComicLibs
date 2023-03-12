@@ -25,10 +25,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using SuperComicLib.Text;
-using static SuperComicLib.DataObject_Helper;
 
 namespace SuperComicLib.DataObject
 {
+    using static DataObject_Helper;
     internal static class DO_Helper
     {
         #region 상수

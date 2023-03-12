@@ -22,10 +22,10 @@
 
 using System;
 using System.Runtime.CompilerServices;
-using static SuperComicLib.Threading.HybridCPU_NativeMethods;
 
 namespace SuperComicLib.Threading
 {
+    using static HybridCPU_NativeMethods;
     public abstract class HybridThreadContext
     {
         protected readonly Delegate m_delegate;

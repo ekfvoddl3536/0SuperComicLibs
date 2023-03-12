@@ -25,10 +25,10 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-using static System.Reflection.BindingFlags;
 
 namespace SuperComicLib.XPatch
 {
+    using static BindingFlags;
     internal static unsafe class Helper
     {
         #region 공개 필드

@@ -22,10 +22,10 @@
 
 using System;
 using System.Runtime.InteropServices;
-using static SuperComicLib.Threading.HybridCPU_NativeMethods;
 
 namespace SuperComicLib.Threading
 {
+    using static HybridCPU_NativeMethods;
     public unsafe static class HybridCPU
     {
         internal static ProcessorCountEx procInfo;
