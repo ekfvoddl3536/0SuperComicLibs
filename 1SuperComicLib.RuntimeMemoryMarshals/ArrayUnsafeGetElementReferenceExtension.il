@@ -33,6 +33,9 @@
        extends [mscorlib]System.Object
 {
 	.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 )
+	.custom instance void [mscorlib]System.Security.SuppressUnmanagedCodeSecurityAttribute::.ctor() = ( 01 00 00 00 )
+	.custom instance void [mscorlib]System.Security.SecurityCriticalAttribute::.ctor() = ( 01 00 00 00 )
+
 
 	.method public hidebysig static !!T&  refdata_dotnet<T>(!!T[] 'array') cil managed aggressiveinlining
 	{
@@ -42,13 +45,11 @@
 		.param [1]
 		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.DisallowNullAttribute::.ctor() = ( 01 00 00 00 )
 	
-		.maxstack 8
+		.maxstack 1
 
 		ldarg.0
-		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!T>>(object)
-		ldflda !0 class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!T>::item
-		sizeof void*
-		add
+		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<class SuperComicLib.RuntimeMemoryMarshals.iffDotnet__asref`1<!!T>>(object)
+		ldflda !0 class SuperComicLib.RuntimeMemoryMarshals.iffDotnet__asref`1<!!T>::item
 		ret
 	}
 
@@ -63,66 +64,15 @@
 		.param [2]
 		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.ValidRangeAttribute::.ctor() = ( 01 00 00 00 )
 	
-		.maxstack 8
+		.maxstack 3
 
 		ldarg.0
-		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!T>>(object)
-		ldflda !0 class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!T>::item
+		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<class SuperComicLib.RuntimeMemoryMarshals.iffDotnet__asref`1<!!T>>(object)
+		ldflda !0 class SuperComicLib.RuntimeMemoryMarshals.iffDotnet__asref`1<!!T>::item
 		ldarg.1
 		sizeof !!T
 		mul
 		add
-		sizeof void*
-		add
-		ret
-	}
-
-	.method public hidebysig static !!T&  refdata_dotnet<T>([in] valuetype ['0SuperComicLib.Core']SuperComicLib.Memory`1<!!T>& 'array') cil managed aggressiveinlining
-	{
-		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 )
-		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.AssumeInputsValidAttribute::.ctor() = ( 01 00 00 00 )
-
-		.param [1]
-		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = (01 00 00 00 )
-		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.DisallowNullAttribute::.ctor() = ( 01 00 00 00 )
-		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.ValidRangeAttribute::.ctor() = ( 01 00 00 00 )
-	
-		.maxstack 8
-
-		ldarg.0
-		ldfld !0[] valuetype ['0SuperComicLib.Core']SuperComicLib.Memory`1<!!T>::_source
-		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!T>>(object)
-		ldflda !0 class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!T>::item
-		ldarg.0
-		ldfld int32 valuetype ['0SuperComicLib.Core']SuperComicLib.Memory`1<!!T>::_start
-		conv.u
-		sizeof !!T
-		mul
-		conv.i
-		add
-		sizeof void*
-		add
-		ret
-	}
-
-	.method public hidebysig static !!T& modreq([mscorlib]System.Runtime.InteropServices.InAttribute) refdata_dotnet<T>([in] valuetype ['0SuperComicLib.Core']SuperComicLib.ConstMemory`1<!!T>& 'array') cil managed aggressiveinlining
-	{
-		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 )
-		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.AssumeInputsValidAttribute::.ctor() = ( 01 00 00 00 )
-
-		.param [0]
-		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = (01 00 00 00 )
-
-		.param [1]
-		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = (01 00 00 00 )
-		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.DisallowNullAttribute::.ctor() = ( 01 00 00 00 )
-		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.ValidRangeAttribute::.ctor() = ( 01 00 00 00 )
-	
-		.maxstack 8
-
-		ldarg.0
-		call !!1& modreq([mscorlib]System.Runtime.InteropServices.InAttribute) SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::ConstAs<valuetype ['0SuperComicLib.Core']SuperComicLib.ConstMemory`1<!!T>, valuetype ['0SuperComicLib.Core']SuperComicLib.Memory`1<!!T>>(!!0&)
-		call !!0& SuperComicLib.RuntimeMemoryMarshals.ArrayUnsafeGetElementReferenceExtension::refdata_dotnet<!!T>(valuetype ['0SuperComicLib.Core']SuperComicLib.Memory`1<!!0>&)
 		ret
 	}
 
@@ -134,13 +84,11 @@
 		.param [1]
 		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.DisallowNullAttribute::.ctor() = ( 01 00 00 00 )
 	
-		.maxstack 8
+		.maxstack 1
 
 		ldarg.0
 		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<class SuperComicLib.RuntimeMemoryMarshals.iffMono__asref`1<!!T>>(object)
 		ldflda !0 class SuperComicLib.RuntimeMemoryMarshals.iffMono__asref`1<!!T>::item
-		sizeof void*
-		add
 		ret
 	}
 
@@ -158,63 +106,13 @@
 		.maxstack 8
 
 		ldarg.0
-		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<class SuperComicLib.RuntimeMemoryMarshals.iffMono__asref`1<!!T>>(object)
-		ldflda !0 class SuperComicLib.RuntimeMemoryMarshals.iffMono__asref`1<!!T>::item
+		conv.u
 		ldarg.1
 		sizeof !!T
 		mul
 		add
-		sizeof void*
+		ldc.i4.s 32
 		add
-		ret
-	}
-
-	.method public hidebysig static !!T&  refdata_mono<T>([in] valuetype ['0SuperComicLib.Core']SuperComicLib.Memory`1<!!T>& 'array') cil managed aggressiveinlining
-	{
-		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 )
-		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.AssumeInputsValidAttribute::.ctor() = ( 01 00 00 00 )
-
-		.param [1]
-		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = (01 00 00 00 )
-		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.DisallowNullAttribute::.ctor() = ( 01 00 00 00 )
-		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.ValidRangeAttribute::.ctor() = ( 01 00 00 00 )
-		
-		.maxstack 8
-
-		ldarg.0
-		ldfld !0[] valuetype ['0SuperComicLib.Core']SuperComicLib.Memory`1<!!T>::_source
-		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<class SuperComicLib.RuntimeMemoryMarshals.iffMono__asref`1<!!T>>(object)
-		ldflda !0 class SuperComicLib.RuntimeMemoryMarshals.iffMono__asref`1<!!T>::item
-		ldarg.0
-		ldfld int32 valuetype ['0SuperComicLib.Core']SuperComicLib.Memory`1<!!T>::_start
-		conv.u
-		sizeof !!T
-		mul
-		conv.i
-		add
-		sizeof void*
-		add
-		ret
-	}
-
-	.method public hidebysig static !!T& modreq([mscorlib]System.Runtime.InteropServices.InAttribute) refdata_mono<T>([in] valuetype ['0SuperComicLib.Core']SuperComicLib.ConstMemory`1<!!T>& 'array') cil managed aggressiveinlining
-	{
-		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 )
-		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.AssumeInputsValidAttribute::.ctor() = ( 01 00 00 00 )
-
-		.param [0]
-		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = (01 00 00 00 )
-
-		.param [1]
-		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = (01 00 00 00 )
-		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.DisallowNullAttribute::.ctor() = ( 01 00 00 00 )
-		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.ValidRangeAttribute::.ctor() = ( 01 00 00 00 )
-	
-		.maxstack 8
-
-		ldarg.0
-		call !!1& modreq([mscorlib]System.Runtime.InteropServices.InAttribute) SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::ConstAs<valuetype ['0SuperComicLib.Core']SuperComicLib.ConstMemory`1<!!T>, valuetype ['0SuperComicLib.Core']SuperComicLib.Memory`1<!!T>>(!!0&)
-		call !!0& SuperComicLib.RuntimeMemoryMarshals.ArrayUnsafeGetElementReferenceExtension::refdata_mono<!!T>(valuetype ['0SuperComicLib.Core']SuperComicLib.Memory`1<!!0>&)
 		ret
 	}
 } // end of 'ArrayUnsafeGetElementReferenceExtension'

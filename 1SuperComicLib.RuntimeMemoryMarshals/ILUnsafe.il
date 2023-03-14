@@ -32,76 +32,51 @@
 .class public abstract auto ansi sealed beforefieldinit SuperComicLib.RuntimeMemoryMarshals.ILUnsafe
        extends [mscorlib]System.Object
 {
+	.custom instance void [mscorlib]System.Security.SuppressUnmanagedCodeSecurityAttribute::.ctor() = ( 01 00 00 00 )
+	.custom instance void [mscorlib]System.Security.SecurityCriticalAttribute::.ctor() = ( 01 00 00 00 )
+
 	.method public hidebysig static !!T  AsClass<class T>(void* 'value') cil managed aggressiveinlining
 	{
 		.maxstack 1
+		.locals (
+            [0] !!T
+        )
 
 		ldarg.0
-		newobj instance void valuetype SuperComicLib.RuntimeMemoryMarshals.iff__asclass`1<!!T>::.ctor(void*)
-		ldfld !0 valuetype SuperComicLib.RuntimeMemoryMarshals.iff__asclass`1<!!T>::item
+		stloc.0
+		ldloc.0
 		ret
 	}
 
-	.method public hidebysig static !!T  AsClass<class T>(uint8& 'value') cil managed aggressiveinlining
+	.method public hidebysig static void*  AsPointer(object 'value') cil managed aggressiveinlining
 	{
 		.maxstack 1
-
-		ldarg.0
-		conv.i
-		newobj instance void valuetype SuperComicLib.RuntimeMemoryMarshals.iff__asclass`1<!!T>::.ctor(void*)
-		ldfld !0 valuetype SuperComicLib.RuntimeMemoryMarshals.iff__asclass`1<!!T>::item
-		ret
-	}
-
-	.method public hidebysig static void*  AsPointer<class T>(!!T 'value') cil managed aggressiveinlining
-	{
-		.maxstack 1
+		.locals (
+			[0] native int
+		)
 		
 		ldarg.0
-		conv.i
+		stloc.0
+		ldloc.0
 		ret
 	}
 
-	.method public hidebysig static void*  AsPointer<class T>(!!T 'value', native int byteOffset) cil managed aggressiveinlining
+	.method public hidebysig static void*  AsPointer(object 'value', native int byteOffset) cil managed aggressiveinlining
 	{
 		.maxstack 2
+		.locals (
+			[0] native int
+		)
 		
 		ldarg.0
-		conv.i
+		stloc.0
+		ldloc.0
 		ldarg.1
 		add
 		ret
 	}
 
-	.method public hidebysig static uint8&  AsRef<class T>(!!T 'value') cil managed aggressiveinlining
-	{
-		.maxstack 2
-		
-		ldarg.0
-		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<uint8>>(object)
-		ldflda !0 class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<uint8>::item
-		sizeof void*
-		conv.i
-		sub
-		ret
-	}
-
-	.method public hidebysig static uint8&  AsRef<class T>(!!T 'value', native int byteOffset) cil managed aggressiveinlining
-	{
-		.maxstack 3
-		
-		ldarg.0
-		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<uint8>>(object)
-		ldflda !0 class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<uint8>::item
-		ldarg.1
-		sizeof void*
-		conv.i
-		sub
-		add
-		ret
-	}
-
-	.method public hidebysig static !!TField&  GetDataRef<class TClass, TField>(!!TClass 'value') cil managed aggressiveinlining
+	.method public hidebysig static !!TField&  GetDataRef<TField>(object class_references) cil managed aggressiveinlining
 	{
 		.maxstack 1
 		
@@ -111,7 +86,7 @@
 		ret
 	}
 
-	.method public hidebysig static !!TField&  GetDataRef<class TClass, TField>(!!TClass 'value', native int byteOffset) cil managed aggressiveinlining
+	.method public hidebysig static !!TField&  GetDataRef<TField>(object class_references, native int byteOffset) cil managed aggressiveinlining
 	{
 		.maxstack 2
 		
@@ -123,7 +98,37 @@
 		ret
 	}
 
-	.method public hidebysig static !!TTo& modreq([mscorlib]System.Runtime.InteropServices.InAttribute) ConstAs<TFrom, TTo>([in] !!TFrom& 'value') cil managed aggressiveinlining
+	.method public hidebysig static !!TField*  GetDataPtr<valuetype .ctor (class [mscorlib]System.ValueType modreq([mscorlib]System.Runtime.InteropServices.UnmanagedType)) TField>(object class_references) cil managed aggressiveinlining
+	{
+		.param type TField
+        .custom instance void System.Runtime.CompilerServices.IsUnmanagedAttribute::.ctor() = ( 01 00 00 00 )
+
+		.maxstack 1
+		
+		ldarg.0
+		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!TField>>(object)
+		ldflda !0 class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!TField>::item
+		conv.u
+		ret
+	}
+
+	.method public hidebysig static !!TField*  GetDataPtr<valuetype .ctor (class [mscorlib]System.ValueType modreq([mscorlib]System.Runtime.InteropServices.UnmanagedType)) TField>(object class_references, native int byteOffset) cil managed aggressiveinlining
+	{
+		.param type TField
+        .custom instance void System.Runtime.CompilerServices.IsUnmanagedAttribute::.ctor() = ( 01 00 00 00 )
+
+		.maxstack 2
+		
+		ldarg.0
+		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!TField>>(object)
+		ldflda !0 class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!TField>::item
+		ldarg.1
+		add
+		conv.u
+		ret
+	}
+
+	.method public hidebysig static !!TTo& modreq([mscorlib]System.Runtime.InteropServices.InAttribute) ReadOnlyAs<TFrom, TTo>([in] !!TFrom& 'value') cil managed aggressiveinlining
 	{
 		.param [0] 
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -134,19 +139,6 @@
 		.maxstack 1
 		
 		ldarg.0
-		ret
-	}
-
-	.method public hidebysig static int32  Compare(object left, object right) cil managed aggressiveinlining
-	{
-		.maxstack 2
-		
-		ldarg.0
-		conv.i
-		ldarg.1
-		conv.i
-		sub
-		conv.i4
 		ret
 	}
 
@@ -180,7 +172,7 @@
 		ret
 	}
 
-	.method public hidebysig static !!T& modreq([mscorlib]System.Runtime.InteropServices.InAttribute) Add<T>([in] !!T& 'value', int32 elementOffset) cil managed aggressiveinlining
+	.method public hidebysig static !!T& modreq([mscorlib]System.Runtime.InteropServices.InAttribute) ReadOnlyAdd<T>([in] !!T& 'value', int32 elementOffset) cil managed aggressiveinlining
 	{
 		.param [0] 
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -204,6 +196,7 @@
 		conv.i4
 		ret
 	}
+
 
 
 

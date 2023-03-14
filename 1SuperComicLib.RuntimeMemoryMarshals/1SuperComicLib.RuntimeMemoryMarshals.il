@@ -94,26 +94,6 @@
 //
 // !============================================================== CLASSES ========================================================!
 
-.class private sequential ansi sealed beforefieldinit SuperComicLib.RuntimeMemoryMarshals.iff__asclass`1<class T>
-       extends [mscorlib]System.ValueType
-{
-	.custom instance void [mscorlib]System.Runtime.CompilerServices.IsByRefLikeAttribute::.ctor() = ( 01 00 00 00 )
-	.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
-
-	.field public initonly !T item
-
-	.method public hidebysig specialname rtspecialname instance void  .ctor(void* source) cil managed aggressiveinlining
-	{
-		.maxstack  8
-		
-		ldarg.0
-		ldarg.1
-		stfld !0 valuetype SuperComicLib.RuntimeMemoryMarshals.iff__asclass`1<!T>::item
-		ret
-	}
-} // end of 'iff__asclass'
-
-
 .class private sequential ansi sealed beforefieldinit SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<T>
     extends [mscorlib]System.Object
 {
@@ -121,14 +101,32 @@
 } // end of 'iff__asref'
 
 
+// dotnet-coreclr array
+.class private sequential ansi sealed beforefieldinit SuperComicLib.RuntimeMemoryMarshals.iffDotnet__asref`1<T>
+    extends [mscorlib]System.Object
+{
+    .field public initonly native int _length
+    .field public !T item
+} // end of 'iffDotnet__asref'
+
+
+// mono array
 .class private sequential ansi sealed beforefieldinit SuperComicLib.RuntimeMemoryMarshals.iffMono__asref`1<T>
     extends [mscorlib]System.Object
 {
 	// I don't know if every object in the mono runtime always has space for 2 native int
+    // [-2] := header (typeHandle?)
+    // [-1] := sync-block (maybe)
+    // [0] := _dummy0 (???)
+    // [1] := _length
+    // [2] := array-data....
+
+    // ???
 	.field public initonly native int _dummy0
-	.field public initonly native int _dummy1
+
+	.field public initonly native int _length
 	.field public !T item
-} // end of 'iff__asref'
+} // end of 'iffMono__asref'
 
 // 레퍼런스 generic에 대한 share가 작용?? -> 어떻게 해결?
 //	원인: 타입 불일치 (또는 예측 불가)에 따른 jit 인라인 불가

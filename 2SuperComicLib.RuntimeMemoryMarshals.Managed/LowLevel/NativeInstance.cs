@@ -62,12 +62,12 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         }
         #endregion
 
+        #region get data reference
         /// <summary>
         /// Gets a field area memory reference at the specified byte offset.
         /// <br/>
         /// It does not perform validation, such as range checking. API for high-performance scenarios.
         /// </summary>
-        #region get data reference
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid, AssumeInputsValid]
         public ref byte GetDataReference([ValidRange] int byteOffset)
         {

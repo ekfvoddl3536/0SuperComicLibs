@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Runtime.CompilerServices;
 using System.Security;
 
@@ -30,12 +31,22 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     public static unsafe class NativeInstanceExtension
     {
         /// <summary>
-        /// Get class reference -OR- read struct data by value
-        /// <br/>
+        /// Read runtime value information for <typeparamref name="T"/>.
+        /// <para/>
+        /// For some scenarios where the type of T, cannot be inferred at compile time.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
+        public static RuntimeTypedValueInfo<T> GetRuntimeValueInfo<T>(this in NativeInstance<T> @this) =>
+            new RuntimeTypedValueInfo<T>(@this._Ptr);
+
+        /// <summary>
+        /// Get class reference -OR- read struct data by value.<br/>
+        /// For some scenarios where <typeparamref name="T"/> is undetermined.
+        /// <para/>
         /// Do not use this method if you know whether the <typeparamref name="T"/> is a class or a struct.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
-        public static T GetValueAutomaticReferenceOrByValue<T>(this in NativeInstance<T> @this)
+        public static T GetValueAny<T>(this in NativeInstance<T> @this)
         {
             if (typeof(T).IsClass)
             {
@@ -47,15 +58,16 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         }
 
         /// <summary>
-        /// Set value direct (class type is not allowed)
-        /// <br/>
+        /// Set value direct (class type is not allowed).<br/>
+        /// For some scenarios where type <typeparamref name="T"/> is undetermined.
+        /// <para/>
         /// Cannot be used when generic type <typeparamref name="T"/> is a class type.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
-        public static void SetValueDirectByValue<T>(this in NativeInstance<T> @this, in T value)
+        public static void SetValueDirect<T>(this in NativeInstance<T> @this, in T value)
         {
             if (typeof(T).IsClass)
-                throw new System.InvalidOperationException("class type is not allowed.");
+                throw new InvalidOperationException("class type is not allowed.");
 
             Unsafe.AsRef<T>(@this._Ptr + (sizeof(void*) << 1)) = value;
         }

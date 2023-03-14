@@ -23,10 +23,12 @@
 #pragma warning disable
 using System;
 using System.Runtime.CompilerServices;
+using System.Security;
 using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
+    [SuppressUnmanagedCodeSecurity, SecurityCritical]
     public static unsafe class ArrayUnsafeGetElementReferenceExtension
     {
         /// <summary>
@@ -43,22 +45,6 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// </summary>
         [AssumeInputsValid, MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T refdata_dotnet<T>([DisallowNull] this T[] array, [ValidRange] IntPtr index) => throw new PlatformNotSupportedException();
-        /// <summary>
-        /// Skip array bounds checking, get reference to relative first element.
-        /// <br/>
-        /// API for high-performance scenarios.
-        /// </summary>
-        [AssumeInputsValid, MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref T refdata_dotnet<T>([DisallowNull, ValidRange] this in Memory<T> array) => throw new PlatformNotSupportedException();
-        /// <summary>
-        /// Skip array bounds checking, get read-only reference to relative first element.
-        /// <br/>
-        /// To index a read-only reference address, use <see cref="ILUnsafe.Add{T}(in T, int)"/>
-        /// <br/>
-        /// API for high-performance scenarios.
-        /// </summary>
-        [AssumeInputsValid, MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref readonly T refdata_dotnet<T>([DisallowNull, ValidRange] this in ConstMemory<T> array) => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// Skip array bounds checking, get reference to first element.
@@ -76,23 +62,5 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// </summary>
         [AssumeInputsValid, MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T refdata_mono<T>([DisallowNull] this T[] array, [ValidRange] IntPtr index) => throw new PlatformNotSupportedException();
-        /// <summary>
-        /// Skip array bounds checking, get reference to relative first element.
-        /// <br/>
-        /// API for high-performance scenarios.
-        /// <seealso href="https://blog.naver.com/ekfvoddl3535/222985670274">refer (KO-KR).</seealso>
-        /// </summary>
-        [AssumeInputsValid, MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref T refdata_mono<T>([DisallowNull, ValidRange] this in Memory<T> array) => throw new PlatformNotSupportedException();
-        /// <summary>
-        /// Skip array bounds checking, get read-only reference to relative first element.
-        /// <br/>
-        /// To index a read-only reference address, use <see cref="ILUnsafe.Add{T}(in T, int)"/>
-        /// <br/>
-        /// API for high-performance scenarios.
-        /// <seealso href="https://blog.naver.com/ekfvoddl3535/222985670274">refer (KO-KR).</seealso>
-        /// </summary>
-        [AssumeInputsValid, MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref readonly T refdata_mono<T>([DisallowNull, ValidRange] this in ConstMemory<T> array) => throw new PlatformNotSupportedException();
     }
 }
