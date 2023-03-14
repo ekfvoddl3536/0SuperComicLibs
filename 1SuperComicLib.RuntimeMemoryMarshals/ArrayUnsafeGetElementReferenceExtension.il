@@ -76,6 +76,8 @@
 		ret
 	}
 
+
+	// HARD-CODING OPTIMZATION, REASON --> 'mono-runtime JIT preformance issue.'
 	.method public hidebysig static !!T&  refdata_mono<T>(!!T[] 'array') cil managed aggressiveinlining
 	{
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 )
@@ -84,14 +86,30 @@
 		.param [1]
 		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.DisallowNullAttribute::.ctor() = ( 01 00 00 00 )
 	
-		.maxstack 1
+		.maxstack 8
 
 		ldarg.0
-		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<class SuperComicLib.RuntimeMemoryMarshals.iffMono__asref`1<!!T>>(object)
-		ldflda !0 class SuperComicLib.RuntimeMemoryMarshals.iffMono__asref`1<!!T>::item
+		conv.u
+		ldc.i4.s 32
+		add
 		ret
 	}
 
+	//	!!! NOTE !!!
+	//	[KR]
+	//		모노 런타임의 최적화 성능은 예상보다 좋지 않았음
+	//		dotnet과 같은 class as를 사용하는 코드에 대해 [*1]의 결과를 만듦
+	//	[*1]
+	//		; mono-runtime JIT performance issue.
+	//		add rax, 20h
+	//		mov ecx, [NUMBER]
+	//		mov ecx, ecx
+	//		shl rcx, 2
+	//		add rax, rcx
+	//		; WTF??
+	//		;	best way -->
+	//		;	mov ecx, NUMBER
+	//		;	lea rax, [rax+rcx*4+20h]
 	.method public hidebysig static !!T&  refdata_mono<T>(!!T[] 'array', native int index) cil managed aggressiveinlining
 	{
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 )

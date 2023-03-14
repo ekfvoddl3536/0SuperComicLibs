@@ -110,23 +110,10 @@
 } // end of 'iffDotnet__asref'
 
 
-// mono array
-.class private sequential ansi sealed beforefieldinit SuperComicLib.RuntimeMemoryMarshals.iffMono__asref`1<T>
-    extends [mscorlib]System.Object
-{
-	// I don't know if every object in the mono runtime always has space for 2 native int
-    // [-2] := header (typeHandle?)
-    // [-1] := sync-block (maybe)
-    // [0] := _dummy0 (???)
-    // [1] := _length
-    // [2] := array-data....
-
-    // ???
-	.field public initonly native int _dummy0
-
-	.field public initonly native int _length
-	.field public !T item
-} // end of 'iffMono__asref'
+// mono array (use constant value 0x20)
+//
+//  !======= DELETED ========!
+//
 
 // 레퍼런스 generic에 대한 share가 작용?? -> 어떻게 해결?
 //	원인: 타입 불일치 (또는 예측 불가)에 따른 jit 인라인 불가
@@ -134,3 +121,6 @@
 //     --> jit 인라인은 되나, 최적화된 소스가 생성이 안됨
 //          --> 해결:   반환 타입을 일치시키는 방식을 사용하되, struct을 사용하는 방식을 취함
 //                      자세한 내용은 blog에 게시된 글을 확인 --> https://blog.naver.com/ekfvoddl3535/223018679855
+//          
+//          --> 새로운 문제, 그리고 해결:
+//              https://blog.naver.com/ekfvoddl3535/223043671536
