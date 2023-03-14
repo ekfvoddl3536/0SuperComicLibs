@@ -30,6 +30,7 @@ using SuperComicLib.Runtime;
 namespace SuperComicLib.XPatch
 {
     using static Utils;
+
     // Refer to https://www.codeproject.com/Articles/14058/Parsing-the-IL-of-a-Method-Body
     public unsafe class MethodBodyEditor : IDisposable
     {

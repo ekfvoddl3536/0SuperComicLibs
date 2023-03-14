@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using SuperComicLib.Core;
 
 namespace SuperComicLib.Runtime
 {
@@ -141,7 +140,7 @@ namespace SuperComicLib.Runtime
             while (--x >= 0)
             {
                 MethodInfo info = vs[x];
-                if (info.Name == name && 
+                if (info.Name == name &&
                     info.ReturnType == returnType &&
                     info.GetParameters()[0].ParameterType == parameterType)
                     return info;
@@ -173,7 +172,7 @@ namespace SuperComicLib.Runtime
         {
             string tmp = type.Name;
             char c = tmp[0];
-            return 
+            return
                 c != 'S' && tmp[1] != 'i' && // 'Si'ngle <-> 'S'Byte
                 c != 'D'; // 'D'ouble
         }

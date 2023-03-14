@@ -59,9 +59,9 @@ namespace SuperComicLib.XPatch
 
             int size = Marshal.SizeOf(retType);
             return
-                size >= 3 && 
-                size != 4 && 
-                size != 8 && 
+                size >= 3 &&
+                size != 4 &&
+                size != 8 &&
                 hasThisPtr;
         }
 

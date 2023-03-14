@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 namespace SuperComicLib.Collections
 {
-    internal sealed unsafe class RawIteratorEnumerator<T> : IEnumerator<T> 
+    internal sealed unsafe class RawIteratorEnumerator<T> : IEnumerator<T>
         where T : unmanaged
     {
         private readonly T* start;

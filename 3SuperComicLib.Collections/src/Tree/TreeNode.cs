@@ -64,7 +64,7 @@ namespace SuperComicLib.Collections
         {
             TreeNode<T> _next = null;
             TreeNode<T> _curr = child_tail;
-            
+
             while (_curr != null)
             {
                 if (comparer.Equals(value, _curr.Value))
@@ -78,7 +78,7 @@ namespace SuperComicLib.Collections
                     return true;
                 }
 
-                _next = _curr; 
+                _next = _curr;
                 _curr = _curr.prev;
             }
 

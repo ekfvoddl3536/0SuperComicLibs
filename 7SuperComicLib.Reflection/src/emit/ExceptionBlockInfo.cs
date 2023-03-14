@@ -39,8 +39,8 @@ namespace SuperComicLib.Runtime
         {
             int result = IntHash.Combine(7, (int)blockType);
             return
-                catchType != null 
-                ? IntHash.Combine(result, catchType.GetHashCode()) 
+                catchType != null
+                ? IntHash.Combine(result, catchType.GetHashCode())
                 : result;
         }
 

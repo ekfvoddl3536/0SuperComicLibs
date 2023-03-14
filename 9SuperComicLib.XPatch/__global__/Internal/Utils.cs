@@ -96,38 +96,38 @@ namespace SuperComicLib.XPatch
                         break;
 
                     case OperandType.InlineField:
-                    {
-                        FieldInfo info = (FieldInfo)il.operand;
-                        strb.Append($" {info.FieldType.Name.ToLower()} {info.DeclaringType.Name}::{info.Name}");
-                    }
-                    break;
+                        {
+                            FieldInfo info = (FieldInfo)il.operand;
+                            strb.Append($" {info.FieldType.Name.ToLower()} {info.DeclaringType.Name}::{info.Name}");
+                        }
+                        break;
 
                     case OperandType.InlineMethod:
-                    {
-                        if (il.operand is MethodInfo temp)
                         {
-                            if (temp.IsStatic == false)
-                                strb.Append($" instance");
-                            strb.Append($" {temp.ReturnType.Name.ToLower()} {temp.DeclaringType.Name}::{temp.Name}()");
+                            if (il.operand is MethodInfo temp)
+                            {
+                                if (temp.IsStatic == false)
+                                    strb.Append($" instance");
+                                strb.Append($" {temp.ReturnType.Name.ToLower()} {temp.DeclaringType.Name}::{temp.Name}()");
+                            }
+                            else
+                            {
+                                ConstructorInfo info = (ConstructorInfo)il.operand;
+                                if (info.IsStatic == false)
+                                    strb.Append($" instance");
+                                strb.Append($" void {info.DeclaringType.Name}::.ctor()");
+                            }
                         }
-                        else
-                        {
-                            ConstructorInfo info = (ConstructorInfo)il.operand;
-                            if (info.IsStatic == false)
-                                strb.Append($" instance");
-                            strb.Append($" void {info.DeclaringType.Name}::.ctor()");
-                        }
-                    }
-                    break;
+                        break;
 
                     case OperandType.InlineSig:
-                    {
-                        if (il.operand is SignatureHelper temp)
-                            strb.Append($" {temp}");
-                        else
-                            strb.Append($" meta_{(int)il.operand:X4}");
-                    }
-                    break;
+                        {
+                            if (il.operand is SignatureHelper temp)
+                                strb.Append($" {temp}");
+                            else
+                                strb.Append($" meta_{(int)il.operand:X4}");
+                        }
+                        break;
 
                     case OperandType.InlineString:
                         strb.Append($" \"{(string)il.operand}\"");
@@ -138,13 +138,13 @@ namespace SuperComicLib.XPatch
                         break;
 
                     case OperandType.InlineTok:
-                    {
-                        if (il.operand is Type temp)
-                            strb.Append($" {temp.FullName}");
-                        else
-                            strb.Append($" 0x{(int)il.operand:X4}");
-                    }
-                    break;
+                        {
+                            if (il.operand is Type temp)
+                                strb.Append($" {temp.FullName}");
+                            else
+                                strb.Append($" 0x{(int)il.operand:X4}");
+                        }
+                        break;
 
                     case OperandType.InlineType:
                         strb.Append($" {((Type)il.operand).FullName}");

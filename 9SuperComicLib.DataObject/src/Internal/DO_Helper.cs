@@ -20,12 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using SuperComicLib.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text;
+using SuperComicLib.Text;
 
 namespace SuperComicLib.DataObject
 {
@@ -84,10 +83,12 @@ namespace SuperComicLib.DataObject
 #if DEBUG
         public static void Debug(Type type, string option_text)
         {
-            MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(option_text));
-            System.Diagnostics.Debug.WriteLine($"SCL::DataObject, MemoryStream -> {nameof(option_text)} ({nameof(Encoding.UTF8)})");
+            var encoding = System.Text.Encoding.UTF8;
 
-            StreamReader sr = new StreamReader(ms, Encoding.UTF8);
+            MemoryStream ms = new MemoryStream(encoding.GetBytes(option_text));
+            System.Diagnostics.Debug.WriteLine($"SCL::DataObject, MemoryStream -> {nameof(option_text)} ({nameof(System.Text.Encoding.UTF8)})");
+
+            StreamReader sr = new StreamReader(ms, encoding);
             System.Diagnostics.Debug.WriteLine($"SCL::DataObject, StreamReader -> {nameof(ms)} (local [0])");
 
             string header = sr.ReadLine();
@@ -240,9 +241,9 @@ namespace SuperComicLib.DataObject
 
         private static void Write(StreamWriter wr, FieldInfo fd)
         {
-            string name = 
-                fd.GetCustomAttribute<MarkAsNameAttribute>() is MarkAsNameAttribute attrb 
-                ? attrb.opt_name 
+            string name =
+                fd.GetCustomAttribute<MarkAsNameAttribute>() is MarkAsNameAttribute attrb
+                ? attrb.opt_name
                 : fd.Name;
 
             if (fd.GetCustomAttribute<SetDescAttribute>() is SetDescAttribute desc)

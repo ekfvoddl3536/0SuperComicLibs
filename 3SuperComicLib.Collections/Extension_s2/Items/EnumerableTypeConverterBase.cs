@@ -8,7 +8,7 @@ namespace SuperComicLib.Collections
     {
         protected readonly IEnumerator<TIn> _innerEnumerator;
 
-        protected EnumerableTypeConverterBase(IEnumerable<TIn> collection) => 
+        protected EnumerableTypeConverterBase(IEnumerable<TIn> collection) =>
             _innerEnumerator = collection.GetEnumerator();
         protected EnumerableTypeConverterBase(IEnumerator<TIn> innerEnumerator) =>
             _innerEnumerator = innerEnumerator;

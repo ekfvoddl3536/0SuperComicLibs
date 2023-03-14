@@ -172,7 +172,7 @@ namespace SuperComicLib
             ulong temp = left - right;
             return right + (temp & (ulong)((long)temp >> 63));
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Max(this ulong left, ulong right)
         {

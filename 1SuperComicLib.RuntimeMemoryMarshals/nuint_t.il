@@ -211,7 +211,7 @@
         ldarg.1
         ldfld native uint SuperComicLib.nuint_t::_value
         add
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -224,7 +224,7 @@
         ldarg.1
         ldfld native uint SuperComicLib.nuint_t::_value
         sub
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -237,7 +237,7 @@
         ldarg.1
         ldfld native uint SuperComicLib.nuint_t::_value
         mul
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -250,7 +250,7 @@
         ldarg.1
         ldfld native uint SuperComicLib.nuint_t::_value
         div
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -263,7 +263,7 @@
         ldarg.1
         ldfld native uint SuperComicLib.nuint_t::_value
         rem
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -281,7 +281,7 @@
         sub
         and
         shl
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -299,7 +299,7 @@
         sub
         and
         shr
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -312,7 +312,7 @@
         ldarg.1
         ldfld native uint SuperComicLib.nuint_t::_value
         and
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -325,7 +325,7 @@
         ldarg.1
         ldfld native uint SuperComicLib.nuint_t::_value
         or
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -338,7 +338,7 @@
         ldarg.1
         ldfld native uint SuperComicLib.nuint_t::_value
         xor
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -351,7 +351,7 @@
         ldc.i4.0
         conv.u
         ceq
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -362,7 +362,7 @@
         ldarg.0
         ldfld native uint SuperComicLib.nuint_t::_value
         not
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -373,7 +373,7 @@
         ldarg.0
         ldfld native uint SuperComicLib.nuint_t::_value
         neg
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -394,7 +394,7 @@
         ldc.i4.1
         conv.u
         add
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -407,7 +407,7 @@
         ldc.i4.1
         conv.u
         sub
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -417,7 +417,7 @@
         
         ldarg.0
         conv.u
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -470,7 +470,7 @@
 
         ldarg.0
         conv.u
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Explicit(native int)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -480,7 +480,7 @@
 
         ldarg.0
         conv.u
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -490,7 +490,7 @@
 
         ldarg.0
         conv.u
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Explicit(native int)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -500,7 +500,7 @@
 
         ldarg.0
         conv.u
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 
@@ -659,7 +659,7 @@
         .maxstack 1
 
         ldarg.0
-        call valuetype SuperComicLib.nuint_t SuperComicLib.nuint_t::op_Implicit(native uint)
+        newobj instance void SuperComicLib.nuint_t::.ctor(void*)
         ret
     }
 }

@@ -65,9 +65,9 @@ namespace SuperComicLib.Runtime
             if (init_x == 0 && init_p == 0)
                 return null;
 
-            CHashSet<int> xdone = 
-                init_x == 0 
-                ? null 
+            CHashSet<int> xdone =
+                init_x == 0
+                ? null
                 : new CHashSet<int>(init_x);
 
             StringBuilder sb = new StringBuilder(t.FullName);
@@ -121,7 +121,7 @@ namespace SuperComicLib.Runtime
         {
             Type[] vs = nb.ParaTypes;
             ILGenerator g = tb.DefineMethod(nb.Name, mattrb, cc, nb.RetType, vs).GetILGenerator();
-            
+
             int max = nb.ParaLength;
             for (int x = 0; x < max;)
                 if (vs[x].IsByRef)
@@ -137,8 +137,8 @@ namespace SuperComicLib.Runtime
         {
             ILGenerator g = tb.DefineMethod(mi.Name, mattrb, cc, mi.ReturnType, null).GetILGenerator();
             g.Emit(
-                byref 
-                    ? OpCodes.Ldsflda 
+                byref
+                    ? OpCodes.Ldsflda
                     : OpCodes.Ldsfld,
                 fd);
             g.Emit(OpCodes.Ret);
@@ -164,8 +164,8 @@ namespace SuperComicLib.Runtime
 
             sb.AppendLine("------- END INFOMATION -------");
 
-            return 
-                new Exception($"Number of methods not implemented: {size - xdone.Count}", 
+            return
+                new Exception($"Number of methods not implemented: {size - xdone.Count}",
                     new Exception(sb.ToString()));
         }
 

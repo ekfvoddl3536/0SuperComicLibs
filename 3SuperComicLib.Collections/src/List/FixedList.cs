@@ -42,7 +42,7 @@ namespace SuperComicLib.Collections
             arr = new T[capacity];
         }
 
-        public T this[int index] 
+        public T this[int index]
         {
             get => arr[index];
             set => arr[index] = value;
@@ -87,7 +87,7 @@ namespace SuperComicLib.Collections
             return -1;
         }
 
-        public void CopyTo(T[] array, int arrayIndex) => 
+        public void CopyTo(T[] array, int arrayIndex) =>
             Array.Copy(arr, 0, array, arrayIndex, count);
 
         public bool Remove(T item) =>

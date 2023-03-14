@@ -96,12 +96,12 @@
       <Project>{1674b047-ca4c-44a1-9d39-211e38c800dc}</Project>
       <Name>0SuperComicLib.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\0SuperComicLib.Text\1SuperComicLib.Text.csproj">
+    <ProjectReference Include="..\1SuperComicLib.Text\1SuperComicLib.Text.csproj">
       <Project>{0af049d3-d6b3-4461-a768-83c9491d3da9}</Project>
       <Name>1SuperComicLib.Text</Name>
     </ProjectReference>
-    <ProjectReference Include="..\2SuperComicLib.IO\3SuperComicLib.IO.csproj">
-      <Project>{18922299-c168-493f-b57f-67f0eda4cc24}</Project>
+    <ProjectReference Include="..\3SuperComicLib.IO\3SuperComicLib.IO.csproj">
+      <Project>{fedc0e9a-b216-48f6-978b-f4952a32d14c}</Project>
       <Name>3SuperComicLib.IO</Name>
     </ProjectReference>
   </ItemGroup>

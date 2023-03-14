@@ -89,7 +89,7 @@ namespace SuperComicLib.XPatch
                 System.Diagnostics.Debug.WriteLine(exc.ToString());
                 System.Diagnostics.Debugger.Break();
 #else
-            catch 
+            catch
             {
 #endif
                 return null;

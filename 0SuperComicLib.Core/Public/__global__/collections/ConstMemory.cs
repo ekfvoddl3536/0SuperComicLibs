@@ -153,6 +153,9 @@ namespace SuperComicLib
         #region special method
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T GetPinnableReference() => ref _source[_start];
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T[] DangerousGetArray() => _source;
         #endregion
 
         #region interface impl (explicit)

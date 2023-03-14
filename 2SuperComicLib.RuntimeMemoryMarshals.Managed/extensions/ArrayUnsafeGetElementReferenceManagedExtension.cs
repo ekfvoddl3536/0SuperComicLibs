@@ -27,22 +27,28 @@ using System.Security;
 
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
-    [SuppressUnmanagedCodeSecurity]
+    [SuppressUnmanagedCodeSecurity, SecurityCritical]
     public static unsafe class ArrayUnsafeGetElementReferenceManagedInt32IndexMOVRRExtension
     {
         // :::NOTE:::
         //  아마도, mov r32/r32 연산이 movsxd 보다 조금 더 빠를 것입니다.
 
+        #region dotnet
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T refdata_dotnet<T>(this T[] array, int index) => ref array.refdata_dotnet((IntPtr)(uint)index);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref T refdata_dotnet<T>(this T[] array, uint index) => ref array.refdata_dotnet((IntPtr)index);
+        #endregion
+
+        #region mono
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T refdata_mono<T>(this T[] array, int index) => ref array.refdata_mono((IntPtr)(uint)index);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref T refdata_dotnet<T>(this T[] array, uint index) => ref array.refdata_dotnet((IntPtr)index);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T refdata_mono<T>(this T[] array, uint index) => ref array.refdata_mono((IntPtr)index);
+        #endregion
 
+        #region auto-detect
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T refdata<T>(this T[] array) =>
             ref JITPlatformEnvironment.IsRunningOnMono
@@ -66,5 +72,6 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             ref JITPlatformEnvironment.IsRunningOnMono
             ? ref refdata_mono(array, index)
             : ref refdata_dotnet(array, index);
+        #endregion
     }
 }

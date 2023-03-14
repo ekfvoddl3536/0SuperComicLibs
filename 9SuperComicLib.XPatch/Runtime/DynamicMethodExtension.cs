@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using SuperComicLib.Core;
 using System;
 using System.Reflection;
 using System.Reflection.Emit;

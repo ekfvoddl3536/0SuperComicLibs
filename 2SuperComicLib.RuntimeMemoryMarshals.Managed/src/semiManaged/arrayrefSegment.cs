@@ -144,7 +144,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
 
         #region operator
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(in arrayrefSegment<T> left, in arrayrefSegment<T> right) => left._source == right._source && (ILUnsafe.ConstAs<int, long>(left._start) ^ ILUnsafe.ConstAs<int, long>(right._start)) == 0;
+        public static bool operator ==(in arrayrefSegment<T> left, in arrayrefSegment<T> right) => left._source == right._source && (ILUnsafe.ReadOnlyAs<int, long>(left._start) ^ ILUnsafe.ReadOnlyAs<int, long>(right._start)) == 0;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(in arrayrefSegment<T> left, in arrayrefSegment<T> right) => !(left == right);
         #endregion

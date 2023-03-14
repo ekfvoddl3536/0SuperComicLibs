@@ -24,14 +24,17 @@
 #pragma warning disable CS1591
 using System;
 using System.Runtime.CompilerServices;
-using SuperComicLib.CodeContracts;
+using System.Security;
 
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
     /// <summary>
     /// Contains generic, low-level functionality for manipulating managed and unmanaged pointers,
     /// that assist '<see href="System.Runtime.CompilerServices.Unsafe"/>'
+    /// <para/>
+    /// Universal support for <see href="https://github.com/dotnet/runtime">dotnet-CoreCLR</see> and <see href="https://github.com/mono/mono">Mono</see> runtimes.
     /// </summary>
+    [SuppressUnmanagedCodeSecurity, SecurityCritical]
     public static unsafe class ILUnsafe
     {
         /// <summary>
@@ -41,13 +44,6 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T AsClass<T>(void* value) where T : class => throw new PlatformNotSupportedException();
-        /// <summary>
-        /// Convert a reference address to a managed class.
-        /// <br/>
-        /// <c>T cls = (T)(void*)value</c>
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T AsClass<T>(ref byte value) where T : class => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// Get the instance address of the managed class.
@@ -55,29 +51,14 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <c>void* cls = (void*)value</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* AsPointer<T>(T value) where T : class => throw new PlatformNotSupportedException();
+        public static void* AsPointer(object value) => throw new PlatformNotSupportedException();
         /// <summary>
         /// Get the instance address of the managed class.
         /// <br/>
         /// <c>void* cls = (byte*)value + byteOffset</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* AsPointer<T>(T value, IntPtr byteOffset) where T : class => throw new PlatformNotSupportedException();
-
-        /// <summary>
-        /// Get the instance address of the managed class.
-        /// <br/>
-        /// <c>ref byte cls = ref (*byte*)value</c>
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref byte AsRef<T>(T value) where T : class => throw new PlatformNotSupportedException();
-        /// <summary>
-        /// Get the instance address of the managed class.
-        /// <br/>
-        /// <c>ref byte cls = ref *((byte*)value + byteOffset)</c>
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref byte AsRef<T>(T value, IntPtr byteOffset) where T : class => throw new PlatformNotSupportedException();
+        public static void* AsPointer(object value, IntPtr byteOffset) => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// Get a reference to the instance data.
@@ -85,26 +66,35 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <c>ref TField cls = ref *(TField*)value.firstFieldData</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref TField GetDataRef<TClass, TField>(TClass value) where TClass : class => throw new PlatformNotSupportedException();
+        public static ref TField GetDataRef<TField>(object class_reference) => throw new PlatformNotSupportedException();
         /// <summary>
         /// Get a reference to the instance data.
         /// <br/>
         /// <c>ref TField cls = ref *(TField*)((byte*)value.firstFieldData + byteOffset)</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref TField GetDataRef<TClass, TField>(TClass value, IntPtr byteOffset) where TClass : class => throw new PlatformNotSupportedException();
+        public static ref TField GetDataRef<TField>(object class_reference, IntPtr byteOffset) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// Get a pointer to the instance data.
+        /// <br/>
+        /// <c>TField* cls = (TField*)value.firstFieldData</c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TField* GetDataPtr<TField>(object class_reference) where TField : unmanaged => throw new PlatformNotSupportedException();
+        /// <summary>
+        /// Get a pointer to the instance data.
+        /// <br/>
+        /// <c>TField* cls = (TField*)((byte*)value.firstFieldData + byteOffset)</c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TField* GetDataPtr<TField>(object class_reference, IntPtr byteOffset) where TField : unmanaged => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// Convert type
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref readonly TTo ConstAs<TFrom, TTo>(in TFrom source) => throw new PlatformNotSupportedException();
-
-        /// <summary>
-        /// Reference address value compare
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int Compare(object left, object right) => throw new PlatformNotSupportedException();
+        public static ref readonly TTo ReadOnlyAs<TFrom, TTo>(in TFrom source) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T AddByteOffset<T>(void* source, int byteOffset) => throw new PlatformNotSupportedException();
@@ -113,13 +103,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public static ref T Add<T>(void* source, int elementOffset, int addByteOffset) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref readonly T Add<T>(in T source, int elementOffset) => throw new PlatformNotSupportedException();
-
-        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        // public static T* Add<T>(T* source, nint_t index) where T : unmanaged => throw new PlatformNotSupportedException();
-        // 
-        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        // public static T* Sub<T>(T* source, nint_t index) where T : unmanaged => throw new PlatformNotSupportedException();
+        public static ref readonly T ReadOnlyAdd<T>(in T source, int elementOffset) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ConvI4(bool value) => throw new PlatformNotSupportedException();

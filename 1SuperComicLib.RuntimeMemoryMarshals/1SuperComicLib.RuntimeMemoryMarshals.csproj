@@ -116,6 +116,9 @@
       <Name>0SuperComicLib.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="CompilerGeneratedClasses.il" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"$(ProjectDir)scbuild.exe" cil "$(ProjectPath)" /targetGroup:\"$(ConfigurationName)|$(PlatformName)\"</PostBuildEvent>

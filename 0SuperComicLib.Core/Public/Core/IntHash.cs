@@ -44,7 +44,7 @@ namespace SuperComicLib.Core
         /// simplest. not special
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.PreserveSig)]
-        public static int Combine(int value, int hashcode, int key) => 
+        public static int Combine(int value, int hashcode, int key) =>
             unchecked((key | 1) * value + hashcode);
     }
 }

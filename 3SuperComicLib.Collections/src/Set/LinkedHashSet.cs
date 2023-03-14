@@ -78,7 +78,7 @@ namespace SuperComicLib.Collections
 
         public int Capacity => buckets.Length;
 
-        public LinkedNode<T> First=> m_head;
+        public LinkedNode<T> First => m_head;
 
         public LinkedNode<T> Last => m_head?.m_prev;
 

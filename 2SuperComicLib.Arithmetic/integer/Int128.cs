@@ -192,13 +192,13 @@ namespace SuperComicLib.Arithmetic
 
         public static implicit operator Int128(uint v) => new Int128(0, 0, 0, v);
         public static implicit operator Int128(ulong v) => new Int128(0, v);
-        public static implicit operator Int128(int v) => 
+        public static implicit operator Int128(int v) =>
             v < 0
             ? new Int128(-1, uint.MaxValue, uint.MaxValue, (uint)v)
             : new Int128(0, 0, 0, (uint)v);
-        public static implicit operator Int128(long v) => 
-            v < 0 
-            ? new Int128(-1L, (ulong)v) 
+        public static implicit operator Int128(long v) =>
+            v < 0
+            ? new Int128(-1L, (ulong)v)
             : new Int128(0L, (ulong)v);
         #endregion
 

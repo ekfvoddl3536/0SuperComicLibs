@@ -23,7 +23,6 @@
 
 #pragma warning disable CS0809 // 사용되는 멤버를 재정의하여 사용하지 않음으로 표시
 using System;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using SuperComicLib.CodeContracts;
@@ -114,7 +113,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public const_reverse_iterator<T> rend() => new const_reverse_iterator<T>(_source - 1);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining), EditorBrowsable(EditorBrowsableState.Never)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T* DangerousGetPointer() => _source;
         #endregion
 

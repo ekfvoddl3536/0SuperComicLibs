@@ -20,11 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using SuperComicLib.Threading;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using SuperComicLib.Threading;
 
 namespace SuperComicLib.Collections.Concurrent
 {

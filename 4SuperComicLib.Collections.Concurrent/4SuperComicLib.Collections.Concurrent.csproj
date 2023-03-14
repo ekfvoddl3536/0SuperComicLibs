@@ -93,13 +93,13 @@
       <Project>{1674b047-ca4c-44a1-9d39-211e38c800dc}</Project>
       <Name>0SuperComicLib.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\1SuperComicLib.Threading\1SuperComicLib.Threading.csproj">
+      <Project>{f7e4f9d9-6fc9-468f-a249-9776a3dd5a62}</Project>
+      <Name>1SuperComicLib.Threading</Name>
+    </ProjectReference>
     <ProjectReference Include="..\3SuperComicLib.Collections\3SuperComicLib.Collections.csproj">
       <Project>{2c7bf115-111a-46b3-9721-a1761928b6cb}</Project>
       <Name>3SuperComicLib.Collections</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\4SuperComicLib.Threading\1SuperComicLib.Threading.csproj">
-      <Project>{f7e4f9d9-6fc9-468f-a249-9776a3dd5a62}</Project>
-      <Name>1SuperComicLib.Threading</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

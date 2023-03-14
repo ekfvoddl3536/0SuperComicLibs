@@ -133,7 +133,7 @@ namespace SuperComicLib
             char* pdi = psi + (long)in_length;
 
             var start = ClampStart_char(psi, pdi, trimChar);
-            
+
             inout_src = psi + (long)start;
             return ClampEnd_char(pdi - 1, inout_src - 1, trimChar);
         }

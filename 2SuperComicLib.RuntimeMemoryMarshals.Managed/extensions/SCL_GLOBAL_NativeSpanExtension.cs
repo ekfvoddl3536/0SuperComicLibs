@@ -24,7 +24,6 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Security;
 using SuperComicLib.CodeContracts;
-using SuperComicLib.RuntimeMemoryMarshals;
 
 namespace SuperComicLib
 {
@@ -52,10 +51,10 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength]
         public static void CopyTo<T>(this in NativeSpan<T> source, in Memory<T> destination) where T : unmanaged
         {
-            if (source.Source == null) 
+            if (source.Source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            if (destination._source == null) 
+            if (destination._source == null)
                 throw new ArgumentNullException(nameof(destination));
 
             if ((destination._start | destination.Length) < 0 ||

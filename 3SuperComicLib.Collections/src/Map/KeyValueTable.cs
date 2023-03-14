@@ -56,13 +56,13 @@ namespace SuperComicLib.Collections
             Values[idx++] = value;
         }
 
-        public IEnumeratorPair<TKey, TValue> GetEnumeratorPair() => 
+        public IEnumeratorPair<TKey, TValue> GetEnumeratorPair() =>
             new EnumerablePair<TKey, TValue>(Keys, Values, m_index);
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() =>
             new InnerEnumerator(this);
 
-        IEnumerator IEnumerable.GetEnumerator() => 
+        IEnumerator IEnumerable.GetEnumerator() =>
             GetEnumerator();
 
         private sealed class InnerEnumerator : IEnumerator<KeyValuePair<TKey, TValue>>
