@@ -31,6 +31,7 @@
 {
   .ver 3:5:0:0
 }
+
 .assembly '1SuperComicLib.RuntimeMemoryMarshals'
 {
   .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilationRelaxationsAttribute::.ctor(int32) = ( 01 00 08 00 00 00 00 00 ) 
@@ -57,7 +58,8 @@
   .custom instance void [mscorlib]System.Runtime.InteropServices.GuidAttribute::.ctor(string) = ( 01 00 24 36 35 34 36 38 38 64 32 2D 65 61 38 32   // ..$654688d2-ea82
                                                                                                   2D 34 37 66 38 2D 39 35 65 39 2D 61 65 30 31 38   // -47f8-95e9-ae018
                                                                                                   35 34 32 38 37 31 34 00 00 )                      // 5428714..
-  .custom instance void [mscorlib]System.Reflection.AssemblyFileVersionAttribute::.ctor(string) = ( 01 00 07 31 2E 30 2E 30 2E 30 00 00 )             // ...1.0.0.0..
+  .custom instance void [mscorlib]System.Reflection.AssemblyVersionAttribute::.ctor(string) = ( 01 00 07 33 2E 30 2E 30 2E 30 00 00 )             // ...3.0.0.0..
+  .custom instance void [mscorlib]System.Reflection.AssemblyFileVersionAttribute::.ctor(string) = ( 01 00 07 33 2E 30 2E 30 2E 30 00 00 )             // ...3.0.0.0..
   .custom instance void [mscorlib]System.Runtime.Versioning.TargetFrameworkAttribute::.ctor(string) = ( 01 00 1C 2E 4E 45 54 46 72 61 6D 65 77 6F 72 6B   // ....NETFramework
                                                                                                         2C 56 65 72 73 69 6F 6E 3D 76 34 2E 37 2E 31 01   // ,Version=v4.7.1.
                                                                                                         00 54 0E 14 46 72 61 6D 65 77 6F 72 6B 44 69 73   // .T..FrameworkDis

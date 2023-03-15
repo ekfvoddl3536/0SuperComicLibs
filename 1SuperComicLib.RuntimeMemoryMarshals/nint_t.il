@@ -504,18 +504,6 @@
         ret
     }
 
-    .method public hidebysig specialname static bool op_Implicit(valuetype SuperComicLib.nint_t a) cil managed aggressiveinlining
-    {
-        .maxstack 2
-        
-        ldarg.0
-        ldfld native int SuperComicLib.nint_t::_value
-        ldc.i4.0
-        conv.i
-        cgt.un
-        ret
-    }
-
     .method public hidebysig specialname static int8 op_Explicit(valuetype SuperComicLib.nint_t a) cil managed aggressiveinlining
     {
         .maxstack 1
@@ -586,7 +574,7 @@
         ret
     }
 
-    .method public hidebysig specialname static int64 op_Explicit(valuetype SuperComicLib.nint_t a) cil managed aggressiveinlining
+    .method public hidebysig specialname static int64 op_Implicit(valuetype SuperComicLib.nint_t a) cil managed aggressiveinlining
     {
         .maxstack 1
 

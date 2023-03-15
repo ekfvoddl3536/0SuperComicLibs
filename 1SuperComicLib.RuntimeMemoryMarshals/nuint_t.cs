@@ -121,8 +121,6 @@ namespace SuperComicLib
         public static implicit operator nuint_t(ulong a) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator bool(nuint_t a) => throw new PlatformNotSupportedException();
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator sbyte(nuint_t a) => throw new PlatformNotSupportedException();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator byte(nuint_t a) => throw new PlatformNotSupportedException();
@@ -142,7 +140,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator long(nuint_t a) => throw new PlatformNotSupportedException();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static explicit operator ulong(nuint_t a) => throw new PlatformNotSupportedException();
+        public static implicit operator ulong(nuint_t a) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator nint_t(nuint_t a) => throw new PlatformNotSupportedException();

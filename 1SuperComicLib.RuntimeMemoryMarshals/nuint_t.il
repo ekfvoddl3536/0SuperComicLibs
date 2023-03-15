@@ -79,7 +79,7 @@
         ldarg.0
         ldflda native uint SuperComicLib.nuint_t::_value
         ldarg.1
-        call instance string [mscorlib]System.UIntPtr::ToString(string)
+        call instance string [mscorlib]System.IntPtr::ToString(string)
         ret
     }
 
@@ -504,18 +504,6 @@
         ret
     }
 
-    .method public hidebysig specialname static bool op_Implicit(valuetype SuperComicLib.nuint_t a) cil managed aggressiveinlining
-    {
-        .maxstack 2
-        
-        ldarg.0
-        ldfld native uint SuperComicLib.nuint_t::_value
-        ldc.i4.0
-        conv.u
-        cgt.un
-        ret
-    }
-
     .method public hidebysig specialname static int8 op_Explicit(valuetype SuperComicLib.nuint_t a) cil managed aggressiveinlining
     {
         .maxstack 1
@@ -596,7 +584,7 @@
         ret
     }
 
-    .method public hidebysig specialname static uint64 op_Explicit(valuetype SuperComicLib.nuint_t a) cil managed aggressiveinlining
+    .method public hidebysig specialname static uint64 op_Implicit(valuetype SuperComicLib.nuint_t a) cil managed aggressiveinlining
     {
         .maxstack 1
 
