@@ -1,5 +1,4 @@
-﻿
-// MIT License
+﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
@@ -64,8 +63,8 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <returns>If <typeparamref name="T"/> is not a struct, the return is a null reference.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T GetValueDirect() =>
-            ref (typeof(T).IsValueType == false) 
-            ? ref Unsafe.AsRef<T>(null) 
+            ref typeof(T).IsValueType == false
+            ? ref Unsafe.AsRef<T>(null)
             : ref Unsafe.AsRef<T>(_Ptr + (sizeof(void*) << 1));
     }
 }

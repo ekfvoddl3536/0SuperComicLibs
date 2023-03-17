@@ -101,6 +101,7 @@
     <Compile Include="extensions\ArrayRefExtension.cs" />
     <Compile Include="extensions\ArrayUnsafeGetElementReferenceManagedExtension.cs" />
     <Compile Include="extensions\ArrayUnsafeGetElementReferenceManagedSCLMemoryExtension.cs" />
+    <Compile Include="extensions\NativeInstanceTStructExtension.cs" />
     <Compile Include="LowLevel\RuntimeTypedValueInfo.cs" />
     <Compile Include="src\semiManaged\CapturedArrayrefSegment.cs" />
     <Compile Include="src\semiManaged\CapturedArrayref.cs" />
@@ -127,7 +128,7 @@
     <Compile Include="extensions\SUPERCOMICLIB_CORE__MemoryExtension.cs" />
     <Compile Include="LowLevel\NativeInstance.cs" />
     <Compile Include="NativeClass.cs" />
-    <Compile Include="extensions\NativeInstanceExtension.cs" />
+    <Compile Include="extensions\NativeInstanceTClassExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LowLevel\PubMethodTable.cs" />
     <Compile Include="src\semiManaged\arrayref.cs" />

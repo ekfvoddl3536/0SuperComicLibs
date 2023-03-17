@@ -1,5 +1,4 @@
-﻿
-// MIT License
+﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
@@ -77,7 +76,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <br/>
         /// but, It does not perform validation, such as range checking. API for high-performance scenarios.
         /// </summary>
-        public ref readonly char this[[ValidRange] int index]
+        public ref char this[[ValidRange] int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid, AssumeInputsValid]
             get => ref GetCharPtr()[index];
@@ -87,7 +86,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Same as: <see cref="string.this[int]"/>.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
-        public ref readonly char at(int index)
+        public ref char at(int index)
         {
             if ((uint)index > (uint)Length)
                 throw new ArgumentOutOfRangeException(nameof(index));
@@ -296,8 +295,6 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         #region cast
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator stringref(string v) => new stringref(v);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator void*(stringref v) => v._Ptr;
         #endregion
 
         #region new stringref
@@ -305,7 +302,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// new fast. No argument validation.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid]
-        public static stringref newf([ValidRange(1)] int length)
+        public static stringref newf([ValidRange] int length)
         {
             var ptr = (IntPtr*)Marshal.AllocHGlobal(align_size(length));
 

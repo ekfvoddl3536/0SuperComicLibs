@@ -1,5 +1,4 @@
-﻿
-// MIT License
+﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
@@ -55,6 +54,36 @@ namespace SuperComicLib
             var temp = left - right;
             return left - (temp & (nuint_t)((nint_t)temp >> ((sizeof(void*) << 3) - 1)));
         }
+        #endregion
+
+        #region classic math
+        /// <summary>
+        /// Calculate in the classical way (using if).<para/>
+        /// It will be possible to show higher performance in an environment where conditional branching can be optimized with CMOV.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static nint_t MinClassic(nint_t left, nint_t right) => left > right ? right : left;
+
+        /// <summary>
+        /// Calculate in the classical way (using if).<para/>
+        /// It will be possible to show higher performance in an environment where conditional branching can be optimized with CMOV.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static nint_t MaxClassic(nint_t left, nint_t right) => left > right ? left : right;
+
+        /// <summary>
+        /// Calculate in the classical way (using if).<para/>
+        /// It will be possible to show higher performance in an environment where conditional branching can be optimized with CMOV.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static nuint_t MinClassic(nuint_t left, nuint_t right) => left > right ? right : left;
+
+        /// <summary>
+        /// Calculate in the classical way (using if).<para/>
+        /// It will be possible to show higher performance in an environment where conditional branching can be optimized with CMOV.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static nuint_t MaxClassic(nuint_t left, nuint_t right) => left > right ? left : right;
         #endregion
 
         #region compare

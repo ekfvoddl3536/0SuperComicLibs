@@ -1,5 +1,4 @@
-﻿
-// MIT License
+﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
@@ -44,7 +43,23 @@ namespace SuperComicLib.RuntimeMemoryMarshals
 
         #region property
         /// <summary>
-        /// Same as: <see cref="Type.TypeHandle"/>
+        /// Read runtime value information for <typeparamref name="T"/>.
+        /// <para/>
+        /// For some scenarios where the type of T, cannot be inferred at compile time.
+        /// </summary>
+        public RuntimeTypedValueInfo<T> RuntimeValueInfo
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                DEBUG_NULL_CHECK(this);
+
+                return new RuntimeTypedValueInfo<T>(_Ptr);
+            }
+        }
+
+        /// <summary>
+        /// Same as: <see cref="Type.TypeHandle"/>.<see cref="RuntimeTypeHandle.Value">Value</see>
         /// </summary>
         public IntPtr TypeHandle
         {
@@ -267,7 +282,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
 
         #region helper
         [Conditional("DEBUG")]
-        internal static void DEBUG_NULL_CHECK(NativeInstance<T> value)
+        internal static void DEBUG_NULL_CHECK(in NativeInstance<T> value)
         {
             if (value._Ptr == null)
                 throw new NullReferenceException(nameof(value));
