@@ -26,20 +26,47 @@ using System.Runtime.InteropServices;
 
 namespace SuperComicLib
 {
+    /// <summary>
+    /// 32비트 정수 2개로 범위를 지정합니다.<para/>
+    /// 시작 위치와 끝 위치(포함하지 않음)를 갖습니다.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct Range : IEquatable<Range>, IComparable<Range>
     {
+        /// <summary>
+        /// 인덱스의 시작 위치입니다.
+        /// </summary>
         public int start;
+        /// <summary>
+        /// 인덱스의 끝 위치입니다.
+        /// </summary>
         public int end;
 
+        /// <summary>
+        /// 시작-끝 위치로 <see cref="Range"/> 구조체를 초기화합니다.
+        /// </summary>
+        /// <param name="start">시작 위치</param>
+        /// <param name="end">끝 위치 (포함하지 않음)</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Range(int start, int end)
         {
             this.start = start;
             this.end = end;
         }
 
-        public int Length => end - start;
+        /// <summary>
+        /// 길이입니다.
+        /// </summary>
+        public int Length
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => end - start;
+        }
 
+#pragma warning disable CS1591
+        /// <summary>
+        /// <see cref="operator ==(Range, Range)"/>를 대신 사용하세요
+        /// </summary>
         public bool Equals(Range other) => this == other;
         public int CompareTo(Range other)
         {
@@ -69,5 +96,6 @@ namespace SuperComicLib
         public static bool operator <=(Range left, Range right) => left.end <= right.start;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator >=(Range left, Range right) => left.start >= right.end;
+#pragma warning restore CS1591
     }
 }

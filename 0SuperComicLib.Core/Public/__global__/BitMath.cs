@@ -24,6 +24,9 @@ using System.Runtime.CompilerServices;
 
 namespace SuperComicLib
 {
+    /// <summary>
+    /// SoftwareFallback bit operations
+    /// </summary>
     public static class BitMath
     {
         #region underbits
@@ -116,9 +119,15 @@ namespace SuperComicLib
         #endregion
 
         #region popcnt
+        /// <summary>
+        /// <see href="https://learn.microsoft.com/cpp/intrinsics/popcnt16-popcnt-popcnt64"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Popcnt(this int value) => Popcnt((uint)value);
 
+        /// <summary>
+        /// <see href="https://learn.microsoft.com/cpp/intrinsics/popcnt16-popcnt-popcnt64"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Popcnt(this uint value)
         {
@@ -127,9 +136,15 @@ namespace SuperComicLib
             return (int)(((value + (value >> 4)) & 0xF0F_0F0Fu) * 0x101_0101u) >> 24;
         }
 
+        /// <summary>
+        /// <see href="https://learn.microsoft.com/cpp/intrinsics/popcnt16-popcnt-popcnt64"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Popcnt64(this long value) => Popcnt64((ulong)value);
 
+        /// <summary>
+        /// <see href="https://learn.microsoft.com/cpp/intrinsics/popcnt16-popcnt-popcnt64"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Popcnt64(this ulong value)
         {

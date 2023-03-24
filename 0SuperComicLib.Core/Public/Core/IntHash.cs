@@ -24,6 +24,9 @@ using System.Runtime.CompilerServices;
 
 namespace SuperComicLib.Core
 {
+    /// <summary>
+    /// hash code generate helper
+    /// </summary>
     public static class IntHash
     {
         /// <summary>

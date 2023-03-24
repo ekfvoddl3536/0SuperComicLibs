@@ -24,12 +24,24 @@ using System;
 
 namespace SuperComicLib.CodeContracts
 {
+    /// <summary>
+    /// <see cref="FastContract"/>가 실패함
+    /// </summary>
     public sealed class FastContractFailException : Exception
     {
+        /// <summary>
+        /// 기본 메시지로 오류 생성
+        /// </summary>
         public FastContractFailException() : base("[SuperComicLib::CodeContracts] Contract Fail") { }
 
+        /// <summary>
+        /// 지정된 메시지로 오류 생성
+        /// </summary>
         public FastContractFailException(string message) : base(message) { }
 
+        /// <summary>
+        /// 지정된 메시지와 내부 오류 정보를 사용해 오류 생성
+        /// </summary>
         public FastContractFailException(string message, Exception innerException) : base(message, innerException)
         {
         }

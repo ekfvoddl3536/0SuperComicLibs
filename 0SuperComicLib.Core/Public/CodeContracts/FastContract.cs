@@ -31,6 +31,9 @@ namespace SuperComicLib.CodeContracts
     /// </summary>
     public static class FastContract
     {
+        /// <summary>
+        /// <see cref="System.Diagnostics.Contracts.Contract.Requires(bool, string)"/>
+        /// </summary>
         [Conditional("DEBUG")]
         public static void Requires(bool conditional, string message)
         {
@@ -41,6 +44,9 @@ namespace SuperComicLib.CodeContracts
             }
         }
 
+        /// <summary>
+        /// <see cref="System.Diagnostics.Contracts.Contract.Requires(bool)"/>
+        /// </summary>
         [Conditional("DEBUG")]
         public static void Requires(bool conditional)
         {
@@ -51,6 +57,9 @@ namespace SuperComicLib.CodeContracts
             }
         }
 
+        /// <summary>
+        /// <see cref="System.Diagnostics.Contracts.Contract.Requires{TException}(bool, string)"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Requires<TExcept>(bool conditional, string message) where TExcept : Exception, new()
         {
@@ -58,6 +67,9 @@ namespace SuperComicLib.CodeContracts
                 throw new FastContractFailException(message, new TExcept());
         }
 
+        /// <summary>
+        /// <see cref="System.Diagnostics.Contracts.Contract.Requires{TException}(bool)"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Requires<TExcept>(bool conditional) where TExcept : Exception, new()
         {

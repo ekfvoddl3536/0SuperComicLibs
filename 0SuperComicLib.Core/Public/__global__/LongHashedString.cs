@@ -23,85 +23,133 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib
 {
-    [StructLayout(LayoutKind.Explicit)]
+    /// <summary>
+    /// 잦은 해시 생성과 해시값 충돌을 피하기위해 128비트로 확장된 고해상도 해시 문자열을 사용합니다.<para/>
+    /// <see cref="HashedString"/>과 호환되지 않습니다.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct LongHashedString : IEquatable<LongHashedString>
     {
-        [FieldOffset(0)]
-        public readonly ulong Low;
-        [FieldOffset(8)]
-        public readonly ulong High;
-        #region private
-        [FieldOffset(0)]
-        private readonly int b_hash;
-        [FieldOffset(4)]
-        private readonly int g_hash;
-        [FieldOffset(8)]
-        private readonly int compare;
-        [FieldOffset(12)]
-        private readonly int length;
-        #endregion
+        /// <summary>
+        /// 하위 64비트 해시
+        /// </summary>
+        public readonly ulong Hash1EX;
+        /// <summary>
+        /// 상위 64비트 해시
+        /// </summary>
+        public readonly ulong Hash2EX;
 
-        public LongHashedString([DisallowNull] string data)
+        /// <summary>
+        /// 지정된 문자열에 대한 128비트 확장 고해상도 해시 코드를 생성합니다.
+        /// </summary>
+        public LongHashedString(string data)
         {
-            Low = High = 0;
-            b_hash = Hashcode(data, out g_hash, out compare, length = data.Length);
+            if (data == null)
+                this = default;
+            else
+                Hash1EX = Hashcode128G1(data, out Hash2EX);
         }
 
-        public override bool Equals(object obj) => obj != null && Equals(new LongHashedString(obj.ToString()));
-        public override int GetHashCode() => CombineHashCode ^ compare ^ length;
-        public unsafe override string ToString() =>
-            $"(Gh: 0x{g_hash:X8} // Bh: 0x{b_hash:X8} // C: 0x{compare:X8} // Length: {length})";
+        /// <summary>
+        /// 기본 해시의 하위 32비트
+        /// </summary>
+        public int BHash => (int)Hash1EX;
 
-        public int CombineHashCode => g_hash + b_hash * 1566083941;
+        /// <summary>
+        /// 기본 해시의 상위 32비트
+        /// </summary>
+        public int GHash => (int)(Hash1EX >> 32);
 
-        public HashedString ToHashedString() => new HashedString(CombineHashCode, length);
+        /// <summary>
+        /// 보조 해시 1번.
+        /// </summary>
+        public int Compare => (int)Hash2EX;
 
-        public bool Equals(LongHashedString other) => Low == other.Low && High == other.High;
+        /// <summary>
+        /// 보조 해시 2번.
+        /// </summary>
+        public int Length => (int)(Hash2EX >> 32);
+
+        /// <summary>
+        /// 대상 <see cref="LongHashedString"/>의 값과 일치하는지 비교합니다.
+        /// </summary>
+        public bool Equals(LongHashedString other) => this == other;
+        /// <summary>
+        /// 대상 <see cref="string"/>에 대한 <see cref="LongHashedString"/>의 값과 일치하는지 비교합니다.
+        /// </summary>
         public bool Equals(string other) => this == new LongHashedString(other);
 
-        public bool HashcodeEquals(LongHashedString other) => b_hash == other.b_hash;
-        public bool HashcodeEquals(int other) => b_hash == other;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator LongHashedString(string op) => op == null ? default : new LongHashedString(op);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(LongHashedString a1, LongHashedString a2) => a1.Low == a2.Low && a1.High == a2.High;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(LongHashedString a1, LongHashedString a2) => a1.Low != a2.Low || a1.High != a2.High;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static unsafe int Hashcode(string data, out int hash1, out int comp, int len)
+        /// <summary>
+        /// <paramref name="obj"/>의 <see cref="object.ToString"/> 결과값에 대한 <see cref="LongHashedString"/>의 값과 일치하는지 비교합니다.
+        /// </summary>
+        public override bool Equals(object obj) => obj != null && this == new LongHashedString(obj.ToString());
+        /// <summary>
+        /// 128비트 정수에 대한 해시코드를 반환합니다.
+        /// </summary>
+        public override int GetHashCode() => (Hash1EX ^ Hash2EX).GetHashCode();
+        /// <summary>
+        /// 해시 코드를 16진수 값으로 변환하여 문자열로 만듭니다
+        /// </summary>
+        /// <returns></returns>
+        public unsafe override string ToString()
         {
-            comp = 0;
+            int hash1Lo = (int)Hash1EX,
+                hash1Hi = (int)(Hash1EX >> 32),
+                hash2Lo = (int)Hash2EX,
+                hash2Hi = (int)(Hash2EX >> 32);
 
-            hash1 = (5381 << 16) + 5381;
+            return $"{hash2Hi:x8}`{hash2Lo:x8}`{hash1Hi:x8}`{hash1Lo:x8}";
+        }
+
+        /// <summary>
+        /// 지정된 문자열을 <see cref="LongHashedString"/>로 변환합니다.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator LongHashedString(string op) => new LongHashedString(op);
+
+        /// <summary>
+        /// 두 <see cref="HashedString"/>의 값이 같은지 비교합니다.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator ==(LongHashedString a1, LongHashedString a2) => ((a1.Hash1EX ^ a2.Hash1EX) | (a1.Hash2EX ^ a2.Hash2EX)) == 0;
+        /// <summary>
+        /// 두 <see cref="HashedString"/>의 값이 다른지 비교합니다.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator !=(LongHashedString a1, LongHashedString a2) => !(a1 == a2);
+
+        #region helper
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe ulong Hashcode128G1(string data, out ulong r_hash2)
+        {
+            int comp = 0;
+
+            int hash1 = SCL_GLOBAL_StringExtension.hashcode_start_c;
             int hash2 = hash1;
 
             fixed (char* src = data)
             {
-                int* pint = (int*)src;
+                var pint = (int*)src;
 
-                while (len > 2)
+                int len = data.Length;
+                for (; len > 4; len -= 4, pint += 2)
                 {
                     hash1 = ((hash1 << 5) + hash1 + (hash1 >> 27)) ^ pint[0];
                     hash2 = ((hash2 << 5) + hash2 + (hash2 >> 27)) ^ pint[1];
 
                     comp = (hash2 - hash1) ^ comp;
-
-                    pint += 2;
-                    len -= 4;
                 }
 
                 if (len > 0)
-                    hash1 = ((hash1 << 5) + hash1 + (hash1 >> 27)) ^ *pint;
+                    hash1 = ((hash1 << 5) + hash1 + (hash1 >> 27)) ^ *pint++;
             }
 
-            return hash2;
+            r_hash2 = (uint)comp | ((ulong)data.Length << 32);
+            return (uint)hash1 | ((ulong)hash2 << 32);
         }
+        #endregion
     }
 }

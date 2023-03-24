@@ -36,6 +36,9 @@ namespace SuperComicLib.CodeContracts
         /// </summary>
         public readonly Type[] Exceptions;
 
+        /// <summary>
+        /// 기본 생성자
+        /// </summary>
         public NoExceptAttribute() => Exceptions = Array.Empty<Type>();
 
         /// <param name="exceptions">억제된 예외 타입 목록입니다. 빈 배열또는 null을 지정하는 경우, 모든 예외를 억제함을 의미합니다.</param>

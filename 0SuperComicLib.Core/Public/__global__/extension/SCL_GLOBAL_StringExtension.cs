@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#pragma warning disable CS1591
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -29,8 +30,8 @@ namespace SuperComicLib
 {
     public static class SCL_GLOBAL_StringExtension
     {
-        private const int hashcode_start_c = (5381 << 16) + 5381;
-        private const int hashcode_last_c = 1566083941;
+        internal const int hashcode_start_c = (5381 << 16) + 5381;
+        internal const int hashcode_last_c = 1566083941;
 
         #region other
         // public static string RemoveBack(this string str, int count) => str.Remove(str.Length - count, count);
@@ -284,15 +285,7 @@ namespace SuperComicLib
         {
             FastContract.Requires(str != null);
 
-            int hash1 = hashcode_start_c;
-            int hash2 = hash1;
-
-            fixed (char* src = str)
-            {
-                var res = Internal_Hashcode((int*)src, hash1, hash2, str.Length);
-
-                return res.start + res.end * hashcode_last_c;
-            }
+            return Internal_Hashcode(str, 0, str.Length);
         }
 
         public static unsafe int GetFixedHashcode(this string str, int startidx, int count)
@@ -301,6 +294,12 @@ namespace SuperComicLib
                 (uint)(startidx + count) > (uint)str.Length)
                 throw new ArgumentOutOfRangeException(nameof(count));
 
+            return Internal_Hashcode(str, startidx, count);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid]
+        internal static unsafe int Internal_Hashcode([DisallowNullOrEmpty] this string str, [ValidRange] int startidx, [ValidRange] int count)
+        {
             int hash1 = hashcode_start_c;
             int hash2 = hash1;
 
@@ -312,6 +311,7 @@ namespace SuperComicLib
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static unsafe Range Internal_Hashcode(int* pint, int hash1, int hash2, int len)
         {
             for (int x = len; x > 2; x -= 4)

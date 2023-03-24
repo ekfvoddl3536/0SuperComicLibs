@@ -26,10 +26,16 @@ using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib
 {
+    /// <summary>
+    /// If-less logical math operations
+    /// </summary>
     [SuppressUnmanagedCodeSecurity]
     public static class CMath
     {
         #region integer
+        /// <summary>
+        /// <see cref="System.Math.Min(int, int)"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe int Min(this int left, int right)
         {
@@ -37,6 +43,9 @@ namespace SuperComicLib
             return ((*(byte*)&t - 1) & (right - left)) + left;
         }
 
+        /// <summary>
+        /// <see cref="System.Math.Max(int, int)"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe int Max(this int left, int right)
         {
@@ -44,13 +53,21 @@ namespace SuperComicLib
             return ((*(byte*)&t - 1) & (left - right)) + right;
         }
 
-        // RngIn --> Clampi 이름 변경
+        /// <summary>
+        /// <see href="https://learn.microsoft.com/dotnet/api/system.math.clamp"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Clampi(this int num, int min, int max) => Max(min, Min(max, num));
 
+        /// <summary>
+        /// <paramref name="num"/> 값이 <paramref name="min"/>(포함) 부터 <paramref name="max"/>(포함) 사이에 있는지 여부
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsRngIn(this int num, int min, int max) => num >= min && num <= max;
 
+        /// <summary>
+        /// <paramref name="num"/> 값이 <paramref name="min"/>(포함) 부터 <paramref name="max"/>(포함) 사이에 존재하지 않는지 여부
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsRngOut(this int num, int min, int max) => num < min || num > max;
 
@@ -66,6 +83,9 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Neg1(this int value) => value | int.MinValue;
 
+        /// <summary>
+        /// <see cref="System.Math.Abs(int)"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Abs(this int value)
         {
@@ -73,7 +93,10 @@ namespace SuperComicLib
             return (value ^ temp) - temp;
         }
 
-        // https://blog.naver.com/ekfvoddl3535/222607247076
+        /// <summary>
+        /// 값을 -1, 0, 1로 노멀라이즈<para/>
+        /// 이 함수는 if를 사용하는 방법보다 최대 130.24%p, 평균 71.5485%p 더 빠름: <see href="https://blog.naver.com/ekfvoddl3535/222607247076">ref. blog</see>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Normal(this int value) => (value >> 31) | (int)((uint)-value >> 31);
 
@@ -89,15 +112,21 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Normal_01(this int value) => (int)Normal((uint)value);
 
-        // https://blog.naver.com/ekfvoddl3535/222629296802
+        /// <summary>
+        /// <paramref name="value"/>를 <paramref name="state"/>이 1일 때, <paramref name="max_include"/>를 최대값으로 하여 뒤집습니다.<para/>
+        /// 이 함수는 if를 사용하는 방법보다 평균 16%p 더 빠름: <see href="https://blog.naver.com/ekfvoddl3535/222629296802">ref. blog</see>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Flip_s(this int value, int max_include, int state)
         {
-            FastContract.Requires(state >= 0 && state <= 1, "invalid state value");
+            FastContract.Requires((uint)state <= 1u, "invalid state value");
             return value - ((value << 1) - max_include) * state;
         }
 
-        // https://blog.naver.com/ekfvoddl3535/222629296802
+        /// <summary>
+        /// <paramref name="value"/>를 <paramref name="state"/>이 1일 때, <paramref name="max_include"/>를 최대값으로 <paramref name="min_include"/>을 최소값으로 하여 뒤집습니다.<para/>
+        /// 이 함수는 if를 사용하는 방법보다 평균 16%p 더 빠름: <see href="https://blog.naver.com/ekfvoddl3535/222629296802">ref. blog</see>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Flip_s(this int value, int min_include, int max_include, int state)
         {
@@ -107,6 +136,9 @@ namespace SuperComicLib
         #endregion
 
         #region uint
+        /// <summary>
+        /// <see cref="System.Math.Min(uint, uint)"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Min(this uint left, uint right)
         {
@@ -114,6 +146,9 @@ namespace SuperComicLib
             return right + (temp & (uint)((int)temp >> 31));
         }
 
+        /// <summary>
+        /// <see cref="System.Math.Max(uint, uint)"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Max(this uint left, uint right)
         {
@@ -121,15 +156,24 @@ namespace SuperComicLib
             return left - (temp & (uint)((int)temp >> 31));
         }
 
-        // https://blog.naver.com/ekfvoddl3535/222607247076
+        /// <summary>
+        /// 값을 0 또는 1로 노멀라이즈.<para/>
+        /// 이 함수는 if를 사용하는 방법보다 더 빠름: <see href="https://blog.naver.com/ekfvoddl3535/222607247076">ref. blog</see>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Normal(this uint value) => (value | (uint)-(int)value) >> 31;
 
+        /// <summary>
+        /// <see href="https://learn.microsoft.com/dotnet/api/system.math.clamp"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Clampu(this uint value, uint min, uint max) => Min(value + min, max);
+        public static uint Clampu(this uint value, uint min, uint max) => Min(Max(value, min), max);
         #endregion
 
         #region long
+        /// <summary>
+        /// <see cref="System.Math.Min(long, long)"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe long Min(this long left, long right)
         {
@@ -137,6 +181,9 @@ namespace SuperComicLib
             return ((*(byte*)&t - 1) & (right - left)) + left;
         }
 
+        /// <summary>
+        /// <see cref="System.Math.Max(long, long)"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe long Max(this long left, long right)
         {
@@ -144,9 +191,15 @@ namespace SuperComicLib
             return ((*(byte*)&t - 1) & (left - right)) + right;
         }
 
+        /// <summary>
+        /// <see href="https://learn.microsoft.com/dotnet/api/system.math.clamp"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Clampi(this long num, long min, long max) => Max(min, Min(max, num));
 
+        /// <summary>
+        /// <see cref="System.Math.Abs(int)"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Abs(this long value)
         {
@@ -154,7 +207,10 @@ namespace SuperComicLib
             return (value ^ temp) - temp;
         }
 
-        // https://blog.naver.com/ekfvoddl3535/222607247076
+        /// <summary>
+        /// 값을 -1, 0, 1로 노멀라이즈<para/>
+        /// 이 함수는 if를 사용하는 방법보다 최대 130.24%p, 평균 71.5485%p 더 빠름: <see href="https://blog.naver.com/ekfvoddl3535/222607247076">ref. blog</see>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Normal(this long value) => (value >> 63) | (long)((ulong)-value >> 63);
 
@@ -166,6 +222,9 @@ namespace SuperComicLib
         #endregion
 
         #region ulong
+        /// <summary>
+        /// <see cref="System.Math.Min(ulong, ulong)"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Min(this ulong left, ulong right)
         {
@@ -173,6 +232,9 @@ namespace SuperComicLib
             return right + (temp & (ulong)((long)temp >> 63));
         }
 
+        /// <summary>
+        /// <see cref="System.Math.Max(ulong, ulong)"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Max(this ulong left, ulong right)
         {
@@ -180,32 +242,18 @@ namespace SuperComicLib
             return left - (temp & (ulong)((long)temp >> 63));
         }
 
-        // https://blog.naver.com/ekfvoddl3535/222607247076
+        /// <summary>
+        /// 값을 0, 1로 노멀라이즈<para/>
+        /// 이 함수는 if를 사용하는 방법보다 최대 130.24%p, 평균 71.5485%p 더 빠름: <see href="https://blog.naver.com/ekfvoddl3535/222607247076">ref. blog</see>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Normal(this ulong value) => (value | (ulong)-(long)value) >> 63;
 
+        /// <summary>
+        /// <see href="https://learn.microsoft.com/dotnet/api/system.math.clamp"/>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Clampu(this ulong value, ulong min, ulong max) => Min(value + min, max);
-        #endregion
-
-        #region native int
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe static void* Min(void* left, void* right)
-        {
-            if (sizeof(int) == System.IntPtr.Size) // 32-bit
-                return (void*)Min((uint)left, (uint)right);
-            else
-                return (void*)Min((ulong)left, (ulong)right);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe static void* Max(void* left, void* right)
-        {
-            if (sizeof(int) == System.IntPtr.Size) // 32-bit
-                return (void*)Max((uint)left, (uint)right);
-            else
-                return (void*)Max((ulong)left, (ulong)right);
-        }
         #endregion
     }
 }

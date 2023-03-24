@@ -40,7 +40,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Copy instance data from <paramref name="source"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
-        public static void CopyFrom<T>(this in NativeInstance<T> @this, T source) where T : class
+        public static void DataCopyFrom<T>(this in NativeInstance<T> @this, T source) where T : class
         {
             if (@this._Ptr == null || source == null)
                 return;
@@ -59,7 +59,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Copies the instance data to <paramref name="destination"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
-        public static void CopyTo<T>(this in NativeInstance<T> @this, T destination) where T : class
+        public static void DataCopyTo<T>(this in NativeInstance<T> @this, T destination) where T : class
         {
             if (@this._Ptr == null || destination == null)
                 return;

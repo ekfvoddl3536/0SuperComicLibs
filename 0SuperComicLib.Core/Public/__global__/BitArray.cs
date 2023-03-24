@@ -21,33 +21,60 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib
 {
+    /// <summary>
+    /// 비트열
+    /// </summary>
     public readonly unsafe struct BitArray : IEquatable<BitArray>, ICloneable
     {
+        /// <summary>
+        /// 비트열 정보
+        /// </summary>
         public readonly uint[] Values;
 
+        /// <summary>
+        /// 기존 비트열 정보를 사용해 복사본 생성
+        /// </summary>
         public BitArray(BitArray other)
         {
             FastContract.Requires(other.Values != null);
-            FastContract.Requires(other.Values.Length > 0);
+            FastContract.Requires(other.Values.Length >= 0);
 
-            Values = (uint[])other.Values.Clone();
+            Values = 
+                other.Values.Length == 0
+                ? other.Values
+                : (uint[])other.Values.Clone();
         }
 
+        /// <summary>
+        /// 새로운 비트열 생성
+        /// </summary>
+        /// <param name="uintArray_size">초기 비트열 정보의 길이, 하나의 비트열 정보(uint)는 32개의 비트 길이를 갖고 있음</param>
         public BitArray(int uintArray_size)
         {
-            FastContract.Requires(uintArray_size > 0);
+            FastContract.Requires(uintArray_size >= 0);
 
-            Values = new uint[(int)CMath.Max((uint)uintArray_size, 1u)];
+            Values = 
+                uintArray_size == 0
+                ? Array.Empty<uint>()
+                : new uint[uintArray_size];
         }
 
         #region method 1
+        /// <summary>
+        /// 비트열 정보의 길이
+        /// </summary>
         public int Length => Values.Length;
 
+        /// <summary>
+        /// 지정된 위치의 비트의 flag 여부를 가져오거나 설정
+        /// </summary>
         public bool this[int bitPosition]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -64,15 +91,25 @@ namespace SuperComicLib
 
                 uint _set = 1u << (bitPosition & 0x1F);
 
-                k ^= (k & _set) ^ _set;
+                uint _val = *(byte*)&value - 1u;
+
+                k &= ~_set & _val;
+                k |= _set & ~_val;
             }
         }
 
+        /// <summary>
+        /// 모든 비트열 정보를 기본 값으로 초기화
+        /// </summary>
         public void Clear() => Array.Clear(Values, 0, Values.Length);
 
+        /// <summary>
+        /// 모든 비트열의 값을 지정된 값으로 설정
+        /// </summary>
+        /// <param name="value"></param>
         public void SetAll(bool value)
         {
-            uint val = (uint)~((*(byte*)&value & 1) - 1);
+            uint val = (uint)-*(byte*)&value;
 
             var arr = Values;
             for (int i = arr.Length; --i >= 0;)
@@ -81,177 +118,165 @@ namespace SuperComicLib
         #endregion
 
         #region method 2
-        public void AND(BitArray other)
-        {
-            uint[] left = Values;
-            uint[] right = other.Values;
-
-            for (int i = (int)CMath.Max((uint)left.Length, (uint)right.Length); --i >= 0;)
-                left[i] &= right[i];
-        }
-
-        public void OR(BitArray other)
-        {
-            uint[] left = Values;
-            uint[] right = other.Values;
-
-            for (int i = (int)CMath.Max((uint)left.Length, (uint)right.Length); --i >= 0;)
-                left[i] |= right[i];
-        }
-
-        public void XOR(BitArray other)
-        {
-            uint[] left = Values;
-            uint[] right = other.Values;
-
-            for (int i = (int)CMath.Max((uint)left.Length, (uint)right.Length); --i >= 0;)
-                left[i] ^= right[i];
-        }
-
-        public void NOT()
-        {
-            uint[] left = Values;
-
-            for (int i = left.Length; --i >= 0;)
-                left[i] = ~left[i];
-        }
-
-        public void LSHIFT(int count)
-        {
-            uint[] left = Values;
-
-            int i = left.Length;
-            int arr_idx = (int)CMath.Min((uint)i, (uint)(count >> 5));
-
-            Array.Copy(left, 0, left, arr_idx, i - arr_idx);
-            Array.Clear(left, 0, arr_idx);
-
-            int shift = count & 0x1F;
-            if (--i >= 0 && shift > 0)
-            {
-                left[i] <<= shift;
-
-                int u_shift = 32 - shift;
-
-                for (uint temp; --i >= arr_idx;)
-                {
-                    temp = left[i] >> u_shift;
-                    left[i + 1] |= temp;
-
-                    left[i] <<= shift;
-                }
-            }
-        }
-
-        public void RSHIFT(int count)
-        {
-            uint[] left = Values;
-
-            int i = left.Length;
-            int arr_idx = (int)CMath.Min((uint)i, (uint)(count >> 5));
-
-            int shift = --i - arr_idx;
-
-            Array.Copy(left, i, left, shift, shift + 1);
-            Array.Clear(left, i, arr_idx);
-
-            arr_idx = shift;
-            shift = count & 0x1F;
-
-            if (shift > 0)
-            {
-                left[i = 0] >>= shift;
-
-                int u_shift = 32 - shift;
-
-                for (uint temp; ++i <= arr_idx;)
-                {
-                    temp = left[i] << u_shift;
-                    left[i - 1] |= temp;
-
-                    left[i] >>= shift;
-                }
-            }
-        }
-        #endregion
-
-        #region method 3
-        public bool Equals(BitArray other)
-        {
-            var left = Values;
-            var right = other.Values;
-
-            int x = left.Length;
-            if (x != right.Length)
-                return false;
-
-            while (--x >= 0)
-                if (left[x] != right[x])
-                    return false;
-
-            return true;
-        }
+        /// <summary>
+        /// <see cref="Enumerable.SequenceEqual{TSource}(IEnumerable{TSource}, IEnumerable{TSource}, IEqualityComparer{TSource})"/>
+        /// </summary>
+        public bool Equals(BitArray other) => Values.SequenceEqual(other.Values, EqualityComparer<uint>.Default);
 
         object ICloneable.Clone() => new BitArray(this);
         #endregion
 
         #region override
-        public override int GetHashCode()
-        {
-            int hashCode = 0;
+        /// <summary>
+        /// <see cref="object.GetHashCode"/>
+        /// </summary>
+        public override int GetHashCode() => Values.GetHashCode();
 
-            var left = Values;
-            for (int i = left.Length; --i >= 0;)
-                hashCode ^= (int)left[i];
-
-            return hashCode;
-        }
-
+        /// <summary>
+        /// <see cref="object.Equals(object)"/>
+        /// </summary>
         public override bool Equals(object obj) =>
             obj is BitArray other && Equals(other);
         #endregion
 
         #region math operator
+        /// <summary>
+        /// 두 비트열을 AND 연산<para/>
+        /// 더 작은 길이를 가진 비트열의 길이를 사용하여 결과 생성
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static BitArray operator &(BitArray left, BitArray right)
         {
-            BitArray v = new BitArray(left);
-            v.AND(right);
-            return v;
+            var result = new BitArray((int)CMath.Max((uint)left.Values.Length, (uint)right.Values.Length));
+
+            for (int i = 0; i < result.Values.Length; ++i)
+                result.Values[i] = left.Values[i] & right.Values[i];
+
+            return result;
         }
+
+        /// <summary>
+        /// 두 비트열을 OR 연산<para/>
+        /// 더 작은 길이를 가진 비트열의 길이를 사용하여 결과 생성
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static BitArray operator |(BitArray left, BitArray right)
         {
-            BitArray v = new BitArray(left);
-            v.OR(right);
-            return v;
+            var result = new BitArray((int)CMath.Max((uint)left.Values.Length, (uint)right.Values.Length));
+
+            for (int i = 0; i < result.Values.Length; ++i)
+                result.Values[i] = left.Values[i] | right.Values[i];
+
+            return result;
         }
+
+        /// <summary>
+        /// 두 비트열을 XOR 연산<para/>
+        /// 더 작은 길이를 가진 비트열의 길이를 사용하여 결과 생성
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static BitArray operator ^(BitArray left, BitArray right)
         {
-            BitArray v = new BitArray(left);
-            v.XOR(right);
-            return v;
+            var result = new BitArray((int)CMath.Max((uint)left.Values.Length, (uint)right.Values.Length));
+
+            for (int i = 0; i < result.Values.Length; ++i)
+                result.Values[i] = left.Values[i] ^ right.Values[i];
+
+            return result;
         }
+
+        /// <summary>
+        /// 비트열을 NOT 연산
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static BitArray operator ~(BitArray left)
         {
-            BitArray v = new BitArray(left);
-            v.NOT();
-            return v;
+            var result = new BitArray(left.Values.Length);
+
+            for (int i = 0; i < result.Values.Length; ++i)
+                result.Values[i] = ~left.Values[i];
+
+            return result;
         }
-        public static BitArray operator >>(BitArray left, int shift)
+
+        /// <summary>
+        /// 비트열을 RSHIFT 연산
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static BitArray operator >>(BitArray left, int count) => RSHIFT_CORE(left, count);
+
+        /// <summary>
+        /// 비트열을 LSHIFT 연산
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static BitArray operator <<(BitArray left, int count) => LSHIFT_CORE(left, count);
+
+        private static BitArray RSHIFT_CORE(BitArray left, int count)
         {
-            BitArray v = new BitArray(left);
-            v.RSHIFT(shift);
-            return v;
+            int majorShift = (int)((uint)count >> 5);
+
+            int majorCount = left.Values.Length - majorShift;
+            if (majorCount <= 0)
+                return new BitArray(0);
+
+            var res = new BitArray(majorCount);
+
+            Array.Copy(left.Values, majorShift, res.Values, 0, majorCount);
+
+            int lowShift = count & 0x1F;    // 31
+            int highShift = 0x20 - lowShift;    // 1
+
+            var vres = res.Values;
+
+            vres[0] >>= lowShift;
+
+            for (int i = 1; i < vres.Length; ++i)
+            {
+                vres[i - 1] |= vres[i] << highShift;
+                vres[i] >>= lowShift;
+            }
+
+            return res;
         }
-        public static BitArray operator <<(BitArray left, int shift)
+
+        private static BitArray LSHIFT_CORE(BitArray left, int count)
         {
-            BitArray v = new BitArray(left);
-            v.LSHIFT(shift);
-            return v;
+            int majorShift = (int)((uint)count >> 5);
+
+            int majorCount = left.Values.Length - majorShift;
+            if (majorCount <= 0)
+                return new BitArray(0);
+
+            var res = new BitArray(left.Values.Length);
+
+            Array.Copy(left.Values, 0, res.Values, majorShift, majorCount);
+
+            int lowShift = count & 0x1F;
+            int highShift = 0x20 - lowShift;
+
+            var vres = res.Values;
+
+            uint tmp = 0;
+            for (int i = majorShift; i < vres.Length; ++i)
+            {
+                var val = vres[i];
+
+                vres[i] = (val << lowShift) | tmp;
+                tmp = val >> highShift;
+            }
+
+            return res;
         }
         #endregion
 
         #region comparsion operator
+        /// <summary>
+        /// <see cref="Enumerable.SequenceEqual{TSource}(IEnumerable{TSource}, IEnumerable{TSource}, IEqualityComparer{TSource})"/> == true
+        /// </summary>
         public static bool operator ==(BitArray left, BitArray right) => left.Equals(right);
+        /// <summary>
+        /// <see cref="Enumerable.SequenceEqual{TSource}(IEnumerable{TSource}, IEnumerable{TSource}, IEqualityComparer{TSource})"/> != true
+        /// </summary>
         public static bool operator !=(BitArray left, BitArray right) => !left.Equals(right);
         #endregion
     }

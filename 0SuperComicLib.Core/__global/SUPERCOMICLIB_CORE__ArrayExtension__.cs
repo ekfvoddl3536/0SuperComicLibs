@@ -22,18 +22,21 @@
 
 using System;
 using System.Collections.Generic;
+using SuperComicLib.CodeContracts;
 
 /// <summary>
-/// 비관리형식 배열을 포인터로 읽습니다
+/// 동일한 크기의 두 배열을 동시에 열거하는 작업에 대한 for 본문 대리자
 /// </summary>
-/// <typeparam name="T">관리되지 않는 형식입니다</typeparam>
-/// <param name="original">배열 원본입니다</param>
-/// <param name="current">현재 데이터 입니다, 같습니다 *(T* + x)</param>
-/// <param name="position">배열에서 current가 존재하는 위치입니다</param>
-/// <param name="length">배열의 전체 길이입니다</param>
-/// <returns>1을 반환하면 다음 데이터를 읽으려고 시도할 것입니다</returns>
-public unsafe delegate int ArrayPtrLoopHandler<T>(T* original, ref T current, int position, int length) where T : unmanaged;
+/// <typeparam name="T1">첫번째 배열의 타입 원소</typeparam>
+/// <typeparam name="T2">두번째 배열의 타입 원소</typeparam>
+/// <param name="item1">첫번째 배열의 현재 원소 값에 대한 참조</param>
+/// <param name="item2">두번째 배열의 현재 원소 값에 대한 참조</param>
+/// <param name="index">현재 배열의 인덱스</param>
+public delegate void ForEachTupleAction<T1, T2>(ref T1 item1, ref T2 item2, int index);
 
+/// <summary>
+/// 광역(global)으로 사용될 수 있는 배열 관련 편의 기능 확장입니다.
+/// </summary>
 public static class SUPERCOMICLIB_CORE__ArrayExtension__
 {
     /// <summary>
@@ -84,59 +87,89 @@ public static class SUPERCOMICLIB_CORE__ArrayExtension__
         return -1;
     }
 
-    public static T[] SubArray<T>(this T[] _arr, int startIdx, int endIdx)
+    /// <summary>
+    /// 부분 배열을 만듭니다.
+    /// </summary>
+    /// <typeparam name="T">배열의 원소 타입</typeparam>
+    /// <param name="_arr">원본 배열</param>
+    /// <param name="startIdx">원본 배열에서 읽기 시작할 위치(지정된 위치의 원소 포함)</param>
+    /// <param name="count">읽을 원소의 개수</param>
+    /// <returns>원본 배열에 대한, 부분 배열</returns>
+    [return: NotNull]
+    public static T[] SubArray<T>(this T[] _arr, int startIdx, int count)
     {
-        if (_arr.Length < endIdx)
-            throw new ArgumentOutOfRangeException(nameof(endIdx));
+        if (count == 0)
+            return Array.Empty<T>();
 
-        int count = endIdx - startIdx;
-        if (count <= 0)
-            throw new ArgumentOutOfRangeException();
+        var result = new T[count];
+        Array.Copy(_arr, startIdx, result, 0, count);
 
-        T[] result = new T[count];
-        for (int x = 0; x < count; x++, startIdx++)
-            result[x] = _arr[startIdx];
         return result;
     }
 
-    public static bool TrySubArray<T>(this T[] _arr, int startIdx, int endIdx, out T[] result)
+    /// <summary>
+    /// 부분 배열 만들기를 시도합니다.
+    /// </summary>
+    /// <typeparam name="T">배열의 원소 타입</typeparam>
+    /// <param name="_arr">원본 배열</param>
+    /// <param name="startIdx">원본 배열에서 읽기 시작할 위치(지정된 위치의 원소 포함)</param>
+    /// <param name="count">읽을 원소의 개수</param>
+    /// <param name="result">부분 배열의 결과 (nullable)</param>
+    /// <returns>성공했을 경우 true</returns>
+    public static bool TrySubArray<T>(this T[] _arr, int startIdx, int count, out T[] result)
     {
-        if (_arr.Length < endIdx)
-        {
-            result = null;
-            return false;
-        }
+        if (_arr == null || (startIdx | count) < 0 || (uint)(startIdx + count) > (uint)_arr.Length)
+            goto _false;
 
-        int count = endIdx - startIdx;
-        if (count <= 0)
+        if (count == 0)
         {
-            result = null;
-            return false;
+            result = Array.Empty<T>();
+            return true;
         }
 
         result = new T[count];
-        for (int x = 0; x < count; x++, startIdx++)
-            result[x] = _arr[startIdx];
+        Array.Copy(_arr, startIdx, result, 0, count);
 
         return true;
+
+    _false:
+        result = null;
+        return false;
     }
 
+    /// <summary>
+    /// 배열 내 지정된 모든 원소 값을 새로운 값으로 대체합니다.
+    /// </summary>
+    /// <typeparam name="T">배열의 원소 타입</typeparam>
+    /// <param name="_arr">원본 배열</param>
+    /// <param name="old">검색할 값</param>
+    /// <param name="replace">대체할 값</param>
+    /// <returns>원본 배열의 복사본에 대해 연산을 수행한 결과를 저장한 배열</returns>
     public static T[] ReplaceAll<T>(this T[] _arr, T old, T replace) where T : IEquatable<T>
     {
-        int len = _arr.Length;
-        T[] result = new T[len];
-        for (int x = 0; x < len; x++)
+        T[] result = new T[_arr.Length];
+
+        for (int x = 0; x < _arr.Length; x++)
         {
-            T now = _arr[x];
+            ref T now = ref _arr[x];
             result[x] = now.Equals(old) ? replace : now;
         }
+
         return result;
     }
 
-    public static T[] ReplaceAll<T>(this T[] _arr, T old, T[] replace) where T : IEquatable<T>
+    /// <summary>
+    /// 배열 내 지정된 모든 원소 값 하나를 새로운 값 배열로 대체합니다.
+    /// </summary>
+    /// <typeparam name="T">배열의 원소 타입</typeparam>
+    /// <param name="_arr">원본 배열</param>
+    /// <param name="old">검색할 값</param>
+    /// <param name="replace">대체할 값 배열</param>
+    /// <returns>원본 배열의 복사본에 대해 연산을 수행한 결과를 저장한 배열</returns>
+    public static T[] ReplaceAll<T>(this T[] _arr, T old, IEnumerable<T> replace) where T : IEquatable<T>
     {
         List<T> result = new List<T>();
-        for (int x = 0, len = _arr.Length; x < len; x++)
+        for (int x = 0; x < _arr.Length; x++)
         {
             T now = _arr[x];
             if (now.Equals(old))
@@ -147,47 +180,51 @@ public static class SUPERCOMICLIB_CORE__ArrayExtension__
         return result.ToArray();
     }
 
+    /// <summary>
+    /// 배열 내 지정된 모든 원소 값 배열을 새로운 값 배열로 대체합니다.
+    /// </summary>
+    /// <typeparam name="T">배열의 원소 타입</typeparam>
+    /// <param name="_arr">원본 배열</param>
+    /// <param name="old">검색할 값 배열</param>
+    /// <param name="replace">대체할 값 배열</param>
+    /// <returns>원본 배열의 복사본에 대해 연산을 수행한 결과를 저장한 배열</returns>
     public static T[] ReplaceAll<T>(this T[] _arr, T[] old, T[] replace) where T : IEquatable<T>
     {
-        List<T> result = new List<T>();
-        int len = old.Length,
-            rlen = replace.Length;
-        for (int x = 0, max = _arr.Length; x + rlen <= max;)
+        var result = new List<T>();
+
+        for (int x = 0; x + replace.Length <= _arr.Length;)
         {
-            bool matched = true;
-            for (int i = 0; i < len; i++)
+            for (int i = 0; i < old.Length; i++)
                 if (_arr[x + i].Equals(old[i]) == false)
-                {
-                    matched = false;
-                    break;
-                }
-            if (matched)
-            {
-                for (int i = 0; i < rlen; i++)
-                    result.Add(replace[i]);
-                x += len;
-            }
-            else
-            {
-                result.Add(_arr[x]);
-                x++;
-            }
+                    goto _matchFalse;
+
+            for (int i = 0; i < replace.Length; i++)
+                result.Add(replace[i]);
+
+            x += replace.Length;
+            continue;
+
+        _matchFalse:
+            result.Add(_arr[x]);
+            x++;
         }
+
         return result.ToArray();
     }
 
     /// <summary>
     /// 배열의 값을 replace합니다
     /// </summary>
+    /// <param name="_arr">원본 배열</param>
     /// <param name="old">찾을 값 입니다</param>
     /// <param name="replace">새 값 입니다</param>
     /// <param name="indexes">old를 찾은 가장 위치들을 저장합니다</param>
     public static T[] ReplaceAll<T>(this T[] _arr, T old, T replace, out int[] indexes) where T : IEquatable<T>
     {
-        int len = _arr.Length;
-        T[] result = new T[len];
-        List<int> idxs = new List<int>();
-        for (int x = 0; x < len; x++)
+        var result = new T[_arr.Length];
+        var idxs = new List<int>();
+
+        for (int x = 0; x < _arr.Length; x++)
         {
             T now = _arr[x];
             if (now.Equals(old))
@@ -205,14 +242,16 @@ public static class SUPERCOMICLIB_CORE__ArrayExtension__
     /// <summary>
     /// 배열의 값을 replace합니다
     /// </summary>
+    /// <param name="_arr">원본 배열</param>
     /// <param name="old">찾을 값 입니다</param>
     /// <param name="replace">새 값 입니다</param>
     /// <param name="indexes">old를 찾은 가장 위치들을 저장합니다</param>
-    public static T[] ReplaceAll<T>(this T[] _arr, T old, T[] replace, out int[] indexes) where T : IEquatable<T>
+    public static T[] ReplaceAll<T>(this T[] _arr, T old, IEnumerable<T> replace, out int[] indexes) where T : IEquatable<T>
     {
-        List<T> result = new List<T>();
-        List<int> idxs = new List<int>();
-        for (int x = 0, len = _arr.Length; x < len; x++)
+        var result = new List<T>();
+        var idxs = new List<int>();
+
+        for (int x = 0; x < _arr.Length; x++)
         {
             T now = _arr[x];
             if (now.Equals(old))
@@ -230,48 +269,45 @@ public static class SUPERCOMICLIB_CORE__ArrayExtension__
     /// <summary>
     /// 배열의 값을 replace합니다
     /// </summary>
+    /// <param name="_arr">원본 배열</param>
     /// <param name="old">찾을 값 입니다</param>
     /// <param name="replace">새 값 입니다</param>
-    /// <param name="indexes">old를 찾은 가장 위치들을 저장합니다</param>
-    public static T[] ReplaceAll<T>(this T[] _arr, T[] old, T[] replace, out int[] indexes) where T : IEquatable<T>
+    /// <param name="indices">old를 찾은 가장 위치들을 저장합니다</param>
+    public static T[] ReplaceAll<T>(this T[] _arr, T[] old, T[] replace, out int[] indices) where T : IEquatable<T>
     {
-        List<T> result = new List<T>();
-        List<int> idxs = new List<int>();
-        int len = old.Length,
-            rlen = replace.Length;
-        for (int x = 0, max = _arr.Length; x + rlen <= max;)
+        var idxs = new List<int>();
+        var result = new List<T>();
+
+        for (int x = 0; x + replace.Length <= _arr.Length;)
         {
-            bool matched = true;
-            for (int i = 0; i < len; i++)
+            for (int i = 0; i < old.Length; i++)
                 if (_arr[x + i].Equals(old[i]) == false)
-                {
-                    matched = false;
-                    break;
-                }
-            if (matched)
-            {
-                for (int i = 0; i < rlen; i++)
-                    result.Add(replace[i]);
-                idxs.Add(x);
-                x += len;
-            }
-            else
-            {
-                result.Add(_arr[x]);
-                x++;
-            }
+                    goto _matchFalse;
+
+            for (int i = 0; i < replace.Length; i++)
+                result.Add(replace[i]);
+
+            idxs.Add(x);
+            x += replace.Length;
+            continue;
+
+        _matchFalse:
+            result.Add(_arr[x]);
+            x++;
         }
-        indexes = idxs.ToArray();
+
+        indices = idxs.ToArray();
         return result.ToArray();
     }
 
     /// <summary>
     /// 배열의 값을 replace합니다
     /// </summary>
+    /// <param name="_arr">원본 배열</param>
     /// <param name="oldLength">각 indexes 위치부터 무시할 배열의 크기입니다</param>
     /// <param name="indexes">배열 내에서 replace할 데이터가 있는 위치들 입니다</param>
     /// <param name="replace">새 값입니다</param>
-    public static T[] ReplaceAllFast<T>(this T[] _arr, int oldLength, int[] indexes, T[] replace) where T : IEquatable<T>
+    public static T[] ReplaceAllFast<T>(this T[] _arr, int oldLength, int[] indexes, IEnumerable<T> replace) where T : IEquatable<T>
     {
         List<T> result = new List<T>();
         int
@@ -296,122 +332,23 @@ public static class SUPERCOMICLIB_CORE__ArrayExtension__
         return result.ToArray();
     }
 
-    public static unsafe void Begin<T>(this T[] _arr, ArrayPtrLoopHandler<T> handler) where T : unmanaged
-    {
-        fixed (T* ptr = _arr)
-            for (int x = 0, max = _arr.Length; x < max;)
-                x += handler.Invoke(ptr, ref ptr[x], x, max);
-    }
-
-    public static unsafe void RBegin<T>(this T[] _arr, ArrayPtrLoopHandler<T> handler) where T : unmanaged
-    {
-        fixed (T* ptr = _arr)
-            for (int x = _arr.Length, max = x; x >= 0;)
-                x -= handler.Invoke(ptr, ref ptr[x], x, max);
-    }
-
-    public static void BeginPair<T1, T2>(this T1[] _arr1, T2[] _arr2, Action<T1, T2> action)
-    {
-        for (int i = 0, max = _arr1.Length; i < max; i++)
-            action.Invoke(_arr1[i], _arr2[i]);
-    }
-
-    public static void RBeginPair<T1, T2>(this T1[] _arr1, T2[] _arr2, Action<T1, T2> action)
-    {
-        for (int i = _arr1.Length; i >= 0; i--)
-            action.Invoke(_arr1[i], _arr2[i]);
-    }
-
-    public static string ToString_s<T>(this T[] _arr)
-    {
-        if (_arr == null || _arr.Length == 0)
-            return string.Empty;
-
-        string res = string.Empty;
-        for (int x = 0, max = _arr.Length; x < max; x++)
-            res += _arr[x].ToString();
-
-        return res;
-    }
-
-    public static string ToString<T>(this T[] _arr, Func<T, string> converter = null, string value = " ")
-    {
-        if (converter == null)
-            converter = DefToString;
-
-        string v = converter.Invoke(_arr[0]);
-        for (int x = 1, max = _arr.Length; x < max; x++)
-            v += value + converter.Invoke(_arr[x]);
-
-        // string v = _arr.Aggregate(string.Empty, (p, c) => $"{p}{(p.Length != 0 ? value : string.Empty)}{converter.Invoke(c)}");
-        return v;
-    }
-
-    private static string DefToString<T>(T obj) => obj.ToString();
-
     /// <summary>
-    /// 배열의 요소를 앞으로 당깁니다
+    /// 동일한 크기의 배열 두 개를 동시에 열거합니다.
     /// </summary>
-    public static void Pull<T>(this T[] _arr, int begin)
+    /// <typeparam name="T1">첫번째 배열 원소의 타입</typeparam>
+    /// <typeparam name="T2">두번째 배열 원소의 타입</typeparam>
+    /// <param name="_arr1">첫번째 배열 원본</param>
+    /// <param name="_arr2">두번째 배열 원본</param>
+    /// <param name="action">본문 대리자</param>
+    public static void ForEachTuple<T1, T2>(this T1[] _arr1, T2[] _arr2, ForEachTupleAction<T1, T2> action)
     {
-        if (begin <= 0)
+        if (_arr1 == null || _arr2 == null)
             return;
 
-        int max = _arr.Length;
-        int x = max - begin;
-        int n = 0;
-        while (n < x)
-            _arr[n++] = _arr[begin++];
-
-        while (n < max)
-            _arr[n++] = default;
-    }
-
-    /// <summary>
-    /// 배열의 요소를 앞으로 당깁니다
-    /// </summary>
-    /// <param name="start">base index</param>
-    /// <param name="begin">target index</param>
-    public static void Pull<T>(this T[] _arr, int start, int begin, int maxLength)
-    {
-        if (start < 0 || maxLength > _arr.Length)
+        if (_arr1.Length != _arr2.Length)
             return;
 
-        int x = maxLength - begin; // count
-        while (--x >= 0)
-            _arr[start++] = _arr[begin++];
-
-        while (start < maxLength)
-            _arr[start++] = default;
-    }
-
-    /// <summary>
-    /// 배열의 요소를 뒤로 밀어냅니다
-    /// </summary>
-    public static void Push<T>(this T[] _arr, int begin)
-    {
-        if (begin <= 0)
-            return;
-
-        int n = _arr.Length;
-        int x = n - begin; // start
-        while (x > 0)
-            _arr[--n] = _arr[--x];
-
-        while (n > 0)
-            _arr[--n] = default;
-    }
-
-    public static void ReverseFast<T>(this T[] arr)
-    {
-        int mx = arr.Length - 1;
-        int x = 0;
-
-        while (x < mx && x != mx)
-        {
-            T tmp = arr[x];
-            arr[x++] = arr[mx];
-            arr[mx--] = tmp;
-        }
+        for (int i = 0; i < _arr1.Length; i++)
+            action.Invoke(ref _arr1[i], ref _arr2[i], i);
     }
 }

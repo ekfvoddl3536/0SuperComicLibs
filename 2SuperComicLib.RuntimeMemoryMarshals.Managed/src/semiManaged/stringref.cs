@@ -116,7 +116,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Get the address of the first character.
         /// </summary>
         /// <returns>null is never returned, but an invalid address may be returned.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
         public char* GetCharPtr()
         {
             DEBUG_NULL_CHECK(this);
@@ -128,7 +128,34 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Gets a <see cref="NativeSpan{T}"/>.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
-        public NativeSpan<char> AsSpan() => new NativeSpan<char>(GetCharPtr(), Length);
+        public NativeSpan<char> AsSpan()
+        {
+            DEBUG_NULL_CHECK(this);
+
+            return new NativeSpan<char>(GetCharPtr(), Length);
+        }
+
+        /// <summary>
+        /// Gets a <see cref="NativeSpan{T}"/>.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
+        public NativeSpan<char> AsSpan(int startIndex)
+        {
+            DEBUG_NULL_CHECK(this);
+
+            return new NativeSpan<char>(GetCharPtr(), (uint)Length).Slice((uint)startIndex);
+        }
+
+        /// <summary>
+        /// Gets a <see cref="NativeSpan{T}"/>.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
+        public NativeSpan<char> AsSpan(int startIndex, int count)
+        {
+            DEBUG_NULL_CHECK(this);
+
+            return new NativeSpan<char>(GetCharPtr(), (uint)Length).Slice((uint)startIndex, (uint)count);
+        }
 
         /// <summary>
         /// Same as: <see cref="string.ToCharArray()"/>.
@@ -227,8 +254,13 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <summary>
         /// Gets a reference to a managed string allocated in unmanaged memory.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public string AsManaged() => ILUnsafe.AsClass<string>(_Ptr);
+        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
+        public string AsManaged()
+        {
+            DEBUG_NULL_CHECK(this);
+
+            return ILUnsafe.AsClass<string>(_Ptr);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
         public void Clear()
@@ -255,17 +287,6 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         {
             if (_Ptr != null)
                 Marshal.FreeHGlobal((IntPtr)(_Ptr - sizeof(void*)));
-        }
-
-        /// <summary>
-        /// High performance scenario version of <see cref="Dispose"/>
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
-        public void DisposeUnsafe()
-        {
-            DEBUG_NULL_CHECK(this);
-
-            Marshal.FreeHGlobal((IntPtr)(_Ptr - sizeof(void*)));
         }
         #endregion
 
@@ -310,7 +331,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             ptr[1] = typeof(string).TypeHandle.Value;
             *(int*)(ptr + 2) = length;
 
-            return new stringref(ptr);
+            return new stringref(ptr + 1);
         }
 
         /// <summary>

@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#pragma warning disable CS1591
 using System;
 using System.Runtime.CompilerServices;
 
@@ -27,10 +28,14 @@ namespace SuperComicLib
 {
     public static unsafe class SCL_GLOBAL_ArrayExtension
     {
+        /// <summary>
+        /// 원본에 대한 부분 배열을 생성합니다.<br/>
+        /// 이 부분 배열은 원본 배열의 복사본이 아닙니다.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Memory<T> Slice<T>(this T[] source, int startIndex, int count)
         {
-            if ((uint)(startIndex + count) > (uint)source.Length)
+            if (startIndex < 0 || (uint)(source.Length - startIndex) < (uint)count)
                 throw new ArgumentNullException(nameof(startIndex));
 
             return new Memory<T>(source, startIndex, count);
