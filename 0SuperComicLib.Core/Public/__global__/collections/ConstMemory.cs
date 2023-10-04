@@ -47,6 +47,17 @@ namespace SuperComicLib
 
         #region constructors
         /// <summary>
+        /// <see cref="ArraySegment{T}"/>의 정보를 사용하여, <see cref="Memory{T}"/>를 초기화
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ConstMemory(in ArraySegment<T> segment)
+        {
+            _source = segment.Array;
+            _start = segment.Offset;
+            Length = segment.Count;
+        }
+
+        /// <summary>
         /// 원본 배열, 시작 위치, 길이 정보를 사용해 부분 배열을 구성
         /// </summary>
         public ConstMemory(T[] source, int startIndex, int length)
@@ -107,7 +118,7 @@ namespace SuperComicLib
         public bool IsIndexOutOfRange
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _start < 0 || (uint)(_source.Length - _start) < (uint)Length;
+            get => _start < 0 || _source.Length - _start < (uint)Length;
         }
         #endregion
 
@@ -136,7 +147,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ConstMemory<T> Slice(int startIndex, int count)
         {
-            if (startIndex < 0 || (uint)(Length - startIndex) < (uint)count)
+            if (startIndex < 0 || Length - startIndex < (uint)count)
                 throw new ArgumentOutOfRangeException($"'{nameof(startIndex)}' or '{nameof(count)}'");
 
             return new ConstMemory<T>(_source, _start + startIndex, count);

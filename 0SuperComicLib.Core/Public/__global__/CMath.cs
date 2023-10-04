@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Runtime.CompilerServices;
 using System.Security;
 using SuperComicLib.CodeContracts;
@@ -34,42 +35,45 @@ namespace SuperComicLib
     {
         #region integer
         /// <summary>
-        /// <see cref="System.Math.Min(int, int)"/>
+        /// <see cref="Math.Min(int, int)"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe int Min(this int left, int right)
+        public static int Min(this int left, int right)
         {
-            bool t = left < right;
-            return ((*(byte*)&t - 1) & (right - left)) + left;
+            var t = (long)left - right;
+            return right + (int)(t & (t >> 63));
         }
 
         /// <summary>
-        /// <see cref="System.Math.Max(int, int)"/>
+        /// <see cref="Math.Max(int, int)"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe int Max(this int left, int right)
+        public static int Max(this int left, int right)
         {
-            bool t = left < right;
-            return ((*(byte*)&t - 1) & (left - right)) + right;
+            var t = (long)left - right;
+            return left - (int)(t & (t >> 63));
         }
 
         /// <summary>
         /// <see href="https://learn.microsoft.com/dotnet/api/system.math.clamp"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int Clampi(this int num, int min, int max) => Max(min, Min(max, num));
+        public static int Clampi(this int num, int min, int max)
+        {
+            // min
+            var t = (long)num - max;
+            var r0 = max + (t & (t >> 63));
+
+            // max
+            t = min - r0;
+            return min - (int)(t & (t >> 63));
+        }
 
         /// <summary>
         /// <paramref name="num"/> 값이 <paramref name="min"/>(포함) 부터 <paramref name="max"/>(포함) 사이에 있는지 여부
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsRngIn(this int num, int min, int max) => num >= min && num <= max;
-
-        /// <summary>
-        /// <paramref name="num"/> 값이 <paramref name="min"/>(포함) 부터 <paramref name="max"/>(포함) 사이에 존재하지 않는지 여부
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsRngOut(this int num, int min, int max) => num < min || num > max;
+        public static bool IsRngIn(this int num, int min, int max) => num - min <= max - min;
 
         /// <summary>
         /// 양수부분만 남도록 강제로 자릅니다
@@ -84,7 +88,7 @@ namespace SuperComicLib
         public static int Neg1(this int value) => value | int.MinValue;
 
         /// <summary>
-        /// <see cref="System.Math.Abs(int)"/>
+        /// <see cref="Math.Abs(int)"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Abs(this int value)
@@ -137,7 +141,7 @@ namespace SuperComicLib
 
         #region uint
         /// <summary>
-        /// <see cref="System.Math.Min(uint, uint)"/>
+        /// <see cref="Math.Min(uint, uint)"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Min(this uint left, uint right)
@@ -147,7 +151,7 @@ namespace SuperComicLib
         }
 
         /// <summary>
-        /// <see cref="System.Math.Max(uint, uint)"/>
+        /// <see cref="Math.Max(uint, uint)"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Max(this uint left, uint right)
@@ -167,12 +171,21 @@ namespace SuperComicLib
         /// <see href="https://learn.microsoft.com/dotnet/api/system.math.clamp"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Clampu(this uint value, uint min, uint max) => Min(Max(value, min), max);
+        public static uint Clampu(this uint value, uint min, uint max)
+        {
+            // min
+            var t = value - max;
+            var r0 = max + (t & (uint)((int)t >> 31));
+
+            // max
+            t = min - r0;
+            return min - (t & (uint)((int)t >> 31));
+        }
         #endregion
 
         #region long
         /// <summary>
-        /// <see cref="System.Math.Min(long, long)"/>
+        /// <see cref="Math.Min(long, long)"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe long Min(this long left, long right)
@@ -182,7 +195,7 @@ namespace SuperComicLib
         }
 
         /// <summary>
-        /// <see cref="System.Math.Max(long, long)"/>
+        /// <see cref="Math.Max(long, long)"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe long Max(this long left, long right)
@@ -198,7 +211,7 @@ namespace SuperComicLib
         public static long Clampi(this long num, long min, long max) => Max(min, Min(max, num));
 
         /// <summary>
-        /// <see cref="System.Math.Abs(int)"/>
+        /// <see cref="Math.Abs(int)"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Abs(this long value)
@@ -223,7 +236,7 @@ namespace SuperComicLib
 
         #region ulong
         /// <summary>
-        /// <see cref="System.Math.Min(ulong, ulong)"/>
+        /// <see cref="Math.Min(ulong, ulong)"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Min(this ulong left, ulong right)
@@ -233,7 +246,7 @@ namespace SuperComicLib
         }
 
         /// <summary>
-        /// <see cref="System.Math.Max(ulong, ulong)"/>
+        /// <see cref="Math.Max(ulong, ulong)"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Max(this ulong left, ulong right)

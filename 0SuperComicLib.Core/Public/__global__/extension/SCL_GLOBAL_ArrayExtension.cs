@@ -35,7 +35,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Memory<T> Slice<T>(this T[] source, int startIndex, int count)
         {
-            if (startIndex < 0 || (uint)(source.Length - startIndex) < (uint)count)
+            if (startIndex < 0 || source.Length - startIndex < (uint)count)
                 throw new ArgumentNullException(nameof(startIndex));
 
             return new Memory<T>(source, startIndex, count);

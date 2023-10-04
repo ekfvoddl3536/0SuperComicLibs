@@ -50,6 +50,17 @@ namespace SuperComicLib
 
         #region constructors
         /// <summary>
+        /// <see cref="ArraySegment{T}"/>의 정보를 사용하여, <see cref="Memory{T}"/>를 초기화
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Memory(in ArraySegment<T> segment)
+        {
+            _source = segment.Array;
+            _start = segment.Offset;
+            Length = segment.Count;
+        }
+
+        /// <summary>
         /// 원본 배열, 시작 위치, 길이 정보를 사용해 부분 배열을 구성
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -82,10 +93,9 @@ namespace SuperComicLib
         /// 부분 배열의 <paramref name="index"/> 번째 원소에 대한 참조 가져오기<para/>
         /// 고성능 시나리오를 위한 API. 범위 검사가 없음.
         /// </summary>
-        [AssumeOperationValid, AssumeInputsValid]
         public ref T this[[ValidRange] int index]
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid, AssumeInputsValid]
             get => ref _source[_start + index];
         }
 
@@ -112,8 +122,8 @@ namespace SuperComicLib
         /// </summary>
         public bool IsIndexOutOfRange
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _start < 0 || (uint)(_source.Length - _start) < (uint)Length;
+            [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
+            get => _start < 0 || _source.Length - _start < (uint)Length;
         }
         #endregion
 
@@ -142,7 +152,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Memory<T> Slice(int startIndex, int count)
         {
-            if (startIndex < 0 || (uint)(Length - startIndex) < (uint)count)
+            if (startIndex < 0 || Length - startIndex < (uint)count)
                 throw new ArgumentOutOfRangeException($"'{nameof(startIndex)}' or '{nameof(count)}'");
 
             return new Memory<T>(_source, _start + startIndex, count);
@@ -190,6 +200,12 @@ namespace SuperComicLib
 
             Array.Copy(_source, _start + startIndex, array._source, array._start + arrayIndex, length);
         }
+
+        /// <summary>
+        /// 현재 <see cref="Memory{T}"/>의 정보를 사용하여, <see cref="ArraySegment{T}"/>로 변환합니다.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ArraySegment<T> AsArraySegment() => new ArraySegment<T>(_source, _start, Length);
         #endregion
 
         #region methods (interface member)

@@ -82,9 +82,9 @@ namespace SuperComicLib
         public override string ToString() => $"[{start}, {end}) Length: '{Length}']";
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(Range64 left, Range64 right) => ((left.start - right.start) | (left.end - right.end)) == 0;
+        public static bool operator ==(Range64 left, Range64 right) => ((left.start ^ right.start) | (left.end ^ right.end)) == 0;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(Range64 left, Range64 right) => ((left.start - right.start) | (left.end - right.end)) != 0;
+        public static bool operator !=(Range64 left, Range64 right) => ((left.start ^ right.start) | (left.end ^ right.end)) != 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator <(Range64 left, Range64 right) => left.end < right.start;
