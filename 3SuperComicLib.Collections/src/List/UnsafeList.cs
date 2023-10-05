@@ -115,7 +115,7 @@ namespace SuperComicLib.Collections
         public Memory<T> at(Range range)
         {
             if ((range.start | range.end) < 0 ||
-                (uint)(range.end - range.start) > (uint)_size)
+                range.end - range.start > (uint)_size)
                 throw new ArgumentOutOfRangeException(nameof(range));
 
             return new Memory<T>(_array, range.start, range.end - range.start);
@@ -181,12 +181,7 @@ namespace SuperComicLib.Collections
 
         public void AddRange(Memory<T> memory)
         {
-            if (memory._source == null)
-                throw new ArgumentNullException(nameof(memory));
-
-            if (memory._start < 0 ||
-                memory.Length < 0 ||
-                (uint)(memory._start + memory.Length) > (uint)memory._source.Length)
+            if (!memory.IsValid)
                 throw new ArgumentOutOfRangeException(nameof(memory));
 
             AddRange_Core(memory);
@@ -290,9 +285,7 @@ namespace SuperComicLib.Collections
             if ((uint)index >= (uint)_size)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
-            if (memory._start < 0 ||
-                memory.Length < 0 ||
-                (uint)(memory._start + memory.Length) > (uint)memory._source.Length)
+            if (!memory.IsValid)
                 throw new ArgumentOutOfRangeException(nameof(memory));
 
             InsertRange_Core(index, memory);
@@ -328,7 +321,7 @@ namespace SuperComicLib.Collections
             if ((uint)index >= (uint)_size)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
-            if ((uint)count > (uint)(_size - index))
+            if ((uint)count > _size - index)
                 throw new ArgumentOutOfRangeException(nameof(count));
 
             return Array.BinarySearch(_array, index, count, item, comparer ?? Comparer<T>.Default);
@@ -705,7 +698,7 @@ namespace SuperComicLib.Collections
             if ((uint)startIndex >= (uint)_size)
                 throw new ArgumentOutOfRangeException(nameof(startIndex));
 
-            if ((uint)count > (uint)(_size - startIndex))
+            if ((uint)count > _size - startIndex)
                 throw new ArgumentOutOfRangeException(nameof(count));
 
             if (match == null)
@@ -808,7 +801,7 @@ namespace SuperComicLib.Collections
             if ((uint)startIndex >= (uint)_size)
                 throw new ArgumentOutOfRangeException(nameof(startIndex));
 
-            if ((uint)count > (uint)(_size - startIndex))
+            if ((uint)count > _size - startIndex)
                 throw new ArgumentOutOfRangeException(nameof(count));
 
             if (match == null)

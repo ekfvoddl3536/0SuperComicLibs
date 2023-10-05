@@ -22,33 +22,25 @@
 
 using System;
 using System.Runtime.CompilerServices;
-using SuperComicLib.CodeContracts;
+using System.Runtime.InteropServices;
 
 namespace SuperComicLib
 {
-    public static unsafe class SCL_GLOBAL_MemoryExtension
+    unsafe partial class MemoryBlock
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength]
-        public static void CopyTo<T>(this in Memory<T> source, in NativeSpan<T> destination) where T : unmanaged
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IntPtr Memalloc(nint_t len, int elementSize) =>
+            Marshal.AllocHGlobal((IntPtr)(len * (uint)elementSize));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Memmove<T>(void* src, void* dest, nuint_t length) where T : unmanaged
         {
-            if (!source.IsValid)
-                throw new ArgumentOutOfRangeException(nameof(source));
-
-            if (destination.Source == null)
-                throw new ArgumentNullException(nameof(destination));
-
-            if ((uint)source.Length > (uint)destination.Length)
-                throw new ArgumentOutOfRangeException(nameof(destination));
-
-            CopyTo_unsafe(source, destination);
+            ulong cb = (ulong)(length * (uint)sizeof(T));
+            Buffer.MemoryCopy(src, dest, cb, cb);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength, AssumeInputsValid]
-        public static void CopyTo_unsafe<T>([DisallowNull, ValidRange] this in Memory<T> source, [DisallowNull, ValidRange] in NativeSpan<T> destination) where T : unmanaged
-        {
-            ulong sz = (uint)source.Length * (uint)sizeof(T);
-            fixed (T* psrc = &source[0])
-                Buffer.MemoryCopy(psrc, destination.Source, sz, sz);
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Clear(void* ptr, nint_t length, int elementSize) =>
+            Clear((byte*)ptr, (nuint_t)length * (uint)elementSize);
     }
 }

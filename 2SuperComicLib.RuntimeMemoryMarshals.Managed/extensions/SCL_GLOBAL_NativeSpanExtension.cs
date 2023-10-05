@@ -54,11 +54,7 @@ namespace SuperComicLib
             if (source.Source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            if (destination._source == null)
-                throw new ArgumentNullException(nameof(destination));
-
-            if ((destination._start | destination.Length) < 0 ||
-                (uint)(destination._start + destination.Length) > (uint)destination._source.Length ||
+            if (!destination.IsValid ||
                 (uint)source.Length > (uint)destination.Length)
                 throw new ArgumentOutOfRangeException(nameof(destination));
 
@@ -79,11 +75,7 @@ namespace SuperComicLib
             if (source._source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            if (destination._source == null)
-                throw new ArgumentNullException(nameof(destination));
-
-            if ((destination._start | destination.Length) < 0 ||
-                (uint)(destination._start + destination.Length) > (uint)destination._source.Length ||
+            if (!destination.IsValid ||
                 (uint)source.Length > (uint)destination.Length)
                 throw new ArgumentOutOfRangeException(nameof(destination));
 

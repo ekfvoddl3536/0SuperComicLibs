@@ -29,12 +29,12 @@ namespace SuperComicLib
         public static string MoveNext(this StreamReader reader)
         {
             if (reader.EndOfStream)
-                return null;
+                return string.Empty;
 
             string now;
             do
                 now = reader.ReadLine().Trim();
-            while (reader.EndOfStream == false && now.Length == 0);
+            while (!reader.EndOfStream && now.Length == 0);
 
             return now;
         }
@@ -42,7 +42,7 @@ namespace SuperComicLib
         public static string MoveNext(this StreamReader reader, ref int count)
         {
             if (reader.EndOfStream)
-                return null;
+                return string.Empty;
 
             string now;
             do
@@ -50,7 +50,7 @@ namespace SuperComicLib
                 now = reader.ReadLine().Trim();
                 count++;
             }
-            while (reader.EndOfStream == false && now.Length == 0);
+            while (!reader.EndOfStream && now.Length == 0);
 
             return now;
         }

@@ -29,7 +29,7 @@
 }
 .assembly extern '0SuperComicLib.Core'
 {
-  .ver 3:5:0:0
+  .ver 3:6:0:0
 }
 
 .assembly '1SuperComicLib.RuntimeMemoryMarshals'
@@ -81,7 +81,7 @@
   )
 
   .hash algorithm 0x00008004
-  .ver 1:0:0:0
+  .ver 3:0:0:0
 }
 .module '1SuperComicLib.RuntimeMemoryMarshals.dll'
 .custom instance void [mscorlib]System.Security.UnverifiableCodeAttribute::.ctor() = ( 01 00 00 00 )

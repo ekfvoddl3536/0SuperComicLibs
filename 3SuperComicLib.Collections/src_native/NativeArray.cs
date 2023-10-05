@@ -62,7 +62,7 @@ namespace SuperComicLib.Collections
 
             if (source.Length > 0)
                 fixed (T* psrc = &source[0])
-                    MemoryBlock.Memmove(psrc, Ptr, sz);
+                    MemoryBlock.Memmove<T>(psrc, Ptr, sz);
         }
         #endregion
 
@@ -82,7 +82,7 @@ namespace SuperComicLib.Collections
         public NativeSpan<T> AsSpan() => new NativeSpan<T>(Ptr, Length);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Clear() => MemoryBlock.Clear(Ptr, Length, sizeof(T));
+        public void Clear() => MemoryBlock.Clear((byte*)Ptr, (nuint_t)Length * (uint)sizeof(T));
         #endregion
 
         #region explicit implement longerfaces

@@ -30,10 +30,10 @@
         
     .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 ) 
     
-    .field private initonly native int _value
+    .field assembly initonly native int _value
 
     // .ctor
-    .method private hidebysig specialname rtspecialname instance void  .ctor(void* x) cil managed aggressiveinlining
+    .method assembly hidebysig specialname rtspecialname instance void  .ctor(void* x) cil managed aggressiveinlining
     {
         .maxstack 2
 

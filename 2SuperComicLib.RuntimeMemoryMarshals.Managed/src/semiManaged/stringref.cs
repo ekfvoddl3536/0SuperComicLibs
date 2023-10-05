@@ -190,10 +190,10 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             if ((uint)startIndex > (uint)len)
                 throw new ArgumentOutOfRangeException(nameof(startIndex));
 
-            if ((uint)(len - startIndex) < (uint)length)
+            if (len - startIndex < (uint)length)
                 throw new ArgumentOutOfRangeException(nameof(length));
 
-            if ((len | length) <= 0)
+            if (length <= 0)
                 return Array.Empty<char>();
 
             var res = new char[length];
@@ -285,8 +285,9 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Dispose()
         {
-            if (_Ptr != null)
-                Marshal.FreeHGlobal((IntPtr)(_Ptr - sizeof(void*)));
+            DEBUG_NULL_CHECK(this);
+
+            Marshal.FreeHGlobal((IntPtr)(_Ptr - sizeof(void*)));
         }
         #endregion
 

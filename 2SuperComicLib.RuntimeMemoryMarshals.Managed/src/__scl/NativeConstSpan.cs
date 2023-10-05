@@ -22,12 +22,15 @@
 
 #pragma warning disable CS0809 // 사용되는 멤버를 재정의하여 사용하지 않음으로 표시
 using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib
 {
+    [DebuggerTypeProxy(typeof(NativeSpanElementDebugView<>))]
+    [DebuggerDisplay("{Length}")]
     [StructLayout(LayoutKind.Sequential)]
     public readonly unsafe ref struct NativeConstSpan<T> where T : unmanaged
     {
@@ -114,6 +117,23 @@ namespace SuperComicLib
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T* DangerousGetPointer() => _source;
+        #endregion
+
+        #region util methods
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public nuint_t capacity() =>
+            (nuint_t)Length * (uint)sizeof(T);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid]
+        public ref readonly TDest getAs<TDest>([ValidRange] nint_t index) where TDest : unmanaged =>
+            ref *(TDest*)(_source + (long)index);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref readonly TDest getAs_at<TDest>(nint_t index) where TDest : unmanaged
+        {
+            ArgValidateHelper.ThrowIfIndexOutOfRange(index, Length);
+            return ref *(TDest*)(_source + (long)index);
+        }
         #endregion
 
         #region override

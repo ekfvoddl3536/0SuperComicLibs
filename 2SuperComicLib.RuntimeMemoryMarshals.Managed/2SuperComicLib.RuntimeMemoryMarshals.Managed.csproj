@@ -84,6 +84,9 @@
     <DocumentationFile>bin\x86\Release\2SuperComicLib.RuntimeMemoryMarshals.Managed.xml</DocumentationFile>
     <NoWarn>CS1591;IDE1006;</NoWarn>
   </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -112,12 +115,15 @@
     <Compile Include="extensions\SCL_GLOBAL_RTMS_ArrayExtension.cs" />
     <Compile Include="src\semiManaged\arrayrefSegment.cs" />
     <Compile Include="src\math\CMathi.cs" />
+    <Compile Include="src\__dbg\NativeSpanElementDebugView.cs" />
     <Compile Include="src\__scl\iters\const_iterator.cs" />
     <Compile Include="src\__scl\iters\const_reverse_iterator.cs" />
     <Compile Include="src\__scl\iters\reverse_iterator.cs" />
     <Compile Include="src\__scl\iters\_iterator.cs" />
-    <Compile Include="src\__scl\MemoryBlock.cs" />
+    <Compile Include="src\__scl\memblk\MemoryBlock.Clear.cs" />
     <Compile Include="src\__scl\ArgValidate.cs" />
+    <Compile Include="src\__scl\memblk\MemoryBlock.Basic.cs" />
+    <Compile Include="src\__scl\memblk\MemoryBlock.Fill.cs" />
     <Compile Include="src\__scl\NativeConstSpan.cs" />
     <Compile Include="src\__scl\NativeSpan.cs" />
     <Compile Include="src\semiManaged\stringref.cs" />

@@ -172,7 +172,7 @@
     <Compile Include="src\Stack\ListStack.cs" />
     <Compile Include="src\Stack\LookaheadStack.cs" />
     <Compile Include="src\List\LongHashedList.cs" />
-    <Compile Include="src\Map\Map.cs" />
+    <Compile Include="src\Map\FastMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\0SuperComicLib.Core\0SuperComicLib.Core.csproj">

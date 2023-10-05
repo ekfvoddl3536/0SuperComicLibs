@@ -28,7 +28,7 @@ using System.Diagnostics;
 namespace SuperComicLib.Collections
 {
     [DebuggerDisplay("Count = {m_count}")]
-    public class Map<T> : IMap<T>
+    public class FastMap<T> : IMap<T>
     {
         protected const int bitmask = 0x7FFF_FFFF;
         protected const int maxlen = 0x7FEF_FFFF;
@@ -42,7 +42,7 @@ namespace SuperComicLib.Collections
         private uint m_version;
 
         #region constructor
-        public Map(int capacity)
+        public FastMap(int capacity)
         {
             if (capacity < 0)
                 throw new ArgumentOutOfRangeException(nameof(capacity));
@@ -57,7 +57,7 @@ namespace SuperComicLib.Collections
                 IncreaseCapacity(capacity);
         }
 
-        public Map(KeyValuePair<int, T>[] items)
+        public FastMap(KeyValuePair<int, T>[] items)
         {
             if (items == null)
                 return;
@@ -80,7 +80,7 @@ namespace SuperComicLib.Collections
             }
         }
 
-        public Map(IEnumerable<T> collection) : this(default_capacity)
+        public FastMap(IEnumerable<T> collection) : this(default_capacity)
         {
             if (collection == null)
                 return;
@@ -90,7 +90,7 @@ namespace SuperComicLib.Collections
                     Add(val.GetHashCode(), val);
         }
 
-        public Map() : this(default_capacity) { }
+        public FastMap() : this(default_capacity) { }
         #endregion
 
         #region property
@@ -355,12 +355,12 @@ namespace SuperComicLib.Collections
         #region structs
         protected struct Enumerator : IEnumerator<KeyValuePair<int, T>>
         {
-            private Map<T> inst;
+            private FastMap<T> inst;
             private int index;
             private uint version;
             private KeyValuePair<int, T> current;
 
-            public Enumerator(Map<T> inst)
+            public Enumerator(FastMap<T> inst)
             {
                 this.inst = inst;
                 version = inst.m_version;
@@ -407,12 +407,12 @@ namespace SuperComicLib.Collections
 
         protected struct KeyEnumerator : IEnumerable<int>, IEnumerator<int>
         {
-            private Map<T> inst;
+            private FastMap<T> inst;
             private int index;
             private uint version;
             private int current;
 
-            public KeyEnumerator(Map<T> inst)
+            public KeyEnumerator(FastMap<T> inst)
             {
                 this.inst = inst;
                 index = 0;
@@ -461,12 +461,12 @@ namespace SuperComicLib.Collections
 
         protected struct ValueEnumerator : IEnumerable<T>, IEnumerator<T>
         {
-            private Map<T> inst;
+            private FastMap<T> inst;
             private int index;
             private uint version;
             private T current;
 
-            public ValueEnumerator(Map<T> inst)
+            public ValueEnumerator(FastMap<T> inst)
             {
                 this.inst = inst;
                 index = 0;

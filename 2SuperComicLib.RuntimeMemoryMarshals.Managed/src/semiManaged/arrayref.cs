@@ -75,7 +75,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         }
         #endregion
 
-        #region property
+        #region property +size()
         /// <summary>
         /// Gets whether this array is a dotnet (CoreCLR) array.
         /// <br/>
@@ -103,6 +103,12 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid, X64Only]
             get => *(long*)_pLength;
+        }
+
+        public bool IsNull
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ((nint_t)_pClass | (nint_t)_pLength) == 0;
         }
 
         /// <summary>

@@ -35,7 +35,7 @@
     <DocumentationFile>bin\Release\1SuperComicLib.RuntimeMemoryMarshals.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
-    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>

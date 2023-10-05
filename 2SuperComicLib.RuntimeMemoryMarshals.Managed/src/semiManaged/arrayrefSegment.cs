@@ -59,6 +59,29 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         }
         #endregion
 
+        #region property
+        /// <summary>
+        /// Whether the current subarray is valid.
+        /// </summary>
+        public bool IsValid
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => !IsNull && !IsIndexOutOfRange;
+        }
+
+        public bool IsNull
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => _source.IsNull;
+        }
+
+        public bool IsIndexOutOfRange
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
+            get => _start < 0 || _source.Length - _start < (uint)Length;
+        }
+        #endregion
+
         #region indexer + at
         public ref T this[[ValidRange] int index]
         {

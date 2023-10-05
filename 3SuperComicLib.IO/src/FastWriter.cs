@@ -53,7 +53,7 @@ namespace SuperComicLib.IO
         {
             if (buf.Length < sizeof(T))
                 // 16 pad
-                buf = new byte[sizeof(T) + ((16 - (sizeof(T) & 0xF)) & 0xF)];
+                buf = new byte[(sizeof(T) + 0xF) & ~0xF];
 
             fixed (byte* dst = &buf[0])
             {

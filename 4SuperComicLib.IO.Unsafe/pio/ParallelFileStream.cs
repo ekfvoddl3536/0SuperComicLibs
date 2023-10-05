@@ -194,8 +194,7 @@ namespace SuperComicLib.IO.AdvancedParallel
         #region disposing
         ~ParallelFileStream()
         {
-            if (_baseStream != null)
-                _baseStream.Dispose();
+            _baseStream?.Dispose();
         }
 
         public void Dispose()

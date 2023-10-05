@@ -54,19 +54,43 @@ namespace SuperComicLib.Collections
             m_Last = m_Ptr + (long)size;
             m_End = m_Last;
 
-            MemoryBlock.Memset(m_Ptr, size, val);
+            MemoryBlock.Fill(m_Ptr, (nuint_t)size, val);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public _vector(const_iterator<T> first, const_iterator<T> last)
+        public _vector(const_iterator<T> first, const_iterator<T> last) : this(first._ptr, last._ptr)
         {
-            var len = (nint_t)last._ptr - (nint_t)first._ptr;
+        }
 
-            m_Ptr = (T*)Marshal.AllocHGlobal((IntPtr)len);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public _vector(T* first, T* last)
+        {
+            var len = (IntPtr)(last - first);
+
+            m_Ptr = (T*)Marshal.AllocHGlobal(len);
             m_Last = (T*)(byte*)m_Ptr + (long)len;
             m_End = m_Last;
 
-            MemoryBlock.Memmove(first._ptr, m_Ptr, (nuint_t)len);
+            MemoryBlock.Memmove<T>(first, m_Ptr, (nuint_t)len);
+        }
+
+        /// <summary>
+        /// Fast object initialization
+        /// </summary>
+        /// <param name="hglobal_first">A pointer to the starting position allocated with the <see cref="Marshal.AllocHGlobal(IntPtr)"/>.</param>
+        /// <param name="hglobal_end">
+        /// End of this vector. 
+        /// The last value is not included in the range. Similar to the role of 'Length', do not confuse with 'Index'.</param>
+        /// <param name="hglobal_last">
+        /// The position to start appending with push. Similar role to 'Count', so it must not be less than <paramref name="hglobal_first"/> 
+        /// or equal to or greater than <paramref name="hglobal_end"/>.</param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid, NoExcept]
+        public _vector(T* hglobal_first, T* hglobal_last, T* hglobal_end)
+        {
+            m_Ptr = hglobal_first;
+            m_Last = hglobal_last;
+            m_End = hglobal_end;
         }
         #endregion
 
@@ -118,7 +142,7 @@ namespace SuperComicLib.Collections
             T* src = m_Ptr + (long)index;
             T* dst = src + 1;
 
-            MemoryBlock.Memmove(src, dst, (nuint_t)((byte*)m_Last - (byte*)dst));
+            MemoryBlock.Memmove<T>(src, dst, (nuint_t)((byte*)m_Last - (byte*)dst));
 
             *src = item;
         }
@@ -132,7 +156,7 @@ namespace SuperComicLib.Collections
             T* dst = m_Ptr + (long)index;
             T* src = dst + 1;
 
-            MemoryBlock.Memmove(src, dst, (nuint_t)((byte*)m_Last - (byte*)src));
+            MemoryBlock.Memmove<T>(src, dst, (nuint_t)((byte*)m_Last - (byte*)src));
 
             m_Last--;
 
@@ -147,7 +171,7 @@ namespace SuperComicLib.Collections
 
             T* dst = position._ptr + 1;
 
-            MemoryBlock.Memmove(dst, position._ptr, (nuint_t)((byte*)m_Last - (byte*)dst));
+            MemoryBlock.Memmove<T>(dst, position._ptr, (nuint_t)((byte*)m_Last - (byte*)dst));
 
             m_Last--;
         }
@@ -160,7 +184,7 @@ namespace SuperComicLib.Collections
 
             T* dst = last._ptr + 1;
 
-            MemoryBlock.Memmove(dst, first._ptr, (nuint_t)((byte*)m_Last - (byte*)dst));
+            MemoryBlock.Memmove<T>(dst, first._ptr, (nuint_t)((byte*)m_Last - (byte*)dst));
 
             m_Last -= last._ptr - first._ptr;
         }
@@ -184,7 +208,7 @@ namespace SuperComicLib.Collections
             T* last = dst + (long)old_cnt;
             T* end = dst + (long)new_capa;
 
-            MemoryBlock.Memmove(m_Ptr, dst, old_cnt, sizeof(T));
+            MemoryBlock.Memmove<T>(m_Ptr, dst, (nuint_t)old_cnt);
 
             Marshal.FreeHGlobal((IntPtr)m_Ptr);
 
@@ -217,7 +241,7 @@ namespace SuperComicLib.Collections
             if (n > cnt)
                 MemoryBlock.Clear(last, n - cnt, sizeof(T));
 
-            MemoryBlock.Memmove(m_Ptr, dst, cpyCnt, sizeof(T));
+            MemoryBlock.Memmove<T>(m_Ptr, dst, (nuint_t)cpyCnt);
 
             Marshal.FreeHGlobal((IntPtr)m_Ptr);
 

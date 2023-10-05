@@ -22,12 +22,15 @@
 
 #pragma warning disable CS0809 // 사용되는 멤버를 재정의하여 사용하지 않음으로 표시
 using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib
 {
+    [DebuggerTypeProxy(typeof(NativeSpanElementDebugView<>))]
+    [DebuggerDisplay("{Length}")]
     [StructLayout(LayoutKind.Sequential)]
     public readonly unsafe ref struct NativeSpan<T> where T : unmanaged
     {
@@ -94,10 +97,10 @@ namespace SuperComicLib
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Fill(in T value) => MemoryBlock.Memset(Source, Length, value);
+        public void Fill(in T value) => MemoryBlock.Fill(Source, (nuint_t)Length, value);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Clear() => MemoryBlock.Clear(Source, Length, sizeof(T));
+        public void Clear() => MemoryBlock.Clear((byte*)Source, (nuint_t)Length * (uint)sizeof(T));
         #endregion
 
         #region impl methods
@@ -121,7 +124,19 @@ namespace SuperComicLib
 
         #region util methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public nuint_t capacity() => (nuint_t)Length * (uint)sizeof(T);
+        public nuint_t capacity() => 
+            (nuint_t)Length * (uint)sizeof(T);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid]
+        public ref TDest getAs<TDest>([ValidRange] nint_t index) where TDest : unmanaged => 
+            ref *(TDest*)(Source + (long)index);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref TDest getAs_at<TDest>(nint_t index) where TDest : unmanaged
+        {
+            ArgValidateHelper.ThrowIfIndexOutOfRange(index, Length);
+            return ref *(TDest*)(Source + (long)index);
+        }
         #endregion
 
         #region override
