@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -106,7 +107,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             {
                 DEBUG_NULL_CHECK(this);
 
-                return *(int*)(_Ptr + sizeof(void*));
+                return *(int*)(_Ptr + sizeof(long));
             }
         }
         #endregion
@@ -121,7 +122,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         {
             DEBUG_NULL_CHECK(this);
 
-            return (char*)(_Ptr + sizeof(void*) + sizeof(int));
+            return (char*)(_Ptr + sizeof(long) + sizeof(int));
         }
 
         /// <summary>
@@ -217,7 +218,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             if (len <= 0)
                 return default;
 
-            var res = arrayref<char>.newf_dotnet(len);
+            var res = arrayref<char>.newf_clr(len);
 
             Marshal.Copy((IntPtr)GetCharPtr(), res.AsManaged(), 0, len);
 
@@ -244,7 +245,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             if ((len | length) <= 0)
                 return default;
 
-            var res = arrayref<char>.newf_dotnet(length);
+            var res = arrayref<char>.newf_clr(length);
 
             Marshal.Copy((IntPtr)(GetCharPtr() + startIndex), res.AsManaged(), 0, length);
 
@@ -267,7 +268,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         {
             DEBUG_NULL_CHECK(this);
 
-            Unsafe.InitBlockUnaligned(GetCharPtr(), 0, (uint)Length << 1);
+            ILUnsafe.InitBlockUnaligned(GetCharPtr(), 0, (uint)Length << 1);
         }
         #endregion
 
@@ -287,7 +288,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         {
             DEBUG_NULL_CHECK(this);
 
-            Marshal.FreeHGlobal((IntPtr)(_Ptr - sizeof(void*)));
+            Marshal.FreeHGlobal((IntPtr)(_Ptr - sizeof(long)));
         }
         #endregion
 
@@ -357,8 +358,8 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static int align_size(int charLength)
         {
-            var tSz = (charLength << 1) + sizeof(void*) * 3 + sizeof(char);
-            return (tSz + (sizeof(void*) - 1)) & -sizeof(void*);
+            var tSz = (charLength << 1) + sizeof(long) * 3 + sizeof(char);
+            return (tSz + (sizeof(long) - 1)) & -sizeof(long);
         }
 
         [Conditional("DEBUG")]

@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -64,7 +65,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public IntPtr TypeHandle
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
-            get => *(IntPtr*)(_Ptr + sizeof(void*));
+            get => *(IntPtr*)(_Ptr + sizeof(long));
         }
 
         /// <summary>
@@ -73,7 +74,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public int Size
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
-            get => NativeClass.InstanceSizeOf(TypeHandle) - (sizeof(void*) << 1);
+            get => NativeClass.InstanceSizeOf(TypeHandle) - (sizeof(long) << 1);
         }
         #endregion
 
@@ -88,7 +89,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         {
             DEBUG_NULL_CHECK(this);
 
-            return ref _Ptr[byteOffset + (sizeof(void*) << 1)];
+            return ref _Ptr[byteOffset + (sizeof(long) << 1)];
         }
 
         /// <summary>
@@ -113,8 +114,8 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         {
             DEBUG_NULL_CHECK(this);
 
-            var tmp = _Ptr + sizeof(void*);
-            return new NativeSpan<byte>(tmp + sizeof(void*), NativeClass.InstanceSizeOf(*(IntPtr*)tmp));
+            var tmp = _Ptr + sizeof(long);
+            return new NativeSpan<byte>(tmp + sizeof(long), NativeClass.InstanceSizeOf(*(IntPtr*)tmp));
         }
         #endregion
 
@@ -129,7 +130,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         {
             DEBUG_NULL_CHECK(this);
 
-            return (TUnmanaged*)(_Ptr + byteOffset + (sizeof(void*) << 1));
+            return (TUnmanaged*)(_Ptr + byteOffset + (sizeof(long) << 1));
         }
 
         /// <summary>
@@ -170,7 +171,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             DEBUG_NULL_CHECK(other);
 
             ulong sz = (uint)Size;
-            Buffer.MemoryCopy(_Ptr + (sizeof(void*) << 1), other._Ptr + (sizeof(void*) << 1), sz, sz);
+            Buffer.MemoryCopy(_Ptr + (sizeof(long) << 1), other._Ptr + (sizeof(long) << 1), sz, sz);
         }
         #endregion
 
@@ -214,7 +215,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
                 return 0;
 
             sz = (int)CMath.Min((uint)(sz - index), (uint)(array.Length - arrayIndex)).Min((uint)count);
-            Marshal.Copy((IntPtr)(_Ptr + index + (sizeof(void*) << 1)), array, arrayIndex, sz);
+            Marshal.Copy((IntPtr)(_Ptr + index + (sizeof(long) << 1)), array, arrayIndex, sz);
             return sz;
         }
 
@@ -231,7 +232,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         {
             DEBUG_NULL_CHECK(this);
 
-            Marshal.Copy((IntPtr)(_Ptr + index + (sizeof(void*) << 1)), array, arrayIndex, count);
+            Marshal.Copy((IntPtr)(_Ptr + index + (sizeof(long) << 1)), array, arrayIndex, count);
         }
         #endregion
         #endregion
@@ -245,7 +246,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         {
             DEBUG_NULL_CHECK(this);
 
-            Unsafe.InitBlockUnaligned(_Ptr + (sizeof(void*) << 1), 0, (uint)Size);
+            ILUnsafe.InitBlockUnaligned(_Ptr + (sizeof(long) << 1), 0, (uint)Size);
         }
         #endregion
 

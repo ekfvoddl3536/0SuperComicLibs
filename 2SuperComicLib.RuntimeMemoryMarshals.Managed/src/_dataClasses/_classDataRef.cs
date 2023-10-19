@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,29 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
-    /// <summary>
-    /// Provides a reference to the managed structure of the <see cref="NativeInstance{T}"/>
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential), MonoRuntimeNotSupported]
-    public readonly unsafe struct varef_t<T> where T : struct
+    [StructLayout(LayoutKind.Sequential)]
+    internal sealed class _classDataRef
     {
-        internal readonly byte* DataReference;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal varef_t(byte* DataReference) => this.DataReference = DataReference;
-
-        /// <summary>
-        /// Get a reference to the value.
-        /// </summary>
-        public ref T Value
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => ref Unsafe.AsRef<T>(DataReference);
-        }
+        public byte Item;
     }
 }

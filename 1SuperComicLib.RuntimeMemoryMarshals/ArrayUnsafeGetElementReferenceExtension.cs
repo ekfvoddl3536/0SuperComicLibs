@@ -1,6 +1,7 @@
-﻿// MIT License
+﻿// The MIT License (MIT)
 //
 // Copyright (c) 2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -37,14 +38,14 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// API for high-performance scenarios.
         /// </summary>
         [AssumeInputsValid, MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref T refdata_dotnet<T>([DisallowNull] this T[] array) => throw new PlatformNotSupportedException();
+        public static ref T refdata_clr<T>([DisallowNull] this T[] array) => throw new PlatformNotSupportedException();
         /// <summary>
         /// Skip array bounds checking, get reference to first element.
         /// <br/>
         /// API for high-performance scenarios.
         /// </summary>
         [AssumeInputsValid, MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref T refdata_dotnet<T>([DisallowNull] this T[] array, [ValidRange] IntPtr index) => throw new PlatformNotSupportedException();
+        public static ref T refdata_clr<T>([DisallowNull] this T[] array, [ValidRange] long index) => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// Skip array bounds checking, get reference to first element.
@@ -61,6 +62,6 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <seealso href="https://blog.naver.com/ekfvoddl3535/222985670274">refer (KO-KR).</seealso>
         /// </summary>
         [AssumeInputsValid, MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref T refdata_mono<T>([DisallowNull] this T[] array, [ValidRange] IntPtr index) => throw new PlatformNotSupportedException();
+        public static ref T refdata_mono<T>([DisallowNull] this T[] array, [ValidRange] long index) => throw new PlatformNotSupportedException();
     }
 }

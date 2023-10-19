@@ -35,7 +35,7 @@ namespace SuperComicLib
     /// </summary>
     public readonly struct ConstMemory<T> : IList<T>, IReadOnlyList<T>, IEquatable<ConstMemory<T>>
     {
-        private readonly T[] _source;
+        internal readonly T[] _source;
         /// <summary>
         /// 원본 배열에서 시작하는 위치
         /// </summary>
@@ -118,7 +118,7 @@ namespace SuperComicLib
         public bool IsIndexOutOfRange
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _start < 0 || _source.Length - _start < (uint)Length;
+            get => (ulong)(_source.Length - (uint)_start) < (uint)Length;
         }
         #endregion
 
@@ -152,6 +152,13 @@ namespace SuperComicLib
 
             return new ConstMemory<T>(_source, _start + startIndex, count);
         }
+
+        /// <summary>
+        /// 현재 부분 배열에 대한 부분 배열을 만듭니다
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid, AssumeOperationValid]
+        public ConstMemory<T> Slice_fast([ValidRange] int startIndex, [ValidRange] int count) =>
+            new ConstMemory<T>(_source, _start + startIndex, count);
 
         /// <summary>
         /// 현재 부분 배열 범위의 원소를 배열로 만듭니다

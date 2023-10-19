@@ -103,13 +103,13 @@
 } // end of 'iff__asref'
 
 
-// dotnet-coreclr array
-.class private sequential ansi sealed beforefieldinit SuperComicLib.RuntimeMemoryMarshals.iffDotnet__asref`1<T>
+// coreclr array
+.class private sequential ansi sealed beforefieldinit SuperComicLib.RuntimeMemoryMarshals.iffCLR__asref`1<T>
     extends [mscorlib]System.Object
 {
     .field public initonly native int _length
     .field public !T item
-} // end of 'iffDotnet__asref'
+} // end of 'iffCLR__asref'
 
 
 // mono array (use constant value 0x20)

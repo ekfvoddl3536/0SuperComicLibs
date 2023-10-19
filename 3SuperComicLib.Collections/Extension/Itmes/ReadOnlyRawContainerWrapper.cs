@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -41,10 +41,10 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public const_reverse_iterator<T> crend() => container.rend();
 
-        public ref readonly T this[nint_t index] => ref container[index];
-        public ref readonly T at(nint_t index) => ref container.at(index);
-        public nint_t capacity() => container.capacity();
-        public nint_t size() => container.size();
+        public ref readonly T this[long index] => ref container[index];
+        public ref readonly T at(long index) => ref container.at(index);
+        public long capacity() => container.capacity();
+        public long size() => container.size();
 
         public RawMemory getMemory() => container.getMemory();
     }

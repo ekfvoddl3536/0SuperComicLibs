@@ -114,6 +114,9 @@
     <None Include="CompilerGeneratedClasses.il" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\0SuperComicLib.Core\0SuperComicLib.Core.csproj">
       <Project>{1674b047-ca4c-44a1-9d39-211e38c800dc}</Project>
       <Name>0SuperComicLib.Core</Name>

@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,8 +36,8 @@ namespace SuperComicLib.Collections
 
         private byte* _ptr; // first (4 -or- 8) bytes = length
         private byte* _head;
-        private nint_t _free;
-        private nint_t _size;
+        private long _free;
+        private long _size;
 
         #region constructor
         public _index_linked_vector(in _index_linked_vector<T> source) : this(source.size())
@@ -58,7 +58,7 @@ namespace SuperComicLib.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public _index_linked_vector(nint_t initCapacity)
+        public _index_linked_vector(long initCapacity)
         {
             _ptr = null;
             _head = null;
@@ -70,18 +70,18 @@ namespace SuperComicLib.Collections
         #endregion
 
         #region indexer
-        public _index_node<T> this[nint_t raw_index] => new _index_node<T>(_get(_ptr, raw_index));
+        public _index_node<T> this[long raw_index] => new _index_node<T>(_get(_ptr, raw_index));
 
         /// <exception cref="ArgumentOutOfRangeException">out of range</exception>
         /// <exception cref="NullReferenceException">tried to access a deleted element</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public _index_node<T> at(nint_t raw_index)
+        public _index_node<T> at(long raw_index)
         {
             ArgValidateHelper.ThrowIfIndexOutOfRange(raw_index, capacity());
 
             var v = this[raw_index];
             if (v.next < 0 || // deleted node
-                (v.next | v.prev) == 0 && (nuint_t)raw_index >= (nuint_t)_size)
+                (v.next | v.prev) == 0 && (ulong)raw_index >= (ulong)_size)
                 throw new NullReferenceException(nameof(raw_index));
 
             return v;
@@ -91,11 +91,11 @@ namespace SuperComicLib.Collections
         #region insert
         private byte* p_insert_before(byte* baseNode, in T value)
         {
-            nint_t tidx_;
+            long tidx_;
             if (_free >= 0)
             {
                 tidx_ = _free;
-                _free = *(nint_t*)_get_vp(_ptr, tidx_);
+                _free = *(long*)_get_vp(_ptr, tidx_);
             }
             else if ((tidx_ = _size) >= capacity()) // no space
             {
@@ -113,7 +113,7 @@ namespace SuperComicLib.Collections
             *v_next(newNode_) = _index(baseNode, list_);
             *v_prev(newNode_) = *v_prev(baseNode);
 
-            *(nint_t*)_get(list_, *v_prev(baseNode)) = tidx_;
+            *(long*)_get(list_, *v_prev(baseNode)) = tidx_;
             *v_prev(baseNode) = tidx_;
 
             _size++;
@@ -122,7 +122,7 @@ namespace SuperComicLib.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public nint_t index_of(_index_node<T> node) => _index(node._ptr, _ptr);
+        public long index_of(_index_node<T> node) => _index(node._ptr, _ptr);
         #endregion
 
         #region erase
@@ -133,8 +133,8 @@ namespace SuperComicLib.Collections
 
             var pnode = node._ptr;
 
-            *(nint_t*)_get_vp(list_, *v_next(pnode)) = *v_prev(pnode);
-            *(nint_t*)_get(list_, *v_prev(pnode)) = *v_next(pnode);
+            *(long*)_get_vp(list_, *v_next(pnode)) = *v_prev(pnode);
+            *(long*)_get(list_, *v_prev(pnode)) = *v_next(pnode);
 
             if (_head == pnode)
                 _head = _get(list_, *v_next(pnode));
@@ -178,7 +178,7 @@ namespace SuperComicLib.Collections
         public void CopyTo(in NativeSpan<T> dest) => CopyTo(dest, _size);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CopyTo(in NativeSpan<T> dest, nint_t count)
+        public void CopyTo(in NativeSpan<T> dest, long count)
         {
             if (dest.Source == null)
                 throw new ArgumentNullException(nameof(dest));
@@ -193,10 +193,10 @@ namespace SuperComicLib.Collections
 
         #region size & capacity
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public nint_t capacity() => *(nint_t*)(_ptr - sizeof(void*));
+        public long capacity() => *(long*)(_ptr - sizeof(long));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public nint_t size() => _size;
+        public long size() => _size;
         #endregion
 
         #region common get item method
@@ -314,7 +314,7 @@ namespace SuperComicLib.Collections
 
         #region private method
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void _internalCopyTo(in NativeSpan<T> dest, nint_t count)
+        private void _internalCopyTo(in NativeSpan<T> dest, long count)
         {
             T* pdst = dest.Source;
 
@@ -329,7 +329,7 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void validate_node(_index_node<T> node)
         {
-            nint_t index = _index(node._ptr, _ptr);
+            long index = _index(node._ptr, _ptr);
             ArgValidateHelper.ThrowIfIndexOutOfRange(index, capacity());
 
             if (node.next < 0 ||
@@ -337,52 +337,52 @@ namespace SuperComicLib.Collections
                 throw new InvalidOperationException($"Dereference to {nameof(NULL_PTR)}");
         }
 
-        private void increaseCapacity(nint_t req_size)
+        private void increaseCapacity(long req_size)
         {
-            var sz = (nint_t)CMathi.Max((nuint_t)req_size, 4u);
+            var sz = (long)CMathi.Max((ulong)req_size, 4u);
 
             var new_sizeInBytes = _sizeInBytes(Arrays.GetNextSize((int)sz));
             if (new_sizeInBytes <= sz)
                 throw new OutOfMemoryException(nameof(_index_linked_vector<T>));
 
-            var np = (byte*)Marshal.AllocHGlobal((IntPtr)(new_sizeInBytes + sizeof(void*)));
+            var np = (byte*)Marshal.AllocHGlobal((IntPtr)(new_sizeInBytes + sizeof(long)));
 
-            *(nint_t*)np = sz;
+            *(long*)np = sz;
 
-            var vs_np = np + sizeof(void*);
+            var vs_np = np + sizeof(long);
 
-            var copysize = (nuint_t)_sizeInBytes(_size);
+            var copysize = (ulong)_sizeInBytes(_size);
             MemoryBlock.Memmove<T>(_ptr, vs_np, copysize);
 
-            MemoryBlock.Clear(_get(vs_np, _size), (nuint_t)new_sizeInBytes - copysize);
+            MemoryBlock.Clear(_get(vs_np, _size), (ulong)new_sizeInBytes - copysize);
 
             if (_ptr != null)
-                Marshal.FreeHGlobal((IntPtr)(_ptr - sizeof(void*)));
+                Marshal.FreeHGlobal((IntPtr)(_ptr - sizeof(long)));
 
-            _head = vs_np + (long)_index(_head, _ptr);
+            _head = vs_np + _index(_head, _ptr);
             _ptr = vs_np;
         }
         #endregion
 
         #region helper methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static nint_t _sizeInBytes(nint_t size) => (sizeof(void*) + sizeof(void*) + sizeof(T)) * size;
+        private static long _sizeInBytes(long size) => (sizeof(long) + sizeof(long) + sizeof(T)) * size;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static nint_t _index(byte* p, byte* b) => (p - b) / (sizeof(void*) + sizeof(void*) + sizeof(T));
+        private static long _index(byte* p, byte* b) => (p - b) / (sizeof(long) + sizeof(long) + sizeof(T));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static byte* _get(byte* p, nint_t idx) => p + (long)((sizeof(void*) + sizeof(void*) + sizeof(T)) * idx);
+        private static byte* _get(byte* p, long idx) => p + (sizeof(long) + sizeof(long) + sizeof(T)) * idx;
         // get, value prev (pivot)
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static byte* _get_vp(byte* p, nint_t idx) => _get(p, idx) + sizeof(void*);
+        private static byte* _get_vp(byte* p, long idx) => _get(p, idx) + sizeof(long);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static nint_t* v_next(byte* p) => (nint_t*)p;
+        private static long* v_next(byte* p) => (long*)p;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static nint_t* v_prev(byte* p) => (nint_t*)(p + sizeof(void*));
+        private static long* v_prev(byte* p) => (long*)(p + sizeof(long));
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static T* v_value(byte* p) => (T*)(p + sizeof(void*) + sizeof(void**));
+        private static T* v_value(byte* p) => (T*)(p + sizeof(long) + sizeof(void**));
         #endregion
     }
 }

@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,31 +27,51 @@ using System.Security;
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
     [SuppressUnmanagedCodeSecurity]
-    public static unsafe class NativeInstanceTStructExtension
+    public static unsafe class NativeInstanceTClassExtension
     {
         /// <summary>
-        /// Directly references the managed structure data of this <see cref="NativeInstance{T}"/>
+        /// Get class reference
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
-        public static ref T Value<T>(this in NativeInstance<T> @this) where T : struct =>
-            ref Unsafe.AsRef<T>(@this._Ptr + (sizeof(void*) << 1));
+        public static T Value<T>(this in NativeInstance<T> @this) where T : class =>
+            ILUnsafe.AsClass<T>(@this._Ptr + sizeof(long));
 
         /// <summary>
-        /// Gets a reference to the managed structure data of this <see cref="NativeInstance{T}"/>
-        /// <br/>
-        /// Use in some scenarios where a reference to data must be passed without the <see langword="ref"/> keyword.
+        /// Copy instance data from <paramref name="source"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
-        public static varef_t<T> GetValueReference<T>(this in NativeInstance<T> @this) where T : struct =>
-            new varef_t<T>(@this._Ptr + (sizeof(void*) << 1));
+        public static void DataCopyFrom<T>(this in NativeInstance<T> @this, T source) where T : class
+        {
+            if (@this._Ptr == null || source == null)
+                return;
+
+            int sz = NativeClass.InstanceSizeOf<T>() - (sizeof(long) << 1);
+
+            if (sz <= 0) return;
+
+            ref var pdst = ref @this._Ptr[sizeof(long) << 1];
+            ref var psrc = ref ILUnsafe.As<_classDataRef>(source).Item;
+
+            ILUnsafe.CopyBlockUnaligned(ref pdst, psrc, (uint)sz);
+        }
 
         /// <summary>
-        /// Gets a read-only reference to the managed structure data of this <see cref="NativeInstance{T}"/>
-        /// <br/>
-        /// Use in some scenarios where a read-only reference to data must be passed without the <see langword="ref"/> keyword.
+        /// Copies the instance data to <paramref name="destination"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
-        public static cvaref<T> GetReadOnlyValueReference<T>(this in NativeInstance<T> @this) where T : struct =>
-            new cvaref<T>(@this._Ptr + (sizeof(void*) << 1));
+        public static void DataCopyTo<T>(this in NativeInstance<T> @this, T destination) where T : class
+        {
+            if (@this._Ptr == null || destination == null)
+                return;
+
+            int sz = NativeClass.InstanceSizeOf<T>() - (sizeof(long) << 1);
+
+            if (sz <= 0) return;
+
+            ref var pdst = ref ILUnsafe.As<_classDataRef>(destination).Item;
+            ref var psrc = ref @this._Ptr[sizeof(long) << 1];
+
+            ILUnsafe.CopyBlockUnaligned(ref pdst, psrc, (uint)sz);
+        }
     }
 }

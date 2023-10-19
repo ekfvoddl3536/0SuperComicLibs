@@ -34,7 +34,7 @@ namespace SuperComicLib.Runtime
             var p1 = (nint_t*)((byte*)Unsafe.AsPointer(ref x) + sz);
             var p2 = (nint_t*)((byte*)Unsafe.AsPointer(ref y) + sz);
 
-            var shift = (sizeof(void*) >> 2) + 1;
+            var shift = (sizeof(long) >> 2) + 1;
             for (var i = sz >> shift; i != 0; --i)
             {
                 var cmp = *p1-- - *p2--;
@@ -45,7 +45,7 @@ namespace SuperComicLib.Runtime
 
             var p1b = (byte*)p1;
             var p2b = (byte*)p2;
-            for (var i = sz & (sizeof(void*) - 1); i != 0; --i)
+            for (var i = sz & (sizeof(long) - 1); i != 0; --i)
             {
                 var cmp = *p1b-- - *p2b--;
 

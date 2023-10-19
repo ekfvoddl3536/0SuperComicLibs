@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -31,18 +31,18 @@ namespace SuperComicLib.Collections
         where T : unmanaged
     {
         public readonly T* Ptr;
-        public readonly nint_t Length;
+        public readonly long Length;
 
         #region constructors
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeArray(nint_t length)
+        public NativeArray(long length)
         {
             Ptr = (T*)MemoryBlock.Memalloc(length, sizeof(T));
             Length = length;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeArray(T* hGlobalAllocated_Ptr, nint_t length)
+        public NativeArray(T* hGlobalAllocated_Ptr, long length)
         {
             Ptr = hGlobalAllocated_Ptr;
             Length = length;
@@ -55,9 +55,9 @@ namespace SuperComicLib.Collections
                 throw new ArgumentNullException(nameof(source));
 
             // don't MOVSXD r64/r32
-            Length = (nint_t)(uint)source.Length;
+            Length = (uint)source.Length;
 
-            var sz = (nuint_t)Length * (uint)sizeof(T);
+            var sz = (ulong)Length * (uint)sizeof(T);
             Ptr = (T*)Marshal.AllocHGlobal((IntPtr)sz);
 
             if (source.Length > 0)
@@ -67,10 +67,10 @@ namespace SuperComicLib.Collections
         #endregion
 
         #region indexer & property
-        public ref T this[nint_t index] => ref *(Ptr + (long)index);
+        public ref T this[long index] => ref *(Ptr + index);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T at(nint_t index)
+        public ref T at(long index)
         {
             ArgValidateHelper.ThrowIfIndexOutOfRange(index, Length);
             return ref this[index];
@@ -82,17 +82,17 @@ namespace SuperComicLib.Collections
         public NativeSpan<T> AsSpan() => new NativeSpan<T>(Ptr, Length);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Clear() => MemoryBlock.Clear((byte*)Ptr, (nuint_t)Length * (uint)sizeof(T));
+        public void Clear() => MemoryBlock.Clear((byte*)Ptr, (ulong)Length * (uint)sizeof(T));
         #endregion
 
         #region explicit implement longerfaces
-        ref readonly T IReadOnlyRawContainer<T>.this[nint_t index] => ref this[index];
-        ref readonly T IReadOnlyRawContainer<T>.at(nint_t index) => ref at(index);
+        ref readonly T IReadOnlyRawContainer<T>.this[long index] => ref this[index];
+        ref readonly T IReadOnlyRawContainer<T>.at(long index) => ref at(index);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public nint_t capacity() => Length;
+        public long capacity() => Length;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public nint_t size() => Length;
+        public long size() => Length;
         #endregion
 
         #region implement -2-
@@ -106,10 +106,10 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public _iterator<T> begin() => new _iterator<T>(Ptr);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public _iterator<T> end() => new _iterator<T>(Ptr + (long)Length);
+        public _iterator<T> end() => new _iterator<T>(Ptr + Length);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public reverse_iterator<T> rbegin() => new reverse_iterator<T>(Ptr + (long)Length - 1);
+        public reverse_iterator<T> rbegin() => new reverse_iterator<T>(Ptr + Length - 1);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public reverse_iterator<T> rend() => new reverse_iterator<T>(Ptr - 1);
 

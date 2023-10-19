@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -37,12 +38,12 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public static arrayref<T> ToArrayUnmanaged<T>([DisallowNull, ValidRange] this in Memory<T> @this) =>
             JITPlatformEnvironment.IsRunningOnMono
             ? ToArrayUnmanaged_mono(@this)
-            : ToArrayUnmanaged_dotnet(@this);
+            : ToArrayUnmanaged_clr(@this);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid, MonoRuntimeNotSupported]
-        public static arrayref<T> ToArrayUnmanaged_dotnet<T>([DisallowNull, ValidRange] this in Memory<T> @this)
+        public static arrayref<T> ToArrayUnmanaged_clr<T>([DisallowNull, ValidRange] this in Memory<T> @this)
         {
-            var res = arrayref<T>.newf_dotnet(@this.Length);
+            var res = arrayref<T>.newf_clr(@this.Length);
 
             var dst = res.AsManaged();
             Array.Copy(@this._source, @this._start, dst, 0, @this.Length);

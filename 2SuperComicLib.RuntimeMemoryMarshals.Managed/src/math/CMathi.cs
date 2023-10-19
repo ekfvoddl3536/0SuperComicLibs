@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,14 +46,14 @@ namespace SuperComicLib
         public static nuint_t Min(this nuint_t left, nuint_t right)
         {
             var temp = left - right;
-            return right + (temp & (nuint_t)((nint_t)temp >> ((sizeof(void*) << 3) - 1)));
+            return right + (temp & (nuint_t)((nint_t)temp >> ((sizeof(long) << 3) - 1)));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static nuint_t Max(this nuint_t left, nuint_t right)
         {
             var temp = left - right;
-            return left - (temp & (nuint_t)((nint_t)temp >> ((sizeof(void*) << 3) - 1)));
+            return left - (temp & (nuint_t)((nint_t)temp >> ((sizeof(long) << 3) - 1)));
         }
         #endregion
 

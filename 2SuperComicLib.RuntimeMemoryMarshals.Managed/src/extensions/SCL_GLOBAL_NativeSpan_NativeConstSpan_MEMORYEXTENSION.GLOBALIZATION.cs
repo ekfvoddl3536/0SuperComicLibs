@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,24 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
-namespace SuperComicLib.RuntimeMemoryMarshals
+namespace SuperComicLib
 {
-    /// <summary>
-    /// Structure for MethodTable in dotnet (CoreCLR).
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential), MonoRuntimeNotSupported]
-    public readonly unsafe struct PubMethodTable
+    static unsafe partial class SCL_GLOBAL_NativeSpan_NativeConstSpan_MEMORYEXTENSION
     {
-        public readonly uint Flags1;
-        public readonly uint Size;
-        public readonly ushort Flags2;
-        public readonly ushort Token;
-        public readonly ushort NumVirtualMethods;
-        public readonly ushort NumInterfaces;
-        public readonly PubMethodTable* ParentMT;
-        public readonly IntPtr pModule;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsWhitespace(this NativeSpan<char> span) => IsWhitespace(span.Source, span.end()._ptr);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsWhitespace(this NativeConstSpan<char> span) => IsWhitespace(span._source, span.end()._ptr);
+
+        #region private
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool IsWhitespace(char* iter, char* end)
+        {
+            for (; iter != end; ++iter)
+                if (!char.IsWhiteSpace(*iter))
+                    return false;
+
+            return true;
+        }
+        #endregion
     }
 }

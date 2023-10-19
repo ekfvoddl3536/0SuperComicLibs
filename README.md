@@ -1,13 +1,19 @@
 # SuperComicLib
 ![GitHub](https://img.shields.io/github/license/ekfvoddl3536/0SuperComicLibs) 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/ekfvoddl3536/0SuperComicLibs) 
-
+  
+# !!== Notification ==!!
+`0SuperComicLibs` no longer supports `x86` or `Any CPU`.  
+The last version that supports `x86` or `Any CPU` architecture is `v4.1 (104100)`.  
+Updates will be made on the `x-amd64` branch for the time being.  
   
 # Summary
 Series of libraries that can be used universally for various development.  
 
 ## Recommended library
  - 0SuperComicLib.Core
+ - 1SuperComicLib.RuntimeMemoryMarshals
+ - 2SuperComicLib.RuntimeMemoryMarshals.Managed
  - 3SuperComicLib.Collections
 
 # Get build artifacts

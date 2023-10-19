@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,11 +36,11 @@ namespace SuperComicLib
     public readonly unsafe ref struct NativeSpan<T> where T : unmanaged
     {
         public readonly T* Source;
-        public readonly nint_t Length;
+        public readonly long Length;
 
         #region constructors
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeSpan(T* source, nint_t length)
+        public NativeSpan(T* source, long length)
         {
             Source = source;
             Length = length;
@@ -53,7 +54,7 @@ namespace SuperComicLib
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeSpan(_iterator<T> start, nint_t length) : this(start._ptr, length)
+        public NativeSpan(_iterator<T> start, long length) : this(start._ptr, length)
         {
         }
 
@@ -64,22 +65,22 @@ namespace SuperComicLib
         #endregion
 
         #region property
-        public ref T this[nint_t index]
+        public ref T this[long index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => ref *(Source + (long)index);
+            get => ref *(Source + index);
         }
         #endregion
 
         #region def methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeSpan<T> Slice(nint_t startIndex) => Slice(startIndex, Length - startIndex);
+        public NativeSpan<T> Slice(long startIndex) => Slice(startIndex, Length - startIndex);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead]
-        public NativeSpan<T> Slice(nint_t startIndex, nint_t count)
+        public NativeSpan<T> Slice(long startIndex, long count)
         {
             ArgValidateHelper.ThrowIfLengthOutOfRange(startIndex + count, Length);
-            return new NativeSpan<T>(Source + (long)startIndex, count);
+            return new NativeSpan<T>(Source + startIndex, count);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength]
@@ -93,49 +94,49 @@ namespace SuperComicLib
         public void CopyTo(in NativeSpan<T> dst)
         {
             ArgValidateHelper.ThrowIfLengthOutOfRange(Length, dst.Length);
-            NativeSpanHelper.CopyTo(Source, dst.Source, (nuint_t)Length);
+            NativeSpanHelper.CopyTo(Source, dst.Source, (ulong)Length);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Fill(in T value) => MemoryBlock.Fill(Source, (nuint_t)Length, value);
+        public void Fill(in T value) => MemoryBlock.Fill(Source, (ulong)Length, value);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Clear() => MemoryBlock.Clear((byte*)Source, (nuint_t)Length * (uint)sizeof(T));
+        public void Clear() => MemoryBlock.Clear((byte*)Source, (ulong)Length * (uint)sizeof(T));
         #endregion
 
         #region impl methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T at(nint_t index)
+        public ref T at(long index)
         {
             ArgValidateHelper.ThrowIfIndexOutOfRange(index, Length);
-            return ref *(Source + (long)index);
+            return ref *(Source + index);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public _iterator<T> begin() => new _iterator<T>(Source);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public _iterator<T> end() => new _iterator<T>(Source + (long)Length);
+        public _iterator<T> end() => new _iterator<T>(Source + Length);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public reverse_iterator<T> rbegin() => new reverse_iterator<T>(Source + (long)Length - 1);
+        public reverse_iterator<T> rbegin() => new reverse_iterator<T>(Source + Length - 1);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public reverse_iterator<T> rend() => new reverse_iterator<T>(Source - 1);
         #endregion
 
         #region util methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public nuint_t capacity() => 
-            (nuint_t)Length * (uint)sizeof(T);
+        public ulong capacity() =>
+            (ulong)Length * (uint)sizeof(T);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid]
-        public ref TDest getAs<TDest>([ValidRange] nint_t index) where TDest : unmanaged => 
-            ref *(TDest*)(Source + (long)index);
+        public ref TDest getAs<TDest>([ValidRange] long index) where TDest : unmanaged =>
+            ref *(TDest*)(Source + index);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref TDest getAs_at<TDest>(nint_t index) where TDest : unmanaged
+        public ref TDest getAs_at<TDest>(long index) where TDest : unmanaged
         {
             ArgValidateHelper.ThrowIfIndexOutOfRange(index, Length);
-            return ref *(TDest*)(Source + (long)index);
+            return ref *(TDest*)(Source + index);
         }
         #endregion
 
@@ -155,11 +156,11 @@ namespace SuperComicLib
         #region static members
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(in NativeSpan<T> left, in NativeSpan<T> right) =>
-            CMathi.CXOR(left.Source, right.Source, left.Length, right.Length) == 0;
+            (((long)left.Source ^ (long)right.Source) | (left.Length ^ right.Length)) == 0L;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(in NativeSpan<T> left, in NativeSpan<T> right) =>
-            CMathi.CXOR(left.Source, right.Source, left.Length, right.Length) != 0;
+            (((long)left.Source ^ (long)right.Source) | (left.Length ^ right.Length)) != 0L;
         #endregion
     }
 }

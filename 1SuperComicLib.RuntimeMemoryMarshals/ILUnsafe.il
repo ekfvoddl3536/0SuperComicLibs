@@ -51,26 +51,18 @@
 	.method public hidebysig static void*  AsPointer(object 'value') cil managed aggressiveinlining
 	{
 		.maxstack 1
-		.locals (
-			[0] native int
-		)
-		
+
 		ldarg.0
-		stloc.0
-		ldloc.0
+		conv.i
 		ret
 	}
 
-	.method public hidebysig static void*  AsPointer(object 'value', native int byteOffset) cil managed aggressiveinlining
+	.method public hidebysig static void*  AsPointer(object 'value', int64 byteOffset) cil managed aggressiveinlining
 	{
 		.maxstack 2
-		.locals (
-			[0] native int
-		)
-		
+
 		ldarg.0
-		stloc.0
-		ldloc.0
+		conv.i
 		ldarg.1
 		add
 		ret
@@ -81,17 +73,17 @@
 		.maxstack 1
 		
 		ldarg.0
-		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!TField>>(object)
+		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::As<class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!TField>>(object)
 		ldflda !0 class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!TField>::item
 		ret
 	}
 
-	.method public hidebysig static !!TField&  GetDataRef<TField>(object class_references, native int byteOffset) cil managed aggressiveinlining
+	.method public hidebysig static !!TField&  GetDataRef<TField>(object class_references, int64 byteOffset) cil managed aggressiveinlining
 	{
 		.maxstack 2
 		
 		ldarg.0
-		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!TField>>(object)
+		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::As<class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!TField>>(object)
 		ldflda !0 class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!TField>::item
 		ldarg.1
 		add
@@ -106,13 +98,13 @@
 		.maxstack 1
 		
 		ldarg.0
-		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!TField>>(object)
+		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::As<class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!TField>>(object)
 		ldflda !0 class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!TField>::item
 		conv.u
 		ret
 	}
 
-	.method public hidebysig static !!TField*  GetDataPtr<valuetype .ctor (class [mscorlib]System.ValueType modreq([mscorlib]System.Runtime.InteropServices.UnmanagedType)) TField>(object class_references, native int byteOffset) cil managed aggressiveinlining
+	.method public hidebysig static !!TField*  GetDataPtr<valuetype .ctor (class [mscorlib]System.ValueType modreq([mscorlib]System.Runtime.InteropServices.UnmanagedType)) TField>(object class_references, int64 byteOffset) cil managed aggressiveinlining
 	{
 		.param type TField
         .custom instance void System.Runtime.CompilerServices.IsUnmanagedAttribute::.ctor() = ( 01 00 00 00 )
@@ -120,7 +112,7 @@
 		.maxstack 2
 		
 		ldarg.0
-		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!TField>>(object)
+		call !!0 SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::As<class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!TField>>(object)
 		ldflda !0 class SuperComicLib.RuntimeMemoryMarshals.iff__asref`1<!!TField>::item
 		ldarg.1
 		add
@@ -150,7 +142,7 @@
 		ldarg.1
 		conv.i
 		add
-		call !!1& SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<int8, !!T>(!!0&)
+		call !!1& SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::As<int8, !!T>(!!0&)
 		ret
 	}
 
@@ -160,19 +152,75 @@
 		
 		ldarg.0
 		ldarg.1
-		conv.i
 		sizeof !!0
 		conv.i
 		mul
 		add
 		ldarg.2
-		conv.i
 		add
-		call !!1& SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::icall__SystemRuntimeCompilerServicesUnsafeAs<int8, !!T>(!!0&)
+		call !!1& SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::As<int8, !!T>(!!0&)
+		ret
+	}
+
+	.method public hidebysig static !!T&  Add<T>(void* source, int64 elementOffset, int32 addByteOffset) cil managed aggressiveinlining
+	{
+		.maxstack 3
+		
+		ldarg.0
+		ldarg.1
+		sizeof !!0
+		mul
+		add
+		ldarg.2
+		add
+		call !!1& SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::As<int8, !!T>(!!0&)
+		ret
+	}
+
+	.method public hidebysig static !!T&  Add<T>(void* source, int32 elementOffset) cil managed aggressiveinlining
+	{
+		.maxstack 3
+		
+		ldarg.0
+		ldarg.1
+		sizeof !!0
+		conv.i
+		mul
+		add
+		call !!1& SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::As<int8, !!T>(!!0&)
+		ret
+	}
+
+	.method public hidebysig static !!T&  Add<T>(void* source, int64 elementOffset) cil managed aggressiveinlining
+	{
+		.maxstack 3
+		
+		ldarg.0
+		ldarg.1
+		sizeof !!0
+		mul
+		add
+		call !!1& SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::As<int8, !!T>(!!0&)
 		ret
 	}
 
 	.method public hidebysig static !!T& modreq([mscorlib]System.Runtime.InteropServices.InAttribute) ReadOnlyAdd<T>([in] !!T& 'value', int32 elementOffset) cil managed aggressiveinlining
+	{
+		.param [0] 
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
+
+        .param [1]
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
+
+		.maxstack 2
+		
+		ldarg.0
+		ldarg.1
+		add
+		ret
+	}
+
+	.method public hidebysig static !!T& modreq([mscorlib]System.Runtime.InteropServices.InAttribute) ReadOnlyAdd<T>([in] !!T& 'value', int64 elementOffset) cil managed aggressiveinlining
 	{
 		.param [0] 
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -193,16 +241,34 @@
 		.maxstack 1
 
 		ldarg.0
-		conv.i4
 		ret
 	}
 
 
 
 
-	// refer: https://github.com/dotnet/corert/blob/master/src/System.Private.CoreLib/shared/Internal/Runtime/CompilerServices/Unsafe.cs#L77
-	// do not expose this method 'public'
-	.method assembly hidebysig static !!T  icall__SystemRuntimeCompilerServicesUnsafeAs<class T>(object 'value') cil managed aggressiveinlining
+	// refer: https://github.com/dotnet/corert/blob/master/src/System.Private.CoreLib/shared/Internal/Runtime/CompilerServices/Unsafe.cs
+	//
+	// !================== System.Runtime.CompilerServices.Unsafe (features) ==================!
+	// 
+	.method public hidebysig static void*  AsPointer<T>(!!T& 'value') cil managed aggressiveinlining
+	{
+		.maxstack 1
+
+		ldarg.0
+		conv.u
+		ret
+	}
+
+	.method public hidebysig static int32  SizeOf<T>() cil managed aggressiveinlining
+	{
+		.maxstack 1
+
+		sizeof !!0
+		ret
+	}
+
+	.method public hidebysig static !!T  As<class T>(object o) cil managed aggressiveinlining
 	{
 		.maxstack 1
 
@@ -210,11 +276,370 @@
 		ret
 	}
 
-	.method assembly hidebysig static !!TTo&  icall__SystemRuntimeCompilerServicesUnsafeAs<TFrom, TTo>(!!TFrom& source) cil managed aggressiveinlining
+	.method public hidebysig static !!TTo& As<TFrom,TTo>(!!TFrom& source) cil managed aggressiveinlining
 	{
 		.maxstack 1
 
 		ldarg.0
+		ret
+	}
+
+	.method public hidebysig static !!T&  Add<T>(!!T& source, int32 elementOffset) cil managed aggressiveinlining
+	{
+		.maxstack 3
+
+		ldarg.0
+		ldarg.1
+		sizeof !!0
+		conv.i
+		mul
+		add
+		ret
+	}
+
+	.method public hidebysig static !!T&  Add<T>(!!T& source, int64 elementOffset) cil managed aggressiveinlining
+	{
+		.maxstack 3
+
+		ldarg.0
+		ldarg.1
+		sizeof !!0
+		mul
+		add
+		ret
+	}
+
+	.method public hidebysig static bool  AreSame<T>([in] !!T& left, [in] !!T& right) cil managed aggressiveinlining
+	{
+		.param [1]
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 ) 
+
+		.param [2]
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 ) 
+
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		ceq
+		ret
+	}
+
+	.method public hidebysig static int64  Compare<T>([in] !!T& left, [in] !!T& right) cil managed aggressiveinlining
+	{
+		.param [1]
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 ) 
+
+		.param [2]
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 ) 
+
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		sub
+		conv.i8
+		ret
+	}
+
+	.method public hidebysig static void  Copy<T>(void* destination, [in] !!T& source) cil managed aggressiveinlining
+	{
+		.param [2]
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 ) 
+
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		ldobj !!0
+		stobj !!0
+		ret
+	}
+
+	.method public hidebysig static void  Copy<T>(!!T& destination, void* source) cil managed aggressiveinlining
+	{
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		ldobj !!0
+		stobj !!0
+		ret
+	}
+
+	.method public hidebysig static void  CopyBlock(void* destination, void* source, uint32 byteCount) cil managed aggressiveinlining
+	{
+		.maxstack 3
+
+		ldarg.0
+		ldarg.1
+		ldarg.2
+		cpblk
+		ret
+	}
+
+	.method public hidebysig static void  CopyBlock(uint8& destination, [in] uint8& source, uint32 byteCount) cil managed aggressiveinlining
+	{
+		.param [2]
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 ) 
+
+		.maxstack 3
+
+		ldarg.0
+		ldarg.1
+		ldarg.2
+		cpblk
+		ret
+	}
+
+	.method public hidebysig static void  CopyBlockUnaligned(void* destination, void* source, uint32 byteCount) cil managed aggressiveinlining
+	{
+		.maxstack 4
+
+		ldarg.0
+        ldarg.1
+        ldarg.2
+        unaligned. 0x1
+        cpblk
+        ret
+	}
+
+	.method public hidebysig static void  CopyBlockUnaligned(uint8& destination, [in] uint8& source, uint32 byteCount) cil managed aggressiveinlining
+	{
+		.param [2]
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
+
+		.maxstack 4
+
+		ldarg.0
+        ldarg.1
+        ldarg.2
+        unaligned. 0x1
+        cpblk
+        ret
+	}
+
+	.method public hidebysig static void  InitBlock(void* startAddress, uint8 'value', uint32 byteCount) cil managed aggressiveinlining
+	{
+		.maxstack 3
+
+		ldarg.0
+		ldarg.1
+		ldarg.2
+		initblk
+		ret
+	}
+
+	.method public hidebysig static void  InitBlock(uint8& startAddress, uint8 'value', uint32 byteCount) cil managed aggressiveinlining
+	{
+		.maxstack 3
+
+		ldarg.0
+		ldarg.1
+		ldarg.2
+		initblk
+		ret
+	}
+
+	.method public hidebysig static void  InitBlockUnaligned(void* startAddress, uint8 'value', uint32 byteCount) cil managed aggressiveinlining
+	{
+		.maxstack 4
+
+		ldarg.0
+		ldarg.1
+		ldarg.2
+		unaligned. 0x1
+		initblk
+		ret
+	}
+
+	.method public hidebysig static void  InitBlockUnaligned(uint8& startAddress, uint8 'value', uint32 byteCount) cil managed aggressiveinlining
+	{
+		.maxstack 4
+
+		ldarg.0
+		ldarg.1
+		ldarg.2
+		unaligned. 0x1
+		initblk
+		ret
+	}
+
+	.method public hidebysig static !!T  ReadUnaligned<T>(void* source) cil managed aggressiveinlining
+	{
+		.maxstack 4
+
+		ldarg.0
+		unaligned. 0x1
+		ldobj !!0
+		ret
+	}
+
+	.method public hidebysig static !!T  ReadUnaligned<T>([in] uint8& source) cil managed aggressiveinlining
+	{
+		.param [1]
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 ) 
+
+		.maxstack 4
+
+		ldarg.0
+		unaligned. 0x1
+		ldobj !!0
+		ret
+	}
+
+	.method public hidebysig static void  WriteUnaligned<T>(void* destination, !!T 'value') cil managed aggressiveinlining
+	{
+		.maxstack 4
+
+		ldarg.0
+		ldarg.1
+		unaligned. 0x1
+		stobj !!0
+		ret
+	}
+
+	.method public hidebysig static void  WriteUnaligned<T>(uint8& destination, !!T 'value') cil managed aggressiveinlining
+	{
+		.maxstack 4
+
+		ldarg.0
+		ldarg.1
+		unaligned. 0x1
+		stobj !!0
+		ret
+	}
+
+	.method public hidebysig static !!T&  AddByteOffset<T>(!!T& source, int32 byteOffset) cil managed aggressiveinlining
+	{
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		conv.i
+		add
+		ret
+	}
+
+	.method public hidebysig static !!T&  AddByteOffset<T>(!!T& source, int64 byteOffset) cil managed aggressiveinlining
+	{
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		add
+		ret
+	}
+
+	.method public hidebysig static !!T&  AsRef<T>(void* source) cil managed aggressiveinlining
+	{
+		.maxstack 1
+
+		ldarg.0
+		ret
+	}
+
+	.method public hidebysig static !!T&  AsRef<T>([in] !!T& source) cil managed aggressiveinlining
+	{
+		.param [1]
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 ) 
+
+		.maxstack 1
+
+		ldarg.0
+		ret
+	}
+
+	.method public hidebysig static !!T  Read<T>(void* source) cil managed aggressiveinlining
+	{
+		.maxstack 2
+
+		ldarg.0
+		ldobj !!0
+		ret
+	}
+
+	.method public hidebysig static void  Write<T>(void* destination, !!T 'value') cil managed aggressiveinlining
+	{
+		.maxstack 4
+
+		ldarg.0
+		ldarg.1
+		stobj !!0
+		ret
+	}
+
+	.method public hidebysig static !!T&  NullRef<T>() cil managed aggressiveinlining
+	{
+		.maxstack 1
+
+		ldc.i4.0
+		conv.u
+		ret
+	}
+
+	.method public hidebysig static bool  IsNullRef<T>([in] !!T& source) cil managed aggressiveinlining
+	{
+		.param [1]
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 ) 
+
+		.maxstack 2
+
+		ldarg.0
+		ldc.i4.0
+		conv.u
+		ceq
+		ret
+	}
+
+	.method public hidebysig static void  SkipInit<T>([out] !!T& 'value') cil managed aggressiveinlining
+	{
+		.maxstack 0
+
+		ret
+	}
+
+	.method public hidebysig static !!T&  Subtract<T>(!!T& source, int32 elementOffset) cil managed aggressiveinlining
+	{
+		.maxstack 4
+
+		ldarg.0
+		ldarg.1
+		sizeof !!0
+		conv.i
+		mul
+		sub
+		ret
+	}
+
+	.method public hidebysig static !!T&  Subtract<T>(!!T& source, int64 elementOffset) cil managed aggressiveinlining
+	{
+		.maxstack 4
+
+		ldarg.0
+		ldarg.1
+		sizeof !!0
+		mul
+		sub
+		ret
+	}
+
+	.method public hidebysig static !!T&  SubtractByteOffset<T>(!!T& source, int64 byteOffset) cil managed aggressiveinlining
+	{
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		sub
+		ret
+	}
+
+	.method public hidebysig static !!T&  Unbox<valuetype .ctor ([mscorlib]System.ValueType) T>(object 'box') cil managed aggressiveinlining
+	{
+		.maxstack 2
+
+		ldarg.0
+		unbox !!0
 		ret
 	}
 } // end of 'ILUnsafe'

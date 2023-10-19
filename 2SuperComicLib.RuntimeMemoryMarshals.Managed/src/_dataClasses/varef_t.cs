@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,29 +27,23 @@ using System.Runtime.InteropServices;
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
     /// <summary>
-    /// <see langword="const"/> <see cref="varef_t{T}"/>
+    /// Provides a reference to the managed structure of the <see cref="NativeInstance{T}"/>
     /// </summary>
     [StructLayout(LayoutKind.Sequential), MonoRuntimeNotSupported]
-    public readonly unsafe struct cvaref<T> where T : struct
+    public readonly unsafe struct varef_t<T> where T : struct
     {
         internal readonly byte* DataReference;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal cvaref(byte* DataReference) => this.DataReference = DataReference;
+        internal varef_t(byte* DataReference) => this.DataReference = DataReference;
 
         /// <summary>
-        /// Get a reference to the value. (read only)
+        /// Get a reference to the value.
         /// </summary>
-        public ref readonly T Value
+        public ref T Value
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => ref Unsafe.AsRef<T>(DataReference);
+            get => ref ILUnsafe.AsRef<T>(DataReference);
         }
-
-        /// <summary>
-        /// Convert to read only
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator cvaref<T>(varef_t<T> input) => new cvaref<T>(input.DataReference);
     }
 }

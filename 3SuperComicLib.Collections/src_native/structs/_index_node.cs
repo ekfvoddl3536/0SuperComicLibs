@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,9 +39,9 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal _index_node(byte* p) => _ptr = p;
 
-        public nint_t next => *(nint_t*)_ptr;
-        public nint_t prev => *(nint_t*)(_ptr + sizeof(void*));
-        public ref T value => ref *(T*)(_ptr + sizeof(void*) + sizeof(void*));
+        public long next => *(long*)_ptr;
+        public long prev => *(long*)(_ptr + sizeof(long));
+        public ref T value => ref *(T*)(_ptr + sizeof(long) + sizeof(long));
 
         public override bool Equals(object obj) => throw new NotSupportedException();
         public override int GetHashCode() => throw new NotSupportedException();

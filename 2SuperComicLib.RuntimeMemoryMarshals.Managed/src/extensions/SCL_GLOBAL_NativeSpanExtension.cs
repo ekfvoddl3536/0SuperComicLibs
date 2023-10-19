@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,8 +36,8 @@ namespace SuperComicLib
             where TFrom : unmanaged
             where TTo : unmanaged
         {
-            var len_u = (nuint_t)@this.Length * (uint)sizeof(TFrom) / (uint)sizeof(TTo);
-            return new NativeSpan<TTo>((TTo*)@this.Source, (nint_t)len_u);
+            var len_u = (ulong)@this.Length * (uint)sizeof(TFrom) / (uint)sizeof(TTo);
+            return new NativeSpan<TTo>((TTo*)@this.Source, (long)len_u);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -44,8 +45,8 @@ namespace SuperComicLib
             where TFrom : unmanaged
             where TTo : unmanaged
         {
-            var len_u = (nuint_t)@this.Length * (uint)sizeof(TFrom) / (uint)sizeof(TTo);
-            return new NativeConstSpan<TTo>((TTo*)@this._source, (nint_t)len_u);
+            var len_u = (ulong)@this.Length * (uint)sizeof(TFrom) / (uint)sizeof(TTo);
+            return new NativeConstSpan<TTo>((TTo*)@this._source, (long)len_u);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength]

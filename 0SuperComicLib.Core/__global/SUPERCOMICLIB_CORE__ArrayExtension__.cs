@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using SuperComicLib.CodeContracts;
 
 /// <summary>
@@ -301,38 +302,6 @@ public static class SUPERCOMICLIB_CORE__ArrayExtension__
     }
 
     /// <summary>
-    /// 배열의 값을 replace합니다
-    /// </summary>
-    /// <param name="_arr">원본 배열</param>
-    /// <param name="oldLength">각 indexes 위치부터 무시할 배열의 크기입니다</param>
-    /// <param name="indexes">배열 내에서 replace할 데이터가 있는 위치들 입니다</param>
-    /// <param name="replace">새 값입니다</param>
-    public static T[] ReplaceAllFast<T>(this T[] _arr, int oldLength, int[] indexes, IEnumerable<T> replace) where T : IEquatable<T>
-    {
-        List<T> result = new List<T>();
-        int
-            max = _arr.Length,
-            x = 0;
-
-        foreach (int idx in indexes)
-            if (x == idx)
-            {
-                result.AddRange(replace);
-                x += oldLength;
-            }
-            else
-            {
-                result.Add(_arr[x]);
-                x++;
-            }
-
-        for (; x < max; x++)
-            result.Add(_arr[x]);
-
-        return result.ToArray();
-    }
-
-    /// <summary>
     /// 동일한 크기의 배열 두 개를 동시에 열거합니다.
     /// </summary>
     /// <typeparam name="T1">첫번째 배열 원소의 타입</typeparam>
@@ -342,13 +311,13 @@ public static class SUPERCOMICLIB_CORE__ArrayExtension__
     /// <param name="action">본문 대리자</param>
     public static void ForEachTuple<T1, T2>(this T1[] _arr1, T2[] _arr2, ForEachTupleAction<T1, T2> action)
     {
-        if (_arr1 == null || _arr2 == null)
-            return;
+        if (_arr1 == null)
+            throw new ArgumentNullException(nameof(_arr1));
 
-        if (_arr1.Length != _arr2.Length)
-            return;
+        if (_arr1 == null)
+            throw new ArgumentNullException(nameof(_arr2));
 
-        for (int i = 0; i < _arr1.Length; i++)
+        for (int i = 0; i < _arr1.Length && i < _arr2.Length; i++)
             action.Invoke(ref _arr1[i], ref _arr2[i], i);
     }
 }

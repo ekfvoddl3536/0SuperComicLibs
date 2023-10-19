@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,23 +49,23 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         {
             if (typeof(T).IsClass)
             {
-                var t0 = _Ptr + sizeof(void*);
-                return Unsafe.As<byte, T>(ref Unsafe.AsRef<byte>(&t0));
+                var t0 = _Ptr + sizeof(long);
+                return ILUnsafe.As<byte, T>(ref ILUnsafe.AsRef<byte>(&t0));
             }
             else
-                return Unsafe.AsRef<T>(_Ptr + (sizeof(void*) << 1));
+                return ILUnsafe.AsRef<T>(_Ptr + (sizeof(long) << 1));
         }
 
         /// <summary>
         /// Get structure value by reference.<para/>
         /// This method may return a null reference.<br/>
-        /// Null checking can be done using <see cref="Unsafe.AsPointer{T}(ref T)"/>
+        /// Null checking can be done using <see cref="ILUnsafe.AsPointer{T}(ref T)"/>
         /// </summary>
         /// <returns>If <typeparamref name="T"/> is not a struct, the return is a null reference.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T GetValueDirect() =>
             ref typeof(T).IsValueType == false
-            ? ref Unsafe.AsRef<T>(null)
-            : ref Unsafe.AsRef<T>(_Ptr + (sizeof(void*) << 1));
+            ? ref ILUnsafe.AsRef<T>(null)
+            : ref ILUnsafe.AsRef<T>(_Ptr + (sizeof(long) << 1));
     }
 }

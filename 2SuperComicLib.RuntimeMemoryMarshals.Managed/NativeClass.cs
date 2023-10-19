@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using SuperComicLib.CodeContracts;
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
-using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
@@ -36,25 +37,25 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     public static unsafe class NativeClass
     {
         /// <summary>
-        /// Get a reference to the MethodTable. dotnet (CoreCLR) only.
+        /// Get a reference to the MethodTable. CoreCLR (.NET Framework, .NET) only.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid, MonoRuntimeNotSupported]
         public static ref readonly PubMethodTable GetMethodTable([DisallowNull] Type type) => ref *(PubMethodTable*)type.TypeHandle.Value;
 
         /// <summary>
-        /// Get a instance size of <typeparamref name="T"/>. dotnet (CoreCLR) only.
+        /// Get a instance size of <typeparamref name="T"/>. CoreCLR (.NET Framework, .NET) only.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead, MonoRuntimeNotSupported]
         public static int InstanceSizeOf<T>() => *((int*)typeof(T).TypeHandle.Value + 1);
 
         /// <summary>
-        /// Get a instance size of <paramref name="type"/>. dotnet (CoreCLR) only.
+        /// Get a instance size of <paramref name="type"/>. CoreCLR (.NET Framework, .NET) only.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid, NoOverhead, MonoRuntimeNotSupported]
         public static int InstanceSizeOf([DisallowNull] Type type) => *((int*)type.TypeHandle.Value + 1);
 
         /// <summary>
-        /// Get a instance size of object from <paramref name="typeHandle"/>. dotnet (CoreCLR) only.
+        /// Get a instance size of object from <paramref name="typeHandle"/>. CoreCLR (.NET Framework, .NET) only.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid, NoOverhead, MonoRuntimeNotSupported]
         public static int InstanceSizeOf([DisallowNull, ValidRange] IntPtr typeHandle) => *((int*)typeHandle + 1);
@@ -97,7 +98,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             ptr[0] = IntPtr.Zero;
             ptr[1] = tHnd;
 
-            Unsafe.InitBlockUnaligned(ptr + 2, 0, (uint)(tSz - (sizeof(void*) << 1)));
+            ILUnsafe.InitBlockUnaligned(ptr + 2, 0, (uint)(tSz - (sizeof(long) << 1)));
 
             return new NativeInstance<T>(ptr);
         }

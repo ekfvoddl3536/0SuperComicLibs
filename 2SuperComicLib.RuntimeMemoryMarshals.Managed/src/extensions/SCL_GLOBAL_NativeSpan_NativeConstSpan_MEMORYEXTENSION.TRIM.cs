@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -89,7 +90,7 @@ namespace SuperComicLib
 
         #region string trim help (private)
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static nint_t ClampStart_char(char* begin, char* end, char trimChar)
+        private static long ClampStart_char(char* begin, char* end, char trimChar)
         {
             int trimInt = trimChar | (trimChar << 16);
 
@@ -108,7 +109,7 @@ namespace SuperComicLib
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static nint_t ClampEnd_char(char* rbegin, char* rend, char trimChar)
+        private static long ClampEnd_char(char* rbegin, char* rend, char trimChar)
         {
             int trimInt = trimChar | (trimChar << 16);
 
@@ -127,19 +128,19 @@ namespace SuperComicLib
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static nint_t TrimCore_char(ref char* inout_src, nint_t in_length, char trimChar)
+        private static long TrimCore_char(ref char* inout_src, long in_length, char trimChar)
         {
             char* psi = inout_src;
-            char* pdi = psi + (long)in_length;
+            char* pdi = psi + in_length;
 
             var start = ClampStart_char(psi, pdi, trimChar);
 
-            inout_src = psi + (long)start;
+            inout_src = psi + start;
             return ClampEnd_char(pdi - 1, inout_src - 1, trimChar);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static nint_t ClampStart(char* begin, char* end)
+        private static long ClampStart(char* begin, char* end)
         {
             var iter = begin;
 
@@ -151,7 +152,7 @@ namespace SuperComicLib
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static nint_t ClampEnd(char* rbegin, char* rend)
+        private static long ClampEnd(char* rbegin, char* rend)
         {
             var iter = rbegin;
 
@@ -163,14 +164,14 @@ namespace SuperComicLib
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static nint_t TrimCore(ref char* inout_src, nint_t in_length)
+        private static long TrimCore(ref char* inout_src, long in_length)
         {
             char* psi = inout_src;
-            char* pdi = psi + (long)in_length;
+            char* pdi = psi + in_length;
 
             var start = ClampStart(psi, pdi);
 
-            inout_src = psi + (long)start;
+            inout_src = psi + start;
             return ClampEnd(pdi - 1, inout_src - 1);
         }
         #endregion

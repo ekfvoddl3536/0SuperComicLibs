@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +29,7 @@ namespace SuperComicLib
     internal static unsafe class NativeSpanHelper
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T[] ToArray<T>(T* source, nint_t length) where T : unmanaged
+        public static T[] ToArray<T>(T* source, long length) where T : unmanaged
         {
             var len_i4 = (int)length;
 
@@ -38,25 +39,25 @@ namespace SuperComicLib
             T[] res = new T[len_i4];
 
             fixed (T* pdst = &res[0])
-                CopyTo(source, pdst, (nuint_t)len_i4);
+                CopyTo(source, pdst, (ulong)len_i4);
 
             return res;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryCopyTo<T>(T* source, nint_t sourceLength, T* dest, nint_t destLength) where T : unmanaged
+        public static bool TryCopyTo<T>(T* source, long sourceLength, T* dest, long destLength) where T : unmanaged
         {
-            if ((nuint_t)sourceLength > (nuint_t)destLength)
+            if ((ulong)sourceLength > (ulong)destLength)
                 return false;
 
-            CopyTo(source, dest, (nuint_t)sourceLength);
+            CopyTo(source, dest, (ulong)sourceLength);
             return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyTo<T>(T* source, T* dest, nuint_t length) where T : unmanaged
+        public static void CopyTo<T>(T* source, T* dest, ulong length) where T : unmanaged
         {
-            ulong copysize = (ulong)(length * (uint)sizeof(T));
+            ulong copysize = length * (uint)sizeof(T);
             Buffer.MemoryCopy(source, dest, copysize, copysize);
         }
     }

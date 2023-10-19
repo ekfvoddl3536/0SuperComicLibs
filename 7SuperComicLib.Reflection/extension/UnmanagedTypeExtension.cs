@@ -6,52 +6,39 @@ namespace SuperComicLib.Runtime
 {
     public static class UnmanagedTypeExtension
     {
-        private static readonly HashSet<Type> bag = new HashSet<Type>();
-
         public static bool IsUnmanaged(this Type type)
         {
             const BindingFlags FLAG = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
-            if (type.IsPointer || type.IsPrimitive || type.IsEnum || bag.Contains(type))
+            if (type.IsPrimitive || type.IsPointer || type.IsEnum)
                 return true;
 
-            if (type.IsValueType)
+            if (!type.IsValueType)
+                return false;
+
+            var stack = new Stack<Type>(16);
+
+            for (; ; )
             {
-                HashSet<Type> done = new HashSet<Type>();
-                Stack<Memory<FieldInfo>> stack = new Stack<Memory<FieldInfo>>();
-
-                Memory<FieldInfo> e1 = type.GetFields(FLAG);
-
-            loop:
-                var arr = e1._source;
-                for (int i = e1._start; (uint)i < (uint)arr.Length; i++)
+                var flds = type.GetFields(FLAG);
+                for (int i = 0; i < flds.Length; ++i)
                 {
-                    Type tmp = arr[i].FieldType;
-                    if (tmp.IsPointer)
-                        continue;
-                    else if (!tmp.IsValueType)
+                    type = flds[i].FieldType;
+                    // find class type
+                    if (!type.IsValueType)
                         return false;
-                    else if (!tmp.IsPrimitive && done.Add(tmp))
-                    {
-                        stack.Push(new Memory<FieldInfo>(arr, i + 1));
-
-                        e1 = tmp.GetFields(FLAG);
-                        goto loop;
-                    }
+                    // no reference type, but, is struct
+                    else if (!type.IsPrimitive && !type.IsPointer && !type.IsEnum)
+                        stack.Push(type);
                 }
 
-                if (stack.Count > 0)
-                {
-                    e1 = stack.Pop();
-                    goto loop;
-                }
+                if (stack.Count == 0)
+                    break;
 
-                bag.Add(type);
-                return true;
+                type = stack.Pop();
             }
 
-            return false;
+            return true;
         }
-
     }
 }

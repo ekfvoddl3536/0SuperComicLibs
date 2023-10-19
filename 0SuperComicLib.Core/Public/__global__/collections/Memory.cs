@@ -123,7 +123,7 @@ namespace SuperComicLib
         public bool IsIndexOutOfRange
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
-            get => _start < 0 || _source.Length - _start < (uint)Length;
+            get => (ulong)(_source.Length - (uint)_start) < (uint)Length;
         }
         #endregion
 
@@ -157,6 +157,13 @@ namespace SuperComicLib
 
             return new Memory<T>(_source, _start + startIndex, count);
         }
+
+        /// <summary>
+        /// 현재 부분 배열에 대한 부분 배열을 만듭니다. (범위 검사가 없음)
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid, AssumeOperationValid]
+        public Memory<T> Slice_fast([ValidRange] int startIndex, [ValidRange] int count) =>
+            new Memory<T>(_source, _start + startIndex, count);
 
         /// <summary>
         /// 현재 부분 배열 범위의 원소를 배열로 만듭니다

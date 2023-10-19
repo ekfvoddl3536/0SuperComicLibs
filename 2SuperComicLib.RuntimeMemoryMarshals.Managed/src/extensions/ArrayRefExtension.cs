@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -43,12 +44,18 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public static NativeSpan<T> AsSpan<T>(this in arrayrefSegment<T> @this) where T : unmanaged =>
             new NativeSpan<T>((T*)@this._source.GetDataPointer() + @this._start, @this.Length);
 
+        /// <summary>
+        /// Returns a subarray of the specified <see cref="arrayref{T}"/>. This operation does not create a copy.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static arrayrefSegment<T> Slice<T>(this in arrayref<T> @this, int startIndex, int count) where T : unmanaged =>
+        public static arrayrefSegment<T> Slice<T>(this in arrayref<T> @this, int startIndex, int count) =>
             new arrayrefSegment<T>(@this, startIndex, count);
 
+        /// <summary>
+        /// Returns a subarray of the specified <see cref="arrayref{T}"/>. This operation does not create a copy.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static arrayrefSegment<T> Slice<T>(this in arrayref<T> @this, int startIndex) where T : unmanaged =>
+        public static arrayrefSegment<T> Slice<T>(this in arrayref<T> @this, int startIndex) =>
             new arrayrefSegment<T>(@this, startIndex);
 
         /// <summary>
@@ -62,8 +69,8 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         {
             *(IntPtr*)@this._pClass = *(IntPtr*)ILUnsafe.AsPointer(Array.Empty<TTo>());
 
-            var len_u = @this.size() * (uint)Unsafe.SizeOf<TFrom>() / (uint)Unsafe.SizeOf<TTo>();
-            *(nuint_t*)@this._pLength = len_u;
+            var len_u = (ulong)@this.LongLength * (uint)ILUnsafe.SizeOf<TFrom>() / (uint)ILUnsafe.SizeOf<TTo>();
+            *(ulong*)@this._pLength = len_u;
 
             return new arrayref<TTo>(@this._pClass, @this._pLength);
         }
@@ -79,8 +86,8 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         {
             var resref = @this._source.CastDirect<TFrom, TTo>();
 
-            var idx_i4 = @this._start * Unsafe.SizeOf<TFrom>() / Unsafe.SizeOf<TTo>();
-            var len_i4 = @this.Length * Unsafe.SizeOf<TFrom>() / Unsafe.SizeOf<TTo>();
+            var idx_i4 = @this._start * ILUnsafe.SizeOf<TFrom>() / ILUnsafe.SizeOf<TTo>();
+            var len_i4 = @this.Length * ILUnsafe.SizeOf<TFrom>() / ILUnsafe.SizeOf<TTo>();
 
             return new arrayrefSegment<TTo>(resref, idx_i4, len_i4);
         }

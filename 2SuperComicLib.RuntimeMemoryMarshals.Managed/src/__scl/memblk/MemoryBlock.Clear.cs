@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,13 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Runtime.CompilerServices;
+using SuperComicLib.RuntimeMemoryMarshals;
 
 namespace SuperComicLib
 {
     public static unsafe partial class MemoryBlock
     {
-        public static void Clear(byte* ptr, nuint_t bytes)
+        public static void Clear(byte* ptr, ulong bytes)
         {
             const uint ALIGN8 = 0x7u;
 
@@ -41,7 +42,7 @@ namespace SuperComicLib
 
                 case 2:
                     *(ushort*)ptr = 0;
-                    break; 
+                    break;
 
                 case 3:
                     *(ushort*)ptr = 0;
@@ -78,7 +79,7 @@ namespace SuperComicLib
             if ((nb & sizeof(long)) != 0)
             {
                 *(long*)ptr = 0;
-                
+
                 ptr += sizeof(long);
                 nb -= sizeof(long);
             }
@@ -87,15 +88,15 @@ namespace SuperComicLib
             if (nb > 0x300u) // 768
                 ClearLarge768_internal(ptr, nb);
             else if (nb != 0)
-                Unsafe.InitBlock(ptr, 0, (uint)nb);
+                ILUnsafe.InitBlock(ptr, 0, (uint)nb);
         }
 
-        private static void ClearLarge768_internal(byte* ptr, nuint_t nb)
+        private static void ClearLarge768_internal(byte* ptr, ulong nb)
         {
             const uint SZ_300 = 0x300u;
             const uint SZ_2GB = 1u << 31;
-            
-            Unsafe.InitBlock(ptr, 0, SZ_300);
+
+            ILUnsafe.InitBlock(ptr, 0, SZ_300);
 
             ptr += SZ_300;
             nb -= SZ_300;
@@ -104,7 +105,7 @@ namespace SuperComicLib
             {
                 var cb1 = CMathi.Min(nb, SZ_2GB);
 
-                Unsafe.InitBlock(ptr, 0, (uint)cb1);
+                ILUnsafe.InitBlock(ptr, 0, (uint)cb1);
 
                 ptr += (uint)cb1;
                 nb -= cb1;

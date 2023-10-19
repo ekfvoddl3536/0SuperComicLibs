@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,27 +22,34 @@
 // SOFTWARE.
 
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
-namespace SuperComicLib
+namespace SuperComicLib.RuntimeMemoryMarshals
 {
-    static unsafe partial class SCL_GLOBAL_NativeSpan_NativeConstSpan_MEMORYEXTENSION
+    /// <summary>
+    /// <see langword="const"/> <see cref="varef_t{T}"/>
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential), MonoRuntimeNotSupported]
+    public readonly unsafe struct cvaref_t<T> where T : struct
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsWhitespace(this NativeSpan<char> span) => IsWhitespace(span.Source, span.end()._ptr);
+        internal readonly byte* DataReference;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsWhitespace(this NativeConstSpan<char> span) => IsWhitespace(span._source, span.end()._ptr);
+        internal cvaref_t(byte* DataReference) => this.DataReference = DataReference;
 
-        #region private
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool IsWhitespace(char* iter, char* end)
+        /// <summary>
+        /// Get a reference to the value. (read only)
+        /// </summary>
+        public ref readonly T Value
         {
-            for (; iter != end; ++iter)
-                if (!char.IsWhiteSpace(*iter))
-                    return false;
-
-            return true;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ref ILUnsafe.AsRef<T>(DataReference);
         }
-        #endregion
+
+        /// <summary>
+        /// Convert to read only
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator cvaref_t<T>(varef_t<T> input) => new cvaref_t<T>(input.DataReference);
     }
 }

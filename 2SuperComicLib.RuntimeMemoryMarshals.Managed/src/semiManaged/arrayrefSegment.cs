@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -124,7 +125,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public Memory<T> AsMemory() => new Memory<T>(_source.AsManaged(), _start, Length);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public byte* GetDataPointer() => _source.GetDataPointer() + _start * Unsafe.SizeOf<T>();
+        public byte* GetDataPointer() => _source.GetDataPointer() + _start * ILUnsafe.SizeOf<T>();
         #endregion
 
         #region interface impl (explicit)

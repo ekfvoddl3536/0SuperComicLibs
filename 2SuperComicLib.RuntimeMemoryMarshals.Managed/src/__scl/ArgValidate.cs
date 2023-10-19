@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -31,9 +32,9 @@ namespace SuperComicLib
         /// Exception thrown if: <c><paramref name="offset"/> &gt;= <paramref name="length"/></c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ThrowIfIndexOutOfRange(nint_t offset, nint_t length)
+        public static void ThrowIfIndexOutOfRange(long offset, long length)
         {
-            if ((nuint_t)offset >= (nuint_t)length)
+            if ((ulong)offset >= (ulong)length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
         }
 
@@ -41,9 +42,9 @@ namespace SuperComicLib
         /// Exception thrown if: <c><paramref name="offset"/> &gt; <paramref name="length"/></c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ThrowIfLengthOutOfRange(nint_t offset, nint_t length)
+        public static void ThrowIfLengthOutOfRange(long offset, long length)
         {
-            if ((nuint_t)offset > (nuint_t)length)
+            if ((ulong)offset > (ulong)length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
         }
 
@@ -51,7 +52,7 @@ namespace SuperComicLib
         /// Exception thrown if: <c><paramref name="value"/> &lt; 0</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ThrowIfNegative(nint_t value)
+        public static void ThrowIfNegative(long value)
         {
             if (value < 0)
                 throw new ArgumentException("Negative values are not allowed!", nameof(value));

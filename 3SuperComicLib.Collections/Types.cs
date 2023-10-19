@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -119,8 +119,8 @@ namespace SuperComicLib.Collections
 
     public interface IRawContainer
     {
-        nint_t size();
-        nint_t capacity();
+        long size();
+        long capacity();
 
         [CodeContracts.X64LossOfLength]
         RawMemory getMemory();
@@ -129,8 +129,8 @@ namespace SuperComicLib.Collections
     public interface IReadOnlyRawContainer<T> : IRawContainer
         where T : unmanaged
     {
-        ref readonly T this[nint_t index] { get; }
-        ref readonly T at(nint_t index);
+        ref readonly T this[long index] { get; }
+        ref readonly T at(long index);
 
         const_iterator<T> cbegin();
         const_iterator<T> cend();
@@ -142,8 +142,8 @@ namespace SuperComicLib.Collections
     public interface IRawContainer<T> : IRawContainer
         where T : unmanaged
     {
-        ref T this[nint_t index] { get; }
-        ref T at(nint_t index);
+        ref T this[long index] { get; }
+        ref T at(long index);
 
         _iterator<T> begin();
         _iterator<T> end();
@@ -159,8 +159,8 @@ namespace SuperComicLib.Collections
 
         T pop_back();
 
-        void insert(nint_t index, in T item);
-        bool removeAt(nint_t index);
+        void insert(long index, in T item);
+        bool removeAt(long index);
 
         void erase(_iterator<T> position);
 

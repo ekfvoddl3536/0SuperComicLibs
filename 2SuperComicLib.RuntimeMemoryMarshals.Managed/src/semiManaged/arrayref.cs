@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -64,27 +65,27 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Since the object occupies external memory, never call <see cref=" Dispose"/>.<para/>
         /// The <see cref="Length"/> is automatically calculated as the number of bytes in the provided.
         /// </summary>
-        /// <param name="unmanagedMemory">It takes 3 (dotnet) or 4 (mono) bytes to write the header.</param>
+        /// <param name="unmanagedMemory">It takes `3 (clr) or 4 (mono)` * IntPtr.Size bytes to write the header.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public arrayref(in NativeSpan<byte> unmanagedMemory)
         {
             if (JITPlatformEnvironment.IsRunningOnMono)
                 this = mono_header((IntPtr*)unmanagedMemory.Source, unmanagedMemory.Length);
             else
-                this = dotnet_header((IntPtr*)unmanagedMemory.Source, unmanagedMemory.Length);
+                this = clr_header((IntPtr*)unmanagedMemory.Source, unmanagedMemory.Length);
         }
         #endregion
 
         #region property +size()
         /// <summary>
-        /// Gets whether this array is a dotnet (CoreCLR) array.
+        /// Gets whether this array is a CoreCLR (.NET Framework, .NET) array.
         /// <br/>
         /// Used to identify arrays allocated using MonoRuntime's array memory layout.
         /// </summary>
-        public bool IsDotnetArray
+        public bool IsCLRArray
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => (IntPtr)(_pLength - _pClass) == (IntPtr)sizeof(void*);
+            get => _pLength - _pClass == sizeof(long);
         }
 
         /// <summary>
@@ -101,21 +102,15 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// </summary>
         public long LongLength
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid, X64Only]
+            [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
             get => *(long*)_pLength;
         }
 
         public bool IsNull
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => ((nint_t)_pClass | (nint_t)_pLength) == 0;
+            get => _pClass == null;
         }
-
-        /// <summary>
-        /// Get the length of an array as a <see cref="nuint_t"/>
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
-        public nuint_t size() => *(nuint_t*)_pLength;
         #endregion
 
         #region indexer
@@ -126,7 +121,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public ref T this[[ValidRange] int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid, AssumeInputsValid]
-            get => ref ILUnsafe.Add<T>(_pLength, index, sizeof(void*));
+            get => ref ILUnsafe.Add<T>(_pLength, index, sizeof(long));
         }
 
         /// <summary>
@@ -164,11 +159,11 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             int len = Length;
 
             arrayref<T> dst =
-                IsDotnetArray
-                ? newf_dotnet(len)
+                IsCLRArray
+                ? newf_clr(len)
                 : newf_mono(len);
 
-            ulong sz = (uint)(len * Unsafe.SizeOf<T>());
+            ulong sz = (uint)(len * ILUnsafe.SizeOf<T>());
             Buffer.MemoryCopy(GetDataPointer(), dst.GetDataPointer(), sz, sz);
 
             return dst;
@@ -178,7 +173,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Gets the data starting address of this array instance.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public byte* GetDataPointer() => _pLength + sizeof(void*);
+        public byte* GetDataPointer() => _pLength + sizeof(long);
 
         /// <summary>
         /// Gets the data starting address of this array instance.
@@ -186,10 +181,22 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeSpan<byte> GetDataReferenceAsSpan()
         {
-            var ptr = _pLength + sizeof(void*);
-            var sz = *(int*)_pLength * Unsafe.SizeOf<T>();
+            var ptr = _pLength + sizeof(long);
+            var sz = *(int*)_pLength * ILUnsafe.SizeOf<T>();
 
             return new NativeSpan<byte>(ptr, sz);
+        }
+
+        /// <summary>
+        /// Gets the data starting address of this array instance.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public NativeSpan<TTo> GetDataReferenceAsSpan<TTo>() where TTo : unmanaged
+        {
+            var ptr = _pLength + sizeof(long);
+            var sz = *(int*)_pLength * ILUnsafe.SizeOf<T>() / sizeof(TTo);
+
+            return new NativeSpan<TTo>((TTo*)ptr, sz);
         }
         #endregion
 
@@ -200,9 +207,9 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
         public void Dispose()
         {
-            if (IsDotnetArray)
-                // dotnet
-                Marshal.FreeHGlobal((IntPtr)(_pClass - sizeof(void*)));
+            if (IsCLRArray)
+                // clr
+                Marshal.FreeHGlobal((IntPtr)(_pClass - sizeof(long)));
             else
                 // mono
                 Marshal.FreeHGlobal((IntPtr)_pClass);
@@ -213,7 +220,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         bool IEquatable<arrayref<T>>.Equals(arrayref<T> other) => this == other;
 
         public override bool Equals(object obj) => obj is arrayref<T> other && this == other;
-        public override int GetHashCode() => ((nint_t)_pClass ^ (nint_t)_pLength).GetHashCode();
+        public override int GetHashCode() => ((long)_pClass ^ (long)_pLength).GetHashCode();
         #endregion
 
         #region operator
@@ -221,12 +228,22 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Shallow comparison. Performing only address comparisons.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(in arrayref<T> left, in arrayref<T> right) => (((nint_t)left._pClass ^ (nint_t)right._pClass) | ((nint_t)left._pLength ^ (nint_t)right._pLength)) == 0;
+        public static bool operator ==(in arrayref<T> left, in arrayref<T> right) => left._pClass == right._pClass;
         /// <summary>
         /// Shallow comparison. Performing only address comparisons.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(in arrayref<T> left, in arrayref<T> right) => !(left == right);
+        public static bool operator !=(in arrayref<T> left, in arrayref<T> right) => left._pClass != right._pClass;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator ==(in arrayref<T> left, T[] right) => left._pClass == ILUnsafe.AsPointer(right);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator !=(in arrayref<T> left, T[] right) => left._pClass != ILUnsafe.AsPointer(right);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator ==(T[] left, in arrayref<T> right) => ILUnsafe.AsPointer(left) == right._pClass;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator !=(T[] left, in arrayref<T> right) => ILUnsafe.AsPointer(left) != right._pClass;
         #endregion
 
         #region new arrayref
@@ -241,21 +258,21 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public static arrayref<T> newf([ValidRange] int length) =>
             JITPlatformEnvironment.IsRunningOnMono
             ? newf_mono(length)
-            : newf_dotnet(length);
+            : newf_clr(length);
 
         /// <summary>
         /// new fast. No argument validation. No zero-init.
         /// <br/>
-        /// Allocates in unmanaged memory, using the memory layout of dotnet (CoreCLR) managed array.
+        /// Allocates in unmanaged memory, using the memory layout of CoreCLR managed array.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid, MonoRuntimeNotSupported]
-        public static arrayref<T> newf_dotnet([ValidRange] int length)
+        public static arrayref<T> newf_clr([ValidRange] int length)
         {
-            var sz = (nint_t)(uint)length * Unsafe.SizeOf<T>() + sizeof(void*) * 3;
+            var sz = (uint)length * ILUnsafe.SizeOf<T>() + sizeof(long) * 3;
 
             var ptr = (IntPtr*)Marshal.AllocHGlobal((IntPtr)sz);
 
-            newf_setHeader_dotnet(ptr, length);
+            newf_setHeader_clr(ptr, length);
 
             return new arrayref<T>(ptr + 1, ptr + 2);
         }
@@ -268,7 +285,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid]
         public static arrayref<T> newf_mono([ValidRange] int length)
         {
-            var sz = (nint_t)(uint)length * Unsafe.SizeOf<T>() + sizeof(void*) * 4;
+            var sz = (uint)length * ILUnsafe.SizeOf<T>() + sizeof(long) * 4;
 
             var ptr = (IntPtr*)Marshal.AllocHGlobal((IntPtr)sz);
 
@@ -278,35 +295,35 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static arrayref<T> mono_header(IntPtr* ptr, nint_t size)
+        internal static arrayref<T> mono_header(IntPtr* ptr, long size)
         {
             const int REQ_SIZE = 4;
 
-            if (size < REQ_SIZE * sizeof(void*))
+            if (size < REQ_SIZE * sizeof(long))
                 return default;
 
-            int maxElementLength = (int)(size - REQ_SIZE) / Unsafe.SizeOf<T>();
-            newf_setHeader_dotnet(ptr, maxElementLength);
+            int maxElementLength = (int)(size - REQ_SIZE) / ILUnsafe.SizeOf<T>();
+            newf_setHeader_clr(ptr, maxElementLength);
 
             return new arrayref<T>(ptr, ptr + 3);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static arrayref<T> dotnet_header(IntPtr* ptr, nint_t size)
+        internal static arrayref<T> clr_header(IntPtr* ptr, long size)
         {
             const int REQ_SIZE = 3;
 
-            if (size < REQ_SIZE * sizeof(void*))
+            if (size < REQ_SIZE * sizeof(long))
                 return default;
 
-            int maxElementLength = (int)(size - REQ_SIZE) / Unsafe.SizeOf<T>();
-            newf_setHeader_dotnet(ptr, maxElementLength);
+            int maxElementLength = (int)(size - REQ_SIZE) / ILUnsafe.SizeOf<T>();
+            newf_setHeader_clr(ptr, maxElementLength);
 
             return new arrayref<T>(ptr + 1, ptr + 2);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void newf_setHeader_dotnet(IntPtr* ptr, int length)
+        internal static void newf_setHeader_clr(IntPtr* ptr, int length)
         {
             ptr[0] = IntPtr.Zero;
             ptr[1] = *(IntPtr*)ILUnsafe.AsPointer(Array.Empty<T>());

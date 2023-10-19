@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,18 +30,18 @@ namespace SuperComicLib
     unsafe partial class MemoryBlock
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IntPtr Memalloc(nint_t len, int elementSize) =>
+        public static IntPtr Memalloc(long len, int elementSize) =>
             Marshal.AllocHGlobal((IntPtr)(len * (uint)elementSize));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Memmove<T>(void* src, void* dest, nuint_t length) where T : unmanaged
+        public static void Memmove<T>(void* src, void* dest, ulong length) where T : unmanaged
         {
-            ulong cb = (ulong)(length * (uint)sizeof(T));
+            ulong cb = length * (uint)sizeof(T);
             Buffer.MemoryCopy(src, dest, cb, cb);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Clear(void* ptr, nint_t length, int elementSize) =>
-            Clear((byte*)ptr, (nuint_t)length * (uint)elementSize);
+        public static void Clear(void* ptr, long length, int elementSize) =>
+            Clear((byte*)ptr, (ulong)length * (uint)elementSize);
     }
 }

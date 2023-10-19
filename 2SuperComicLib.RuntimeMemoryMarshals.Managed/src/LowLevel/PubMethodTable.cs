@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,13 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Runtime.InteropServices;
 
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
-    [StructLayout(LayoutKind.Sequential)]
-    internal sealed class _classDataRef
+    /// <summary>
+    /// Structure for MethodTable in CoreCLR (.NET Framework, .NET).
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential), MonoRuntimeNotSupported]
+    public readonly unsafe struct PubMethodTable
     {
-        public byte Item;
+        public readonly uint Flags1;
+        public readonly uint Size;
+        public readonly ushort Flags2;
+        public readonly ushort Token;
+        public readonly ushort NumVirtualMethods;
+        public readonly ushort NumInterfaces;
+        public readonly PubMethodTable* ParentMT;
+        public readonly IntPtr pModule;
     }
 }

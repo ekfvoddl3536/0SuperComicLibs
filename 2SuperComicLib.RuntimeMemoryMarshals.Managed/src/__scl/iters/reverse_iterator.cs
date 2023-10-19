@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -65,9 +66,9 @@ namespace SuperComicLib
         public static reverse_iterator<T> operator -(reverse_iterator<T> left, int right) => new reverse_iterator<T>(left._ptr + right);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static reverse_iterator<T> operator +(reverse_iterator<T> left, nint_t right) => new reverse_iterator<T>(left._ptr + (long)right);
+        public static reverse_iterator<T> operator +(reverse_iterator<T> left, long right) => new reverse_iterator<T>(left._ptr + right);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static reverse_iterator<T> operator -(reverse_iterator<T> left, nint_t right) => new reverse_iterator<T>(left._ptr - (long)right);
+        public static reverse_iterator<T> operator -(reverse_iterator<T> left, long right) => new reverse_iterator<T>(left._ptr - right);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static reverse_iterator<T> operator ++(reverse_iterator<T> left) => new reverse_iterator<T>(left._ptr - 1);

@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
 // Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,14 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using SuperComicLib.RuntimeMemoryMarshals;
 using System;
-using System.Runtime.CompilerServices;
 
 namespace SuperComicLib
 {
     unsafe partial class MemoryBlock
     {
-        public static void Fill<T>(T* ptr, nuint_t length, in T value) where T : unmanaged
+        public static void Fill<T>(T* ptr, ulong length, in T value) where T : unmanaged
         {
             const uint SMALL_SIZE = 0x1_0000u;
 
@@ -37,21 +38,21 @@ namespace SuperComicLib
             ptr[0] = value;
 
             T* dest = ptr;
-            nuint_t next = 1u;
-            nuint_t next_cb = (uint)sizeof(T);
+            ulong next = 1u;
+            ulong next_cb = (uint)sizeof(T);
 
             // 2^n 개씩 값 대입
             for (--length; next <= length && (uint)next_cb <= SMALL_SIZE; next <<= 1, next_cb <<= 1)
             {
                 length -= next;
                 dest = (T*)((byte*)ptr + (long)next_cb);
-                Unsafe.CopyBlockUnaligned(dest, ptr, (uint)next_cb);
+                ILUnsafe.CopyBlockUnaligned(dest, ptr, (uint)next_cb);
             }
             for (; next <= length; next <<= 1, next_cb <<= 1)
             {
                 length -= next;
                 dest = (T*)((byte*)ptr + (long)next_cb);
-                Buffer.MemoryCopy(ptr, dest, next_cb, (ulong)next_cb);
+                Buffer.MemoryCopy(ptr, dest, next_cb, next_cb);
             }
 
             for (; ; )
@@ -64,14 +65,14 @@ namespace SuperComicLib
 
                 length -= next;
                 dest = (T*)((byte*)ptr + (long)next_cb);
-                Buffer.MemoryCopy(ptr, dest, next_cb, (ulong)next_cb);
+                Buffer.MemoryCopy(ptr, dest, next_cb, next_cb);
             }
 
             while ((uint)next != 0u)
             {
                 length -= next;
                 dest = (T*)((byte*)ptr + (long)next_cb);
-                Unsafe.CopyBlockUnaligned(dest, ptr, (uint)next_cb);
+                ILUnsafe.CopyBlockUnaligned(dest, ptr, (uint)next_cb);
 
                 for (; next > length; next_cb >>= 1, ptr += (long)next)
                     next >>= 1;

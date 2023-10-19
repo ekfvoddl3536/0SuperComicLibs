@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2022 SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -43,18 +43,18 @@ namespace SuperComicLib.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public _vector(nint_t size) : this(size, default)
+        public _vector(long size) : this(size, default)
         {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public _vector(nint_t size, in T val)
+        public _vector(long size, in T val)
         {
             m_Ptr = (T*)MemoryBlock.Memalloc(size, sizeof(T));
-            m_Last = m_Ptr + (long)size;
+            m_Last = m_Ptr + size;
             m_End = m_Last;
 
-            MemoryBlock.Fill(m_Ptr, (nuint_t)size, val);
+            MemoryBlock.Fill(m_Ptr, (ulong)size, val);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -71,7 +71,7 @@ namespace SuperComicLib.Collections
             m_Last = (T*)(byte*)m_Ptr + (long)len;
             m_End = m_Last;
 
-            MemoryBlock.Memmove<T>(first, m_Ptr, (nuint_t)len);
+            MemoryBlock.Memmove<T>(first, m_Ptr, (ulong)len);
         }
 
         /// <summary>
@@ -95,31 +95,31 @@ namespace SuperComicLib.Collections
         #endregion
 
         #region indexer & property
-        public ref T this[nint_t index] => ref *(m_Ptr + (long)index);
+        public ref T this[long index] => ref *(m_Ptr + index);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T at(nint_t index)
+        public ref T at(long index)
         {
             ArgValidateHelper.ThrowIfIndexOutOfRange(index, size());
             return ref this[index];
         }
 
-        public nint_t Count => size();
+        public long Count => size();
 
-        public nint_t Capacity => capacity();
+        public long Capacity => capacity();
         #endregion
 
         #region impl interface -1-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public nint_t size() => m_Last - m_Ptr;
+        public long size() => m_Last - m_Ptr;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public nint_t capacity() => m_End - m_Ptr;
+        public long capacity() => m_End - m_Ptr;
         #endregion
 
         #region impl interface -2-
-        ref readonly T IReadOnlyRawContainer<T>.this[nint_t index] => ref this[index];
+        ref readonly T IReadOnlyRawContainer<T>.this[long index] => ref this[index];
 
-        ref readonly T IReadOnlyRawContainer<T>.at(nint_t index) => ref at(index);
+        ref readonly T IReadOnlyRawContainer<T>.at(long index) => ref at(index);
         #endregion
 
         #region methods 
@@ -132,31 +132,31 @@ namespace SuperComicLib.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void insert(nint_t index, in T item)
+        public void insert(long index, in T item)
         {
             if (index >= size())
                 throw new ArgumentOutOfRangeException(nameof(index));
 
             reserve(size() + 1);
 
-            T* src = m_Ptr + (long)index;
+            T* src = m_Ptr + index;
             T* dst = src + 1;
 
-            MemoryBlock.Memmove<T>(src, dst, (nuint_t)((byte*)m_Last - (byte*)dst));
+            MemoryBlock.Memmove<T>(src, dst, (ulong)((byte*)m_Last - (byte*)dst));
 
             *src = item;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool removeAt(nint_t index)
+        public bool removeAt(long index)
         {
             if (index >= size())
                 return false;
 
-            T* dst = m_Ptr + (long)index;
+            T* dst = m_Ptr + index;
             T* src = dst + 1;
 
-            MemoryBlock.Memmove<T>(src, dst, (nuint_t)((byte*)m_Last - (byte*)src));
+            MemoryBlock.Memmove<T>(src, dst, (ulong)((byte*)m_Last - (byte*)src));
 
             m_Last--;
 
@@ -171,7 +171,7 @@ namespace SuperComicLib.Collections
 
             T* dst = position._ptr + 1;
 
-            MemoryBlock.Memmove<T>(dst, position._ptr, (nuint_t)((byte*)m_Last - (byte*)dst));
+            MemoryBlock.Memmove<T>(dst, position._ptr, (ulong)((byte*)m_Last - (byte*)dst));
 
             m_Last--;
         }
@@ -184,7 +184,7 @@ namespace SuperComicLib.Collections
 
             T* dst = last._ptr + 1;
 
-            MemoryBlock.Memmove<T>(dst, first._ptr, (nuint_t)((byte*)m_Last - (byte*)dst));
+            MemoryBlock.Memmove<T>(dst, first._ptr, (ulong)((byte*)m_Last - (byte*)dst));
 
             m_Last -= last._ptr - first._ptr;
         }
@@ -196,19 +196,19 @@ namespace SuperComicLib.Collections
         public RawMemory getMemory() => new RawMemory(m_Ptr, (int)size());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void _increaseCapacity(nint_t min_size)
+        private void _increaseCapacity(long min_size)
         {
             var old_cnt = size();
             var old_capa = capacity();
 
-            var new_capa = (nint_t)CMathi.Max((nuint_t)old_capa << 1, 4u);
-            new_capa = (nint_t)CMathi.Max((nuint_t)new_capa, (nuint_t)min_size);
+            var new_capa = (long)CMathi.Max((ulong)old_capa << 1, 4u);
+            new_capa = (long)CMathi.Max((ulong)new_capa, (ulong)min_size);
 
             T* dst = (T*)MemoryBlock.Memalloc(new_capa, sizeof(T));
-            T* last = dst + (long)old_cnt;
-            T* end = dst + (long)new_capa;
+            T* last = dst + old_cnt;
+            T* end = dst + new_capa;
 
-            MemoryBlock.Memmove<T>(m_Ptr, dst, (nuint_t)old_cnt);
+            MemoryBlock.Memmove<T>(m_Ptr, dst, (ulong)old_cnt);
 
             Marshal.FreeHGlobal((IntPtr)m_Ptr);
 
@@ -220,28 +220,28 @@ namespace SuperComicLib.Collections
 
         #region set capacity
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void reserve(nint_t capacity)
+        public void reserve(long capacity)
         {
-            if (m_Ptr + (long)capacity > m_End)
+            if (m_Ptr + capacity > m_End)
                 _increaseCapacity(capacity);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void resize(nint_t capacity)
+        public void resize(long capacity)
         {
             var cnt = size();
             var n = capacity;
 
-            var cpyCnt = (nint_t)CMathi.Min((nuint_t)cnt, (nuint_t)n);
+            var cpyCnt = (long)CMathi.Min((ulong)cnt, (ulong)n);
 
             T* dst = (T*)Marshal.AllocHGlobal((IntPtr)(n * (uint)sizeof(T)));
-            T* last = dst + (long)cpyCnt;
-            T* end = dst + (long)n;
+            T* last = dst + cpyCnt;
+            T* end = dst + n;
 
             if (n > cnt)
                 MemoryBlock.Clear(last, n - cnt, sizeof(T));
 
-            MemoryBlock.Memmove<T>(m_Ptr, dst, (nuint_t)cpyCnt);
+            MemoryBlock.Memmove<T>(m_Ptr, dst, (ulong)cpyCnt);
 
             Marshal.FreeHGlobal((IntPtr)m_Ptr);
 
