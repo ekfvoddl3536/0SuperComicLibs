@@ -114,6 +114,21 @@ namespace SuperComicLib.RuntimeMemoryMarshals
                 _arr = source;
         }
 
+        public SafeArrayref(T[] source)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (source.Length == 0)
+                _arr = Empty._arr;
+            else
+            {
+                var temp = arrayref<T>.newf(source.Length);
+                Array.Copy(source, temp.AsManaged(), source.Length);
+                _arr = temp;
+            }
+        }
+
         public bool IsCLRArray
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -282,8 +297,12 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         #region deconstructor
         ~SafeArrayref()
         {
-            if (this != _EmptyArray && !_arr.IsNull)
-                _arr.Dispose();
+            ref readonly var arr = ref _arr;
+            if (arr.IsNull)
+                return;
+
+            if (_EmptyArray == null || _EmptyArray._arr._pClass != arr._pClass)
+                arr.Dispose();
         }
 
         int IStructuralComparable.CompareTo(object other, IComparer comparer)
@@ -373,6 +392,14 @@ namespace SuperComicLib.RuntimeMemoryMarshals
 
             return res;
         }
+        #endregion
+
+        #region operator
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator T[](SafeArrayref<T> array) => array._arr.AsManaged();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator SafeArrayref<T>(T[] array) => new SafeArrayref<T>(array);
         #endregion
     }
 }
