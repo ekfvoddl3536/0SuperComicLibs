@@ -309,8 +309,8 @@ namespace SuperComicLib.RuntimeMemoryMarshals
                 if (c != 0)
                     return c;
 
-                ILUnsafe.Increment(ref l_iter);
-                ILUnsafe.Increment(ref r_iter);
+                l_iter = ref ILUnsafe.Increment(ref l_iter);
+                r_iter = ref ILUnsafe.Increment(ref r_iter);
             }
 
             return 0;
@@ -338,8 +338,8 @@ namespace SuperComicLib.RuntimeMemoryMarshals
                 if (!comparer.Equals(l_iter, r_iter))
                     return false;
 
-                ILUnsafe.Increment(ref l_iter);
-                ILUnsafe.Increment(ref r_iter);
+                l_iter = ref ILUnsafe.Increment(ref l_iter);
+                r_iter = ref ILUnsafe.Increment(ref r_iter);
             }
 
             return true;

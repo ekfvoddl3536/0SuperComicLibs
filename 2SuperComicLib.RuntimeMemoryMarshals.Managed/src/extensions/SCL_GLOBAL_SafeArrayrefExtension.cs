@@ -28,6 +28,10 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     public static unsafe class SCL_GLOBAL_SafeArrayrefExtension
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static NativeSpan<T> AsSpan<T>(this SafeArrayref<T> @this) where T : unmanaged =>
+            @this._arr.AsSpan();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte* GetDataPointer<T>(this SafeArrayref<T> @this) where T : unmanaged => 
             @this._arr.GetDataPointer();
 

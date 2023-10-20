@@ -260,7 +260,7 @@
 
 	.method public hidebysig static !!T&  Increment<T>(!!T& source) cil managed aggressiveinlining
 	{
-		.maxstack 1
+		.maxstack 2
 
 		ldarg.0
 		sizeof !!0
@@ -270,7 +270,7 @@
 
 	.method public hidebysig static !!T&  Decrement<T>(!!T& source) cil managed aggressiveinlining
 	{
-		.maxstack 1
+		.maxstack 2
 
 		ldarg.0
 		sizeof !!0
