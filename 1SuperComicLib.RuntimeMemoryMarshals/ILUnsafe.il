@@ -39,8 +39,22 @@
 	{
 		.maxstack 1
 		.locals (
-            [0] !!T
+            [0] !!0
         )
+
+		ldarg.0
+		conv.i
+		stloc.0
+		ldloc.0
+		ret
+	}
+
+	.method public hidebysig static !!T  AsClass<class T>(native int 'value') cil managed aggressiveinlining
+	{
+		.maxstack 1
+		.locals (
+			[0] !!0
+		)
 
 		ldarg.0
 		stloc.0

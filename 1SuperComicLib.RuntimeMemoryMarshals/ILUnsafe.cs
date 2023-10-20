@@ -49,6 +49,14 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public static T AsClass<T>(void* value) where T : class => throw new PlatformNotSupportedException();
 
         /// <summary>
+        /// Convert a pointer address to a managed class.
+        /// <br/>
+        /// <c>T cls = (T)(void*)value</c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T AsClass<T>(IntPtr value) where T : class => throw new PlatformNotSupportedException();
+
+        /// <summary>
         /// Get the instance address of the managed class.
         /// <br/>
         /// <c>void* cls = (void*)value</c>
