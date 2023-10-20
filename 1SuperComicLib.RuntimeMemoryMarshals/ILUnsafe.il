@@ -258,6 +258,26 @@
 		ret
 	}
 
+	.method public hidebysig static !!T&  Increment<T>(!!T& source) cil managed aggressiveinlining
+	{
+		.maxstack 1
+
+		ldarg.0
+		sizeof !!0
+		add
+		ret
+	}
+
+	.method public hidebysig static !!T&  Decrement<T>(!!T& source) cil managed aggressiveinlining
+	{
+		.maxstack 1
+
+		ldarg.0
+		sizeof !!0
+		sub
+		ret
+	}
+
 
 
 

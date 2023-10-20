@@ -24,6 +24,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using SuperComicLib.CodeContracts;
@@ -33,6 +34,8 @@ namespace SuperComicLib
     /// <summary>
     /// 원본 배열에 대한 부분 배열 정보 (기본적으로 읽기 전용)
     /// </summary>
+    [DebuggerTypeProxy(typeof(MemoryElementDebugView<>))]
+    [DebuggerDisplay("{Length}")]
     public readonly struct ConstMemory<T> : IList<T>, IReadOnlyList<T>, IEquatable<ConstMemory<T>>
     {
         internal readonly T[] _source;
@@ -118,7 +121,7 @@ namespace SuperComicLib
         public bool IsIndexOutOfRange
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => (ulong)(_source.Length - (uint)_start) < (uint)Length;
+            get => ((_start >> 31) | (_source.Length - _start)) < (uint)Length;
         }
         #endregion
 
@@ -138,23 +141,29 @@ namespace SuperComicLib
         /// <summary>
         /// 현재 부분 배열에 대한 부분 배열을 만듭니다
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ConstMemory<T> Slice(int startIndex) => Slice(startIndex, Length - startIndex);
+        [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead]
+        public ConstMemory<T> Slice(int startIndex)
+        {
+            if ((uint)startIndex >= (uint)Length)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+            return new ConstMemory<T>(_source, _start + startIndex, Length - startIndex);
+        }
 
         /// <summary>
         /// 현재 부분 배열에 대한 부분 배열을 만듭니다
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead]
         public ConstMemory<T> Slice(int startIndex, int count)
         {
-            if (startIndex < 0 || Length - startIndex < (uint)count)
+            if (((startIndex >> 31) | (Length - startIndex)) < (uint)count)
                 throw new ArgumentOutOfRangeException($"'{nameof(startIndex)}' or '{nameof(count)}'");
 
             return new ConstMemory<T>(_source, _start + startIndex, count);
         }
 
         /// <summary>
-        /// 현재 부분 배열에 대한 부분 배열을 만듭니다
+        /// 현재 부분 배열에 대한 부분 배열을 만듭니다. (범위 검사가 없음)
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid, AssumeOperationValid]
         public ConstMemory<T> Slice_fast([ValidRange] int startIndex, [ValidRange] int count) =>

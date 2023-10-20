@@ -153,6 +153,20 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ConvI4(bool value) => throw new PlatformNotSupportedException();
 
+        /// <summary>
+        /// <c><see langword="ref"/> Add(<see langword="ref"/> <paramref name="source"/>, 1)</c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref T Increment<T>(ref T source) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// <c><see langword="ref"/> Subtract(<see langword="ref"/> <paramref name="source"/>, 1)</c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref T Decrement<T>(ref T source) => throw new PlatformNotSupportedException();
+
+
+
         //
         // !================== System.Runtime.CompilerServices.Unsafe (features) ==================!
         // 

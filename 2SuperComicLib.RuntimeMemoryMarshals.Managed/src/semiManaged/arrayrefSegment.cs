@@ -79,7 +79,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public bool IsIndexOutOfRange
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
-            get => _start < 0 || _source.Length - _start < (uint)Length;
+            get => ((_start >> 31) | (_source.Length - _start)) < (uint)Length;
         }
         #endregion
 
@@ -101,13 +101,19 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         #endregion
 
         #region methods (slice, copy, +toUmgArray)
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public arrayrefSegment<T> Slice(int startIndex) => Slice(startIndex, Length - startIndex);
+        [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead]
+        public arrayrefSegment<T> Slice(int startIndex)
+        {
+            if ((uint)startIndex >= (uint)Length)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            return new arrayrefSegment<T>(_source, _start + startIndex, Length - startIndex);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead]
         public arrayrefSegment<T> Slice(int startIndex, int count)
         {
-            if ((uint)(startIndex + count) >= (uint)Length)
+            if (((startIndex >> 31) | (Length - startIndex)) < (uint)count)
                 throw new ArgumentOutOfRangeException($"'{nameof(startIndex)}' and '{nameof(count)}'");
 
             return new arrayrefSegment<T>(_source, _start + startIndex, count);
@@ -136,15 +142,15 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             set => at(index) = value;
         }
         int IList<T>.IndexOf(T item) => AsMemory().IndexOf(item);
-        void IList<T>.Insert(int index, T item) => throw new NotSupportedException("FixedSizeCollection");
-        void IList<T>.RemoveAt(int index) => throw new NotSupportedException("FixedSizeCollection");
+        void IList<T>.Insert(int index, T item) => throw new NotSupportedException(Arrayrefs.ERROR_FIXEDSIZECOLLECTION);
+        void IList<T>.RemoveAt(int index) => throw new NotSupportedException(Arrayrefs.ERROR_FIXEDSIZECOLLECTION);
         int ICollection<T>.Count => Length;
         bool ICollection<T>.IsReadOnly => false;
-        void ICollection<T>.Add(T item) => throw new NotSupportedException("FixedSizeCollection");
+        void ICollection<T>.Add(T item) => throw new NotSupportedException(Arrayrefs.ERROR_FIXEDSIZECOLLECTION);
         void ICollection<T>.Clear() => AsMemory().Clear();
         bool ICollection<T>.Contains(T item) => AsMemory().Contains(item);
         void ICollection<T>.CopyTo(T[] array, int arrayIndex) => AsMemory().CopyTo(array, arrayIndex);
-        bool ICollection<T>.Remove(T item) => throw new NotSupportedException("FixedSizeCollection");
+        bool ICollection<T>.Remove(T item) => throw new NotSupportedException(Arrayrefs.ERROR_FIXEDSIZECOLLECTION);
         #endregion
 
         #region IReadOnlyList<T>

@@ -26,46 +26,20 @@ using System.Runtime.CompilerServices;
 
 namespace SuperComicLib
 {
-    public static unsafe class ArgValidateHelper
+    public static class ArgValidateHelper
     {
-        /// <summary>
-        /// Exception thrown if: <c><paramref name="offset"/> &gt;= <paramref name="length"/></c>
-        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ThrowIfIndexOutOfRange(long offset, long length)
+        public static void ThrowIfIndexOutOfRange(long index, long length)
         {
-            if ((ulong)offset >= (ulong)length)
-                throw new ArgumentOutOfRangeException(nameof(offset));
+            if ((ulong)index >= (ulong)length)
+                throw new ArgumentOutOfRangeException(nameof(index));
         }
 
-        /// <summary>
-        /// Exception thrown if: <c><paramref name="offset"/> &gt; <paramref name="length"/></c>
-        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ThrowIfLengthOutOfRange(long offset, long length)
+        public static void ThrowIfNotEnoughLength(long sourceLength, long destinationLength)
         {
-            if ((ulong)offset > (ulong)length)
-                throw new ArgumentOutOfRangeException(nameof(offset));
-        }
-
-        /// <summary>
-        /// Exception thrown if: <c><paramref name="value"/> &lt; 0</c>
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ThrowIfNegative(long value)
-        {
-            if (value < 0)
-                throw new ArgumentException("Negative values are not allowed!", nameof(value));
-        }
-
-        /// <summary>
-        /// Exception thrown if: <c><paramref name="value"/> == null</c>
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ThrowIfNull<T>(T value)
-        {
-            if (value == null)
-                throw new ArgumentNullException(nameof(value));
+            if ((ulong)sourceLength > (ulong)destinationLength)
+                throw new ArgumentOutOfRangeException(nameof(destinationLength), "Not enough length");
         }
     }
 }

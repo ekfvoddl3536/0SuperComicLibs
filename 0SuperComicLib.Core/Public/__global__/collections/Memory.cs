@@ -24,6 +24,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using SuperComicLib.CodeContracts;
@@ -33,6 +34,8 @@ namespace SuperComicLib
     /// <summary>
     /// 원본 배열에 대한 부분 배열 정보
     /// </summary>
+    [DebuggerTypeProxy(typeof(MemoryElementDebugView<>))]
+    [DebuggerDisplay("{Length}")]
     public readonly struct Memory<T> : IList<T>, IReadOnlyList<T>, IEquatable<Memory<T>>
     {
         /// <summary>
@@ -123,7 +126,7 @@ namespace SuperComicLib
         public bool IsIndexOutOfRange
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
-            get => (ulong)(_source.Length - (uint)_start) < (uint)Length;
+            get => ((_start >> 31) | (_source.Length - _start)) < (uint)Length;
         }
         #endregion
 
@@ -134,7 +137,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T at(int index)
         {
-            if ((uint)index >= (uint)Length)
+            if ((uint)index >= Length)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
             return ref _source[_start + index];
@@ -143,16 +146,22 @@ namespace SuperComicLib
         /// <summary>
         /// 현재 부분 배열에 대한 부분 배열을 만듭니다
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Memory<T> Slice(int startIndex) => Slice(startIndex, Length - startIndex);
+        [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead]
+        public Memory<T> Slice(int startIndex)
+        {
+            if ((uint)startIndex >= (uint)Length) 
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+            return new Memory<T>(_source, _start + startIndex, Length - startIndex);
+        }
 
         /// <summary>
         /// 현재 부분 배열에 대한 부분 배열을 만듭니다
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead]
         public Memory<T> Slice(int startIndex, int count)
         {
-            if (startIndex < 0 || Length - startIndex < (uint)count)
+            if (((startIndex >> 31) | (Length - startIndex)) < (uint)count)
                 throw new ArgumentOutOfRangeException($"'{nameof(startIndex)}' or '{nameof(count)}'");
 
             return new Memory<T>(_source, _start + startIndex, count);
@@ -171,7 +180,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T[] ToArray()
         {
-            if (Length == 0)
+            if (Length <= 0)
                 return Array.Empty<T>();
 
             T[] res = new T[Length];
@@ -199,7 +208,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyTo(int startIndex, in Memory<T> array, int arrayIndex, int length)
         {
-            if ((uint)startIndex >= (uint)Length)
+            if ((uint)startIndex >= Length)
                 throw new ArgumentOutOfRangeException(nameof(startIndex));
 
             if ((uint)arrayIndex >= (uint)array.Length)

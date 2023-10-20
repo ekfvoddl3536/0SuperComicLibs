@@ -73,15 +73,30 @@ namespace SuperComicLib
         #endregion
 
         #region def methods
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeConstSpan<T> Slice(long startIndex) => Slice(startIndex, Length - startIndex);
+        [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead]
+        public NativeConstSpan<T> Slice(long startIndex)
+        {
+            if ((ulong)startIndex >= (ulong)Length)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+            return new NativeConstSpan<T>(_source + startIndex, Length - startIndex);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead]
         public NativeConstSpan<T> Slice(long startIndex, long count)
         {
-            ArgValidateHelper.ThrowIfLengthOutOfRange(startIndex + count, Length);
+            if ((startIndex | count) < 0 || Length - startIndex < count)
+                throw new ArgumentOutOfRangeException($"{nameof(startIndex)} or {nameof(count)}");
+
             return new NativeConstSpan<T>(_source + startIndex, count);
         }
+
+        /// <summary>
+        /// This method performs no range checks on the input value and executes the operation immediately.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid, AssumeOperationValid]
+        public NativeConstSpan<T> Slice_fast([ValidRange] long startIndex, [ValidRange] long count) =>
+            new NativeConstSpan<T>(_source + startIndex, count);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength]
         public T[] ToArray() => NativeSpanHelper.ToArray(_source, Length);
@@ -93,7 +108,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyTo(in NativeSpan<T> dst)
         {
-            ArgValidateHelper.ThrowIfLengthOutOfRange(Length, dst.Length);
+            ArgValidateHelper.ThrowIfNotEnoughLength(Length, dst.Length);
             NativeSpanHelper.CopyTo(_source, dst.Source, (ulong)Length);
         }
         #endregion

@@ -23,6 +23,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using SuperComicLib.CodeContracts;
 
@@ -34,7 +35,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     /// Supports both unmanaged and managed array scenarios simultaneously.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public readonly unsafe struct arrayref<T> : IEquatable<arrayref<T>>, IDisposable
+    public readonly unsafe partial struct arrayref<T> : IEquatable<arrayref<T>>, IDisposable
     {
         internal readonly byte* _pClass;
         internal readonly byte* _pLength;

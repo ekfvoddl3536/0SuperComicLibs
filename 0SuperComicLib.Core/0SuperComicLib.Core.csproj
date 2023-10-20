@@ -109,6 +109,7 @@
     <Compile Include="Public\__global__\BitArray.cs" />
     <Compile Include="Public\__global__\collections\ConstMemory.cs" />
     <Compile Include="Public\__global__\collections\Memory.cs" />
+    <Compile Include="Public\__global__\collections\MemoryElementDebugView.cs" />
     <Compile Include="Public\__global__\extension\SCL_GLOBAL_ArrayExtension.cs" />
     <Compile Include="Public\__global__\extension\SCL_GLOBAL_SystemIOStreamExtension.cs" />
     <Compile Include="Public\__global__\LongHashedString.cs" />
