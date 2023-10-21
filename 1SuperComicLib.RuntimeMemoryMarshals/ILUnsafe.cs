@@ -165,6 +165,12 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T Decrement<T>(ref T source) => throw new PlatformNotSupportedException();
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref T Subtract<T>(void* source, int elementOffset) => throw new PlatformNotSupportedException();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref T Subtract<T>(void* source, long elementOffset) => throw new PlatformNotSupportedException();
+
 
 
         //

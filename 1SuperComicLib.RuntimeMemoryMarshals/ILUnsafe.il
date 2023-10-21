@@ -278,6 +278,31 @@
 		ret
 	}
 
+	.method public hidebysig static !!T&  Subtract<T>(void* source, int32 elementOffset) cil managed aggressiveinlining
+	{
+		.maxstack 4
+
+		ldarg.0
+		ldarg.1
+		sizeof !!0
+		conv.i
+		mul
+		sub
+		ret
+	}
+
+	.method public hidebysig static !!T&  Subtract<T>(void* source, int64 elementOffset) cil managed aggressiveinlining
+	{
+		.maxstack 4
+
+		ldarg.0
+		ldarg.1
+		sizeof !!0
+		mul
+		sub
+		ret
+	}
+
 
 
 
@@ -570,6 +595,7 @@
 		.maxstack 1
 
 		ldarg.0
+		call !!1& SuperComicLib.RuntimeMemoryMarshals.ILUnsafe::As<int8, !!T>(!!0&)
 		ret
 	}
 

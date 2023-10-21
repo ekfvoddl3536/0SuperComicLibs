@@ -22,8 +22,9 @@
 // SOFTWARE.
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using SuperComicLib.CodeContracts;
 
@@ -35,7 +36,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     /// Supports both unmanaged and managed array scenarios simultaneously.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public readonly unsafe partial struct arrayref<T> : IEquatable<arrayref<T>>, IDisposable
+    public readonly unsafe partial struct arrayref<T> : IEquatable<arrayref<T>>, IEnumerable<T>, IDisposable
     {
         internal readonly byte* _pClass;
         internal readonly byte* _pLength;
@@ -116,7 +117,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
 
         #region indexer
         /// <summary>
-        /// Same as: <see cref="System.Collections.Generic.List{T}.this[int]"/>.
+        /// Same as: <see cref="List{T}.this[int]"/>.
         /// but, it does not perform validation, such as range checking. API for high-performance scenarios.
         /// </summary>
         public ref T this[[ValidRange] int index]
@@ -126,7 +127,17 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         }
 
         /// <summary>
-        /// Same as: <see cref="System.Collections.Generic.List{T}.this[int]"/>.
+        /// Same as: <see cref="List{T}.this[int]"/>.
+        /// but, it does not perform validation, such as range checking. API for high-performance scenarios.
+        /// </summary>
+        public ref T this[[ValidRange] long index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid, AssumeInputsValid]
+            get => ref ILUnsafe.Add<T>(_pLength, index, sizeof(long));
+        }
+
+        /// <summary>
+        /// Same as: <see cref="List{T}.this[int]"/>.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
         public ref T at(int index)
@@ -199,6 +210,21 @@ namespace SuperComicLib.RuntimeMemoryMarshals
 
             return new NativeSpan<TTo>((TTo*)ptr, sz);
         }
+        #endregion
+
+        #region enumerable & iterator
+        public IEnumerator<T> GetEnumerator() => new enumerator(_pLength);
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public iterator begin() => new iterator(ref this[0L]);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public iterator end() => new iterator(ref this[LongLength]);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public iterator rbegin() => new iterator(ref this[LongLength - 1]);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public iterator rend() => new iterator(ref this[-1L]);
         #endregion
 
         #region dispose
@@ -304,7 +330,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
                 return default;
 
             int maxElementLength = (int)(size - REQ_SIZE) / ILUnsafe.SizeOf<T>();
-            newf_setHeader_clr(ptr, maxElementLength);
+            newf_setHeader_mono(ptr, maxElementLength);
 
             return new arrayref<T>(ptr, ptr + 3);
         }
