@@ -122,8 +122,7 @@ namespace SuperComicLib.Collections
         long size();
         long capacity();
 
-        [CodeContracts.X64LossOfLength]
-        RawMemory getMemory();
+        RawContainerBuffer getRawContainerBuffer();
     }
 
     public interface IReadOnlyRawContainer<T> : IRawContainer

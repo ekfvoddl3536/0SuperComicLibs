@@ -68,7 +68,6 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// The <see cref="Length"/> is automatically calculated as the number of bytes in the provided.
         /// </summary>
         /// <param name="unmanagedMemory">It takes `3 (clr) or 4 (mono)` * IntPtr.Size bytes to write the header.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public arrayref(in NativeSpan<byte> unmanagedMemory)
         {
             if (JITPlatformEnvironment.IsRunningOnMono)
@@ -281,7 +280,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <br/>
         /// The current runtime is auto-detected. Avoid using this method if know fixed runtime information.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid]
+        [AssumeInputsValid]
         public static arrayref<T> newf([ValidRange] int length) =>
             JITPlatformEnvironment.IsRunningOnMono
             ? newf_mono(length)

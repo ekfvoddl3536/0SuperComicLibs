@@ -25,6 +25,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using SuperComicLib.CodeContracts;
+using SuperComicLib.RuntimeMemoryMarshals;
 
 namespace SuperComicLib.Collections
 {
@@ -65,14 +66,47 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public _vector(T* first, T* last)
         {
-            var len = (IntPtr)(last - first);
+            var blen = last - first;
 
-            m_Ptr = (T*)Marshal.AllocHGlobal(len);
-            m_Last = (T*)(byte*)m_Ptr + (long)len;
+            m_Ptr = (T*)Marshal.AllocHGlobal((IntPtr)blen);
+            m_Last = (T*)((byte*)m_Ptr + blen);
             m_End = m_Last;
 
-            MemoryBlock.Memmove<T>(first, m_Ptr, (ulong)len);
+            MemoryBlock.Memmove(first, m_Ptr, (ulong)blen);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public _vector(in NativeSpan<T> source)
+        {
+            var blen = source.Length * sizeof(T);
+
+            m_Ptr = (T*)Marshal.AllocHGlobal((IntPtr)blen);
+            m_Last = (T*)((byte*)m_Ptr + blen);
+            m_End = m_Last;
+
+            MemoryBlock.Memmove(source.Source, m_Ptr, (ulong)blen);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public _vector(in NativeConstSpan<T> source)
+        {
+            var blen = source.Length * sizeof(T);
+
+            m_Ptr = (T*)Marshal.AllocHGlobal((IntPtr)blen);
+            m_Last = (T*)((byte*)m_Ptr + blen);
+            m_End = m_Last;
+
+            MemoryBlock.Memmove(source.DangerousGetPointer(), m_Ptr, (ulong)blen);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public _vector(in arrayref<T> source) : this(source.AsSpan()) { }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public _vector(in arrayrefSegment<T> source) : this(source.AsSpan()) { }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public _vector(SafeArrayref<T> source) : this(source.AsSpan()) { }
 
         /// <summary>
         /// Fast object initialization
@@ -95,7 +129,11 @@ namespace SuperComicLib.Collections
         #endregion
 
         #region indexer & property
-        public ref T this[long index] => ref *(m_Ptr + index);
+        public ref T this[long index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ref *(m_Ptr + index);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T at(long index)
@@ -104,14 +142,23 @@ namespace SuperComicLib.Collections
             return ref this[index];
         }
 
-        public long Count => size();
+        public long Count
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => size();
+        }
 
-        public long Capacity => capacity();
+        public long Capacity
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => capacity();
+        }
         #endregion
 
         #region impl interface -1-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long size() => m_Last - m_Ptr;
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long capacity() => m_End - m_Ptr;
         #endregion
@@ -142,7 +189,7 @@ namespace SuperComicLib.Collections
             T* src = m_Ptr + index;
             T* dst = src + 1;
 
-            MemoryBlock.Memmove<T>(src, dst, (ulong)((byte*)m_Last - (byte*)dst));
+            MemoryBlock.Memmove(src, dst, (ulong)((byte*)m_Last - (byte*)dst));
 
             *src = item;
         }
@@ -156,7 +203,7 @@ namespace SuperComicLib.Collections
             T* dst = m_Ptr + index;
             T* src = dst + 1;
 
-            MemoryBlock.Memmove<T>(src, dst, (ulong)((byte*)m_Last - (byte*)src));
+            MemoryBlock.Memmove(src, dst, (ulong)((byte*)m_Last - (byte*)src));
 
             m_Last--;
 
@@ -171,7 +218,7 @@ namespace SuperComicLib.Collections
 
             T* dst = position._ptr + 1;
 
-            MemoryBlock.Memmove<T>(dst, position._ptr, (ulong)((byte*)m_Last - (byte*)dst));
+            MemoryBlock.Memmove(dst, position._ptr, (ulong)((byte*)m_Last - (byte*)dst));
 
             m_Last--;
         }
@@ -184,7 +231,7 @@ namespace SuperComicLib.Collections
 
             T* dst = last._ptr + 1;
 
-            MemoryBlock.Memmove<T>(dst, first._ptr, (ulong)((byte*)m_Last - (byte*)dst));
+            MemoryBlock.Memmove(dst, first._ptr, (ulong)((byte*)m_Last - (byte*)dst));
 
             m_Last -= last._ptr - first._ptr;
         }
@@ -192,8 +239,8 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void clear() => MemoryBlock.Clear(m_Ptr, size(), sizeof(T));
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining), X64LossOfLength]
-        public RawMemory getMemory() => new RawMemory(m_Ptr, (int)size());
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public RawContainerBuffer getRawContainerBuffer() => new RawContainerBuffer(m_Ptr, size());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void _increaseCapacity(long min_size)
@@ -208,7 +255,7 @@ namespace SuperComicLib.Collections
             T* last = dst + old_cnt;
             T* end = dst + new_capa;
 
-            MemoryBlock.Memmove<T>(m_Ptr, dst, (ulong)old_cnt);
+            MemoryBlock.Memmove(m_Ptr, dst, (ulong)old_cnt);
 
             Marshal.FreeHGlobal((IntPtr)m_Ptr);
 
@@ -241,7 +288,7 @@ namespace SuperComicLib.Collections
             if (n > cnt)
                 MemoryBlock.Clear(last, n - cnt, sizeof(T));
 
-            MemoryBlock.Memmove<T>(m_Ptr, dst, (ulong)cpyCnt);
+            MemoryBlock.Memmove(m_Ptr, dst, (ulong)cpyCnt);
 
             Marshal.FreeHGlobal((IntPtr)m_Ptr);
 

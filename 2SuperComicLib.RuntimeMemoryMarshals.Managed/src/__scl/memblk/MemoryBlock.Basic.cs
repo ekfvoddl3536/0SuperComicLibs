@@ -34,11 +34,8 @@ namespace SuperComicLib
             Marshal.AllocHGlobal((IntPtr)(len * (uint)elementSize));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Memmove<T>(void* src, void* dest, ulong length) where T : unmanaged
-        {
-            ulong cb = length * (uint)sizeof(T);
+        public static void Memmove(void* src, void* dest, ulong cb) => 
             Buffer.MemoryCopy(src, dest, cb, cb);
-        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Clear(void* ptr, long length, int elementSize) =>

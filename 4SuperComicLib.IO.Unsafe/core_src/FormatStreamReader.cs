@@ -53,7 +53,7 @@ namespace SuperComicLib.IO
             int size = encoding.GetMaxCharCount(bufsize);
             _char_arr = new NativeArray<char>(size);
 
-            resolver.SetNativeBuffer(_char_arr.Ptr);
+            resolver.SetNativeBuffer(_char_arr.Source);
 
             baseStream = stream ?? throw new ArgumentNullException(nameof(stream));
             baseEncoding = encoding;
@@ -72,7 +72,7 @@ namespace SuperComicLib.IO
 
             _char_arr = new NativeArray<char>(encoding.GetMaxByteCount(buf_size));
 
-            resolver.SetNativeBuffer(_char_arr.Ptr);
+            resolver.SetNativeBuffer(_char_arr.Source);
 
             _ub_arr = new byte[buf_size];
         }
@@ -122,7 +122,7 @@ namespace SuperComicLib.IO
 
                 int pos;
                 fixed (byte* ptr = &encarr[0])
-                    pos = encoding_.GetChars(ptr, readcnt, buf.Ptr, (int)buf.Length);
+                    pos = encoding_.GetChars(ptr, readcnt, buf.Source, (int)buf.Length);
 
                 if (Calli(inst, &local_buf, &local_res, pos))
                     return local_res;

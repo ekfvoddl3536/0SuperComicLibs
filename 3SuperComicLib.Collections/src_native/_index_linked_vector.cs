@@ -352,7 +352,7 @@ namespace SuperComicLib.Collections
             var vs_np = np + sizeof(long);
 
             var copysize = (ulong)_sizeInBytes(_size);
-            MemoryBlock.Memmove<T>(_ptr, vs_np, copysize);
+            MemoryBlock.Memmove(_ptr, vs_np, copysize);
 
             MemoryBlock.Clear(_get(vs_np, _size), (ulong)new_sizeInBytes - copysize);
 

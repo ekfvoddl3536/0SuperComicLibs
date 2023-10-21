@@ -147,14 +147,13 @@
     <Compile Include="src\Queue\DoubleQueue.cs" />
     <Compile Include="src_native\extensions\IRawContainer_Extension.cs" />
     <Compile Include="src_native\extensions\items\RawIteratorEnumerator.cs" />
-    <Compile Include="src_native\extensions\RawContainerUtility.cs" />
     <Compile Include="src_native\NativeArray.cs" />
     <Compile Include="src\List\ValuePairTable.cs" />
     <Compile Include="src\Map\HashKeyBag.cs" />
     <Compile Include="src\Map\LinkedDictionary.cs" />
     <Compile Include="src\Tree\TreeNode.cs" />
     <Compile Include="src_gcsafe\LoopArray.cs" />
-    <Compile Include="src_native\RawMemory.cs" />
+    <Compile Include="src_native\RawContainerBuffer.cs" />
     <Compile Include="src_native\_index_linked_vector.cs" />
     <Compile Include="src_native\structs\_index_node.cs" />
     <Compile Include="src_native\_vector.cs" />

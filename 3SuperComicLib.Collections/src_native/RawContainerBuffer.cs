@@ -24,14 +24,16 @@ using System.Runtime.InteropServices;
 
 namespace SuperComicLib.Collections
 {
+    /// <summary>
+    /// 비관리 컨테이너 객체의 원시 버퍼를 지닙니다.<para/>
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public readonly unsafe struct RawMemory
+    public readonly unsafe struct RawContainerBuffer
     {
-        // 바이트 기준이 아니므로, 정확하지 않음
         public readonly void* _value;
-        public readonly int _size;
+        public readonly long _size;
 
-        public RawMemory(void* value, int size)
+        public RawContainerBuffer(void* value, long size)
         {
             _value = value;
             _size = size;

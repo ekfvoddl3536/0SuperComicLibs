@@ -46,6 +46,6 @@ namespace SuperComicLib.Collections
         public long capacity() => container.capacity();
         public long size() => container.size();
 
-        public RawMemory getMemory() => container.getMemory();
+        public RawContainerBuffer getRawContainerBuffer() => container.getRawContainerBuffer();
     }
 }
