@@ -38,7 +38,7 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public NativeArray(long length)
         {
-            Source = (T*)MemoryBlock.Memalloc(length, sizeof(T));
+            Source = (T*)MemoryBlock.Memalloc(length * sizeof(T));
             Length = length;
         }
 
@@ -59,7 +59,7 @@ namespace SuperComicLib.Collections
             Length = (uint)source.Length;
 
             var sz = (ulong)Length * (uint)sizeof(T);
-            Source = (T*)Marshal.AllocHGlobal((IntPtr)sz);
+            Source = (T*)MemoryBlock.Memalloc((long)sz);
 
             if (source.Length > 0)
                 fixed (T* psrc = &source[0])
@@ -72,7 +72,7 @@ namespace SuperComicLib.Collections
             var blen = source.Length * sizeof(T);
 
             Length = source.Length;
-            Source = (T*)Marshal.AllocHGlobal((IntPtr)blen);
+            Source = (T*)MemoryBlock.Memalloc(blen);
 
             MemoryBlock.Memmove(source.Source, Source, (ulong)blen);
         }
@@ -83,7 +83,7 @@ namespace SuperComicLib.Collections
             var blen = source.Length * sizeof(T);
 
             Length = source.Length;
-            Source = (T*)Marshal.AllocHGlobal((IntPtr)blen);
+            Source = (T*)MemoryBlock.Memalloc(blen);
 
             MemoryBlock.Memmove(source.DangerousGetPointer(), Source, (ulong)blen);
         }

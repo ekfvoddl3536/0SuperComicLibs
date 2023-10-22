@@ -29,16 +29,23 @@ namespace SuperComicLib
 {
     unsafe partial class MemoryBlock
     {
+        /// <summary>
+        /// <see cref="Marshal.AllocHGlobal(IntPtr)"/>
+        /// </summary>
+        /// <param name="cb"></param>
+        /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IntPtr Memalloc(long len, int elementSize) =>
-            Marshal.AllocHGlobal((IntPtr)(len * (uint)elementSize));
+        public static IntPtr Memalloc(long cb) =>
+            Marshal.AllocHGlobal(new IntPtr(cb));
 
+        /// <summary>
+        /// <see cref="Buffer.MemoryCopy(void*, void*, ulong, ulong)"/>
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="dest"></param>
+        /// <param name="cb"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Memmove(void* src, void* dest, ulong cb) => 
             Buffer.MemoryCopy(src, dest, cb, cb);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Clear(void* ptr, long length, int elementSize) =>
-            Clear((byte*)ptr, (ulong)length * (uint)elementSize);
     }
 }

@@ -345,7 +345,7 @@ namespace SuperComicLib.Collections
             if (new_sizeInBytes <= sz)
                 throw new OutOfMemoryException(nameof(_index_linked_vector<T>));
 
-            var np = (byte*)Marshal.AllocHGlobal((IntPtr)(new_sizeInBytes + sizeof(long)));
+            var np = (byte*)MemoryBlock.Memalloc((new_sizeInBytes + sizeof(long)));
 
             *(long*)np = sz;
 

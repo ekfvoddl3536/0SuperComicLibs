@@ -51,7 +51,7 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public _vector(long size, in T val)
         {
-            m_Ptr = (T*)MemoryBlock.Memalloc(size, sizeof(T));
+            m_Ptr = (T*)MemoryBlock.Memalloc(size * sizeof(T));
             m_Last = m_Ptr + size;
             m_End = m_Last;
 
@@ -68,7 +68,7 @@ namespace SuperComicLib.Collections
         {
             var blen = last - first;
 
-            m_Ptr = (T*)Marshal.AllocHGlobal((IntPtr)blen);
+            m_Ptr = (T*)MemoryBlock.Memalloc(blen);
             m_Last = (T*)((byte*)m_Ptr + blen);
             m_End = m_Last;
 
@@ -80,7 +80,7 @@ namespace SuperComicLib.Collections
         {
             var blen = source.Length * sizeof(T);
 
-            m_Ptr = (T*)Marshal.AllocHGlobal((IntPtr)blen);
+            m_Ptr = (T*)MemoryBlock.Memalloc(blen);
             m_Last = (T*)((byte*)m_Ptr + blen);
             m_End = m_Last;
 
@@ -92,7 +92,7 @@ namespace SuperComicLib.Collections
         {
             var blen = source.Length * sizeof(T);
 
-            m_Ptr = (T*)Marshal.AllocHGlobal((IntPtr)blen);
+            m_Ptr = (T*)MemoryBlock.Memalloc(blen);
             m_Last = (T*)((byte*)m_Ptr + blen);
             m_End = m_Last;
 
@@ -237,7 +237,7 @@ namespace SuperComicLib.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void clear() => MemoryBlock.Clear(m_Ptr, size(), sizeof(T));
+        public void clear() => MemoryBlock.Clear((byte*)m_Ptr, (ulong)(size() * sizeof(T)));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public RawContainerBuffer getRawContainerBuffer() => new RawContainerBuffer(m_Ptr, size());
@@ -251,7 +251,7 @@ namespace SuperComicLib.Collections
             var new_capa = (long)CMathi.Max((ulong)old_capa << 1, 4u);
             new_capa = (long)CMathi.Max((ulong)new_capa, (ulong)min_size);
 
-            T* dst = (T*)MemoryBlock.Memalloc(new_capa, sizeof(T));
+            T* dst = (T*)MemoryBlock.Memalloc(new_capa * sizeof(T));
             T* last = dst + old_cnt;
             T* end = dst + new_capa;
 
@@ -281,12 +281,12 @@ namespace SuperComicLib.Collections
 
             var cpyCnt = (long)CMathi.Min((ulong)cnt, (ulong)n);
 
-            T* dst = (T*)Marshal.AllocHGlobal((IntPtr)(n * (uint)sizeof(T)));
+            T* dst = (T*)MemoryBlock.Memalloc((n * (uint)sizeof(T)));
             T* last = dst + cpyCnt;
             T* end = dst + n;
 
             if (n > cnt)
-                MemoryBlock.Clear(last, n - cnt, sizeof(T));
+                MemoryBlock.Clear((byte*)last, (ulong)((n - cnt) * sizeof(T)));
 
             MemoryBlock.Memmove(m_Ptr, dst, (ulong)cpyCnt);
 

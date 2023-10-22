@@ -29,87 +29,57 @@ namespace SuperComicLib
     {
         public static void Clear(byte* ptr, ulong bytes)
         {
-            const uint ALIGN8 = 0x7u;
+            const ulong SZ_300 = 0x300u;
+            const long ALIGN8 = 0x7u;
 
             if (bytes == 0)
                 return;
 
-            switch ((uint)bytes & ALIGN8)
+            // pointer = 'unknown', number of bytes = 'unknown'
+            var aligned = ((long)ptr + ALIGN8) & ~ALIGN8;
+
+            var cb = CMath.Min((ulong)(aligned - (long)ptr), bytes);
+
+            ILUnsafe.InitBlockUnaligned(ptr, 0, (uint)cb);
+
+            bytes -= cb;
+
+            cb = bytes & unchecked((ulong)~ALIGN8);
+
+            // pointer = 'aligned', number of bytes = 'alilgned'
+            if (cb > SZ_300)
+                aligned = (long)ClearLarge768_internal((byte*)aligned, cb);
+            else if (cb != 0)
             {
-                case 1:
-                    *ptr = 0;
-                    break;
-
-                case 2:
-                    *(ushort*)ptr = 0;
-                    break;
-
-                case 3:
-                    *(ushort*)ptr = 0;
-                    ptr[sizeof(ushort)] = 0;
-                    break;
-
-                case 4:
-                    *(uint*)ptr = 0;
-                    break;
-
-                case 5:
-                    *(uint*)ptr = 0;
-                    ptr[sizeof(uint)] = 0;
-                    break;
-
-                case 6:
-                    *(uint*)ptr = 0;
-                    *(ushort*)(ptr + sizeof(uint)) = 0;
-                    break;
-
-                case 7:
-                    *(uint*)ptr = 0;
-                    *(ushort*)(ptr + sizeof(uint)) = 0;
-                    ptr[sizeof(uint) + sizeof(ushort)] = 0;
-                    break;
-
-                default:
-                    break;
+                ILUnsafe.InitBlock((byte*)aligned, 0, (uint)cb);
+                aligned += (long)cb;
             }
 
-            ptr += (uint)bytes & ALIGN8;
-
-            var nb = bytes & ~ALIGN8;
-            if ((nb & sizeof(long)) != 0)
-            {
-                *(long*)ptr = 0;
-
-                ptr += sizeof(long);
-                nb -= sizeof(long);
-            }
-
-            // aligned 16
-            if (nb > 0x300u) // 768
-                ClearLarge768_internal(ptr, nb);
-            else if (nb != 0)
-                ILUnsafe.InitBlock(ptr, 0, (uint)nb);
+            // pointer = 'aligned', number of bytes = 'unaligned'
+            ILUnsafe.InitBlock((byte*)aligned, 0, (uint)(bytes & ALIGN8));
         }
 
-        private static void ClearLarge768_internal(byte* ptr, ulong nb)
+        private static byte* ClearLarge768_internal(byte* ptr, ulong nb)
         {
-            const uint SZ_300 = 0x300u;
-            const uint SZ_2GB = 1u << 31;
+            const ulong SZ_300 = 0x300u;
+            const ulong SZ_2GB = 1u << 31;
 
-            ILUnsafe.InitBlock(ptr, 0, SZ_300);
+            ILUnsafe.InitBlock(ptr, 0, (uint)SZ_300);
 
             ptr += SZ_300;
             nb -= SZ_300;
 
             while (nb != 0)
             {
-                var cb1 = CMathi.Min(nb, SZ_2GB);
+                var cb1 = CMath.Min(nb, SZ_2GB);
 
                 ILUnsafe.InitBlock(ptr, 0, (uint)cb1);
 
-                ptr += (uint)cb1;
+                ptr += cb1;
                 nb -= cb1;
             }
+
+            return ptr;
         }
     }
 }

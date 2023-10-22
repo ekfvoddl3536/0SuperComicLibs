@@ -296,7 +296,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         {
             var sz = (uint)length * ILUnsafe.SizeOf<T>() + sizeof(long) * 3;
 
-            var ptr = (IntPtr*)Marshal.AllocHGlobal((IntPtr)sz);
+            var ptr = (IntPtr*)Marshal.AllocHGlobal(new IntPtr(sz));
 
             newf_setHeader_clr(ptr, length);
 
@@ -313,7 +313,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         {
             var sz = (uint)length * ILUnsafe.SizeOf<T>() + sizeof(long) * 4;
 
-            var ptr = (IntPtr*)Marshal.AllocHGlobal((IntPtr)sz);
+            var ptr = (IntPtr*)Marshal.AllocHGlobal(new IntPtr(sz));
 
             newf_setHeader_mono(ptr, length);
 

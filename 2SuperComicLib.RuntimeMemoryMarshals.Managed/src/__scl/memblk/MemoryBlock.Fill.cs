@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using SuperComicLib.RuntimeMemoryMarshals;
-using System;
 
 namespace SuperComicLib
 {
@@ -30,53 +29,64 @@ namespace SuperComicLib
     {
         public static void Fill<T>(T* ptr, ulong length, in T value) where T : unmanaged
         {
-            const uint SMALL_SIZE = 0x1_0000u;
-
-            if (length == 0)
+            if (sizeof(T) == 1)
+            {
+                Fill_SZ1((byte*)ptr, length, ILUnsafe.ReadOnlyAs<T, byte>(value));
                 return;
-
-            ptr[0] = value;
-
-            T* dest = ptr;
-            ulong next = 1u;
-            ulong next_cb = (uint)sizeof(T);
-
-            // 2^n 개씩 값 대입
-            for (--length; next <= length && (uint)next_cb <= SMALL_SIZE; next <<= 1, next_cb <<= 1)
-            {
-                length -= next;
-                dest = (T*)((byte*)ptr + (long)next_cb);
-                ILUnsafe.CopyBlockUnaligned(dest, ptr, (uint)next_cb);
-            }
-            for (; next <= length; next <<= 1, next_cb <<= 1)
-            {
-                length -= next;
-                dest = (T*)((byte*)ptr + (long)next_cb);
-                Buffer.MemoryCopy(ptr, dest, next_cb, next_cb);
             }
 
-            for (; ; )
+            var cb = (ulong)sizeof(T) << 3;
+            for (var i = length >> 3; i != 0; --i)
             {
-                for (; next > length; next_cb >>= 1, ptr += (long)next)
-                    next >>= 1;
+                ptr[0] = ptr[1] = ptr[2] = ptr[3] =
+                ptr[4] = ptr[5] = ptr[6] = ptr[7] = value;
 
-                if (next_cb <= SMALL_SIZE)
-                    break;
-
-                length -= next;
-                dest = (T*)((byte*)ptr + (long)next_cb);
-                Buffer.MemoryCopy(ptr, dest, next_cb, next_cb);
+                ptr = (T*)((byte*)ptr + cb);
             }
 
-            while ((uint)next != 0u)
+            if (((uint)length & 4) != 0)
             {
-                length -= next;
-                dest = (T*)((byte*)ptr + (long)next_cb);
-                ILUnsafe.CopyBlockUnaligned(dest, ptr, (uint)next_cb);
+                ptr[0] = ptr[1] = ptr[2] = ptr[3] = value;
 
-                for (; next > length; next_cb >>= 1, ptr += (long)next)
-                    next >>= 1;
+                ptr += 4;
+                length -= 4;
             }
+
+            if (((uint)length & 2) != 0)
+            {
+                ptr[0] = ptr[1] = value;
+
+                ptr += 2;
+                length -= 2;
+            }
+
+            if (((uint)length & 1) != 0)
+                *ptr = value;
+        }
+
+        private static void Fill_SZ1(byte* ptr, ulong length, byte value)
+        {
+            const uint SZ_2GiB = 0x8000_0000u;
+            const long ALIGN8 = 0x7u;
+
+            // pointer = 'unknown', number of bytes = 'unknown'
+            var aligned = ((long)ptr + ALIGN8) & ~ALIGN8;
+
+            var cb = CMath.Min((ulong)(aligned - (long)ptr), length);
+
+            ILUnsafe.InitBlockUnaligned(ptr, 0, (uint)cb);
+
+            length -= cb;
+
+            // pointer = 'aligned', number of bytes = 'alilgned'
+            for (var i = length >> 31; i != 0; --i)
+            {
+                ILUnsafe.InitBlock((byte*)aligned, value, SZ_2GiB);
+                aligned += SZ_2GiB;
+            }
+
+            // pointer = 'aligned', number of bytes = 'unaligned'
+            ILUnsafe.InitBlock((byte*)aligned, value, (uint)length & 0x7FFF_FFF8u);
         }
     }
 }
