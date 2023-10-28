@@ -35,7 +35,16 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public reverse_iterator(T* source) => _ptr = source;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public reverse_iterator(_iterator<T> i) => _ptr = i._ptr - 1;
+
         public ref T this[int index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ref *(_ptr - index);
+        }
+
+        public ref T this[long index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => ref *(_ptr - index);
@@ -49,13 +58,13 @@ namespace SuperComicLib
 
         #region special methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public _iterator<T> _base() => new _iterator<T>(_ptr + 1);
+        public _iterator<T> @base() => new _iterator<T>(_ptr + 1);
         #endregion
 
         #region override
-        [Obsolete("NotSupport")]
+        [Obsolete(nameof(NotSupportedException))]
         public override int GetHashCode() => throw new NotSupportedException();
-        [Obsolete("NotSupport")]
+        [Obsolete(nameof(NotSupportedException))]
         public override bool Equals(object obj) => throw new NotSupportedException();
         #endregion
 
@@ -76,7 +85,7 @@ namespace SuperComicLib
         public static reverse_iterator<T> operator --(reverse_iterator<T> left) => new reverse_iterator<T>(left._ptr + 1);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* operator -(reverse_iterator<T> left, reverse_iterator<T> right) => (void*)(left._ptr - right._ptr);
+        public static long operator -(reverse_iterator<T> left, reverse_iterator<T> right) => left._ptr - right._ptr;
         #endregion
 
         #region compare & equals
@@ -101,7 +110,7 @@ namespace SuperComicLib
         public static implicit operator reverse_iterator<T>(T* ptr) => new reverse_iterator<T>(ptr);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator reverse_iterator<T>(_iterator<T> iter) => new reverse_iterator<T>(iter._ptr - 1);
+        public static explicit operator reverse_iterator<T>(_iterator<T> iter) => new reverse_iterator<T>(iter._ptr - 1);
         #endregion
     }
 }

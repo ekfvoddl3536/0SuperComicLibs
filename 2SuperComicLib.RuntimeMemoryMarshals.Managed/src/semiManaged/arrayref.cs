@@ -36,7 +36,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     /// Supports both unmanaged and managed array scenarios simultaneously.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public readonly unsafe partial struct arrayref<T> : IEquatable<arrayref<T>>, IEnumerable<T>, IDisposable
+    public readonly unsafe partial struct arrayref<T> : IEquatable<arrayref<T>>, IList<T>, IReadOnlyList<T>, IDisposable
     {
         internal readonly byte* _pClass;
         internal readonly byte* _pLength;
@@ -221,9 +221,44 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public iterator end() => new iterator(ref this[LongLength]);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public iterator rbegin() => new iterator(ref this[LongLength - 1]);
+        public reverse_iterator rbegin() => new reverse_iterator(ref this[LongLength - 1]);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public iterator rend() => new iterator(ref this[-1L]);
+        public reverse_iterator rend() => new reverse_iterator(ref this[-1L]);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_iterator cbegin() => begin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_iterator cend() => end();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_reverse_iterator crbegin() => rbegin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_reverse_iterator crend() => rend();
+        #endregion
+
+        #region interface implements
+        #region IList<T>
+        T IList<T>.this[int index]
+        {
+            get => at(index);
+            set => at(index) = value;
+        }
+        int IList<T>.IndexOf(T item) => AsMemory().IndexOf(item);
+        void IList<T>.Insert(int index, T item) => throw new NotSupportedException(Arrayrefs.ERROR_FIXEDSIZECOLLECTION);
+        void IList<T>.RemoveAt(int index) => throw new NotSupportedException(Arrayrefs.ERROR_FIXEDSIZECOLLECTION);
+        int ICollection<T>.Count => Length;
+        bool ICollection<T>.IsReadOnly => false;
+        void ICollection<T>.Add(T item) => throw new NotSupportedException(Arrayrefs.ERROR_FIXEDSIZECOLLECTION);
+        void ICollection<T>.Clear() => AsMemory().Clear();
+        bool ICollection<T>.Contains(T item) => AsMemory().Contains(item);
+        void ICollection<T>.CopyTo(T[] array, int arrayIndex) => AsMemory().CopyTo(array, arrayIndex);
+        bool ICollection<T>.Remove(T item) => throw new NotSupportedException(Arrayrefs.ERROR_FIXEDSIZECOLLECTION);
+        #endregion
+
+        #region IReadOnlyList<T>
+        T IReadOnlyList<T>.this[int index] => at(index);
+        int IReadOnlyCollection<T>.Count => Length;
+        #endregion
         #endregion
 
         #region dispose

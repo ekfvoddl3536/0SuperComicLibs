@@ -261,6 +261,15 @@ namespace SuperComicLib
         public int BinarySearch(T value, IComparer<T> comparer) => Array.BinarySearch(_source, _start, Length, value, comparer) - _start;
         #endregion
 
+        #region collection methods
+        /// <summary>
+        /// 부분 배열 범위에서 지정된 원소의 마지막 위치를 찾습니다.
+        /// </summary>
+        /// <returns>부분 배열 범위에 상대적인 인덱스, 값을 찾지 못한 경우 -1 보다 작을 수 있습니다.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int LastIndexOf(T item) => Array.LastIndexOf(_source, item, _start, Length) - _start;
+        #endregion
+
         #region special method
         /// <summary>
         /// fixed에 사용하기 위한, 특수 메소드
@@ -272,13 +281,13 @@ namespace SuperComicLib
         #region interface impl (explicit)
         #region IList<T>
         T IList<T>.this[int index] { get => at(index); set => at(index) = value; }
-        void IList<T>.Insert(int index, T item) => throw new NotSupportedException("FixedSizeCollection");
-        void IList<T>.RemoveAt(int index) => throw new NotSupportedException("FixedSizeCollection");
+        void IList<T>.Insert(int index, T item) => throw new NotSupportedException(MemorySR.ERROR_FIXEDSIZECOLLECTION);
+        void IList<T>.RemoveAt(int index) => throw new NotSupportedException(MemorySR.ERROR_FIXEDSIZECOLLECTION);
         int ICollection<T>.Count => Length;
         bool ICollection<T>.IsReadOnly => false;
-        void ICollection<T>.Add(T item) => throw new NotSupportedException("FixedSizeCollection");
+        void ICollection<T>.Add(T item) => throw new NotSupportedException(MemorySR.ERROR_FIXEDSIZECOLLECTION);
         void ICollection<T>.CopyTo(T[] array, int arrayIndex) => Array.Copy(_source, _start, array, arrayIndex, Length);
-        bool ICollection<T>.Remove(T item) => throw new NotSupportedException("FixedSizeCollection");
+        bool ICollection<T>.Remove(T item) => throw new NotSupportedException(MemorySR.ERROR_FIXEDSIZECOLLECTION);
         #endregion
 
         #region IReadOnlyList<T>

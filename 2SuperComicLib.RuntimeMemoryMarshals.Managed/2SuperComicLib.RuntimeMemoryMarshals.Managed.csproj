@@ -104,8 +104,11 @@
     <Compile Include="src\extensions\NativeInstanceTStructExtension.cs" />
     <Compile Include="src\extensions\SCL_GLOBAL_SafeArrayrefExtension.cs" />
     <Compile Include="src\LowLevel\RuntimeTypedValueInfo.cs" />
-    <Compile Include="src\semiManaged\arrayref.enumerator.cs" />
-    <Compile Include="src\semiManaged\arrayref.iterator.cs" />
+    <Compile Include="src\semiManaged\arrayref_enumerator\arrayref.enumerator.cs" />
+    <Compile Include="src\semiManaged\arrayref_iterators\arrayref.const_iterator.cs" />
+    <Compile Include="src\semiManaged\arrayref_iterators\arrayref.iterator.cs" />
+    <Compile Include="src\semiManaged\arrayref_iterators\arrayref.const_reverse_iterator.cs" />
+    <Compile Include="src\semiManaged\arrayref_iterators\arrayref.reverse_iterator.cs" />
     <Compile Include="src\semiManaged\Arrayrefs.cs" />
     <Compile Include="src\semiManaged\CapturedArrayrefSegment.cs" />
     <Compile Include="src\semiManaged\CapturedArrayref.cs" />

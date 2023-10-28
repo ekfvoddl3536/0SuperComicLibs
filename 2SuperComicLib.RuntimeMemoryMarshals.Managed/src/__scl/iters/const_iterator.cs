@@ -41,6 +41,12 @@ namespace SuperComicLib
             get => ref *(_ptr + index);
         }
 
+        public ref readonly T this[long index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ref *(_ptr + index);
+        }
+
         public ref readonly T value
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -48,9 +54,9 @@ namespace SuperComicLib
         }
 
         #region override
-        [Obsolete("NotSupport")]
+        [Obsolete(nameof(NotSupportedException))]
         public override int GetHashCode() => throw new NotSupportedException();
-        [Obsolete("NotSupport")]
+        [Obsolete(nameof(NotSupportedException))]
         public override bool Equals(object obj) => throw new NotSupportedException();
         #endregion
 
@@ -71,7 +77,7 @@ namespace SuperComicLib
         public static const_iterator<T> operator --(const_iterator<T> left) => new const_iterator<T>(left._ptr - 1);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* operator -(const_iterator<T> left, const_iterator<T> right) => (void*)(left._ptr - right._ptr);
+        public static long operator -(const_iterator<T> left, const_iterator<T> right) => left._ptr - right._ptr;
         #endregion
 
         #region compare & equals

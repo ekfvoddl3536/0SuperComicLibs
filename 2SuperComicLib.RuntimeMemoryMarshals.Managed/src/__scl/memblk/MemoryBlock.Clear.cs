@@ -29,7 +29,7 @@ namespace SuperComicLib
     {
         public static void Clear(byte* ptr, ulong bytes)
         {
-            const ulong SZ_300 = 0x300u;
+            const ulong SZ_128K = 0x2_0000u;
             const long ALIGN8 = 0x7u;
 
             if (bytes == 0)
@@ -47,27 +47,25 @@ namespace SuperComicLib
             cb = bytes & unchecked((ulong)~ALIGN8);
 
             // pointer = 'aligned', number of bytes = 'alilgned'
-            if (cb > SZ_300)
-                aligned = (long)ClearLarge768_internal((byte*)aligned, cb);
-            else if (cb != 0)
+            if (cb > SZ_128K)
             {
-                ILUnsafe.InitBlock((byte*)aligned, 0, (uint)cb);
-                aligned += (long)cb;
+                ClearLarge128K_internal((byte*)aligned, cb);
+                return;
             }
-
-            // pointer = 'aligned', number of bytes = 'unaligned'
-            ILUnsafe.InitBlock((byte*)aligned, 0, (uint)(bytes & ALIGN8));
+            
+            if (cb != 0)
+                ILUnsafe.InitBlock((byte*)aligned, 0, (uint)cb);
         }
 
-        private static byte* ClearLarge768_internal(byte* ptr, ulong nb)
+        private static void ClearLarge128K_internal(byte* ptr, ulong nb)
         {
-            const ulong SZ_300 = 0x300u;
+            const ulong SZ_128K = 0x2_0000u;
             const ulong SZ_2GB = 1u << 31;
 
-            ILUnsafe.InitBlock(ptr, 0, (uint)SZ_300);
+            ILUnsafe.InitBlock(ptr, 0, (uint)SZ_128K);
 
-            ptr += SZ_300;
-            nb -= SZ_300;
+            ptr += SZ_128K;
+            nb -= SZ_128K;
 
             while (nb != 0)
             {
@@ -78,8 +76,6 @@ namespace SuperComicLib
                 ptr += cb1;
                 nb -= cb1;
             }
-
-            return ptr;
         }
     }
 }

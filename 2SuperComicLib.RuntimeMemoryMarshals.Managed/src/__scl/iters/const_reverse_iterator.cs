@@ -35,7 +35,16 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public const_reverse_iterator(T* source) => _ptr = source;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_reverse_iterator(const_iterator<T> i) => _ptr = i._ptr - 1;
+
         public ref readonly T this[int index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ref *(_ptr - index);
+        }
+
+        public ref readonly T this[long index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => ref *(_ptr - index);
@@ -49,13 +58,13 @@ namespace SuperComicLib
 
         #region special methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public const_iterator<T> _base() => new const_iterator<T>(_ptr + 1);
+        public const_iterator<T> @base() => new const_iterator<T>(_ptr + 1);
         #endregion
 
         #region override
-        [Obsolete("NotSupport")]
+        [Obsolete(nameof(NotSupportedException))]
         public override int GetHashCode() => throw new NotSupportedException();
-        [Obsolete("NotSupport")]
+        [Obsolete(nameof(NotSupportedException))]
         public override bool Equals(object obj) => throw new NotSupportedException();
         #endregion
 
@@ -76,7 +85,7 @@ namespace SuperComicLib
         public static const_reverse_iterator<T> operator --(const_reverse_iterator<T> left) => new const_reverse_iterator<T>(left._ptr + 1);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* operator -(const_reverse_iterator<T> left, const_reverse_iterator<T> right) => (void*)(left._ptr - right._ptr);
+        public static long operator -(const_reverse_iterator<T> left, const_reverse_iterator<T> right) => left._ptr - right._ptr;
         #endregion
 
         #region compare & equals
@@ -102,6 +111,9 @@ namespace SuperComicLib
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator const_reverse_iterator<T>(reverse_iterator<T> iter) => new const_reverse_iterator<T>(iter._ptr);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator const_reverse_iterator<T>(const_iterator<T> iter) => new const_reverse_iterator<T>(iter);
         #endregion
     }
 }

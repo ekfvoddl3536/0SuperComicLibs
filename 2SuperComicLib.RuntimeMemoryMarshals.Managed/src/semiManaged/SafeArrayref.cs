@@ -47,6 +47,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
 
         internal readonly arrayref<T> _arr;
 
+        #region constructors
         private SafeArrayref() => _arr = arrayref<T>.newf(0);
 
         public SafeArrayref(int length) : this(length, false)
@@ -129,6 +130,35 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             }
         }
 
+        /// <summary>
+        /// iterators to the initial and final positions in a range.
+        /// <para/>
+        /// The range used is <c>[<paramref name="first"/>, <paramref name="last"/>)</c>, which includes all the elements between <paramref name="first"/> and <paramref name="last"/>.<br/>
+        /// Including the element pointed by <paramref name="first"/> but not the element pointed by <paramref name="last"/>.
+        /// </summary>
+        /// <param name="first">The starting address of the range, including the pointed element.</param>
+        /// <param name="last">The ending address of the range, <b>excluding</b> the pointed element.</param>
+        public SafeArrayref(arrayref<T>.const_iterator first, arrayref<T>.const_iterator last)
+        {
+            long length = last - first;
+            if (length > Arrayrefs.MaxLength)
+                throw new ArgumentOutOfRangeException($"{nameof(first)} and {nameof(last)}");
+
+            if (length == 0)
+            {
+                _arr = Empty._arr;
+                return;
+            }
+
+            var temp = arrayref<T>.newf((int)length);
+
+            var iter = temp.begin();
+            for (var end = iter + length; iter != end; ++iter, ++first)
+                iter.value = first.value;
+        }
+        #endregion
+
+        #region properties
         public bool IsCLRArray
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -146,7 +176,9 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _arr.LongLength;
         }
+        #endregion
 
+        #region indexer
         /// <summary>
         /// References the element at the specified index.
         /// </summary>
@@ -173,6 +205,30 @@ namespace SuperComicLib.RuntimeMemoryMarshals
 
         /// <summary>
         /// References the element at the specified index.
+        /// </summary>
+        /// <param name="index">The zero-based index of the element to reference</param>
+        /// <returns>A reference to the element at the specified index.</returns>
+        /// <exception cref="IndexOutOfRangeException">
+        /// <paramref name="index"/> is less than 0.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="index"/> is equal to or greater than <see cref="LongLength"/>
+        /// </exception>
+        public ref T this[long index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                if ((ulong)index >= (ulong)_arr.LongLength)
+                    throw new IndexOutOfRangeException(nameof(index));
+
+                return ref _arr[index];
+            }
+        }
+
+        /// <summary>
+        /// References the element at the specified index.
         /// <para/>
         /// This method does not perform range checks on the provided <paramref name="index"/> parameter.
         /// </summary>
@@ -181,6 +237,18 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid, AssumeOperationValid]
         public ref T at_fast([ValidRange] int index) => ref _arr[index];
 
+        /// <summary>
+        /// References the element at the specified index.
+        /// <para/>
+        /// This method does not perform range checks on the provided <paramref name="index"/> parameter.
+        /// </summary>
+        /// <param name="index">The zero-based index of the element to reference</param>
+        /// <returns>A reference to the element at the specified index.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid, AssumeOperationValid]
+        public ref T at_fast([ValidRange] long index) => ref _arr[index];
+        #endregion
+
+        #region convert
         /// <summary>
         /// Creates a new managed array and copies the data.
         /// <para/>
@@ -214,7 +282,9 @@ namespace SuperComicLib.RuntimeMemoryMarshals
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Memory<T> Slice(int startIndex, int count) => _arr.AsMemory().Slice(startIndex, count);
+        #endregion
 
+        #region array methods
         public bool TrueForAll(Predicate<T> match)
         {
             var vs = _arr.AsManaged();
@@ -266,6 +336,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             var source = _arr.AsManaged();
             Array.Copy(source, 0, array, arrayIndex, source.Length);
         }
+        #endregion
 
         #region explicit implements
         T IList<T>.this[int index]
@@ -288,6 +359,28 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         #region enumerator
         public IEnumerator<T> GetEnumerator() => (IEnumerator<T>)_arr.AsManaged().GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        #endregion
+
+        #region iterator
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.iterator begin() => _arr.begin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.iterator end() => _arr.end();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.reverse_iterator rbegin() => _arr.rbegin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.reverse_iterator rend() => _arr.rend();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.const_iterator cbegin() => begin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.const_iterator cend() => end();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.const_reverse_iterator crbegin() => rbegin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.const_reverse_iterator crend() => rend();
         #endregion
 
         #region override

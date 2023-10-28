@@ -39,27 +39,57 @@ namespace SuperComicLib
         public readonly long Length;
 
         #region constructors
+        /// <summary>
+        /// Pointers to the initial position and the length of a range.
+        /// <para/>
+        /// The range used is <c>[<paramref name="first"/>, <paramref name="first"/> + <paramref name="length"/>)</c>, which includes <paramref name="length"/> elements starting from <paramref name="first"/>.<br/>
+        /// </summary>
+        /// <param name="first">The starting address of the range, including the pointed element.</param>
+        /// <param name="length">The number of elements to include from <paramref name="first"/>.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeConstSpan(T* source, long length)
+        public NativeConstSpan(T* first, long length)
         {
-            _source = source;
+            _source = first;
             Length = length;
         }
 
+        /// <summary>
+        /// Pointers to the initial and final positions in a range.
+        /// <para/>
+        /// The range used is <c>[<paramref name="first"/>, <paramref name="last"/>)</c>, which includes all the elements between <paramref name="first"/> and <paramref name="last"/>.<br/>
+        /// Including the element pointed by <paramref name="first"/> but not the element pointed by <paramref name="last"/>.
+        /// </summary>
+        /// <param name="first">The starting address of the range, including the pointed element.</param>
+        /// <param name="last">The ending address of the range, <b>excluding</b> the pointed element.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeConstSpan(T* start, T* end)
+        public NativeConstSpan(T* first, T* last)
         {
-            _source = start;
-            Length = end - start;
+            _source = first;
+            Length = last - first;
         }
 
+        /// <summary>
+        /// Iterator to the initial position and the length of a range.
+        /// <para/>
+        /// The range used is <c>[<paramref name="first"/>, <paramref name="first"/> + <paramref name="length"/>)</c>, which includes <paramref name="length"/> elements starting from <paramref name="first"/>.<br/>
+        /// </summary>
+        /// <param name="first">The starting address of the range, including the pointed element.</param>
+        /// <param name="length">The number of elements to include from <paramref name="first"/>.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeConstSpan(const_iterator<T> start, long length) : this(start._ptr, length)
+        public NativeConstSpan(const_iterator<T> first, long length) : this(first._ptr, length)
         {
         }
 
+        /// <summary>
+        /// iterators to the initial and final positions in a range.
+        /// <para/>
+        /// The range used is <c>[<paramref name="first"/>, <paramref name="last"/>)</c>, which includes all the elements between <paramref name="first"/> and <paramref name="last"/>.<br/>
+        /// Including the element pointed by <paramref name="first"/> but not the element pointed by <paramref name="last"/>.
+        /// </summary>
+        /// <param name="first">The starting address of the range, including the pointed element.</param>
+        /// <param name="last">The ending address of the range, <b>excluding</b> the pointed element.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public NativeConstSpan(const_iterator<T> start, const_iterator<T> end) : this(start._ptr, end._ptr)
+        public NativeConstSpan(const_iterator<T> first, const_iterator<T> last) : this(first._ptr, last._ptr)
         {
         }
         #endregion
@@ -153,10 +183,10 @@ namespace SuperComicLib
         #endregion
 
         #region override
-        [Obsolete("NotSupport")]
+        [Obsolete(nameof(NotSupportedException))]
         public override bool Equals(object obj) => throw new NotSupportedException();
 
-        [Obsolete("NotSupport")]
+        [Obsolete(nameof(NotSupportedException))]
         public override int GetHashCode() => throw new NotSupportedException();
 
         public override string ToString() =>
