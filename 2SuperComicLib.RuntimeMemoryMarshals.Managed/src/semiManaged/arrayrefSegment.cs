@@ -171,6 +171,28 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public override int GetHashCode() => _source.GetHashCode() ^ _start ^ Length;
         #endregion
 
+        #region iterator
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.iterator begin() => _source.begin() + _start;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.iterator end() => _source.begin() + (_start + Length);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.reverse_iterator rbegin() => new arrayref<T>.reverse_iterator(_source.begin() + (_start + Length - 1));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.reverse_iterator rend() => new arrayref<T>.reverse_iterator(_source.begin() + (_start - 1));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.const_iterator cbegin() => begin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.const_iterator cend() => end();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.const_reverse_iterator crbegin() => rbegin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.const_reverse_iterator crend() => rend();
+        #endregion
+
         #region operator
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(in arrayrefSegment<T> left, in arrayrefSegment<T> right) => left._source == right._source && (ILUnsafe.ReadOnlyAs<int, long>(left._start) ^ ILUnsafe.ReadOnlyAs<int, long>(right._start)) == 0;

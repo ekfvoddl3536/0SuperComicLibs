@@ -279,6 +279,16 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public bool Equals(stringref other) => this == other;
         #endregion
 
+        #region override
+        public override bool Equals(object obj) => obj is stringref other1 && this == other1;
+        public override int GetHashCode() => ToString().GetHashCode();
+        [return: NotNull]
+        public override string ToString() =>
+            _Ptr == null
+            ? string.Empty
+            : AsManaged();
+        #endregion
+
         #region dispose
         /// <summary>
         /// <see cref="IDisposable.Dispose()"/>.
@@ -290,16 +300,6 @@ namespace SuperComicLib.RuntimeMemoryMarshals
 
             Marshal.FreeHGlobal((IntPtr)(_Ptr - sizeof(long)));
         }
-        #endregion
-
-        #region override
-        public override bool Equals(object obj) => obj is stringref other1 && this == other1;
-        public override int GetHashCode() => ToString().GetHashCode();
-        [return: NotNull]
-        public override string ToString() =>
-            _Ptr == null
-            ? string.Empty
-            : AsManaged();
         #endregion
 
         #region operator
