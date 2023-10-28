@@ -31,7 +31,7 @@ namespace SuperComicLib
         public static bool IsWhitespace(this NativeSpan<char> span) => IsWhitespace(span.Source, span.end()._ptr);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsWhitespace(this NativeConstSpan<char> span) => IsWhitespace(span._source, span.end()._ptr);
+        public static bool IsWhitespace(this NativeConstSpan<char> span) => IsWhitespace(span._source, span.cend()._ptr);
 
         #region private
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

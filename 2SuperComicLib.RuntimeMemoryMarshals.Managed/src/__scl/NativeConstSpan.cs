@@ -152,14 +152,14 @@ namespace SuperComicLib
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public const_iterator<T> begin() => new const_iterator<T>(_source);
+        public const_iterator<T> cbegin() => new const_iterator<T>(_source);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public const_iterator<T> end() => new const_iterator<T>(_source + Length);
+        public const_iterator<T> cend() => new const_iterator<T>(_source + Length);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public const_reverse_iterator<T> rbegin() => new const_reverse_iterator<T>(_source + Length - 1);
+        public const_reverse_iterator<T> crbegin() => new const_reverse_iterator<T>(_source + Length - 1);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public const_reverse_iterator<T> rend() => new const_reverse_iterator<T>(_source - 1);
+        public const_reverse_iterator<T> crend() => new const_reverse_iterator<T>(_source - 1);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T* DangerousGetPointer() => _source;

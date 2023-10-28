@@ -30,10 +30,10 @@ namespace SuperComicLib
     {
         #region string trim (trim char)
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NativeConstSpan<char> TrimStart(this in NativeConstSpan<char> span, char trimChar) => span.Slice(ClampStart_char(span._source, span.end()._ptr, trimChar));
+        public static NativeConstSpan<char> TrimStart(this in NativeConstSpan<char> span, char trimChar) => span.Slice(ClampStart_char(span._source, span.cend()._ptr, trimChar));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NativeConstSpan<char> TrimEnd(this in NativeConstSpan<char> span, char trimChar) => span.Slice(0, ClampEnd_char(span.rbegin()._ptr, span._source - 1, trimChar));
+        public static NativeConstSpan<char> TrimEnd(this in NativeConstSpan<char> span, char trimChar) => span.Slice(0, ClampEnd_char(span.crbegin()._ptr, span._source - 1, trimChar));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static NativeConstSpan<char> Trim(this in NativeConstSpan<char> span, char trimChar)
@@ -60,10 +60,10 @@ namespace SuperComicLib
 
         #region string trim (any whitespace)
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NativeConstSpan<char> TrimStart(this in NativeConstSpan<char> span) => span.Slice(ClampStart(span._source, span.end()._ptr));
+        public static NativeConstSpan<char> TrimStart(this in NativeConstSpan<char> span) => span.Slice(ClampStart(span._source, span.cend()._ptr));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NativeConstSpan<char> TrimEnd(this in NativeConstSpan<char> span) => span.Slice(0, ClampEnd(span.rbegin()._ptr, span._source - 1));
+        public static NativeConstSpan<char> TrimEnd(this in NativeConstSpan<char> span) => span.Slice(0, ClampEnd(span.crbegin()._ptr, span._source - 1));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static NativeConstSpan<char> Trim(this in NativeConstSpan<char> span)

@@ -166,6 +166,16 @@ namespace SuperComicLib
         public reverse_iterator<T> rbegin() => new reverse_iterator<T>(Source + Length - 1);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public reverse_iterator<T> rend() => new reverse_iterator<T>(Source - 1);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_iterator<T> cbegin() => begin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_iterator<T> cend() => end();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_reverse_iterator<T> crbegin() => rbegin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public const_reverse_iterator<T> crend() => rend();
         #endregion
 
         #region util methods
