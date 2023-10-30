@@ -24,6 +24,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using SuperComicLib.CodeContracts;
@@ -33,6 +34,8 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     /// <summary>
     /// Represents a subarray of the original <see cref="arrayref{T}"/>
     /// </summary>
+    [DebuggerTypeProxy(typeof(SemiManagedArrayElementDebugView<>))]
+    [DebuggerDisplay("{Length}")]
     [StructLayout(LayoutKind.Sequential, Pack = 16)]
     public readonly unsafe struct arrayrefSegment<T> : IEquatable<arrayrefSegment<T>>, IList<T>, IReadOnlyList<T>
     {
@@ -104,7 +107,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead]
         public arrayrefSegment<T> Slice(int startIndex)
         {
-            if ((uint)startIndex >= (uint)Length)
+            if (((Length >> 31) | Length) < (uint)startIndex)
                 throw new ArgumentOutOfRangeException(nameof(startIndex));
 
             return new arrayrefSegment<T>(_source, _start + startIndex, Length - startIndex);
@@ -113,7 +116,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead]
         public arrayrefSegment<T> Slice(int startIndex, int count)
         {
-            if (((startIndex >> 31) | (Length - startIndex)) < (uint)count)
+            if ((((Length | startIndex) >> 31) | (Length - startIndex)) < (uint)count)
                 throw new ArgumentOutOfRangeException($"'{nameof(startIndex)}' and '{nameof(count)}'");
 
             return new arrayrefSegment<T>(_source, _start + startIndex, count);

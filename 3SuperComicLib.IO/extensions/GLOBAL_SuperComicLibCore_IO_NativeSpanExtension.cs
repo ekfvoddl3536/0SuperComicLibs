@@ -46,15 +46,15 @@ namespace SuperComicLib.IO
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyToStream<T>(this in NativeConstSpan<T> src, [DisallowNull] Stream dest, int buffer_size) where T : unmanaged =>
-            Internal_CopyToStream((byte*)src.DangerousGetPointer(), (byte*)src.end()._ptr, dest, new byte[buffer_size]);
+            Internal_CopyToStream((byte*)src.DangerousGetPointer(), (byte*)src.cend()._ptr, dest, new byte[buffer_size]);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyToStream<T>(this in NativeConstSpan<T> src, [DisallowNull] Stream dest, [DisallowNullOrEmpty] byte[] buffer) where T : unmanaged =>
-            Internal_CopyToStream((byte*)src.DangerousGetPointer(), (byte*)src.end()._ptr, dest, buffer);
+            Internal_CopyToStream((byte*)src.DangerousGetPointer(), (byte*)src.cend()._ptr, dest, buffer);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyToStream<T>(this in NativeConstSpan<T> src, [DisallowNull] Stream dest) where T : unmanaged =>
-            Internal_CopyToStream((byte*)src.DangerousGetPointer(), (byte*)src.end()._ptr, dest, new byte[16384]);
+            Internal_CopyToStream((byte*)src.DangerousGetPointer(), (byte*)src.cend()._ptr, dest, new byte[16384]);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void Internal_CopyToStream(byte* iter, byte* end, Stream dest, byte[] buffer)

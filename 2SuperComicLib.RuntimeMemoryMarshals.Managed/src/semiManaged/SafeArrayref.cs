@@ -24,8 +24,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using SuperComicLib.CodeContracts;
 
 namespace SuperComicLib.RuntimeMemoryMarshals
@@ -35,14 +37,36 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     /// For safe usage, some of the features and extended features provided by <see cref="arrayref{T}"/> are not available.
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    [DebuggerTypeProxy(typeof(SemiManagedArrayElementDebugView<>))]
+    [DebuggerDisplay("{Length}")]
     public sealed unsafe class SafeArrayref<T> : ICloneable, IList<T>, IReadOnlyList<T>, IStructuralEquatable, IStructuralComparable
     {
+        private static long _tempLock;
         private static SafeArrayref<T> _EmptyArray;
 
-        public SafeArrayref<T> Empty
+        public static SafeArrayref<T> Empty
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _EmptyArray ?? (_EmptyArray = new SafeArrayref<T>());
+            get
+            {
+                if (_EmptyArray == null)
+                {
+                    for (SpinWait w = default; Interlocked.CompareExchange(ref _tempLock, 1, 0) != 0;)
+                        w.SpinOnce();
+
+                    try
+                    {
+                        if (_EmptyArray == null)
+                            _EmptyArray = new SafeArrayref<T>();
+                    }
+                    finally
+                    {
+                        Interlocked.Exchange(ref _tempLock, 0);
+                    }
+                }
+
+                return _EmptyArray;
+            }
         }
 
         internal readonly arrayref<T> _arr;

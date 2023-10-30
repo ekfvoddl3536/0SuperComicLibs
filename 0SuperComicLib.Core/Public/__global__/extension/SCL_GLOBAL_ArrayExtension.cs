@@ -33,9 +33,22 @@ namespace SuperComicLib
         /// 이 부분 배열은 원본 배열의 복사본이 아닙니다.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Memory<T> Slice<T>(this T[] source, int startIndex)
+        {
+            if ((uint)startIndex >= (uint)source.Length)
+                throw new ArgumentNullException(nameof(startIndex));
+
+            return new Memory<T>(source, startIndex, source.Length - startIndex);
+        }
+
+        /// <summary>
+        /// 원본에 대한 부분 배열을 생성합니다.<br/>
+        /// 이 부분 배열은 원본 배열의 복사본이 아닙니다.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Memory<T> Slice<T>(this T[] source, int startIndex, int count)
         {
-            if (startIndex < 0 || source.Length - startIndex < (uint)count)
+            if (((startIndex >> 31) | (source.Length - startIndex)) < (uint)count)
                 throw new ArgumentNullException(nameof(startIndex));
 
             return new Memory<T>(source, startIndex, count);

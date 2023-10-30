@@ -173,7 +173,7 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void push_back(in T item)
         {
-            reserve(m_Last - m_Ptr + 1);
+            reserve(size() + 1);
 
             *m_Last++ = item;
         }
@@ -213,7 +213,7 @@ namespace SuperComicLib.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void erase(_iterator<T> position)
         {
-            if (position._ptr - m_Ptr >= size())
+            if ((ulong)(position._ptr - m_Ptr) >= (ulong)size())
                 throw new ArgumentOutOfRangeException(nameof(position));
 
             T* dst = position._ptr + 1;
@@ -248,8 +248,8 @@ namespace SuperComicLib.Collections
             var old_cnt = size();
             var old_capa = capacity();
 
-            var new_capa = (long)CMathi.Max((ulong)old_capa << 1, 4u);
-            new_capa = (long)CMathi.Max((ulong)new_capa, (ulong)min_size);
+            var new_capa = (long)CMath.Max((ulong)old_capa << 1, 4u);
+            new_capa = (long)CMath.Max((ulong)new_capa, (ulong)min_size);
 
             T* dst = (T*)MemoryBlock.Memalloc(new_capa * sizeof(T));
             T* last = dst + old_cnt;
@@ -279,9 +279,9 @@ namespace SuperComicLib.Collections
             var cnt = size();
             var n = capacity;
 
-            var cpyCnt = (long)CMathi.Min((ulong)cnt, (ulong)n);
+            var cpyCnt = (long)CMath.Min((ulong)cnt, (ulong)n);
 
-            T* dst = (T*)MemoryBlock.Memalloc((n * (uint)sizeof(T)));
+            T* dst = (T*)MemoryBlock.Memalloc(n * (uint)sizeof(T));
             T* last = dst + cpyCnt;
             T* end = dst + n;
 

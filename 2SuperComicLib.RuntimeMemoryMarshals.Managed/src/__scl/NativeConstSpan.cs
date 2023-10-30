@@ -106,7 +106,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead]
         public NativeConstSpan<T> Slice(long startIndex)
         {
-            if ((ulong)startIndex >= (ulong)Length)
+            if (Length < 0 || (ulong)startIndex >= (ulong)Length)
                 throw new ArgumentOutOfRangeException(nameof(startIndex));
 
             return new NativeConstSpan<T>(_source + startIndex, Length - startIndex);
@@ -115,7 +115,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead]
         public NativeConstSpan<T> Slice(long startIndex, long count)
         {
-            if ((startIndex | count) < 0 || Length - startIndex < count)
+            if ((Length | startIndex | count) < 0 || Length - startIndex < count)
                 throw new ArgumentOutOfRangeException($"{nameof(startIndex)} or {nameof(count)}");
 
             return new NativeConstSpan<T>(_source + startIndex, count);

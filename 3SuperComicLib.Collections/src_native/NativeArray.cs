@@ -173,11 +173,11 @@ namespace SuperComicLib.Collections
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(in NativeArray<T> left, in NativeArray<T> right) =>
-            CMathi.CXOR(left.Source, right.Source, left.Length, right.Length) == 0;
+            CMath.CXOR((long)left.Source, (long)right.Source, left.Length, right.Length) == 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(in NativeArray<T> left, in NativeArray<T> right) =>
-            CMathi.CXOR(left.Source, right.Source, left.Length, right.Length) != 0;
+            CMath.CXOR((long)left.Source, (long)right.Source, left.Length, right.Length) != 0;
         #endregion
     }
 }

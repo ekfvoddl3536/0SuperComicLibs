@@ -339,13 +339,13 @@ namespace SuperComicLib.Collections
 
         private void increaseCapacity(long req_size)
         {
-            var sz = (long)CMathi.Max((ulong)req_size, 4u);
+            var sz = (long)CMath.Max((ulong)req_size, 4u);
 
             var new_sizeInBytes = _sizeInBytes(Arrays.GetNextSize((int)sz));
             if (new_sizeInBytes <= sz)
                 throw new OutOfMemoryException(nameof(_index_linked_vector<T>));
 
-            var np = (byte*)MemoryBlock.Memalloc((new_sizeInBytes + sizeof(long)));
+            var np = (byte*)MemoryBlock.Memalloc(new_sizeInBytes + sizeof(long));
 
             *(long*)np = sz;
 

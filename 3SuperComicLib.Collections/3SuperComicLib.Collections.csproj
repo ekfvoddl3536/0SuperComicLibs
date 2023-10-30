@@ -145,6 +145,7 @@
     <Compile Include="src\Map\KeyValueTable.cs" />
     <Compile Include="src\Map\ValueListMap.cs" />
     <Compile Include="src\Queue\DoubleQueue.cs" />
+    <Compile Include="src_gcsafe\SMList.cs" />
     <Compile Include="src_native\extensions\IRawContainer_Extension.cs" />
     <Compile Include="src_native\extensions\items\RawIteratorEnumerator.cs" />
     <Compile Include="src_native\NativeArray.cs" />

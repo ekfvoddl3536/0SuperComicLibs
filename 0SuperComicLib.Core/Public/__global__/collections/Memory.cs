@@ -149,7 +149,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead]
         public Memory<T> Slice(int startIndex)
         {
-            if ((uint)startIndex >= (uint)Length) 
+            if (((Length >> 31) | Length) < (uint)startIndex) 
                 throw new ArgumentOutOfRangeException(nameof(startIndex));
 
             return new Memory<T>(_source, _start + startIndex, Length - startIndex);
@@ -161,7 +161,7 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining), NoOverhead]
         public Memory<T> Slice(int startIndex, int count)
         {
-            if (((startIndex >> 31) | (Length - startIndex)) < (uint)count)
+            if ((((Length | startIndex) >> 31) | (Length - startIndex)) < (uint)count)
                 throw new ArgumentOutOfRangeException($"'{nameof(startIndex)}' or '{nameof(count)}'");
 
             return new Memory<T>(_source, _start + startIndex, count);
@@ -199,22 +199,25 @@ namespace SuperComicLib
         /// 현재 부분 배열 범위의 원소를 대상 부분 배열로 복사합니다
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CopyTo(in Memory<T> dst, int length) => Array.Copy(_source, _start, dst._source, dst._start, length);
+        public void CopyTo(in Memory<T> dst, int count)
+        {
+            if (Length < count)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            Array.Copy(_source, _start, dst._source, dst._start, count);
+        }
 
         /// <summary>
         /// 현재 부분 배열 범위의 원소를 대상 부분 배열로 복사합니다.<br/>
         /// 참고: <see cref="List{T}.CopyTo(int, T[], int, int)"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CopyTo(int startIndex, in Memory<T> array, int arrayIndex, int length)
+        public void CopyTo(int startIndex, in Memory<T> array, int count)
         {
-            if ((uint)startIndex >= Length)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
+            if ((((Length | startIndex) >> 31) | (Length - startIndex)) < (uint)count)
+                throw new ArgumentOutOfRangeException($"'{nameof(startIndex)}' or '{nameof(count)}'");
 
-            if ((uint)arrayIndex >= (uint)array.Length)
-                throw new ArgumentOutOfRangeException(nameof(arrayIndex));
-
-            Array.Copy(_source, _start + startIndex, array._source, array._start + arrayIndex, length);
+            Array.Copy(_source, _start + startIndex, array._source, array._start, count);
         }
 
         /// <summary>

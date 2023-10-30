@@ -36,3 +36,18 @@ namespace SuperComicLib
         public T[] Items => _array;
     }
 }
+
+namespace SuperComicLib.RuntimeMemoryMarshals
+{
+    internal sealed class SemiManagedArrayElementDebugView<T>
+    {
+        private readonly T[] _array;
+
+        public SemiManagedArrayElementDebugView(arrayref<T> arr) => _array = arr.AsManaged();
+        public SemiManagedArrayElementDebugView(arrayrefSegment<T> arr) => _array = arr.AsMemory().ToArray();
+        public SemiManagedArrayElementDebugView(SafeArrayref<T> arr) => _array = arr.AsManaged();
+
+        [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+        public T[] Items => _array;
+    }
+}

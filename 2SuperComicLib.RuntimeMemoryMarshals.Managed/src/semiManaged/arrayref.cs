@@ -24,6 +24,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using SuperComicLib.CodeContracts;
@@ -35,6 +36,8 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     /// <br/>
     /// Supports both unmanaged and managed array scenarios simultaneously.
     /// </summary>
+    [DebuggerTypeProxy(typeof(SemiManagedArrayElementDebugView<>))]
+    [DebuggerDisplay("{Length}")]
     [StructLayout(LayoutKind.Sequential)]
     public readonly unsafe partial struct arrayref<T> : IEquatable<arrayref<T>>, IList<T>, IReadOnlyList<T>, IDisposable
     {

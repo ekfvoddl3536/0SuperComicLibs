@@ -33,7 +33,7 @@ namespace SuperComicLib
     [SuppressUnmanagedCodeSecurity]
     public static class CMath
     {
-        #region integer
+        #region int
         /// <summary>
         /// <see cref="Math.Min(int, int)"/>
         /// </summary>
@@ -137,6 +137,14 @@ namespace SuperComicLib
             FastContract.Requires(state >= 0 && state <= 1, "invalid state value");
             return value - ((value << 1) - max_include - min_include) * state;
         }
+
+        /// <summary>
+        /// Cross ExclusiveOR<para/>
+        /// (<paramref name="La0"/> ^ <paramref name="Ra0"/>) |
+        /// (<paramref name="La1"/> ^ <paramref name="Ra1"/>)
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int CXOR(int La0, int Ra0, int La1, int Ra1) => (La0 ^ Ra0) | (La1 ^ Ra1);
         #endregion
 
         #region uint
@@ -181,6 +189,14 @@ namespace SuperComicLib
             t = min - r0;
             return min - (t & (uint)((int)t >> 31));
         }
+
+        /// <summary>
+        /// Cross ExclusiveOR<para/>
+        /// (<paramref name="La0"/> ^ <paramref name="Ra0"/>) |
+        /// (<paramref name="La1"/> ^ <paramref name="Ra1"/>)
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint CXOR(uint La0, uint Ra0, uint La1, uint Ra1) => (La0 ^ Ra0) | (La1 ^ Ra1);
         #endregion
 
         #region long
@@ -232,6 +248,14 @@ namespace SuperComicLib
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Normal_11(this long value) => (value >> 63) | (long)((ulong)~value >> 63);
+
+        /// <summary>
+        /// Cross ExclusiveOR<para/>
+        /// (<paramref name="La0"/> ^ <paramref name="Ra0"/>) |
+        /// (<paramref name="La1"/> ^ <paramref name="Ra1"/>)
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long CXOR(long La0, long Ra0, long La1, long Ra1) => (La0 ^ Ra0) | (La1 ^ Ra1);
         #endregion
 
         #region ulong
@@ -267,6 +291,14 @@ namespace SuperComicLib
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Clampu(this ulong value, ulong min, ulong max) => Min(value + min, max);
+
+        /// <summary>
+        /// Cross ExclusiveOR<para/>
+        /// (<paramref name="La0"/> ^ <paramref name="Ra0"/>) |
+        /// (<paramref name="La1"/> ^ <paramref name="Ra1"/>)
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong CXOR(ulong La0, ulong Ra0, ulong La1, ulong Ra1) => (La0 ^ Ra0) | (La1 ^ Ra1);
         #endregion
     }
 }
