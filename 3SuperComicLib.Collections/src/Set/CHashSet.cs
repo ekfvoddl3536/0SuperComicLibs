@@ -27,8 +27,9 @@ using System.Diagnostics;
 
 namespace SuperComicLib.Collections
 {
+    [DebuggerTypeProxy(typeof(EnumerableView<>))]
     [DebuggerDisplay("Count = {m_count}")]
-    public class CHashSet<T> : ISet<T>, IEnumerable<T>, IDisposable
+    public class CHashSet<T> : ISet<T>, IEnumerable<T>
     {
         protected const int bitmask = 0x7FFF_FFFF;
         protected const int maxlen = 0x7FEF_FFFF;
@@ -80,6 +81,12 @@ namespace SuperComicLib.Collections
         public int Capacity => buckets.Length;
 
         public bool IsReadOnly => false;
+
+        public IEqualityComparer<T> Comparer
+        {
+            get => m_comparer;
+            set => m_comparer = value ?? throw new ArgumentNullException(nameof(value));
+        }
         #endregion
 
         #region methods
@@ -454,27 +461,6 @@ namespace SuperComicLib.Collections
             slots = nslots;
             buckets = nbks;
         }
-        #endregion
-
-        #region disposable
-        protected virtual void Dispose(bool disposing)
-        {
-            buckets = null;
-            slots = null;
-
-            m_count = 0;
-            m_freeList = 0;
-            m_lastIndex = 0;
-
-            m_comparer = null;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         #endregion
 
         #region item

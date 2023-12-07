@@ -96,6 +96,9 @@ namespace SuperComicLib
         public static bool operator <=(Range left, Range right) => left.end <= right.start;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator >=(Range left, Range right) => left.start >= right.end;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Range64(Range v) => new Range64(v.start, v.end);
 #pragma warning restore CS1591
     }
 }

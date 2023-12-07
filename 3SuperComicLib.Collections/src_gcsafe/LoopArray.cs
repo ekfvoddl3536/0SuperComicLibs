@@ -65,14 +65,14 @@ namespace SuperComicLib.Collections
         {
             int len = m_array.Length;
             if (m_size == len)
-                m_readpos = (m_readpos + 1) % len;
+                m_readpos = CMath.Rem(m_readpos + 1, len);
             else
                 m_size++;
 
             int curr = m_writepos;
             m_array[curr] = value;
 
-            m_writepos = (curr + 1) % len;
+            m_writepos = CMath.Rem(curr + 1, len);
         }
 
         public T[] ToArray()
@@ -80,15 +80,32 @@ namespace SuperComicLib.Collections
             if (m_size == 0)
                 return Array.Empty<T>();
 
-            T[] arr = m_array;
-            int len = arr.Length;
-            int r = m_readpos;
-
             T[] vs = new T[m_size];
-            for (int x = 0; x < len; x++)
-                vs[x] = arr[(r + x) % len];
+
+            InternalCopyTo(vs);
 
             return vs;
+        }
+
+        public void CopyTo(T[] array)
+        {
+            if (array == null)
+                throw new ArgumentNullException(nameof(array));
+
+            if (array.Length < m_size)
+                throw new ArgumentOutOfRangeException(nameof(array));
+
+            InternalCopyTo(array);
+        }
+
+        private void InternalCopyTo(T[] array)
+        {
+            T[] source = m_array;
+
+            int r = m_readpos;
+            Array.Copy(source, array, r);
+
+            Array.Copy(source, r, array, r, m_size - r);
         }
 
         public void Clear()

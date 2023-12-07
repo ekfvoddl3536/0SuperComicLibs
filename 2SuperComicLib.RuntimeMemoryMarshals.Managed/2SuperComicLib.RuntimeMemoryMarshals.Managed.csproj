@@ -13,29 +13,6 @@
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Debug\2SuperComicLib.RuntimeMemoryMarshals.Managed.xml</DocumentationFile>
-    <NoWarn>CS1591;IDE1006;</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Release\2SuperComicLib.RuntimeMemoryMarshals.Managed.xml</DocumentationFile>
-    <NoWarn>CS1591;IDE1006;</NoWarn>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
@@ -58,30 +35,6 @@
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <DocumentationFile>bin\x64\Release\2SuperComicLib.RuntimeMemoryMarshals.Managed.xml</DocumentationFile>
-    <NoWarn>CS1591;IDE1006;</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <DocumentationFile>bin\x86\Debug\2SuperComicLib.RuntimeMemoryMarshals.Managed.xml</DocumentationFile>
-    <NoWarn>CS1591;IDE1006;</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <DocumentationFile>bin\x86\Release\2SuperComicLib.RuntimeMemoryMarshals.Managed.xml</DocumentationFile>
     <NoWarn>CS1591;IDE1006;</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
@@ -119,8 +72,9 @@
     <Compile Include="src\extensions\SCL_GLOBAL_RTMS_ArrayExtension.cs" />
     <Compile Include="src\semiManaged\arrayrefSegment.cs" />
     <Compile Include="src\semiManaged\SafeArrayref.cs" />
-    <Compile Include="src\__dbg\NativeSpanElementDebugView.cs" />
+    <Compile Include="src\__dbg\SemiManagedArrayElementDebugView.cs" />
     <Compile Include="src\math\CMathi.cs" />
+    <Compile Include="src\__dbg\NativeSpanElementDebugView.cs" />
     <Compile Include="src\__scl\ArgValidateHelper.cs" />
     <Compile Include="src\__scl\iters\const_iterator.cs" />
     <Compile Include="src\__scl\iters\const_reverse_iterator.cs" />

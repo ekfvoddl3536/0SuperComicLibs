@@ -145,6 +145,13 @@ namespace SuperComicLib
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int CXOR(int La0, int Ra0, int La1, int Ra1) => (La0 ^ Ra0) | (La1 ^ Ra1);
+
+        /// <summary>
+        /// 모듈러 연산을 수행하는데, 모듈러 연산 없이 기본 산술 및 비트 연산만을 사용해 수행합니다.<para/>
+        /// <paramref name="value"/> must be equal to or smaller than <paramref name="divisor"/>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Rem(this int value, int divisor) => ((value - divisor) >> 31) & value;
         #endregion
 
         #region uint
@@ -197,6 +204,13 @@ namespace SuperComicLib
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint CXOR(uint La0, uint Ra0, uint La1, uint Ra1) => (La0 ^ Ra0) | (La1 ^ Ra1);
+
+        /// <summary>
+        /// 모듈러 연산을 수행하는데, 모듈러 연산 없이 기본 산술 및 비트 연산만을 사용해 수행합니다.<para/>
+        /// <paramref name="value"/> must be equal to or smaller than <paramref name="divisor"/>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint Rem(this uint value, uint divisor) => (uint)((int)(value - divisor) >> 31) & value;
         #endregion
 
         #region long
@@ -256,6 +270,13 @@ namespace SuperComicLib
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long CXOR(long La0, long Ra0, long La1, long Ra1) => (La0 ^ Ra0) | (La1 ^ Ra1);
+
+        /// <summary>
+        /// 모듈러 연산을 수행하는데, 모듈러 연산 없이 기본 산술 및 비트 연산만을 사용해 수행합니다.<para/>
+        /// <paramref name="value"/> must be equal to or smaller than <paramref name="divisor"/>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long Rem(this long value, long divisor) => ((value - divisor) >> 63) & value;
         #endregion
 
         #region ulong
@@ -299,6 +320,13 @@ namespace SuperComicLib
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong CXOR(ulong La0, ulong Ra0, ulong La1, ulong Ra1) => (La0 ^ Ra0) | (La1 ^ Ra1);
+
+        /// <summary>
+        /// 모듈러 연산을 수행하는데, 모듈러 연산 없이 기본 산술 및 비트 연산만을 사용해 수행합니다.<para/>
+        /// <paramref name="value"/> must be equal to or smaller than <paramref name="divisor"/>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong Rem(this ulong value, ulong divisor) => (ulong)((long)(value - divisor) >> 63) & value;
         #endregion
     }
 }
