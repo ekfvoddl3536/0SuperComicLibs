@@ -98,8 +98,6 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
         public ref byte GetDataReference_at(int byteOffset)
         {
-            DEBUG_NULL_CHECK(this);
-
             if ((uint)byteOffset >= (uint)Size)
                 throw new ArgumentOutOfRangeException(nameof(byteOffset));
 

@@ -162,7 +162,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Gets a reference to a managed array allocated in unmanaged memory.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
-        public Memory<T> AsMemory() => new Memory<T>(ILUnsafe.AsClass<T[]>(_pClass));
+        public Memory<T> AsMemory() => new Memory<T>(AsManaged());
 
         /// <summary>
         /// Create a copy.
