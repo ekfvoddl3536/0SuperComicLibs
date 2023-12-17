@@ -22,7 +22,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace SuperComicLib.Tensor;
+namespace SuperComicLib;
 
 [StructLayout(LayoutKind.Sequential)]
 public readonly unsafe struct Ptr<T> : IComparable<Ptr<T>>, IEquatable<Ptr<T>>

@@ -35,7 +35,7 @@
 	.custom instance void [mscorlib]System.Security.SuppressUnmanagedCodeSecurityAttribute::.ctor() = ( 01 00 00 00 )
 	.custom instance void [mscorlib]System.Security.SecurityCriticalAttribute::.ctor() = ( 01 00 00 00 )
 
-	.method public hidebysig static !!T  AsClass<class T>(void* 'value') cil managed aggressiveinlining
+	.method public hidebysig static !!T  AsClass<class T>(void* source) cil managed aggressiveinlining
 	{
 		.maxstack 1
 		.locals (
@@ -49,7 +49,7 @@
 		ret
 	}
 
-	.method public hidebysig static !!T  AsClass<class T>(native int 'value') cil managed aggressiveinlining
+	.method public hidebysig static !!T  AsClass<class T>(native int source) cil managed aggressiveinlining
 	{
 		.maxstack 1
 		.locals (
@@ -62,7 +62,7 @@
 		ret
 	}
 
-	.method public hidebysig static void*  AsPointer(object 'value') cil managed aggressiveinlining
+	.method public hidebysig static void*  AsPointer(object source) cil managed aggressiveinlining
 	{
 		.maxstack 1
 
@@ -71,7 +71,7 @@
 		ret
 	}
 
-	.method public hidebysig static void*  AsPointer(object 'value', int64 byteOffset) cil managed aggressiveinlining
+	.method public hidebysig static void*  AsPointer(object source, int64 byteOffset) cil managed aggressiveinlining
 	{
 		.maxstack 2
 
@@ -134,7 +134,7 @@
 		ret
 	}
 
-	.method public hidebysig static !!TTo& modreq([mscorlib]System.Runtime.InteropServices.InAttribute) ReadOnlyAs<TFrom, TTo>([in] !!TFrom& 'value') cil managed aggressiveinlining
+	.method public hidebysig static !!TTo& modreq([mscorlib]System.Runtime.InteropServices.InAttribute) ReadOnlyAs<TFrom, TTo>([in] !!TFrom& source) cil managed aggressiveinlining
 	{
 		.param [0] 
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -218,7 +218,7 @@
 		ret
 	}
 
-	.method public hidebysig static !!T& modreq([mscorlib]System.Runtime.InteropServices.InAttribute) ReadOnlyAdd<T>([in] !!T& 'value', int32 elementOffset) cil managed aggressiveinlining
+	.method public hidebysig static !!T& modreq([mscorlib]System.Runtime.InteropServices.InAttribute) ReadOnlyAdd<T>([in] !!T& source, int32 elementOffset) cil managed aggressiveinlining
 	{
 		.param [0] 
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -234,7 +234,7 @@
 		ret
 	}
 
-	.method public hidebysig static !!T& modreq([mscorlib]System.Runtime.InteropServices.InAttribute) ReadOnlyAdd<T>([in] !!T& 'value', int64 elementOffset) cil managed aggressiveinlining
+	.method public hidebysig static !!T& modreq([mscorlib]System.Runtime.InteropServices.InAttribute) ReadOnlyAdd<T>([in] !!T& source, int64 elementOffset) cil managed aggressiveinlining
 	{
 		.param [0] 
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -303,6 +303,172 @@
 		ret
 	}
 
+	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!T>&  AsRefpoint<T>(!!T& source) cil managed aggressiveinlining
+	{
+		.maxstack 1
+
+		ldarg.0
+		ret
+	}
+
+	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!TTo>&  AsRefpoint<TFrom, TTo>(!!TFrom& source) cil managed aggressiveinlining
+	{
+		.maxstack 1
+
+		ldarg.0
+		ret
+	}
+
+	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!TTo>&  AsRefpoint<TFrom, TTo>(!!TFrom& source, int64 offset) cil managed aggressiveinlining
+	{
+		.maxstack 3
+
+		ldarg.0
+		ldarg.1
+		conv.i
+		sizeof !!0
+		mul
+		add
+		ret
+	}
+
+	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!TTo>&  AsRefpoint<TFrom, TSize, TTo>(!!TFrom& source, int64 offset) cil managed aggressiveinlining
+	{
+		.maxstack 3
+
+		ldarg.0
+		ldarg.1
+		conv.i
+		sizeof !!1
+		mul
+		add
+		ret
+	}
+
+	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!TTo>&  AsRefpoint<TFrom, TSize, TTo>(!!TFrom& source, int64 offset, int32 displacement) cil managed aggressiveinlining
+	{
+		.maxstack 3
+
+		ldarg.0
+		ldarg.1
+		conv.i
+		sizeof !!1
+		mul
+		add
+		ldarg.2
+		add
+		ret
+	}
+
+	.method public hidebysig static !!TTo&  Add<TFrom, TTo>(!!TFrom& source, int64 offset) cil managed aggressiveinlining
+	{
+		.maxstack 3
+
+		ldarg.0
+		ldarg.1
+		conv.i
+		sizeof !!0
+		mul
+		add
+		ret
+	}
+
+	.method public hidebysig static !!TTo&  Add<TFrom, TSize, TTo>(!!TFrom& source, int64 offset) cil managed aggressiveinlining
+	{
+		.maxstack 3
+
+		ldarg.0
+		ldarg.1
+		conv.i
+		sizeof !!1
+		mul
+		add
+		ret
+	}
+
+	.method public hidebysig static !!TTo&  Subtract<TFrom, TTo>(!!TFrom& source, int64 offset) cil managed aggressiveinlining
+	{
+		.maxstack 3
+
+		ldarg.0
+		ldarg.1
+		conv.i
+		sizeof !!0
+		mul
+		sub
+		ret
+	}
+
+	.method public hidebysig static !!TTo&  Subtract<TFrom, TSize, TTo>(!!TFrom& source, int64 offset) cil managed aggressiveinlining
+	{
+		.maxstack 3
+
+		ldarg.0
+		ldarg.1
+		conv.i
+		sizeof !!1
+		mul
+		sub
+		ret
+	}
+
+	.method public hidebysig static !!TTo&  Add<TFrom, TSize, TTo>(!!TFrom& source, int64 offset, int32 displacement) cil managed aggressiveinlining
+	{
+		.maxstack 3
+
+		ldarg.0
+		ldarg.1
+		conv.i
+		sizeof !!1
+		mul
+		add
+		ldarg.2
+		add
+		ret
+	}
+
+	.method public hidebysig static !!TFrom&  Increment<TFrom, TSize>(!!TFrom& source) cil managed aggressiveinlining
+	{
+		.maxstack 2
+
+		ldarg.0
+		sizeof !!1
+		add
+		ret
+	}
+
+	.method public hidebysig static !!TFrom&  Decrement<TFrom, TSize>(!!TFrom& source) cil managed aggressiveinlining
+	{
+		.maxstack 2
+
+		ldarg.0
+		sizeof !!1
+		sub
+		ret
+	}
+
+	.method public hidebysig static !!TTo&  Increment<TFrom, TSize, TTo>(!!TFrom& source) cil managed aggressiveinlining
+	{
+		.maxstack 2
+
+		ldarg.0
+		sizeof !!1
+		add
+		ret
+	}
+
+	.method public hidebysig static !!TTo&  Decrement<TFrom, TSize, TTo>(!!TFrom& source) cil managed aggressiveinlining
+	{
+		.maxstack 2
+
+		ldarg.0
+		sizeof !!1
+		sub
+		ret
+	}
+
+
+
 
 
 
@@ -310,7 +476,7 @@
 	//
 	// !================== System.Runtime.CompilerServices.Unsafe (features) ==================!
 	// 
-	.method public hidebysig static void*  AsPointer<T>(!!T& 'value') cil managed aggressiveinlining
+	.method public hidebysig static void*  AsPointer<T>(!!T& source) cil managed aggressiveinlining
 	{
 		.maxstack 1
 
@@ -384,7 +550,7 @@
 		ret
 	}
 
-	.method public hidebysig static int64  Compare<T>([in] !!T& left, [in] !!T& right) cil managed aggressiveinlining
+	.method public hidebysig static int64  ByteOffset<T>([in] !!T& origin, [in] !!T& target) cil managed aggressiveinlining
 	{
 		.param [1]
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 ) 
@@ -398,6 +564,38 @@
 		ldarg.1
 		sub
 		conv.i8
+		ret
+	}
+
+	.method public hidebysig static bool  IsAddressGreaterThan<T>([in] !!T& left, [in] !!T& right) cil managed aggressiveinlining
+	{
+		.param [1]
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 ) 
+
+		.param [2]
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 ) 
+
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		cgt.un
+		ret
+	}
+
+	.method public hidebysig static bool  IsAddressLessThan<T>([in] !!T& left, [in] !!T& right) cil managed aggressiveinlining
+	{
+		.param [1]
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 ) 
+
+		.param [2]
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 ) 
+
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		clt.un
 		ret
 	}
 
@@ -652,7 +850,7 @@
 		ret
 	}
 
-	.method public hidebysig static void  SkipInit<T>([out] !!T& 'value') cil managed aggressiveinlining
+	.method public hidebysig static void  SkipInit<T>([out] !!T& source) cil managed aggressiveinlining
 	{
 		.maxstack 0
 

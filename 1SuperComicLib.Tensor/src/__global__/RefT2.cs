@@ -1,7 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
-// Copyright (c) .NET Foundation and Contributors
+// Copyright (c) 2023. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,29 +20,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+namespace SuperComicLib;
 
-namespace SuperComicLib.RuntimeMemoryMarshals
+[StructLayout(LayoutKind.Sequential, Pack = 0x10)]
+public ref struct RefT2<T>
 {
-    /// <summary>
-    /// Provides a reference to the managed structure of the <see cref="NativeInstance{T}"/>
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential), MonoRuntimeNotSupported]
-    public readonly unsafe struct varef_t<T> where T : struct
+    public ref T v1;
+    public ref T v2;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public RefT2(ref T v1) : this(ref v1, ref Unsafe.NullRef<T>())
     {
-        internal readonly byte* DataReference;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal varef_t(byte* DataReference) => this.DataReference = DataReference;
-
-        /// <summary>
-        /// Get a reference to the value.
-        /// </summary>
-        public ref T Value
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => ref ILUnsafe.AsRef<T>(DataReference);
-        }
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public RefT2(ref T v1, ref T v2)
+    {
+        this.v1 = ref v1;
+        this.v2 = ref v2;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public RefT1<T> lower() => new RefT1<T>(ref v1);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public RefT1<T> upper() => new RefT1<T>(ref v2);
 }

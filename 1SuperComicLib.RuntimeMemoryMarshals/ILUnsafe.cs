@@ -43,45 +43,45 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <summary>
         /// Convert a pointer address to a managed class.
         /// <br/>
-        /// <c>T cls = (T)(void*)value</c>
+        /// <c>T cls = (T)(void*)source</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T AsClass<T>(void* value) where T : class => throw new PlatformNotSupportedException();
+        public static T AsClass<T>(void* source) where T : class => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// Convert a pointer address to a managed class.
         /// <br/>
-        /// <c>T cls = (T)(void*)value</c>
+        /// <c>T cls = (T)(void*)source</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T AsClass<T>(IntPtr value) where T : class => throw new PlatformNotSupportedException();
+        public static T AsClass<T>(IntPtr source) where T : class => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// Get the instance address of the managed class.
         /// <br/>
-        /// <c>void* cls = (void*)value</c>
+        /// <c>void* cls = (void*)source</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* AsPointer(object value) => throw new PlatformNotSupportedException();
+        public static void* AsPointer(object source) => throw new PlatformNotSupportedException();
         /// <summary>
         /// Get the instance address of the managed class.
         /// <br/>
-        /// <c>void* cls = (byte*)value + byteOffset</c>
+        /// <c>void* cls = (byte*)source + byteOffset</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* AsPointer(object value, long byteOffset) => throw new PlatformNotSupportedException();
+        public static void* AsPointer(object source, long byteOffset) => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// Get a reference to the instance data.
         /// <br/>
-        /// <c>ref TField cls = ref *(TField*)value.firstFieldData</c>
+        /// <c>ref TField cls = ref *(TField*)source.firstFieldData</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref TField GetDataRef<TField>(object class_reference) => throw new PlatformNotSupportedException();
         /// <summary>
         /// Get a reference to the instance data.
         /// <br/>
-        /// <c>ref TField cls = ref *(TField*)((byte*)value.firstFieldData + byteOffset)</c>
+        /// <c>ref TField cls = ref *(TField*)((byte*)source.firstFieldData + byteOffset)</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref TField GetDataRef<TField>(object class_reference, long byteOffset) => throw new PlatformNotSupportedException();
@@ -89,14 +89,14 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <summary>
         /// Get a pointer to the instance data.
         /// <br/>
-        /// <c>TField* cls = (TField*)value.firstFieldData</c>
+        /// <c>TField* cls = (TField*)source.firstFieldData</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TField* GetDataPtr<TField>(object class_reference) where TField : unmanaged => throw new PlatformNotSupportedException();
         /// <summary>
         /// Get a pointer to the instance data.
         /// <br/>
-        /// <c>TField* cls = (TField*)((byte*)value.firstFieldData + byteOffset)</c>
+        /// <c>TField* cls = (TField*)((byte*)source.firstFieldData + byteOffset)</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TField* GetDataPtr<TField>(object class_reference, long byteOffset) where TField : unmanaged => throw new PlatformNotSupportedException();
@@ -135,15 +135,27 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T Add<T>(void* source, long elementOffset, int addByteOffset) => throw new PlatformNotSupportedException();
 
+        /// <summary>
+        /// <c>(<typeparamref name="T"/>*)<paramref name="source"/> + <paramref name="elementOffset"/></c>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T Add<T>(void* source, int elementOffset) => throw new PlatformNotSupportedException();
 
+        /// <summary>
+        /// <c>(<typeparamref name="T"/>*)<paramref name="source"/> + <paramref name="elementOffset"/></c>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T Add<T>(void* source, long elementOffset) => throw new PlatformNotSupportedException();
 
+        /// <summary>
+        /// <c>(<typeparamref name="T"/>*)<paramref name="source"/> + <paramref name="elementOffset"/></c>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref readonly T ReadOnlyAdd<T>(in T source, int elementOffset) => throw new PlatformNotSupportedException();
 
+        /// <summary>
+        /// <c>(<typeparamref name="T"/>*)<paramref name="source"/> + <paramref name="elementOffset"/></c>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref readonly T ReadOnlyAdd<T>(in T source, long elementOffset) => throw new PlatformNotSupportedException();
 
@@ -165,20 +177,110 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T Decrement<T>(ref T source) => throw new PlatformNotSupportedException();
 
+        /// <summary>
+        /// <c>(<typeparamref name="T"/>*)<paramref name="source"/> - <paramref name="elementOffset"/></c>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T Subtract<T>(void* source, int elementOffset) => throw new PlatformNotSupportedException();
 
+        /// <summary>
+        /// <c>(<typeparamref name="T"/>*)<paramref name="source"/> - <paramref name="elementOffset"/></c>
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T Subtract<T>(void* source, long elementOffset) => throw new PlatformNotSupportedException();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref refpoint<T> AsRefpoint<T>(ref T source) => throw new PlatformNotSupportedException();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref refpoint<TTo> AsRefpoint<TFrom, TTo>(ref TFrom source) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        ///<c>(<typeparamref name="TFrom"/>*)<paramref name="source"/> + <paramref name="offset"/></c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref refpoint<TTo> AsRefpoint<TFrom, TTo>(ref TFrom source, long offset) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// <c>(<typeparamref name="TSize"/>*)<paramref name="source"/> + <paramref name="offset"/></c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref refpoint<TTo> AsRefpoint<TFrom, TSize, TTo>(ref TFrom source, long offset) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// <c>(<see langword="byte"/>*)((<typeparamref name="TSize"/>*)<paramref name="source"/> + <paramref name="offset"/>) + <paramref name="displacement"/></c>
+        /// <para/>
+        /// <c>LEA rax, [<paramref name="source"/> + <paramref name="offset"/> * <see langword="sizeof"/>(<typeparamref name="TSize"/>) + <paramref name="displacement"/>]</c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref refpoint<TTo> AsRefpoint<TFrom, TSize, TTo>(ref TFrom source, long offset, int displacement) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// <c>(<typeparamref name="TFrom"/>*)<paramref name="source"/> + <paramref name="offset"/></c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref TTo Add<TFrom, TTo>(ref TFrom source, long offset) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// <c>(<typeparamref name="TSize"/>*)<paramref name="source"/> + <paramref name="offset"/></c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref TTo Add<TFrom, TSize, TTo>(ref TFrom source, long offset) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// <c>(<typeparamref name="TFrom"/>*)<paramref name="source"/> - <paramref name="offset"/></c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref TTo Subtract<TFrom, TTo>(ref TFrom source, long offset) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// <c>(<typeparamref name="TSize"/>*)<paramref name="source"/> - <paramref name="offset"/></c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref TTo Subtract<TFrom, TSize, TTo>(ref TFrom source, long offset) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// <c>(<see langword="byte"/>*)((<typeparamref name="TSize"/>*)<paramref name="source"/> + <paramref name="offset"/>) + <paramref name="displacement"/></c>
+        /// <para/>
+        /// <c>LEA rax, [<paramref name="source"/> + <paramref name="offset"/> * <see langword="sizeof"/>(<typeparamref name="TSize"/>) + <paramref name="displacement"/>]</c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref TTo Add<TFrom, TSize, TTo>(ref TFrom source, long offset, int displacement) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// <c>(<typeparamref name="TSize"/>*)(<see langword="ref"/> <paramref name="source"/>) + 1</c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref TFrom Increment<TFrom, TSize>(ref TFrom source) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// <c>(<typeparamref name="TSize"/>*)(<see langword="ref"/> <paramref name="source"/>) - 1</c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref TFrom Decrement<TFrom, TSize>(ref TFrom source) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// <c>(<typeparamref name="TSize"/>*)(<see langword="ref"/> <paramref name="source"/>) + 1</c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref TTo Increment<TFrom, TSize, TTo>(ref TFrom source) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// <c>(<typeparamref name="TSize"/>*)(<see langword="ref"/> <paramref name="source"/>) - 1</c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref TTo Decrement<TFrom, TSize, TTo>(ref TFrom source) => throw new PlatformNotSupportedException();
+
+
 
 
 
         //
         // !================== System.Runtime.CompilerServices.Unsafe (features) ==================!
-        // 
+        //
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* AsPointer<T>(ref T value)
+        public static void* AsPointer<T>(ref T source)
         {
             throw new PlatformNotSupportedException();
 
@@ -254,7 +356,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static long Compare<T>(in T left, in T right)
+        public static long ByteOffset<T>(in T origin, in T target)
         {
             throw new PlatformNotSupportedException();
 
@@ -262,6 +364,28 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             // ldarg.1
             // sub
             // conv.i8
+            // ret
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsAddressGreaterThan<T>(in T left, in T right)
+        {
+            throw new PlatformNotSupportedException();
+
+            // ldarg.0
+            // ldarg.1
+            // cgt.un
+            // ret
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsAddressLessThan<T>(in T left, in T right)
+        {
+            throw new PlatformNotSupportedException();
+
+            // ldarg.0
+            // ldarg.1
+            // clt.un
             // ret
         }
 
@@ -519,7 +643,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SkipInit<T>(out T value)
+        public static void SkipInit<T>(out T source)
         {
             throw new PlatformNotSupportedException();
 

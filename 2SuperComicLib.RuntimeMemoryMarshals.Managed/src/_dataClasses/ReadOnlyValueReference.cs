@@ -27,15 +27,15 @@ using System.Runtime.InteropServices;
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
     /// <summary>
-    /// <see langword="const"/> <see cref="varef_t{T}"/>
+    /// <see langword="readonly"/> <see cref="ValueReference{T}"/>
     /// </summary>
     [StructLayout(LayoutKind.Sequential), MonoRuntimeNotSupported]
-    public readonly unsafe struct cvaref_t<T> where T : struct
+    public readonly unsafe struct ReadOnlyValueReference<T> where T : struct
     {
         internal readonly byte* DataReference;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal cvaref_t(byte* DataReference) => this.DataReference = DataReference;
+        internal ReadOnlyValueReference(byte* DataReference) => this.DataReference = DataReference;
 
         /// <summary>
         /// Get a reference to the value. (read only)
@@ -50,6 +50,6 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Convert to read only
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator cvaref_t<T>(varef_t<T> input) => new cvaref_t<T>(input.DataReference);
+        public static implicit operator ReadOnlyValueReference<T>(ValueReference<T> input) => new ReadOnlyValueReference<T>(input.DataReference);
     }
 }

@@ -87,8 +87,8 @@
     <Compile Include="src\__scl\NativeSpan.cs" />
     <Compile Include="src\semiManaged\stringref.cs" />
     <Compile Include="src\__scl\NativeSpanHelper.cs" />
-    <Compile Include="src\_dataClasses\cvaref_t.cs" />
-    <Compile Include="src\_dataClasses\varef_t.cs" />
+    <Compile Include="src\_dataClasses\ReadOnlyValueReference.cs" />
+    <Compile Include="src\_dataClasses\ValueReference.cs" />
     <Compile Include="src\_dataClasses\_classDataRef.cs" />
     <Compile Include="src\extensions\SUPERCOMICLIB_CORE__MemoryExtension.cs" />
     <Compile Include="src\LowLevel\NativeInstance.cs" />

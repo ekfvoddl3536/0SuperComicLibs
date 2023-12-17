@@ -42,8 +42,8 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Use in some scenarios where a reference to data must be passed without the <see langword="ref"/> keyword.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
-        public static varef_t<T> GetValueReference<T>(this in NativeInstance<T> @this) where T : struct =>
-            new varef_t<T>(@this._Ptr + (sizeof(long) << 1));
+        public static ValueReference<T> GetValueReference<T>(this in NativeInstance<T> @this) where T : struct =>
+            new ValueReference<T>(@this._Ptr + (sizeof(long) << 1));
 
         /// <summary>
         /// Gets a read-only reference to the managed structure data of this <see cref="NativeInstance{T}"/>
@@ -51,7 +51,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Use in some scenarios where a read-only reference to data must be passed without the <see langword="ref"/> keyword.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
-        public static cvaref_t<T> GetReadOnlyValueReference<T>(this in NativeInstance<T> @this) where T : struct =>
-            new cvaref_t<T>(@this._Ptr + (sizeof(long) << 1));
+        public static ReadOnlyValueReference<T> GetReadOnlyValueReference<T>(this in NativeInstance<T> @this) where T : struct =>
+            new ReadOnlyValueReference<T>(@this._Ptr + (sizeof(long) << 1));
     }
 }

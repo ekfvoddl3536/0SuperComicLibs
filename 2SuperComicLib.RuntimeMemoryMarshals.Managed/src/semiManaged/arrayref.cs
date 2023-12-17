@@ -399,7 +399,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         {
             ptr[0] = *(IntPtr*)ILUnsafe.AsPointer(Array.Empty<T>());
             ptr[1] = IntPtr.Zero;
-            ptr[2] = IntPtr.Zero;
+            ptr[2] = IntPtr.Zero;           /* Bounds (Pointer) */
             ptr[3] = (IntPtr)(uint)length;
         }
         #endregion

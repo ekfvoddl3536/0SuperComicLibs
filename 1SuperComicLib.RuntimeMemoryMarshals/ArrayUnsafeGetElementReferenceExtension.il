@@ -133,4 +133,72 @@
 		add
 		ret
 	}
+
+	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!T>&  refpoint_clr<T>(!!T[] 'array') cil managed aggressiveinlining
+	{
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 )
+		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.AssumeInputsValidAttribute::.ctor() = ( 01 00 00 00 )
+
+		.param [1]
+		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.DisallowNullAttribute::.ctor() = ( 01 00 00 00 )
+
+		.maxstack 1
+
+		ldarg.0
+		call !!0& SuperComicLib.RuntimeMemoryMarshals.ArrayUnsafeGetElementReferenceExtension::refdata_clr<!!T>(!!0[])
+		ret
+	}
+
+	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!T>&  refpoint_clr<T>(!!T[] 'array', int64 index) cil managed aggressiveinlining
+	{
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 )
+		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.AssumeInputsValidAttribute::.ctor() = ( 01 00 00 00 )
+
+		.param [1]
+		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.DisallowNullAttribute::.ctor() = ( 01 00 00 00 )
+
+		.param [2]
+		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.ValidRangeAttribute::.ctor() = ( 01 00 00 00 )
+
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		call !!0& SuperComicLib.RuntimeMemoryMarshals.ArrayUnsafeGetElementReferenceExtension::refdata_clr<!!T>(!!0[], int64)
+		ret
+	}
+
+	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!T>&  refpoint_mono<T>(!!T[] 'array') cil managed aggressiveinlining
+	{
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 )
+		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.AssumeInputsValidAttribute::.ctor() = ( 01 00 00 00 )
+
+		.param [1]
+		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.DisallowNullAttribute::.ctor() = ( 01 00 00 00 )
+
+		.maxstack 1
+
+		ldarg.0
+		call !!0& SuperComicLib.RuntimeMemoryMarshals.ArrayUnsafeGetElementReferenceExtension::refdata_mono<!!T>(!!0[])
+		ret
+	}
+
+	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!T>&  refpoint_mono<T>(!!T[] 'array', int64 index) cil managed aggressiveinlining
+	{
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 )
+		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.AssumeInputsValidAttribute::.ctor() = ( 01 00 00 00 )
+
+		.param [1]
+		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.DisallowNullAttribute::.ctor() = ( 01 00 00 00 )
+
+		.param [2]
+		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.ValidRangeAttribute::.ctor() = ( 01 00 00 00 )
+
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		call !!0& SuperComicLib.RuntimeMemoryMarshals.ArrayUnsafeGetElementReferenceExtension::refdata_mono<!!T>(!!0[], int64)
+		ret
+	}
 } // end of 'ArrayUnsafeGetElementReferenceExtension'

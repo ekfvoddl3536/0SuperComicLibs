@@ -111,7 +111,7 @@ public static unsafe class TensorsExtension
 
     #region clear & fill (vector)
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector1D<T> Clear<T>(this Vector1D<T> v) where T : unmanaged
+    public static void Clear<T>(this Vector1D<T> v) where T : unmanaged
     {
         var t = v;
 
@@ -119,12 +119,10 @@ public static unsafe class TensorsExtension
             t.Slice(0, int.MaxValue).AsSpan().Clear();
 
         t.AsSpan().Clear();
-
-        return v;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector1D<T> Fill<T>(this Vector1D<T> v, T value) where T : unmanaged
+    public static void Fill<T>(this Vector1D<T> v, T value) where T : unmanaged
     {
         var t = v;
 
@@ -132,54 +130,34 @@ public static unsafe class TensorsExtension
             t.Slice(0, int.MaxValue).AsSpan().Fill(value);
 
         t.AsSpan().Fill(value);
-
-        return v;
     }
     #endregion
 
     #region clear
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Matrix2D<T> Clear<T>(this Matrix2D<T> v) where T : unmanaged
-    {
+    public static void Clear<T>(this Matrix2D<T> v) where T : unmanaged => 
         v.AsVector().Clear();
-        return v;
-    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Cube3D<T> Clear<T>(this Cube3D<T> v) where T : unmanaged
-    {
+    public static void Clear<T>(this Cube3D<T> v) where T : unmanaged => 
         v.AsVector().Clear();
-        return v;
-    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static TensorND<T> Clear<T>(this TensorND<T> v) where T : unmanaged
-    {
+    public static void Clear<T>(this TensorND<T> v) where T : unmanaged => 
         v.AsVector().Clear();
-        return v;
-    }
     #endregion
 
     #region fill
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Matrix2D<T> Fill<T>(this Matrix2D<T> v, T value) where T : unmanaged
-    {
+    public static void Fill<T>(this Matrix2D<T> v, T value) where T : unmanaged => 
         v.AsVector().Fill(value);
-        return v;
-    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Cube3D<T> Fill<T>(this Cube3D<T> v, T value) where T : unmanaged
-    {
+    public static void Fill<T>(this Cube3D<T> v, T value) where T : unmanaged => 
         v.AsVector().Fill(value);
-        return v;
-    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static TensorND<T> Fill<T>(this TensorND<T> v, T value) where T : unmanaged
-    {
+    public static void Fill<T>(this TensorND<T> v, T value) where T : unmanaged => 
         v.AsVector().Fill(value);
-        return v;
-    }
     #endregion
 }

@@ -33,14 +33,14 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     public static unsafe class ArrayUnsafeGetElementReferenceExtension
     {
         /// <summary>
-        /// Skip array bounds checking, get reference to first element.
+        /// Skips array bounds checking and gets a reference to the first element.
         /// <br/>
         /// API for high-performance scenarios.
         /// </summary>
         [AssumeInputsValid, MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T refdata_clr<T>([DisallowNull] this T[] array) => throw new PlatformNotSupportedException();
         /// <summary>
-        /// Skip array bounds checking, get reference to first element.
+        /// Skips array bounds checking and gets a reference to the element at the specified index position.
         /// <br/>
         /// API for high-performance scenarios.
         /// </summary>
@@ -48,7 +48,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public static ref T refdata_clr<T>([DisallowNull] this T[] array, [ValidRange] long index) => throw new PlatformNotSupportedException();
 
         /// <summary>
-        /// Skip array bounds checking, get reference to first element.
+        /// Skips array bounds checking and gets a reference to the first element.
         /// <br/>
         /// API for high-performance scenarios.
         /// <seealso href="https://blog.naver.com/ekfvoddl3535/222985670274">refer (KO-KR).</seealso>
@@ -56,12 +56,45 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [AssumeInputsValid, MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T refdata_mono<T>([DisallowNull] this T[] array) => throw new PlatformNotSupportedException();
         /// <summary>
-        /// Skip array bounds checking, get reference to first element.
+        /// Skips array bounds checking and gets a reference to the element at the specified index position.
         /// <br/>
         /// API for high-performance scenarios.
         /// <seealso href="https://blog.naver.com/ekfvoddl3535/222985670274">refer (KO-KR).</seealso>
         /// </summary>
         [AssumeInputsValid, MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ref T refdata_mono<T>([DisallowNull] this T[] array, [ValidRange] long index) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// Skips array bounds checking and gets an <see langword="addressable"/> reference to the first element.
+        /// <br/>
+        /// API for high-performance scenarios.
+        /// </summary>
+        [AssumeInputsValid, MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref refpoint<T> refpoint_clr<T>([DisallowNull] this T[] array) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// Skips array bounds checking and gets an <see langword="addressable"/> reference to the element at the specified index position..
+        /// <br/>
+        /// API for high-performance scenarios.
+        /// </summary>
+        [AssumeInputsValid, MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref refpoint<T> refpoint_clr<T>([DisallowNull] this T[] array, [ValidRange] long index) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// Skips array bounds checking and gets an <see langword="addressable"/> reference to the first element.
+        /// <br/>
+        /// API for high-performance scenarios.
+        /// <seealso href="https://blog.naver.com/ekfvoddl3535/222985670274">refer (KO-KR).</seealso>
+        /// </summary>
+        [AssumeInputsValid, MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref refpoint<T> refpoint_mono<T>([DisallowNull] this T[] array) => throw new PlatformNotSupportedException();
+        /// <summary>
+        /// Skips array bounds checking and gets an <see langword="addressable"/> reference to the element at the specified index position.
+        /// <br/>
+        /// API for high-performance scenarios.
+        /// <seealso href="https://blog.naver.com/ekfvoddl3535/222985670274">refer (KO-KR).</seealso>
+        /// </summary>
+        [AssumeInputsValid, MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref refpoint<T> refpoint_mono<T>([DisallowNull] this T[] array, [ValidRange] long index) => throw new PlatformNotSupportedException();
     }
 }

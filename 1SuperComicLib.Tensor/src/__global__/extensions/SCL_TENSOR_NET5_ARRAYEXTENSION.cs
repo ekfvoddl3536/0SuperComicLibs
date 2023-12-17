@@ -38,4 +38,15 @@ public static class SCL_TENSOR_NET5_ARRAYEXTENSION
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static ReadOnlySpan<T> AsReadOnlySpan<T>(this T[] array, Index startIndex) => array.AsSpan(startIndex);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static RefT1<T> ref_begin<T>(this T[] array) => new RefT1<T>(array);
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static RefT1<T> ref_begin<T>(this T[] array, int startIndex) => new RefT1<T>(array, startIndex);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static RefT1<T> ref_end<T>(this T[] array) => ref_begin(array, array.Length);
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static RefT1<T> ref_end<T>(this T[] array, int startIndex) => ref_begin(array, array.Length - startIndex);
+
 }

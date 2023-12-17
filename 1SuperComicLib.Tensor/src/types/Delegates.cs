@@ -20,9 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace SuperComicLib.Tensor
-{
-    public delegate T WithIndexFunc<T>(in T item, ShapeRef index) where T : unmanaged;
+namespace SuperComicLib.Tensor;
 
-    public delegate void WithIndexAction<T>(in T item, ShapeRef index) where T : unmanaged;
-}
+public delegate T WithIndexFunc<T>(in T item, ShapeRef index) where T : unmanaged;
+
+public delegate void WithIndexAction<T>(in T item, ShapeRef index) where T : unmanaged;
