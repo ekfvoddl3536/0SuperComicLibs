@@ -151,6 +151,30 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref refpoint<T> sub(ulong offset) => throw new PlatformNotSupportedException();
 
+        #region extend 'add'
+        /// <summary>
+        /// <c>(<see langword="byte"/>*)((<typeparamref name="T"/>*)(<see langword="ref this"/>) + <paramref name="offset"/>) + <paramref name="displacement"/></c>
+        /// <para/>
+        /// <c>LEA rax, [<see langword="this"/> + <paramref name="offset"/> * <see langword="sizeof"/>(<typeparamref name="T"/>) + <paramref name="displacement"/>]</c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref refpoint<T> add(long offset, int displacement) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// <c>(<typeparamref name="TSize"/>*)(<see langword="ref this"/>) + <paramref name="offset"/></c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref refpoint<T> add<TSize>(long offset) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// <c>(<see langword="byte"/>*)((<typeparamref name="TSize"/>*)(<see langword="ref this"/>) + <paramref name="offset"/>) + <paramref name="displacement"/></c>
+        /// <para/>
+        /// <c>LEA rax, [<see langword="this"/> + <paramref name="offset"/> * <see langword="sizeof"/>(<typeparamref name="TSize"/>) + <paramref name="displacement"/>]</c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref refpoint<T> add<TSize>(long offset, int displacement) => throw new PlatformNotSupportedException();
+        #endregion
+
         /// <summary>
         /// <c>(<see langword="byte"/>*)(<see langword="ref this"/>) - (<see langword="byte"/>*)(<see langword="ref"/> <paramref name="right"/>)</c>
         /// </summary>
