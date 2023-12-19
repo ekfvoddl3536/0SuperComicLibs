@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Runtime.CompilerServices;
 using System.Security;
 
@@ -48,64 +47,14 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Returns a subarray of the specified <see cref="arrayref{T}"/>. This operation does not create a copy.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static arrayrefSegment<T> Slice<T>(this in arrayref<T> @this, int startIndex, int count) =>
+        public static arrayrefSegment<T> Slice<T>(this in arrayref<T> @this, int startIndex, int count) where T : unmanaged =>
             new arrayrefSegment<T>(@this, startIndex, count);
 
         /// <summary>
         /// Returns a subarray of the specified <see cref="arrayref{T}"/>. This operation does not create a copy.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static arrayrefSegment<T> Slice<T>(this in arrayref<T> @this, int startIndex) =>
+        public static arrayrefSegment<T> Slice<T>(this in arrayref<T> @this, int startIndex) where T : unmanaged =>
             new arrayrefSegment<T>(@this, startIndex);
-
-        /// <summary>
-        /// Returns a casted semi-managed array.<para/>
-        /// This method modifies the values of the original <see cref="arrayref{T}"/> without making a copy.<br/>
-        /// Therefore, do not use the original <see cref="arrayref{T}"/> after calling this method.<para/>
-        /// To avoid <see cref="arrayref{T}.Length"/> loss, back up by calling <see cref="Capture{T}(in arrayref{T})"/> before calling this method.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static arrayref<TTo> CastDirect<TFrom, TTo>(this in arrayref<TFrom> @this)
-        {
-            *(IntPtr*)@this._pClass = *(IntPtr*)ILUnsafe.AsPointer(Array.Empty<TTo>());
-
-            var len_u = (ulong)@this.LongLength * (uint)ILUnsafe.SizeOf<TFrom>() / (uint)ILUnsafe.SizeOf<TTo>();
-            *(ulong*)@this._pLength = len_u;
-
-            return new arrayref<TTo>(@this._pClass, @this._pLength);
-        }
-
-        /// <summary>
-        /// Returns a casted semi-managed array segment.<para/>
-        /// This method modifies the values of the original <see cref="arrayref{T}"/> without making a copy.<br/>
-        /// Therefore, do not use the original <see cref="arrayrefSegment{T}"/> after calling this method.<para/>
-        /// To avoid loss of unique data of <see cref="arrayrefSegment{T}"/>, back up by calling <see cref="Capture{T}(in arrayrefSegment{T})"/> before calling this method.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static arrayrefSegment<TTo> CastDirect<TFrom, TTo>(this in arrayrefSegment<TFrom> @this)
-        {
-            var resref = @this._source.CastDirect<TFrom, TTo>();
-
-            var idx_i4 = @this._start * ILUnsafe.SizeOf<TFrom>() / ILUnsafe.SizeOf<TTo>();
-            var len_i4 = @this.Length * ILUnsafe.SizeOf<TFrom>() / ILUnsafe.SizeOf<TTo>();
-
-            return new arrayrefSegment<TTo>(resref, idx_i4, len_i4);
-        }
-
-        /// <summary>
-        /// Save the unique data of the current <see cref="arrayref{T}"/> for later restoration.
-        /// </summary>
-        /// <returns><see cref="CapturedArrayref{T}"/> that can later perform a restore of the unique data of the <see cref="arrayref{T}"/>.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static CapturedArrayref<T> Capture<T>(this in arrayref<T> @this) =>
-            new CapturedArrayref<T>(@this);
-
-        /// <summary>
-        /// Save the unique data of the current <see cref="arrayrefSegment{T}"/> for later restoration.
-        /// </summary>
-        /// <returns><see cref="CapturedArrayrefSegment{T}"/> that can later perform a restore of the unique data of the <see cref="arrayrefSegment{T}"/>.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static CapturedArrayrefSegment<T> Capture<T>(this in arrayrefSegment<T> @this) =>
-            new CapturedArrayrefSegment<T>(@this);
     }
 }

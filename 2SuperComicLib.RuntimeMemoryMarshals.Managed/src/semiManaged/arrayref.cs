@@ -40,6 +40,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     [DebuggerDisplay("{Length}")]
     [StructLayout(LayoutKind.Sequential)]
     public readonly unsafe partial struct arrayref<T> : IEquatable<arrayref<T>>, IList<T>, IReadOnlyList<T>, IDisposable
+        where T : unmanaged
     {
         internal readonly byte* _pClass;
         internal readonly byte* _pLength;
@@ -115,6 +116,11 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _pClass == null;
         }
+
+        /// <summary>
+        /// total bytes
+        /// </summary>
+        public ulong size() => (ulong)LongLength * (uint)sizeof(T);
         #endregion
 
         #region indexer
@@ -170,14 +176,14 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
         public arrayref<T> Clone()
         {
-            int len = Length;
+            long len = (uint)Length;
 
             arrayref<T> dst =
                 IsCLRArray
-                ? newf_clr(len)
-                : newf_mono(len);
+                ? newf_clr((int)len)
+                : newf_mono((int)len);
 
-            ulong sz = (uint)(len * ILUnsafe.SizeOf<T>());
+            ulong sz = (ulong)(len * ILUnsafe.SizeOf<T>());
             Buffer.MemoryCopy(GetDataPointer(), dst.GetDataPointer(), sz, sz);
 
             return dst;
@@ -268,15 +274,15 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <summary>
         /// Release this unmanaged instance.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
         public void Dispose()
         {
-            if (IsCLRArray)
-                // clr
-                Marshal.FreeHGlobal((IntPtr)(_pClass - sizeof(long)));
-            else
-                // mono
-                Marshal.FreeHGlobal((IntPtr)_pClass);
+            if (_pClass == null)
+                return;
+
+            var offset = (_pLength - _pClass + 8) >> 1;
+            Marshal.FreeHGlobal((IntPtr)(_pClass - offset));
+
+            ILUnsafe.AsRef<arrayref<T>, IntPtr>(in this) = default;
         }
         #endregion
 
@@ -284,7 +290,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         bool IEquatable<arrayref<T>>.Equals(arrayref<T> other) => this == other;
 
         public override bool Equals(object obj) => obj is arrayref<T> other && this == other;
-        public override int GetHashCode() => ((long)_pClass ^ (long)_pLength).GetHashCode();
+        public override int GetHashCode() => ((long)_pClass).GetHashCode();
         #endregion
 
         #region operator

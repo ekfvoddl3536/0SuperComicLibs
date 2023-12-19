@@ -22,13 +22,13 @@
 // SOFTWARE.
 
 #pragma warning disable CS0809 // 사용되는 멤버를 재정의하여 사용하지 않음으로 표시
+using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System;
 
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
-    unsafe partial struct arrayref<T>
+    unsafe partial struct arrayref<T> where T : unmanaged
     {
         [StructLayout(LayoutKind.Sequential)]
         public readonly ref struct iterator

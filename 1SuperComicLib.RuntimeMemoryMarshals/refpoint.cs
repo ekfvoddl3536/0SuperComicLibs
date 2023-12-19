@@ -171,9 +171,11 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public ref T GetPinnableReference() => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref refpoint<T> As(ref T value) => throw new PlatformNotSupportedException();
+        public static ref refpoint<T> As(void* source) => throw new PlatformNotSupportedException();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref refpoint<U> As<U>(ref T value) => throw new PlatformNotSupportedException();
+        public static ref refpoint<T> As(ref T source) => throw new PlatformNotSupportedException();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref refpoint<U> As<U>(ref T source) => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// <c>(<see langword="void"/>*)(<see langword="ref"/> <paramref name="left"/>) == (<see langword="void"/>*)(<see langword="ref"/> <paramref name="right"/>)</c>

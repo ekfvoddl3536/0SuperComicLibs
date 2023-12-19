@@ -26,7 +26,7 @@ using System.Collections.Generic;
 
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
-    unsafe partial struct arrayref<T>
+    unsafe partial struct arrayref<T> where T : unmanaged
     {
         public struct enumerator : IEnumerator<T>
         {

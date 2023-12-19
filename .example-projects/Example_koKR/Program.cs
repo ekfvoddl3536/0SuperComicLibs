@@ -148,26 +148,6 @@ namespace Example_koKR
             Console.WriteLine("반관리 배열 index: 10 = " + semiManagedArray[10]);
             Console.WriteLine("반관리 배열 index: 20 = " + semiManagedArray[20]);
 
-            // 많이 위험한 방법이지만, 반관리 배열을 캐스팅하는 것도 가능합니다.
-            CapturedArrayref<int> previous_state = semiManagedArray.Capture();
-            arrayref<byte> byteSemiManaged = semiManagedArray.CastDirect<int, byte>();
-
-            Console.WriteLine();
-            Console.WriteLine("반관리 배열 캐스팅 이후 semiManagedArray.AsManaged().GetType() -> " + semiManagedArray.AsManaged().GetType().FullName);
-
-            byteSemiManaged[0] = 0;
-            byteSemiManaged[1] = 0xFF;
-            byteSemiManaged[2] = 0xFF;
-            byteSemiManaged[3] = 0xFF;
-
-            // 이전에 저장해둔 상태로 되돌립니다.
-            previous_state.restore();
-
-            Console.WriteLine("상태 복구 후 semiManagedArray.AsManaged().GetType() -> " + semiManagedArray.AsManaged().GetType().FullName);
-            // [0xFF 0xFF 0xFF 0x00] 이라서, -256이 출력됨
-            Console.WriteLine("managedArray[0]의 값 -> " + managedArray[0]);
-
-
             // 반관리 배열은 자동으로 메모리 수거가 되지 않으므로, 직접 Dispose()를 호출해서 메모리를 정리해야 합니다.
             semiManagedArray.Dispose();
 

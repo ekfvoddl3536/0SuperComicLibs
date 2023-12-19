@@ -26,6 +26,7 @@ using System.Diagnostics;
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
     internal sealed class SemiManagedArrayElementDebugView<T>
+        where T : unmanaged
     {
         private readonly T[] _array;
 

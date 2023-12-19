@@ -35,13 +35,14 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Creates a new <see cref="arrayref{T}"/> and, copies the element data of the specified range.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid]
-        public static arrayref<T> ToArrayUnmanaged<T>([DisallowNull, ValidRange] this in Memory<T> @this) =>
+        public static arrayref<T> ToArrayUnmanaged<T>([DisallowNull, ValidRange] this in Memory<T> @this) where T : unmanaged =>
             JITPlatformEnvironment.IsRunningOnMono
             ? ToArrayUnmanaged_mono(@this)
             : ToArrayUnmanaged_clr(@this);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid, MonoRuntimeNotSupported]
         public static arrayref<T> ToArrayUnmanaged_clr<T>([DisallowNull, ValidRange] this in Memory<T> @this)
+            where T : unmanaged
         {
             var res = arrayref<T>.newf_clr(@this.Length);
 
@@ -53,6 +54,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid]
         public static arrayref<T> ToArrayUnmanaged_mono<T>([DisallowNull, ValidRange] this in Memory<T> @this)
+            where T : unmanaged
         {
             var res = arrayref<T>.newf_mono(@this.Length);
 

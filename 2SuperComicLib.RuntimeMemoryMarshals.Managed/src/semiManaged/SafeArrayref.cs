@@ -40,6 +40,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     [DebuggerTypeProxy(typeof(SemiManagedArrayElementDebugView<>))]
     [DebuggerDisplay("{Length}")]
     public sealed unsafe class SafeArrayref<T> : ICloneable, IList<T>, IReadOnlyList<T>, IStructuralEquatable, IStructuralComparable
+        where T : unmanaged
     {
         private static long _tempLock;
         private static SafeArrayref<T> _EmptyArray;
@@ -380,51 +381,10 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         void ICollection<T>.Clear() => throw new NotSupportedException(Arrayrefs.ERROR_FIXEDSIZECOLLECTION);
         #endregion
 
-        #region enumerator
-        public IEnumerator<T> GetEnumerator() => (IEnumerator<T>)_arr.AsManaged().GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        #endregion
-
-        #region iterator
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public arrayref<T>.iterator begin() => _arr.begin();
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public arrayref<T>.iterator end() => _arr.end();
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public arrayref<T>.reverse_iterator rbegin() => _arr.rbegin();
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public arrayref<T>.reverse_iterator rend() => _arr.rend();
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public arrayref<T>.const_iterator cbegin() => begin();
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public arrayref<T>.const_iterator cend() => end();
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public arrayref<T>.const_reverse_iterator crbegin() => rbegin();
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public arrayref<T>.const_reverse_iterator crend() => rend();
-        #endregion
-
-        #region override
-        public override int GetHashCode() => ((long)_arr._pClass).GetHashCode();
-        #endregion
-
-        #region deconstructor
-        ~SafeArrayref()
-        {
-            ref readonly var arr = ref _arr;
-            if (arr.IsNull)
-                return;
-
-            if (_EmptyArray == null || _EmptyArray._arr._pClass != arr._pClass)
-                arr.Dispose();
-        }
-
+        #region IStructuralComparable, IClone
         int IStructuralComparable.CompareTo(object other, IComparer comparer)
         {
-            if (other == null) 
+            if (other == null)
                 return 1;
 
             if (!(other is SafeArrayref<T> temp))
@@ -508,6 +468,49 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             Array.Copy(src, res.AsManaged(), src.Length);
 
             return res;
+        }
+        #endregion
+
+        #region enumerator
+        public IEnumerator<T> GetEnumerator() => (IEnumerator<T>)_arr.AsManaged().GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        #endregion
+
+        #region iterator
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.iterator begin() => _arr.begin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.iterator end() => _arr.end();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.reverse_iterator rbegin() => _arr.rbegin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.reverse_iterator rend() => _arr.rend();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.const_iterator cbegin() => begin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.const_iterator cend() => end();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.const_reverse_iterator crbegin() => rbegin();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public arrayref<T>.const_reverse_iterator crend() => rend();
+        #endregion
+
+        #region override
+        public override int GetHashCode() => ((long)_arr._pClass).GetHashCode();
+        #endregion
+
+        #region finalize
+        ~SafeArrayref()
+        {
+            ref readonly var arr = ref _arr;
+            if (arr.IsNull)
+                return;
+
+            if (_EmptyArray == null || _EmptyArray._arr._pClass != arr._pClass)
+                arr.Dispose();
         }
         #endregion
 

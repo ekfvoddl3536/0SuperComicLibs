@@ -47,6 +47,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static arrayref<T> Alloc<T>(int length)
+            where T : unmanaged
         {
             if ((uint)length > MaxLength)
                 throw new ArgumentOutOfRangeException(nameof(length));
@@ -65,7 +66,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Must be greater than or equal to 0.
         /// </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid]
-        public static arrayref<T> Alloc_fast<T>([ValidRange] int length) => arrayref<T>.newf(length);
+        public static arrayref<T> Alloc_fast<T>([ValidRange] int length) where T : unmanaged => arrayref<T>.newf(length);
         #endregion
 
         #region core-clr
@@ -81,6 +82,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
         public static arrayref<T> CLRAlloc<T>(int length)
+            where T : unmanaged
         {
             if ((uint)length > MaxLength)
                 throw new ArgumentOutOfRangeException(nameof(length));
@@ -99,7 +101,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Must be greater than or equal to 0.
         /// </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported, AssumeInputsValid]
-        public static arrayref<T> CLRAlloc_fast<T>([ValidRange] int length) => arrayref<T>.newf_clr(length);
+        public static arrayref<T> CLRAlloc_fast<T>([ValidRange] int length) where T : unmanaged => arrayref<T>.newf_clr(length);
         #endregion
 
         #region mono
@@ -115,6 +117,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static arrayref<T> MonoAlloc<T>(int length)
+            where T : unmanaged
         {
             if ((uint)length > MaxLength)
                 throw new ArgumentOutOfRangeException(nameof(length));
@@ -133,7 +136,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Must be greater than or equal to 0.
         /// </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid]
-        public static arrayref<T> MonoAlloc_fast<T>([ValidRange] int length) => arrayref<T>.newf_mono(length);
+        public static arrayref<T> MonoAlloc_fast<T>([ValidRange] int length) where T : unmanaged => arrayref<T>.newf_mono(length);
         #endregion
     }
 }

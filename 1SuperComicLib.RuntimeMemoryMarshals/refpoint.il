@@ -284,7 +284,16 @@
         ret
     }
     
-    .method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!T>&  As(!T& 'value') cil managed aggressiveinlining
+    .method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!T>&  As(void* source) cil managed aggressiveinlining
+    {
+        .maxstack 1
+
+        ldarg.0
+        conv.i
+        ret
+    }
+
+    .method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!T>&  As(!T& source) cil managed aggressiveinlining
     {
         .maxstack 1
 
@@ -292,7 +301,7 @@
         ret
     }
     
-    .method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!U>&  As<U>(!T& 'value') cil managed aggressiveinlining
+    .method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!U>&  As<U>(!T& source) cil managed aggressiveinlining
     {
         .maxstack 1
 

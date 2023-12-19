@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
-    unsafe partial struct arrayref<T>
+    unsafe partial struct arrayref<T> where T : unmanaged
     {
         [StructLayout(LayoutKind.Sequential)]
         public readonly ref struct const_reverse_iterator

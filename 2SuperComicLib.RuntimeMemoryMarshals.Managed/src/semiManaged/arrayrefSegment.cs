@@ -38,6 +38,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     [DebuggerDisplay("{Length}")]
     [StructLayout(LayoutKind.Sequential, Pack = 16)]
     public readonly unsafe struct arrayrefSegment<T> : IEquatable<arrayrefSegment<T>>, IList<T>, IReadOnlyList<T>
+        where T : unmanaged
     {
         public readonly arrayref<T> _source;
         public readonly int _start;
