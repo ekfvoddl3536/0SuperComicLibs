@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Example_RuntimeMemoryMarshals
+namespace ExampleProject
 {
     internal static class MyUtils
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using SuperComicLib; /* Add to 'using' */
 
-namespace Example_RuntimeMemoryMarshals
+namespace ExampleProject
 {
     public static unsafe partial class NativeSpanExample
     {

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
-namespace Example_RuntimeMemoryMarshals
+namespace ExampleProject
 {
     partial class Program
     {
@@ -27,8 +28,7 @@ namespace Example_RuntimeMemoryMarshals
             var target = GetEntryPoint(menu, input);
             if (target == null)
             {
-                Console.WriteLine($"'{input}' is not the name of an runnable example.");
-                Console.WriteLine();
+                PrintInputError(input);
                 return -1;
             }
             else
@@ -91,12 +91,23 @@ namespace Example_RuntimeMemoryMarshals
 
                 Console.WriteLine();
                 Console.WriteLine("Enter the name (or, number) of the example to run. To quit, type 'exit' or 'quit'.");
+                Console.WriteLine("For advanced information for professional analysis, '!show [name | number]'.");
 
                 for (; ; )
                 {
                     Console.Write("$ ");
 
                     var input = Console.ReadLine();
+
+                    if (!string.IsNullOrEmpty(input))
+                    {
+                        input = input.Trim();
+                        if (input.StartsWith("!show"))
+                        {
+                            PrintAdvInfo(menu, input);
+                            continue;
+                        }
+                    }
 
                     input = GetTitleName(menu, input);
 
@@ -117,6 +128,60 @@ namespace Example_RuntimeMemoryMarshals
                     break;
                 }
             }
+        }
+
+        private static void PrintAdvInfo((string, string, Action)[] menu, string input)
+        {
+            if (input.Length == 5)
+            {
+                for (int i = 0; i < menu.Length; ++i)
+                    PrintAdvInfo(menu[i]);
+
+                return;
+            }
+
+            var name = GetTitleName(menu, input.Substring(5).TrimStart());
+            for (int i = 0; i < menu.Length; ++i)
+                if (menu[i].Item1.Equals(name, StringComparison.OrdinalIgnoreCase))
+                {
+                    PrintAdvInfo(menu[i]);
+                    return;
+                }
+
+            PrintInputError(input);
+        }
+
+        private static void PrintInputError(string input)
+        {
+            Console.WriteLine($"'{input}' is not the name of an runnable example.");
+            Console.WriteLine();
+        }
+
+        private static void PrintAdvInfo((string, string, Action) item)
+        {
+            Console.Write('[');
+            Console.Write(item.Item1);
+            Console.WriteLine(']');
+
+            var method = item.Item3.Method;
+            var handle = method.MethodHandle;
+
+            RuntimeHelpers.PrepareMethod(handle);
+
+            var fp = handle.GetFunctionPointer();
+            Console.Write("    Entry Point       :  ");
+            Console.WriteLine(fp.ToString("X12"));
+
+            var attrb = method.GetCustomAttribute<ExampleAttribute>();
+            Console.Write("    File Name         :  ");
+            Console.WriteLine(attrb.File);
+
+            Console.Write("    Member            :  ");
+            Console.Write(method.DeclaringType.FullName);
+            Console.Write('.');
+            Console.WriteLine(method.Name);
+
+            Console.WriteLine();
         }
 
         private static string GetTheme(string title)

@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
-namespace Example_RuntimeMemoryMarshals
+namespace ExampleProject
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     internal sealed class ExampleAttribute : Attribute
@@ -8,10 +9,15 @@ namespace Example_RuntimeMemoryMarshals
         public readonly string Title;
         public readonly string Summary;
 
-        public ExampleAttribute(string title, string summary)
+        public readonly string File;
+
+        public ExampleAttribute(string title, string summary,
+            [CallerFilePath] string file = "")
         {
             Title = title;
             Summary = summary;
+
+            File = file;
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Linq;
 using SuperComicLib.RuntimeMemoryMarshals; /* Add to 'using' */
 
-namespace Example_RuntimeMemoryMarshals
+namespace ExampleProject
 {
     public static unsafe partial class RefpointExample
     {

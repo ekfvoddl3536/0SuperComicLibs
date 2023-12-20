@@ -297,8 +297,15 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             if (_pClass == null)
                 return;
 
-            var offset = (_pLength - _pClass + 8) >> 1;
-            Marshal.FreeHGlobal((IntPtr)(_pClass - offset));
+            var pLen = (long)_pLength;
+
+            // sub rdx, rcx
+            // sar rdx, 4
+            // lea rax, [rcx+rdx*8-8]
+            var pCls = (pLen - (long)_pClass) >> 4;
+            pCls = pLen + pCls * 8 - 8;
+
+            Marshal.FreeHGlobal((IntPtr)pCls);
 
             ILUnsafe.AsRef<arrayref<T>, IntPtr>(in this) = default;
         }
