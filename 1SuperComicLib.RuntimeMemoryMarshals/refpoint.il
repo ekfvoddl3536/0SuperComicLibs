@@ -246,6 +246,19 @@
         ret
     }
 
+    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!T>&  'sub'<TSize>(int64 offset) cil managed aggressiveinlining
+    {
+        .maxstack 3
+
+        ldarg.0
+        ldarg.1
+        sizeof !!0
+        conv.i
+        mul
+        sub
+        ret
+    }
+
 
 
     .method public hidebysig instance int64  byteOffset(valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!T>& right) cil managed aggressiveinlining

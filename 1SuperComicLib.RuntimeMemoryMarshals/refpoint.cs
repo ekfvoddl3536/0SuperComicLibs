@@ -151,7 +151,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref refpoint<T> sub(ulong offset) => throw new PlatformNotSupportedException();
 
-        #region extend 'add'
+        #region extend 'add', 'sub'
         /// <summary>
         /// <c>(<see langword="byte"/>*)((<typeparamref name="T"/>*)(<see langword="ref this"/>) + <paramref name="offset"/>) + <paramref name="displacement"/></c>
         /// <para/>
@@ -173,6 +173,12 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref refpoint<T> add<TSize>(long offset, int displacement) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// <c>(<typeparamref name="TSize"/>*)(<see langword="ref this"/>) - <paramref name="offset"/></c>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref refpoint<T> sub<TSize>(long offset) => throw new PlatformNotSupportedException();
         #endregion
 
         /// <summary>

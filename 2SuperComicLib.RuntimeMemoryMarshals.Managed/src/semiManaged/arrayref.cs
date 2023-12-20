@@ -125,7 +125,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
 
         #region indexer
         /// <summary>
-        /// Same as: <see cref="List{T}.this[int]"/>.
+        /// Gets the reference address value at the specified <paramref name="index"/> position.<br/>
         /// but, it does not perform validation, such as range checking. API for high-performance scenarios.
         /// </summary>
         public ref T this[[ValidRange] int index]
@@ -135,7 +135,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         }
 
         /// <summary>
-        /// Same as: <see cref="List{T}.this[int]"/>.
+        /// Gets the reference address value at the specified <paramref name="index"/> position.<br/>
         /// but, it does not perform validation, such as range checking. API for high-performance scenarios.
         /// </summary>
         public ref T this[[ValidRange] long index]
@@ -145,12 +145,30 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         }
 
         /// <summary>
-        /// Same as: <see cref="List{T}.this[int]"/>.
+        /// Gets the reference address value at the specified <paramref name="index"/> position.
+        /// <para/>
+        /// This API performs array bounds checking and attempts to keep accesses safer.
         /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">Index exceeds array range.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
         public ref T at(int index)
         {
             if ((uint)index >= *(uint*)_pLength)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            return ref this[index];
+        }
+
+        /// <summary>
+        /// Gets the reference address value at the specified <paramref name="index"/> position.
+        /// <para/>
+        /// This API performs array bounds checking and attempts to keep accesses safer.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">Index exceeds array range.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeOperationValid]
+        public ref T at(long index)
+        {
+            if ((ulong)index >= *(ulong*)_pLength)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
             return ref this[index];

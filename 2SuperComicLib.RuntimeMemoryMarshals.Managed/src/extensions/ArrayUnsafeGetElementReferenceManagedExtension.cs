@@ -73,6 +73,18 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             ref JITPlatformEnvironment.IsRunningOnMono
             ? ref refdata_mono(array, index)
             : ref refdata_clr(array, index);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref refpoint<T> refpoint<T>(this T[] array) =>
+            ref JITPlatformEnvironment.IsRunningOnMono
+            ? ref array.refpoint_mono()
+            : ref array.refpoint_clr();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ref refpoint<T> refpoint<T>(this T[] array, long index) =>
+            ref JITPlatformEnvironment.IsRunningOnMono
+            ? ref array.refpoint_mono(index)
+            : ref array.refpoint_clr(index);
         #endregion
     }
 }
