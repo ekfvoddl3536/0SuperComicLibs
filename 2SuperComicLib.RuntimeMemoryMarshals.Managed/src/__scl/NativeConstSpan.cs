@@ -171,14 +171,21 @@ namespace SuperComicLib
             (ulong)Length * (uint)sizeof(T);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid]
-        public ref readonly TDest getAs<TDest>([ValidRange] long index) where TDest : unmanaged =>
-            ref *(TDest*)(_source + index);
+        public ref readonly TTo getAs<TTo>([ValidRange] long index) where TTo : unmanaged =>
+            ref *(TTo*)(_source + index);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly TDest getAs_at<TDest>(long index) where TDest : unmanaged
+        public ref readonly TTo getAs_at<TTo>(long index) where TTo : unmanaged
         {
             ArgValidateHelper.ThrowIfIndexOutOfRange(index, Length);
-            return ref *(TDest*)(_source + index);
+            return ref *(TTo*)(_source + index);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public NativeConstSpan<TTo> Cast<TTo>() where TTo : unmanaged
+        {
+            var len_u = (ulong)Length * (ulong)sizeof(T) / (ulong)sizeof(TTo);
+            return new NativeConstSpan<TTo>((TTo*)_source, (long)len_u);
         }
         #endregion
 

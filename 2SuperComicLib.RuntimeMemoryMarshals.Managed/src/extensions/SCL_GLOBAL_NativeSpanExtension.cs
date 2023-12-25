@@ -31,7 +31,7 @@ namespace SuperComicLib
     [SuppressUnmanagedCodeSecurity]
     public static unsafe class SCL_GLOBAL_NativeSpanExtension
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("This API will be removed in the next major update. Use 'NativeSpan<T>.Cast<TTo>()' method instead. If 'obj.Cast<int, byte>()' is currently in use, please switch to 'obj.Cast<byte>()'.", false)]
         public static NativeSpan<TTo> Cast<TFrom, TTo>(this in NativeSpan<TFrom> @this)
             where TFrom : unmanaged
             where TTo : unmanaged
@@ -40,7 +40,7 @@ namespace SuperComicLib
             return new NativeSpan<TTo>((TTo*)@this.Source, (long)len_u);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("This API will be removed in the next major update. Use 'NativeConstSpan<T>.Cast<TTo>()' method instead. If 'obj.Cast<int, byte>()' is currently in use, please switch to 'obj.Cast<byte>()'.", false)]
         public static NativeConstSpan<TTo> Cast<TFrom, TTo>(this in NativeConstSpan<TFrom> @this)
             where TFrom : unmanaged
             where TTo : unmanaged

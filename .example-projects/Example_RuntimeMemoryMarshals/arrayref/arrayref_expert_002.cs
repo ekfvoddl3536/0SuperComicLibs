@@ -1,13 +1,14 @@
 ﻿using System;
 using System.IO;
+using SuperComicLib;
 using SuperComicLib.RuntimeMemoryMarshals; /* Add to 'using' */
 
 namespace ExampleProject
 {
     public static unsafe partial class ArrayrefExample
     {
-        [Example("arrayref/expert/002", "Excellent use case")]
-        public static void Expert002()
+        [Example("arrayref/expert/002.1", "Excellent use case")]
+        public static void Expert002_1()
         {
             //  This example shows what the effect is when there is no conversion
             //  cost between managed and unmanaged arrays.
@@ -39,7 +40,7 @@ namespace ExampleProject
             // When you are finished using it, you must free the memory.
             buffer.Dispose();
         }
-
+        
         //  You can use a file stream or any other stream.
         private static Stream GetStream(Stream previous = null)
         {

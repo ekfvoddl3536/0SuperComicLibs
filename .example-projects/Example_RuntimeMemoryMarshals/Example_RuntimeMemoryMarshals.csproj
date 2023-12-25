@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="arrayref\arrayref_expert_003.cs" />
     <Compile Include="NativeSpan\NativeSpan_basic_002.cs" />
     <Compile Include="__helper\MyUtils.cs" />
     <Compile Include="__helper\ExampleAttribute.cs" />

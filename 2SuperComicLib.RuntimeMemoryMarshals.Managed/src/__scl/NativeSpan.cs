@@ -180,18 +180,35 @@ namespace SuperComicLib
 
         #region util methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ulong capacity() =>
-            (ulong)Length * (uint)sizeof(T);
+        public ulong capacity() => (ulong)Length * (uint)sizeof(T);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid]
-        public ref TDest getAs<TDest>([ValidRange] long index) where TDest : unmanaged =>
-            ref *(TDest*)(Source + index);
+        public ref TTo getAs<TTo>([ValidRange] long index) where TTo : unmanaged =>
+            ref *(TTo*)(Source + index);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref TDest getAs_at<TDest>(long index) where TDest : unmanaged
+        public ref TTo getAs_at<TTo>(long index) where TTo : unmanaged
         {
             ArgValidateHelper.ThrowIfIndexOutOfRange(index, Length);
-            return ref *(TDest*)(Source + index);
+            return ref *(TTo*)(Source + index);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid]
+        public void setFrom<TFrom>([ValidRange] long index, TFrom value) where TFrom : unmanaged =>
+            *(TFrom*)(Source + index) = value;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void setFrom_at<TFrom>(long index, TFrom value) where TFrom : unmanaged
+        {
+            ArgValidateHelper.ThrowIfIndexOutOfRange(index, Length);
+            *(TFrom*)(Source + index) = value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public NativeSpan<TTo> Cast<TTo>() where TTo : unmanaged
+        {
+            var len_u = (ulong)Length * (ulong)sizeof(T) / (ulong)sizeof(TTo);
+            return new NativeSpan<TTo>((TTo*)Source, (long)len_u);
         }
         #endregion
 

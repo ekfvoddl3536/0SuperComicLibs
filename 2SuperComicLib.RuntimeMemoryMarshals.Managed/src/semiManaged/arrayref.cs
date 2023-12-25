@@ -213,6 +213,9 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public byte* GetDataPointer() => _pLength + sizeof(long);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref refpoint<byte> GetDataReference() => ref ILUnsafe.AsRefpoint<byte>(GetDataPointer());
+
         /// <summary>
         /// Gets the data starting address of this array instance.
         /// </summary>
@@ -297,17 +300,17 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             if (_pClass == null)
                 return;
 
-            var pLen = (long)_pLength;
+            var pCls = (ulong)_pClass;
 
             // sub rdx, rcx
             // sar rdx, 4
             // lea rax, [rcx+rdx*8-8]
-            var pCls = (pLen - (long)_pClass) >> 4;
-            pCls = pLen + pCls * 8 - 8;
+            var handle = ((ulong)_pLength - pCls) >> 4;
+            handle = pCls + handle * 8 - 8;
 
-            Marshal.FreeHGlobal((IntPtr)pCls);
+            Marshal.FreeHGlobal((IntPtr)handle);
 
-            ILUnsafe.AsRef<arrayref<T>, IntPtr>(in this) = default;
+            ILUnsafe.AsRef<arrayref<T>, long>(in this) = 0;
         }
         #endregion
 
