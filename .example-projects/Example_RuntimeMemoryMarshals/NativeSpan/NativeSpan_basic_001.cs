@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.SqlServer.Server;
 using SuperComicLib; /* Add to 'using' */
 
 namespace ExampleProject
@@ -37,9 +38,13 @@ namespace ExampleProject
                 Console.WriteLine();
 
                 NativeConstSpan<int> subspan = span.Slice(5, 5);
-                Console.WriteLine("subspan = = span.Slice(5, 5);");
+                Console.WriteLine("subspan = span.Slice(5, 5);");
                 Console.WriteLine("(subspan[0] == span[5]) = " + (subspan[0] == span[5]));
                 Console.WriteLine();
+
+                //  'NativeSpan<T>' has no ownership of the target memory address by default,
+                //  and therefore has no right to free the memory in principle.
+                //  Therefore, there is no need to free memory for normal use.
             }
         }
     }

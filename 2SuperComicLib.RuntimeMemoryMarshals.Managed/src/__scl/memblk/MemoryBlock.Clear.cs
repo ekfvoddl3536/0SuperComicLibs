@@ -21,61 +21,111 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using SuperComicLib.RuntimeMemoryMarshals;
+using System.Runtime.CompilerServices;
+using m128i = System.Numerics.Vector4;
 
 namespace SuperComicLib
 {
     public static unsafe partial class MemoryBlock
     {
+        // benchmark results: https://docs.google.com/spreadsheets/d/1EcfnCxDA7ffUkDjn0_N07Ql6xCMpCxQejKQlNnLKRHE
         public static void Clear(byte* ptr, ulong bytes)
         {
-            const ulong SZ_128K = 0x2_0000u;
-            const long ALIGN8 = 0x7u;
-
-            if (bytes == 0)
-                return;
-
-            // pointer = 'unknown', number of bytes = 'unknown'
-            var aligned = ((long)ptr + ALIGN8) & ~ALIGN8;
-
-            var cb = CMath.Min((ulong)(aligned - (long)ptr), bytes);
-
-            ILUnsafe.InitBlockUnaligned(ptr, 0, (uint)cb);
-
-            bytes -= cb;
-
-            cb = bytes & unchecked((ulong)~ALIGN8);
-
-            // pointer = 'aligned', number of bytes = 'alilgned'
-            if (cb > SZ_128K)
+            if (bytes >= 0x400)
             {
-                ClearLarge128K_internal((byte*)aligned, cb);
+                _impl_clear1k(ptr, bytes);
+
+                if (((uint)bytes & 7) != 0)
+                    *(ulong*)(ptr + bytes - sizeof(long)) = 0;
+
                 return;
             }
-            
-            if (cb != 0)
-                ILUnsafe.InitBlock((byte*)aligned, 0, (uint)cb);
+
+            _impl_clearSmall(ptr, bytes);
         }
 
-        private static void ClearLarge128K_internal(byte* ptr, ulong nb)
+        [SkipLocalsInit, MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void _impl_clearSmall(byte* ptr, ulong bytes)
         {
-            const ulong SZ_128K = 0x2_0000u;
-            const ulong SZ_2GB = 1u << 31;
+            if ((uint)bytes == 0)
+                return;
 
-            ILUnsafe.InitBlock(ptr, 0, (uint)SZ_128K);
+            ulong stopLoopAtOffset;
+            ulong offset = 0;
 
-            ptr += SZ_128K;
-            nb -= SZ_128K;
-
-            while (nb != 0)
+            // NOTE (ko-kr)::
+            //      128 ~ 512 바이트 구간에서 더 효율적이지만, 1024 바이트 또는 그 이상에서
+            //      reg64/Fill 방식보다 더 느려지는 현상이 있다.
+            if ((uint)bytes >= (uint)sizeof(m128i) * 8)
             {
-                var cb1 = CMath.Min(nb, SZ_2GB);
+                m128i xmm0 = m128i.Zero;
 
-                ILUnsafe.InitBlock(ptr, 0, (uint)cb1);
+                m128i* rdi;
 
-                ptr += cb1;
-                nb -= cb1;
+                stopLoopAtOffset = bytes & (ulong)(sizeof(m128i) * -8L);
+                do
+                {
+                    rdi = (m128i*)(ptr + offset);
+
+                    rdi[0x00 + 0] = xmm0; rdi[0x00 + 1] = xmm0; rdi[0x00 + 2] = xmm0; rdi[0x00 + 3] = xmm0;
+                    rdi[0x00 + 4] = xmm0; rdi[0x00 + 5] = xmm0; rdi[0x00 + 6] = xmm0; rdi[0x00 + 7] = xmm0;
+
+                    offset += (ulong)(sizeof(m128i) * 8);
+                } while (offset < stopLoopAtOffset);
+
+                rdi = (m128i*)(ptr + bytes - (uint)(sizeof(m128i) * 8));
+
+                rdi[0x00 + 0] = xmm0; rdi[0x00 + 1] = xmm0; rdi[0x00 + 2] = xmm0; rdi[0x00 + 3] = xmm0;
+                rdi[0x00 + 4] = xmm0; rdi[0x00 + 5] = xmm0; rdi[0x00 + 6] = xmm0; rdi[0x00 + 7] = xmm0;
+
+                return;
             }
+
+            ulong rax = 0;
+            if (((uint)bytes & 0x70) != 0) // 16 <= x < 128
+            {
+                stopLoopAtOffset = bytes & ~15ul;
+                do
+                {
+                    *(ulong*)(ptr + offset + 0) = rax;
+                    *(ulong*)(ptr + offset + 8) = rax;
+                } while ((offset += 16) < stopLoopAtOffset);
+
+                *(ulong*)(ptr + bytes - 8) = rax;
+                *(ulong*)(ptr + bytes - 0) = rax;
+
+                return;
+            }
+
+            if (((uint)bytes & 8) != 0)
+            {
+                *(ulong*)ptr = rax;
+                *(ulong*)(ptr + bytes - 8) = rax;
+                return;
+            }
+
+            if (((uint)bytes & 4) != 0)
+            {
+                *(uint*)ptr = (uint)rax;
+                *(uint*)(ptr + bytes - 4) = (uint)rax;
+                return;
+            }
+
+            if (((uint)bytes & 2) != 0)
+            {
+                *(ushort*)ptr = (ushort)rax;
+                *(ushort*)(ptr + bytes - 2) = (ushort)rax;
+                return;
+            }
+
+            *ptr = (byte)rax;
+        }
+
+        [SkipLocalsInit, MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void _impl_clear1k(byte* ptr, ulong bytes)
+        {
+            ulong r8 = 0;
+            Fill((ulong*)ptr, bytes >> 3, r8);
         }
     }
 }

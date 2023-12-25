@@ -205,5 +205,95 @@ namespace SuperComicLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int FLS64(this ulong value) => Popcnt64(SetUnderbits64(value));
         #endregion
+
+        #region broadcast
+        /// <summary>
+        /// Broadcasts an <see langword="byte"/> value to an <see langword="uint"/>.
+        /// </summary>
+        /// <remarks>
+        /// Takes an 8-bit <see langword="byte"/> value and duplicates it into each 8-bit segment of a 32-bit <see langword="uint"/>.<br/>
+        /// The resulting 32-bit number consists of the original 8-bit value repeated 4-times.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint BroadcastToUint32(this byte value)
+        {
+            // movzx eax, cl
+            // imul eax, eax, 01010101h
+            return value * 0x0101_0101u; 
+        }
+
+        /// <summary>
+        /// Broadcasts an <see langword="ushort"/> value to an <see langword="uint"/>.
+        /// </summary>
+        /// <remarks>
+        /// Takes an 16-bit <see langword="ushort"/> value and duplicates it into each 16-bit segment of a 32-bit <see langword="uint"/>.<br/>
+        /// The resulting 32-bit number consists of the original 16-bit value repeated 2-times.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint BroadcastToUint32(this ushort value)
+        {
+            // movzx eax, cx
+            // sal ecx, 16
+            // add eax, ecx
+            uint eax = value;
+            return ((uint)value << 16) | eax;
+        }
+
+        /// <summary>
+        /// Broadcasts an <see langword="byte"/> value to an <see langword="ulong"/>.
+        /// </summary>
+        /// <remarks>
+        /// Takes an 8-bit <see langword="byte"/> value and duplicates it into each 8-bit segment of a 64-bit <see langword="ulong"/>.<br/>
+        /// The resulting 64-bit number consists of the original 8-bit value repeated 8-times. 
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong BroadcastToUint64(this byte value)
+        {
+            // movabs rdx, 0101010101010101h
+            // movzx eax, cl
+            // imul rax, rdx
+            uint eax = value;
+            return eax * 0x01010101_01010101ul;
+        }
+
+        /// <summary>
+        /// Broadcasts an <see langword="ushort"/> value to an <see langword="ulong"/>.
+        /// </summary>
+        /// <remarks>
+        /// Takes an 16-bit <see langword="ushort"/> value and duplicates it into each 16-bit segment of a 64-bit <see langword="ulong"/>.<br/>
+        /// The resulting 64-bit number consists of the original 16-bit value repeated 4-times. 
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong BroadcastToUint64(this ushort value)
+        {
+            // movzx ecx, cx
+            // mov rax, rcx
+            // sal rax, 16
+            // add rax, rcx
+            // mov rdx, rax
+            // sal rdx, 32
+            // add rax, rdx
+            ulong rax = value;
+            rax = (rax << 16) + rax;
+            return (rax << 32) + rax;
+        }
+
+        /// <summary>
+        /// Broadcasts an <see langword="uint"/> value to an <see langword="ulong"/>.
+        /// </summary>
+        /// <remarks>
+        /// Takes an 32-bit <see langword="uint"/> value and duplicates it into each 32-bit segment of a 64-bit <see langword="ulong"/>.<br/>
+        /// The resulting 64-bit number consists of the original 32-bit value repeated 2-times. 
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong BroadcastToUint64(this uint value)
+        {
+            // mov eax, ecx
+            // sal rcx, 32
+            // add rax, rcx
+            ulong rax = value;
+            return (rax << 32) + rax;
+        }
+        #endregion
     }
 }

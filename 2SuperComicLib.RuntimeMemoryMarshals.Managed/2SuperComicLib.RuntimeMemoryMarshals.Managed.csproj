@@ -43,6 +43,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -81,6 +82,7 @@
     <Compile Include="src\__scl\memblk\MemoryBlock.Clear.cs" />
     <Compile Include="src\__scl\memblk\MemoryBlock.Basic.cs" />
     <Compile Include="src\__scl\memblk\MemoryBlock.Fill.cs" />
+    <Compile Include="src\attributes\SkipLocalsInitAttribute.cs" />
     <Compile Include="src\__scl\NativeConstSpan.cs" />
     <Compile Include="src\__scl\NativeSpan.cs" />
     <Compile Include="src\semiManaged\stringref.cs" />
