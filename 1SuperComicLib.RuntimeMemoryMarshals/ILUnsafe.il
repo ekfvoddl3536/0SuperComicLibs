@@ -596,8 +596,8 @@
 
 		ldarg.0
 		ldarg.1
-		conv.i
 		sizeof !!0
+		conv.i
 		mul
 		add
 		ret
@@ -609,8 +609,8 @@
 
 		ldarg.0
 		ldarg.1
-		conv.i
 		sizeof !!0
+		conv.i
 		mul
 		add
 		ldarg.2
@@ -624,8 +624,8 @@
 
 		ldarg.0
 		ldarg.1
-		conv.i
 		sizeof !!1
+		conv.i
 		mul
 		add
 		ret
@@ -637,8 +637,51 @@
 
 		ldarg.0
 		ldarg.1
-		conv.i
 		sizeof !!1
+		conv.i
+		mul
+		add
+		ldarg.2
+		add
+		ret
+	}
+
+	.method public hidebysig static !!T&  Add<T>(!!T& source, uint64 offset) cil managed aggressiveinlining
+	{
+		.maxstack 3
+
+		ldarg.0
+		ldarg.1
+		sizeof !!0
+		conv.i
+		mul
+		add
+		ret
+	}
+
+	.method public hidebysig static !!T&  Add<T>(!!T& source, uint64 offset, int32 displacement) cil managed aggressiveinlining
+	{
+		.maxstack 3
+
+		ldarg.0
+		ldarg.1
+		sizeof !!0
+		conv.i
+		mul
+		add
+		ldarg.2
+		add
+		ret
+	}
+
+	.method public hidebysig static !!T&  Add<T>(!!T& source, int64 offset, int32 displacement) cil managed aggressiveinlining
+	{
+		.maxstack 3
+
+		ldarg.0
+		ldarg.1
+		sizeof !!0
+		conv.i
 		mul
 		add
 		ldarg.2
@@ -654,8 +697,8 @@
 
 		ldarg.0
 		ldarg.1
-		conv.i
 		sizeof !!0
+		conv.i
 		mul
 		sub
 		ret
@@ -667,8 +710,8 @@
 
 		ldarg.0
 		ldarg.1
-		conv.i
 		sizeof !!1
+		conv.i
 		mul
 		sub
 		ret

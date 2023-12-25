@@ -29,27 +29,23 @@ namespace SuperComicLib
 {
     unsafe partial class MemoryBlock
     {
-        // optimize target = .NET Framework X64 RyuJIT CoreCLR runtime
+        // optimize target = .NET Framework X64 RyuJIT CoreCLR runtime<br/>
         // ref.: https://source.dot.net/#System.Private.CoreLib/src/libraries/System.Private.CoreLib/src/System/SpanHelpers.T.cs,22fac8ad1f92d5ab,references
         // benchmark results: https://docs.google.com/spreadsheets/d/1EcfnCxDA7ffUkDjn0_N07Ql6xCMpCxQejKQlNnLKRHE
         [SkipLocalsInit]
-        public static void Fill<T>(T* ptr, ulong length, in T value) where T : unmanaged
+        public static void Fill<T>(T* ptr, ulong elementLength, in T value) where T : unmanaged
         {
             const int VECTOR_SIZE = sizeof(long) * 16;
-
-            // global local variables
-            T tmp;
-            ulong i;
 
             if (sizeof(T) > VECTOR_SIZE) goto CannotVectorize;
             if ((sizeof(T) & (sizeof(T) - 1)) != 0) goto CannotVectorize;
 
+            ulong i;
             if (sizeof(T) < sizeof(m128i))
             {
-                if (length >= (uint)(4 * sizeof(m128i) / sizeof(T)))
+                if (elementLength >= (uint)(4 * sizeof(m128i) / sizeof(T)))
                 {
-                    m128i xmmTemp;
-                    ulong* pXmmTemp = (ulong*)&xmmTemp;
+                    Range64 xmmTemp;
 
                     // broadcast
                     i = sizeof(T) == sizeof(byte)
@@ -60,9 +56,10 @@ namespace SuperComicLib
                         ? ILUnsafe.ReadOnlyAs<T, uint>(in value).BroadcastToUint64()
                         : ILUnsafe.ReadOnlyAs<T, ulong>(in value);
 
-                    pXmmTemp[1] = pXmmTemp[0] = i;
+                    xmmTemp.start = (long)i;
+                    xmmTemp.end = (long)i;
 
-                    Fill_XMM1cVectorize_GR((byte*)ptr, length * (ulong)sizeof(T), ref xmmTemp);
+                    Fill_XMM1cVectorize_GR((byte*)ptr, elementLength * (ulong)sizeof(T), ref ILUnsafe.As<Range64, m128i>(ref xmmTemp));
                 }
                 else
                     goto CannotVectorize;
@@ -71,33 +68,33 @@ namespace SuperComicLib
             }
             else if (sizeof(T) == sizeof(m128i))
             {
-                Fill_XMM1cVectorize_SSE((byte*)ptr, length, ref ILUnsafe.AsRef<T, m128i>(in value));
+                Fill_XMM1cVectorize_SSE((byte*)ptr, elementLength, ref ILUnsafe.AsRef<T, m128i>(in value));
                 return;
             }
             else if (sizeof(T) == sizeof(m128i) * 2)
             {
-                Fill_XMM2cVectorize((byte*)ptr, length, ref ILUnsafe.AsRef<T, m128i>(in value));
+                Fill_XMM2cVectorize((byte*)ptr, elementLength, ref ILUnsafe.AsRef<T, m128i>(in value));
                 return;
             }
             else if (sizeof(T) == sizeof(m128i) * 4)
             {
-                Fill_XMM4cVectorize((byte*)ptr, length, ref ILUnsafe.AsRef<T, m128i>(in value));
+                Fill_XMM4cVectorize((byte*)ptr, elementLength, ref ILUnsafe.AsRef<T, m128i>(in value));
                 return;
             }
             else if (sizeof(T) == sizeof(m128i) * 8)
             {
-                Fill_XMM8cVectorize((byte*)ptr, length, ref ILUnsafe.AsRef<T, m128i>(in value));
+                Fill_XMM8cVectorize((byte*)ptr, elementLength, ref ILUnsafe.AsRef<T, m128i>(in value));
                 return;
             }
 
         CannotVectorize:
             // setup
-            tmp = value;
             i = 0;
+            T tmp = value;
 
-            if (length >= 8)
+            if (elementLength >= 8)
             {
-                ulong end = length & ~7ul;
+                ulong end = elementLength & ~7ul;
                 do
                 {
                     ptr[i + 0] = tmp; ptr[i + 1] = tmp;
@@ -107,7 +104,7 @@ namespace SuperComicLib
                 } while ((i += 8) < end);
             }
 
-            if (((uint)length & 4) != 0)
+            if (((uint)elementLength & 4) != 0)
             {
                 ptr[i + 0] = tmp; ptr[i + 1] = tmp;
                 ptr[i + 2] = tmp; ptr[i + 3] = tmp;
@@ -115,14 +112,14 @@ namespace SuperComicLib
                 i += 4;
             }
 
-            if (((uint)length & 2) != 0)
+            if (((uint)elementLength & 2) != 0)
             {
                 ptr[i + 0] = tmp; ptr[i + 1] = tmp;
 
                 i += 2;
             }
             
-            if (((uint)length & 1) != 0)
+            if (((uint)elementLength & 1) != 0)
                 ptr[i] = tmp;
         }
 
