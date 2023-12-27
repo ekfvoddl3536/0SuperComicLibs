@@ -22,6 +22,8 @@
 // SOFTWARE.
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Security;
 using SuperComicLib.CodeContracts;
@@ -89,6 +91,113 @@ namespace SuperComicLib
             ulong sz = (uint)source.Length * (uint)sizeof(T);
             fixed (T* pdst = &destination[0])
                 Buffer.MemoryCopy(source._source, pdst, sz, sz);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static NativeConstSpan<T> AsReadOnly<T>(this NativeSpan<T> source) where T : unmanaged => new NativeConstSpan<T>(source.Source, source.Length);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool SequenceEqual<T>(this NativeSpan<T> left, NativeConstSpan<T> right) where T : unmanaged, IEquatable<T> =>
+            SequenceEqual(left.AsReadOnly(), right);
+
+        public static bool SequenceEqual<T>(this NativeConstSpan<T> left, NativeConstSpan<T> right) where T : unmanaged, IEquatable<T>
+        {
+            if (left.Length != right.Length)
+                return false;
+
+            if (left._source == right._source)
+                return true;
+
+            T* pleft = left._source;
+            T* pright = right._source;
+
+            long length = left.Length;
+            for (long i = 0; i < length; ++i)
+                if (!pleft[i].Equals(pright[i]))
+                    return false;
+
+            return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool SequenceEqual<T>(this NativeSpan<T> left, NativeConstSpan<T> right, IEqualityComparer<T> comparer) where T : unmanaged =>
+            SequenceEqual(left.AsReadOnly(), right, comparer);
+
+        public static bool SequenceEqual<T>(this NativeConstSpan<T> left, NativeConstSpan<T> right, IEqualityComparer<T> comparer) where T : unmanaged
+        {
+            if (left.Length != right.Length)
+                return false;
+
+            if (left._source == right._source)
+                return true;
+
+            if (comparer == null)
+                comparer = EqualityComparer<T>.Default;
+
+            T* pleft = left._source;
+            T* pright = right._source;
+
+            long length = left.Length;
+            for (long i = 0; i < length; ++i)
+                if (!comparer.Equals(pleft[i], pright[i]))
+                    return false;
+
+            return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int SequenceCompareTo<T>(this NativeSpan<T> left, NativeConstSpan<T> right) where T : unmanaged, IComparable<T> =>
+            SequenceCompareTo(left.AsReadOnly(), right);
+
+        public static int SequenceCompareTo<T>(NativeConstSpan<T> left, NativeConstSpan<T> right) where T : unmanaged, IComparable<T>
+        {
+            if (CMath.CXOR((long)left._source, (long)right._source, left.Length, right.Length) == 0)
+                return 0;
+
+            T* pleft = left._source;
+            T* pright = right._source;
+
+            long length = left.Length;
+            long offset = 0;
+
+            int cmp;
+            for (; offset < (length & ~3L); offset += 4)
+            {
+                cmp =
+                    pleft[offset + 0].CompareTo(pright[offset + 0]) |
+                    pleft[offset + 1].CompareTo(pright[offset + 1]) |
+                    pleft[offset + 2].CompareTo(pright[offset + 2]) |
+                    pleft[offset + 3].CompareTo(pright[offset + 3]);
+
+                if (cmp != 0) 
+                    return cmp;
+            }
+
+            for (; offset < length; ++offset)
+            {
+                cmp = pright[offset].CompareTo(pright[offset]);
+                if (cmp != 0)
+                    return cmp;
+            }
+
+            return 0;
+        }
+
+        public static void Reverse<T>(this NativeSpan<T> span) where T : unmanaged
+        {
+            if (span.Length <= 1)
+                return;
+
+            T* fp = span.Source;
+            T* lp = fp + span.Length - 1;
+
+            long half = span.Length >> 1;
+            for (long i = 0; i < half; ++i)
+            {
+                T tmp = lp[-i];
+                lp[-i] = fp[i];
+                fp[i] = tmp;
+            }
         }
     }
 }

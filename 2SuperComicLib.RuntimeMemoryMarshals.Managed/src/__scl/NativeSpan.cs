@@ -33,7 +33,7 @@ namespace SuperComicLib
     [DebuggerTypeProxy(typeof(NativeSpanElementDebugView<>))]
     [DebuggerDisplay("{Length}")]
     [StructLayout(LayoutKind.Sequential)]
-    public readonly unsafe ref struct NativeSpan<T> where T : unmanaged
+    public readonly unsafe ref partial struct NativeSpan<T> where T : unmanaged
     {
         public readonly T* Source;
         public readonly long Length;
@@ -191,17 +191,6 @@ namespace SuperComicLib
         {
             ArgValidateHelper.ThrowIfIndexOutOfRange(index, Length);
             return ref *(TTo*)(Source + index);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining), AssumeInputsValid]
-        public void setFrom<TFrom>([ValidRange] long index, TFrom value) where TFrom : unmanaged =>
-            *(TFrom*)(Source + index) = value;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void setFrom_at<TFrom>(long index, TFrom value) where TFrom : unmanaged
-        {
-            ArgValidateHelper.ThrowIfIndexOutOfRange(index, Length);
-            *(TFrom*)(Source + index) = value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

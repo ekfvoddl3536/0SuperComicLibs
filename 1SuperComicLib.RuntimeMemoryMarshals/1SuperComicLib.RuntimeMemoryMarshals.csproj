@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArrayUnsafeGetElementReferenceExtension.cs" />
+    <Compile Include="crefpoint.cs" />
     <Compile Include="refpoint.cs" />
     <Compile Include="ILUnsafe.cs" />
     <Compile Include="nint_t.cs" />
@@ -63,6 +64,7 @@
   <ItemGroup>
     <None Include=".editorconfig" />
     <None Include="1SuperComicLib.RuntimeMemoryMarshals.il" />
+    <None Include="crefpoint.il" />
     <None Include="refpoint.il" />
     <None Include="ILUnsafe.il" />
     <None Include="ArrayUnsafeGetElementReferenceExtension.il" />

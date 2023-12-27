@@ -25,6 +25,7 @@
 #pragma warning disable CS1591
 
 using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -182,22 +183,25 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         #endregion
 
         /// <summary>
-        /// <c>(<see langword="byte"/>*)(<see langword="ref this"/>) - (<see langword="byte"/>*)(<see langword="ref"/> <paramref name="right"/>)</c>
+        /// <c>(<see langword="byte"/>*)(<see langword="ref this"/>) - (<see langword="byte"/>*)(<see langword="ref"/> <paramref name="other"/>)</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public long byteOffset(ref refpoint<T> right) => throw new PlatformNotSupportedException();
+        public long byteOffset(ref refpoint<T> other) => throw new PlatformNotSupportedException();
 
         /// <summary>
-        /// <c>(<typeparamref name="T"/>*)(<see langword="ref this"/>) - (<typeparamref name="T"/>*)(<see langword="ref"/> <paramref name="right"/>)</c>
+        /// <c>(<typeparamref name="T"/>*)(<see langword="ref this"/>) - (<typeparamref name="T"/>*)(<see langword="ref"/> <paramref name="other"/>)</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public long elementOffset(ref refpoint<T> right) => throw new PlatformNotSupportedException();
+        public long elementOffset(ref refpoint<T> other) => throw new PlatformNotSupportedException();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref readonly crefpoint<T> AsReadOnly() => throw new PlatformNotSupportedException();
 
         public override int GetHashCode() => throw new PlatformNotSupportedException();
         public override bool Equals(object obj) => throw new PlatformNotSupportedException();
         public override string ToString() => throw new PlatformNotSupportedException();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining), EditorBrowsable(EditorBrowsableState.Never)]
         public ref T GetPinnableReference() => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using SuperComicLib;
 using SuperComicLib.RuntimeMemoryMarshals; /* Add to 'using' */
 
 namespace ExampleProject

@@ -26,8 +26,8 @@ namespace ExampleProject
 
             NativeSpan<byte> span = buffer.GetDataReferenceAsSpan();
 
-            span.setFrom<long>(0, 10);
-            span.setFrom<double>(8, 330);
+            span.getAs<long>(0) = 10;
+            span.getAs<double>(8) = 330;
 
             //  Useful when a large amount of data needs to be assigned to the same type.
             NativeSpan<int> intspan = span.Slice(16, 1024).Cast<int>();
