@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Runtime.CompilerServices;
 
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
@@ -32,29 +31,11 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     /// ref.: https://stackoverflow.com/questions/721161/how-to-detect-which-net-runtime-is-being-used-ms-vs-mono
     public static unsafe class JITPlatformEnvironment
     {
-        private static int _isRunningOnMono;
-
         /// <summary>
         /// Gets whether the running on MonoRuntime.
-        /// <br/>
-        /// The result of this method is cached and returns the same result value until the cache is forcibly cleared.
         /// </summary>
-        public static bool IsRunningOnMono
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                if (_isRunningOnMono == 0)
-                    _isRunningOnMono = ILUnsafe.ConvI4(Type.GetType("Mono.Runtime") != null) + 1;
+        public readonly static bool IsRunningOnMono = Init();
 
-                return _isRunningOnMono > 1;
-            }
-        }
-
-        /// <summary>
-        /// Discard all cached data.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void DiscardCache() => _isRunningOnMono = 0;
+        private static bool Init() => Type.GetType("Mono.Runtime") != null;
     }
 }

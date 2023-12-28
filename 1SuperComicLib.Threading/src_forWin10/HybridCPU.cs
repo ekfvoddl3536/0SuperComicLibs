@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace SuperComicLib.Threading
@@ -28,49 +29,15 @@ namespace SuperComicLib.Threading
     using static HybridCPU_NativeMethods;
     public unsafe static class HybridCPU
     {
-        internal static ProcessorCountEx procInfo;
-        internal static int headLittleCores;
+        internal readonly static ProcessorCountEx procInfo = GetProcInfo();
 
-        public static bool IsHybridProcessor
+        private static ProcessorCountEx GetProcInfo()
         {
-            get
-            {
-                ref ProcessorCountEx _pinfo = ref procInfo;
-                if ((_pinfo.littleCores | _pinfo.bigCores) == 0)
-                    GetProcessorCount(ref _pinfo);
-
-                return _pinfo.bigCores > 0 && _pinfo.littleCores > 0;
-            }
-        }
-
-        public static ProcessorCountEx ProcessorCount
-        {
-            get
-            {
-                ref ProcessorCountEx _pinfo = ref procInfo;
-                if ((_pinfo.littleCores | _pinfo.bigCores) == 0)
-                    GetProcessorCount(ref _pinfo);
-
-                return _pinfo;
-            }
-        }
-
-        /// <summary>
-        /// <paramref name="mode"/> 값에 따른 유효 논리 프로세서 개수를 가져옵니다.
-        /// </summary>
-        /// <param name="mode">사용자 지정 <see cref="Preference"/> 열거형 값 입니다.</param>
-        public static int EffectiveProcessorCount(Preference mode)
-        {
-            ref ProcessorCountEx _pinfo = ref procInfo;
-            if ((_pinfo.littleCores | _pinfo.bigCores) == 0)
-                GetProcessorCount(ref _pinfo);
-
-            return _pinfo.EffectiveCount(mode);
-        }
-
-        private static void GetProcessorCount(ref ProcessorCountEx result)
-        {
-            if (IsValidateOS() == false)
+            var os = Environment.OSVersion;
+            // runtime is x64
+            // IntPtr.Size >= sizeof(long) &&
+            // Windows 10 이상
+            if (os.Platform != PlatformID.Win32NT || os.Version.Major < 10)
                 goto f_exit;
 
             int* cores = stackalloc int[2];
@@ -93,26 +60,37 @@ namespace SuperComicLib.Threading
             // 0번째 cpu의 SystemCPUSetInfo->efficiencyClass가 0(효율 코어)인 경우
             // 리틀 코어가 빅 코어보다 앞에 위치함 (ARM big.LITTLE 구조)
             if (*(pbuf + 18) == 0)
-                headLittleCores = 1;
+                cores[0] |= int.MinValue;
 
             Marshal.FreeHGlobal((IntPtr)pbuf);
 
-            result = new ProcessorCountEx(cores[0], cores[1]);
-            return;
+            return new ProcessorCountEx(cores[0], cores[1]);
 
         f_exit:
-            result = new ProcessorCountEx(0, Environment.ProcessorCount);
+            return new ProcessorCountEx(0, Environment.ProcessorCount);
         }
 
-        private static bool IsValidateOS()
+        public static bool IsHybridProcessor
         {
-            var os = Environment.OSVersion;
-            return
-                // runtime is x64
-                // IntPtr.Size >= sizeof(long) &&
-                // Windows 10 이상
-                os.Platform == PlatformID.Win32NT &&
-                os.Version.Major >= 10;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                ref readonly ProcessorCountEx _pinfo = ref procInfo;
+                return _pinfo.BigCores > 0 && _pinfo.LittleCores > 0;
+            }
         }
+
+        public static ref readonly ProcessorCountEx ProcessorCount
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ref procInfo;
+        }
+
+        /// <summary>
+        /// <paramref name="mode"/> 값에 따른 유효 논리 프로세서 개수를 가져옵니다.
+        /// </summary>
+        /// <param name="mode">사용자 지정 <see cref="Preference"/> 열거형 값 입니다.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int EffectiveProcessorCount(Preference mode) => procInfo.EffectiveCount(mode);
     }
 }

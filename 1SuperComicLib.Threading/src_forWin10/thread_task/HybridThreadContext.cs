@@ -60,14 +60,14 @@ namespace SuperComicLib.Threading
         #region help static methods
         internal static UIntPtr GetMask(Preference mode)
         {
-            var c = HybridCPU.ProcessorCount;
+            ref readonly var c = ref HybridCPU.ProcessorCount;
             switch (mode)
             {
                 case Preference.BigCores:
-                    return (UIntPtr)(Mask(c.bigCores) << (c.littleCores * HybridCPU.headLittleCores));
+                    return (UIntPtr)(Mask(c.BigCores) << c.AbsoluteLittleCoreIndex());
 
                 case Preference.LittleCores:
-                    return (UIntPtr)(Mask(c.littleCores) << (c.bigCores * (HybridCPU.headLittleCores ^ 1)));
+                    return (UIntPtr)(Mask(c.LittleCores) << c.AbsoluteBigCoreIndex());
 
                 default:
                     return (UIntPtr)Mask(Environment.ProcessorCount);
@@ -92,20 +92,14 @@ namespace SuperComicLib.Threading
         /// </summary>
         public static unsafe void SetCurrentThreadPreferenceW64(Preference mode)
         {
-            ProcessorCountEx cpu = HybridCPU.ProcessorCount;
+            ref readonly var cpu = ref HybridCPU.ProcessorCount;
 
-            switch (HybridCPU.headLittleCores)
-            {
+            if (cpu.IsLittleCoresBeforeBigCores)
                 // littleCore head
-                case 1:
-                    __SetGroupAffinity(cpu.bigCores, cpu.littleCores, ((uint)mode >> 1) ^ 1, (uint)mode ^ 1);
-                    break;
-
+                __SetGroupAffinity(cpu.BigCores, cpu.LittleCores, ((uint)mode >> 1) ^ 1, (uint)mode ^ 1);
+            else
                 // bigCore head
-                default:
-                    __SetGroupAffinity(cpu.littleCores, cpu.bigCores, (uint)mode ^ 1, ((uint)mode >> 1) ^ 1);
-                    break;
-            }
+                __SetGroupAffinity(cpu.LittleCores, cpu.BigCores, (uint)mode ^ 1, ((uint)mode >> 1) ^ 1);
         }
 
         /// <summary>

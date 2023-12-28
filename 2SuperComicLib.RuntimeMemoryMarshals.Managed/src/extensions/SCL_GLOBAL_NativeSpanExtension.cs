@@ -94,7 +94,7 @@ namespace SuperComicLib
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NativeConstSpan<T> AsReadOnly<T>(this NativeSpan<T> source) where T : unmanaged => new NativeConstSpan<T>(source.Source, source.Length);
+        public static NativeConstSpan<T> AsReadOnly<T>(this in NativeSpan<T> source) where T : unmanaged => new NativeConstSpan<T>(source.Source, source.Length);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool SequenceEqual<T>(this NativeSpan<T> left, NativeConstSpan<T> right) where T : unmanaged, IEquatable<T> =>

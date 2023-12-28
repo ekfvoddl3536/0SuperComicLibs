@@ -379,9 +379,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         void ICollection<T>.Add(T item) => throw new NotSupportedException(Arrayrefs.ERROR_FIXEDSIZECOLLECTION);
         bool ICollection<T>.Remove(T item) => throw new NotSupportedException(Arrayrefs.ERROR_FIXEDSIZECOLLECTION);
         void ICollection<T>.Clear() => throw new NotSupportedException(Arrayrefs.ERROR_FIXEDSIZECOLLECTION);
-        #endregion
 
-        #region IStructuralComparable, IClone
         int IStructuralComparable.CompareTo(object other, IComparer comparer)
         {
             if (other == null)
