@@ -299,13 +299,13 @@ namespace SuperComicLib.RuntimeMemoryMarshals
 
         #region Group 4. (CUSTOM, +refpoint<>)
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref refpoint<T> AsRefpoint<T>(void* source) => throw new PlatformNotSupportedException();
+        public static ref Refpoint<T> AsRefpoint<T>(void* source) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref refpoint<T> AsRefpoint<T>(ref T source) => throw new PlatformNotSupportedException();
+        public static ref Refpoint<T> AsRefpoint<T>(ref T source) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref refpoint<TTo> AsRefpoint<TFrom, TTo>(ref TFrom source) => throw new PlatformNotSupportedException();
+        public static ref Refpoint<TTo> AsRefpoint<TFrom, TTo>(ref TFrom source) => throw new PlatformNotSupportedException();
         #endregion
 
         #region Group 5. (EXTEND, +Add, +Subtract, +AsRef)

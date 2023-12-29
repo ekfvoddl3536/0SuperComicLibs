@@ -43,8 +43,8 @@
 	{
 		.maxstack 1
 		.locals (
-            [0] !!0
-        )
+			[0] !!0
+		)
 
 		ldarg.0
 		conv.i
@@ -57,12 +57,44 @@
 	{
 		.maxstack 1
 		.locals (
-			[0] !!0
+			// NOTE::
+			//		A variable that assists in producing code as concise as possible 
+			//		when data containing pointer operations is input.
+			//		
+			//		byte* SOURCE_VALUE = ...;
+			//		
+			//		[CASE 1 | (without 'int8&')]
+			//		x = (System.IntPtr)(SOURCE_VALUE)
+			//		(JIT) -->
+			//			mov rbx, rcx	; OK
+			//
+			//		[CASE 2 | (without 'int8&')]
+			//		y = (System.IntPtr)(SOURCE_VALUE + 8)
+			//		(JIT) -->
+			//			lea rax, [rcx+8]
+			//			mov rbx, rax
+			//			mov rax, rbx
+			//			mov rbx, rax	; What?
+			//
+			//		[CASE 3 | (with 'int8&')]
+			//		z = (System.IntPtr)(SOURCE_VALUE + 8)
+			//		(JIT) -->
+			//			lea rax, [rcx+8]
+			//			mov rbx, rax	; Okay, not bad. (best = 'lea rbx, [rcx+8]')
+			[0] int8&,
+			[1] !!0
 		)
 
+		// load 'native int' and store to 'int8&'
 		ldarg.0
 		stloc.0
+		
+		// load 'int8&' and store to '!!0'
 		ldloc.0
+		stloc.1
+
+		// load '!!0' and return
+		ldloc.1
 		ret
 	}
 
@@ -74,7 +106,7 @@
 		)
 
 		ldarg.0
-		conv.i
+		// Since '&' is treated as a managed pointer, 'conv.i' does not seem to be necessary.
 		stloc.0
 		ldloc.0
 		ret
@@ -558,7 +590,7 @@
 	// 
 	//				Group 4. (CUSTOM, +refpoint<>)
 	// 
-	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!T>&  AsRefpoint<T>(void* source) cil managed aggressiveinlining
+	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.Refpoint`1<!!T>&  AsRefpoint<T>(void* source) cil managed aggressiveinlining
 	{
 		.maxstack 1
 
@@ -567,7 +599,7 @@
 		ret
 	}
 
-	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!T>&  AsRefpoint<T>(!!T& source) cil managed aggressiveinlining
+	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.Refpoint`1<!!T>&  AsRefpoint<T>(!!T& source) cil managed aggressiveinlining
 	{
 		.maxstack 1
 
@@ -575,7 +607,7 @@
 		ret
 	}
 
-	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!TTo>&  AsRefpoint<TFrom, TTo>(!!TFrom& source) cil managed aggressiveinlining
+	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.Refpoint`1<!!TTo>&  AsRefpoint<TFrom, TTo>(!!TFrom& source) cil managed aggressiveinlining
 	{
 		.maxstack 1
 

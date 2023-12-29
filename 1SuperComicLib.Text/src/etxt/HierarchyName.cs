@@ -20,11 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace SuperComicLib.eTxt
+namespace SuperComicLib.Text
 {
     [StructLayout(LayoutKind.Sequential)]
     public readonly ref struct HierarchyName

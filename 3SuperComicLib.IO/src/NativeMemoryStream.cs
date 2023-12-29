@@ -167,15 +167,7 @@ namespace SuperComicLib.IO
             if (cancellationToken.IsCancellationRequested)
                 return Task.FromCanceled(cancellationToken);
 
-            try
-            {
-                Flush();
-                return Task.CompletedTask;
-            }
-            catch (Exception ex)
-            {
-                return Task.FromException(ex);
-            }
+            return Task.CompletedTask;
         }
 
         public virtual byte[] GetBuffer()

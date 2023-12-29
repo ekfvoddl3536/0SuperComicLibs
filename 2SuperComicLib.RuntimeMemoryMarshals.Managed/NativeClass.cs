@@ -83,7 +83,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Creates an initialized managed object in unmanaged memory.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
+        [MethodImpl(MethodImplOptions.NoInlining), MonoRuntimeNotSupported]
         public static NativeInstance<T> AllocZeroed<T>()
         {
             var type = typeof(T);
@@ -98,7 +98,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             ptr[0] = IntPtr.Zero;
             ptr[1] = tHnd;
 
-            ILUnsafe.InitBlockUnaligned(ptr + 2, 0, (uint)(tSz - (sizeof(long) << 1)));
+            MemoryBlock.Clear((byte*)(ptr + 2), (uint)(tSz - (sizeof(long) << 1)));
 
             return new NativeInstance<T>(ptr);
         }

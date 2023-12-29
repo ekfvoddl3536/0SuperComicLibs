@@ -214,7 +214,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public byte* GetDataPointer() => _pLength + sizeof(long);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref refpoint<byte> GetDataReference() => ref ILUnsafe.AsRefpoint<byte>(GetDataPointer());
+        public ref Refpoint<byte> GetDataReference() => ref ILUnsafe.AsRefpoint<byte>(GetDataPointer());
 
         /// <summary>
         /// Gets the data starting address of this array instance.

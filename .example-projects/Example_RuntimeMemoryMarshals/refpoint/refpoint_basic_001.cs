@@ -14,13 +14,13 @@ namespace ExampleProject
             ref int idx8value = ref sample.refdata(8);
 
             // Unlike ref int, a type that allows address operations like a pointer.
-            ref refpoint<int> idx7value = ref sample.refpoint(10);
+            ref Refpoint<int> idx7value = ref sample.refpoint(10);
 
             // WARNING: this should always be passed with the ref keyword.
             idx7value = ref idx7value.sub(3);
 
             // can be called sequentially.
-            ref refpoint<byte> cast14value = ref idx7value.add(7).cast<byte>();
+            ref Refpoint<byte> cast14value = ref idx7value.add(7).cast<byte>();
 
             // True
             bool isIndex7 = idx7value == cast14value.cast<int>().sub(7);

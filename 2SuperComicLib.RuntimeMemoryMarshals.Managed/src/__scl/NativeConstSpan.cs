@@ -33,7 +33,7 @@ namespace SuperComicLib
     [DebuggerTypeProxy(typeof(NativeSpanElementDebugView<>))]
     [DebuggerDisplay("{Length}")]
     [StructLayout(LayoutKind.Sequential)]
-    public readonly unsafe ref struct NativeConstSpan<T> where T : unmanaged
+    public readonly unsafe ref partial struct NativeConstSpan<T> where T : unmanaged
     {
         internal readonly T* _source;
         public readonly long Length;

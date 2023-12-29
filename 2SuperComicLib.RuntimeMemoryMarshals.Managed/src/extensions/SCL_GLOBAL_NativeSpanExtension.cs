@@ -158,24 +158,9 @@ namespace SuperComicLib
             T* pright = right._source;
 
             long length = left.Length;
-            long offset = 0;
-
-            int cmp;
-            for (; offset < (length & ~3L); offset += 4)
+            for (long i = 0; i < length; ++i)
             {
-                cmp =
-                    pleft[offset + 0].CompareTo(pright[offset + 0]) |
-                    pleft[offset + 1].CompareTo(pright[offset + 1]) |
-                    pleft[offset + 2].CompareTo(pright[offset + 2]) |
-                    pleft[offset + 3].CompareTo(pright[offset + 3]);
-
-                if (cmp != 0) 
-                    return cmp;
-            }
-
-            for (; offset < length; ++offset)
-            {
-                cmp = pright[offset].CompareTo(pright[offset]);
+                int cmp = pright[i].CompareTo(pright[i]);
                 if (cmp != 0)
                     return cmp;
             }

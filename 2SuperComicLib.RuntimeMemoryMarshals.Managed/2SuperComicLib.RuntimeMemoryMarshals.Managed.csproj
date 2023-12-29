@@ -58,6 +58,7 @@
     <Compile Include="src\extensions\NativeInstanceTStructExtension.cs" />
     <Compile Include="src\extensions\SCL_GLOBAL_SafeArrayrefExtension.cs" />
     <Compile Include="src\LowLevel\RuntimeTypedValueInfo.cs" />
+    <Compile Include="src\runtime\BitwiseComparer.cs" />
     <Compile Include="src\semiManaged\arrayref_enumerator\arrayref.enumerator.cs" />
     <Compile Include="src\semiManaged\arrayref_iterators\arrayref.const_iterator.cs" />
     <Compile Include="src\semiManaged\arrayref_iterators\arrayref.iterator.cs" />
@@ -72,7 +73,7 @@
     <Compile Include="src\semiManaged\arrayrefSegment.cs" />
     <Compile Include="src\semiManaged\SafeArrayref.cs" />
     <Compile Include="src\__dbg\SemiManagedArrayElementDebugView.cs" />
-    <Compile Include="src\math\CMathi.cs" />
+    <Compile Include="src\runtime\CMathi.cs" />
     <Compile Include="src\__dbg\NativeSpanElementDebugView.cs" />
     <Compile Include="src\__scl\ArgValidateHelper.cs" />
     <Compile Include="src\__scl\iters\const_iterator.cs" />
@@ -84,8 +85,10 @@
     <Compile Include="src\__scl\memblk\MemoryBlock.Fill.cs" />
     <Compile Include="src\attributes\SkipLocalsInitAttribute.cs" />
     <Compile Include="src\__scl\NativeConstSpan.cs" />
+    <Compile Include="src\__scl\NativeConstSpan.Enumerator.cs" />
     <Compile Include="src\__scl\NativeSpan.cs" />
     <Compile Include="src\semiManaged\stringref.cs" />
+    <Compile Include="src\__scl\NativeSpan.Enumerator.cs" />
     <Compile Include="src\__scl\NativeSpanHelper.cs" />
     <Compile Include="src\_dataClasses\ReadOnlyValueReference.cs" />
     <Compile Include="src\_dataClasses\ValueReference.cs" />
@@ -98,7 +101,7 @@
     <Compile Include="src\LowLevel\PubMethodTable.cs" />
     <Compile Include="src\semiManaged\arrayref.cs" />
     <Compile Include="src\attributes\MonoRuntimeNotSupportedAttribute.cs" />
-    <Compile Include="src\JITPlatformEnvironment.cs" />
+    <Compile Include="src\runtime\JITPlatformEnvironment.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\0SuperComicLib.Core\0SuperComicLib.Core.csproj">

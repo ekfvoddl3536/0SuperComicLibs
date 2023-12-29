@@ -23,7 +23,7 @@
 
 
 
-.class public sequential ansi sealed beforefieldinit SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<T>
+.class public sequential ansi sealed beforefieldinit SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<T>
     extends [mscorlib]System.ValueType
 {
     .custom instance void [mscorlib]System.Runtime.CompilerServices.IsByRefLikeAttribute::.ctor() = ( 01 00 00 00 )
@@ -69,7 +69,7 @@
         ret
     }
     
-    .method public hidebysig specialname instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>&  get_inc() cil managed aggressiveinlining
+    .method public hidebysig specialname instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>&  get_inc() cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -83,7 +83,7 @@
         ret
     }
     
-    .method public hidebysig specialname instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>&  get_dec() cil managed aggressiveinlining
+    .method public hidebysig specialname instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>&  get_dec() cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -97,7 +97,7 @@
         ret
     }
     
-    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!!U>&  cast<U>() cil managed aggressiveinlining
+    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!!U>&  cast<U>() cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -108,7 +108,7 @@
         ret
     }
     
-    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>&  'add'(int32 offset) cil managed aggressiveinlining
+    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>&  'add'(int32 offset) cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -124,7 +124,7 @@
         ret
     }
     
-    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>&  'sub'(int32 offset) cil managed aggressiveinlining
+    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>&  'sub'(int32 offset) cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -140,7 +140,7 @@
         ret
     }
     
-    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>&  'add'(uint32 offset) cil managed aggressiveinlining
+    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>&  'add'(uint32 offset) cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -156,7 +156,7 @@
         ret
     }
     
-    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>&  'sub'(uint32 offset) cil managed aggressiveinlining
+    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>&  'sub'(uint32 offset) cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -172,7 +172,7 @@
         ret
     }
     
-    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>&  'add'(int64 offset) cil managed aggressiveinlining
+    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>&  'add'(int64 offset) cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -188,7 +188,7 @@
         ret
     }
     
-    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>&  'sub'(int64 offset) cil managed aggressiveinlining
+    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>&  'sub'(int64 offset) cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -204,7 +204,7 @@
         ret
     }
     
-    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>&  'add'(uint64 offset) cil managed aggressiveinlining
+    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>&  'add'(uint64 offset) cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -220,7 +220,7 @@
         ret
     }
     
-    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>&  'sub'(uint64 offset) cil managed aggressiveinlining
+    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>&  'sub'(uint64 offset) cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -242,7 +242,7 @@
     //
     //				extend 'add'
     //
-    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>&  'add'(int64 offset, int32 displacement) cil managed aggressiveinlining
+    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>&  'add'(int64 offset, int32 displacement) cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -260,7 +260,7 @@
         ret
     }
 
-    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>&  'add'<TSize>(int64 offset) cil managed aggressiveinlining
+    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>&  'add'<TSize>(int64 offset) cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -276,7 +276,7 @@
         ret
     }
 
-    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>&  'add'<TSize>(int64 offset, int32 displacement) cil managed aggressiveinlining
+    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>&  'add'<TSize>(int64 offset, int32 displacement) cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -294,7 +294,7 @@
         ret
     }
 
-    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>&  'sub'<TSize>(int64 offset) cil managed aggressiveinlining
+    .method public hidebysig instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>&  'sub'<TSize>(int64 offset) cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -312,7 +312,7 @@
 
 
 
-    .method public hidebysig instance int64  byteOffset(valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& right) cil managed aggressiveinlining
+    .method public hidebysig instance int64  byteOffset(valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& right) cil managed aggressiveinlining
     {
         .param [1]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -326,7 +326,7 @@
         ret
     }
 
-    .method public hidebysig instance int64  elementOffset(valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& right) cil managed aggressiveinlining
+    .method public hidebysig instance int64  elementOffset(valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& right) cil managed aggressiveinlining
     {
         .param [1]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -407,7 +407,7 @@
         ret
     }
     
-    .method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>&  As(void* source) cil managed aggressiveinlining
+    .method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>&  As(void* source) cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -419,7 +419,7 @@
         ret
     }
 
-    .method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>&  As(!T& source) cil managed aggressiveinlining
+    .method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>&  As(!T& source) cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -433,7 +433,7 @@
         ret
     }
     
-    .method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!!U>&  As<U>(!T& source) cil managed aggressiveinlining
+    .method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!!U>&  As<U>(!T& source) cil managed aggressiveinlining
     {
         .param [0]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -448,8 +448,8 @@
     }
     
     .method public hidebysig specialname static bool  op_Equality(
-            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& left,
-            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& right) cil managed aggressiveinlining
+            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& left,
+            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& right) cil managed aggressiveinlining
     {
         .param [1]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -466,8 +466,8 @@
     }
     
     .method public hidebysig specialname static bool  op_Inequality(
-            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& left,
-            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& right) cil managed aggressiveinlining
+            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& left,
+            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& right) cil managed aggressiveinlining
     {
         .param [1]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -486,8 +486,8 @@
     }
     
     .method public hidebysig specialname static bool  op_LessThan(
-            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& left,
-            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& right) cil managed aggressiveinlining
+            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& left,
+            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& right) cil managed aggressiveinlining
     {
         .param [1]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -504,8 +504,8 @@
     }
     
     .method public hidebysig specialname static bool  op_GreaterThan(
-            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& left,
-            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& right) cil managed aggressiveinlining
+            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& left,
+            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& right) cil managed aggressiveinlining
     {
         .param [1]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -522,8 +522,8 @@
     }
     
     .method public hidebysig specialname static bool  op_LessThanOrEqual(
-            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& left,
-            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& right) cil managed aggressiveinlining
+            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& left,
+            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& right) cil managed aggressiveinlining
     {
         .param [1]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -542,8 +542,8 @@
     }
     
     .method public hidebysig specialname static bool  op_GreaterThanOrEqual(
-            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& left,
-            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& right) cil managed aggressiveinlining
+            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& left,
+            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& right) cil managed aggressiveinlining
     {
         .param [1]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -562,8 +562,8 @@
     }
 
     .method public hidebysig specialname static int64  op_Subtraction(
-            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& left,
-            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& right) cil managed aggressiveinlining
+            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& left,
+            [in] valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& right) cil managed aggressiveinlining
     {
         .param [1]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -582,7 +582,7 @@
         ret
     }
 
-    .method public hidebysig specialname static !T  op_UnaryPlus([in] valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& v) cil managed aggressiveinlining
+    .method public hidebysig specialname static !T  op_UnaryPlus([in] valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& v) cil managed aggressiveinlining
     {
         .param [1]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -596,36 +596,36 @@
     
     .property instance void* address()
     {
-        .get instance void* SuperComicLib.RuntimeMemoryMarshals.crefpoint`1::get_address()
+        .get instance void* SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1::get_address()
     }
 
     .property instance !T& 'value'()
     {
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
 
-        .get instance !T& SuperComicLib.RuntimeMemoryMarshals.crefpoint`1::get_value()
+        .get instance !T& SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1::get_value()
     }
 
     .property instance !T& Item(int64)
     {
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
 
-        .get instance !T& SuperComicLib.RuntimeMemoryMarshals.crefpoint`1::get_Item(int64)
+        .get instance !T& SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1::get_Item(int64)
     }
 
-    .property instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& inc()
+    .property instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& inc()
     {
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
         .custom instance void [mscorlib]System.Diagnostics.DebuggerBrowsableAttribute::.ctor(valuetype [mscorlib]System.Diagnostics.DebuggerBrowsableState) = ( 01 00 00 00 00 00 00 00 )
 
-        .get instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& SuperComicLib.RuntimeMemoryMarshals.crefpoint`1::get_inc()
+        .get instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1::get_inc()
     }
 
-    .property instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& dec()
+    .property instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& dec()
     {
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
         .custom instance void [mscorlib]System.Diagnostics.DebuggerBrowsableAttribute::.ctor(valuetype [mscorlib]System.Diagnostics.DebuggerBrowsableState) = ( 01 00 00 00 00 00 00 00 )
 
-        .get instance valuetype SuperComicLib.RuntimeMemoryMarshals.crefpoint`1<!T>& SuperComicLib.RuntimeMemoryMarshals.crefpoint`1::get_dec()
+        .get instance valuetype SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1<!T>& SuperComicLib.RuntimeMemoryMarshals.ReadOnlyRefpoint`1::get_dec()
     }
 }

@@ -49,7 +49,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     /// 또한, 포인터(*)를 사용하여 참조를 전달하는 것은 JIT가 참조를 추적할 수 없게 되므로, 절대로 권장하지 않습니다.
     /// </remarks>
     [StructLayout(LayoutKind.Sequential, Pack = 0, Size = 1)]
-    public readonly unsafe ref struct refpoint<T>
+    public readonly unsafe ref struct Refpoint<T>
     {
         /// <summary>
         /// <c>(<see langword="void"/>*)(<see langword="ref this"/>)</c>
@@ -87,7 +87,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <summary>
         /// <c>(<typeparamref name="T"/>*)(<see langword="ref this"/>) + 1</c>
         /// </summary>
-        public ref refpoint<T> inc
+        public ref Refpoint<T> inc
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => throw new PlatformNotSupportedException();
@@ -96,7 +96,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <summary>
         /// <c>(<typeparamref name="T"/>*)(<see langword="ref this"/>) - 1</c>
         /// </summary>
-        public ref refpoint<T> dec
+        public ref Refpoint<T> dec
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => throw new PlatformNotSupportedException();
@@ -106,51 +106,51 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <c>(<typeparamref name="U"/>*)(<see langword="ref this"/>)</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref refpoint<U> cast<U>() => throw new PlatformNotSupportedException();
+        public ref Refpoint<U> cast<U>() => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// <c>(<typeparamref name="T"/>*)(<see langword="ref this"/>) + <paramref name="offset"/></c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref refpoint<T> add(int offset) => throw new PlatformNotSupportedException();
+        public ref Refpoint<T> add(int offset) => throw new PlatformNotSupportedException();
         /// <summary>
         /// <c>(<typeparamref name="T"/>*)(<see langword="ref this"/>) - <paramref name="offset"/></c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref refpoint<T> sub(int offset) => throw new PlatformNotSupportedException();
+        public ref Refpoint<T> sub(int offset) => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// <c>(<typeparamref name="T"/>*)(<see langword="ref this"/>) + <paramref name="offset"/></c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref refpoint<T> add(uint offset) => throw new PlatformNotSupportedException();
+        public ref Refpoint<T> add(uint offset) => throw new PlatformNotSupportedException();
         /// <summary>
         /// <c>(<typeparamref name="T"/>*)(<see langword="ref this"/>) - <paramref name="offset"/></c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref refpoint<T> sub(uint offset) => throw new PlatformNotSupportedException();
+        public ref Refpoint<T> sub(uint offset) => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// <c>(<typeparamref name="T"/>*)(<see langword="ref this"/>) + <paramref name="offset"/></c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref refpoint<T> add(long offset) => throw new PlatformNotSupportedException();
+        public ref Refpoint<T> add(long offset) => throw new PlatformNotSupportedException();
         /// <summary>
         /// <c>(<typeparamref name="T"/>*)(<see langword="ref this"/>) - <paramref name="offset"/></c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref refpoint<T> sub(long offset) => throw new PlatformNotSupportedException();
+        public ref Refpoint<T> sub(long offset) => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// <c>(<typeparamref name="T"/>*)(<see langword="ref this"/>) + <paramref name="offset"/></c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref refpoint<T> add(ulong offset) => throw new PlatformNotSupportedException();
+        public ref Refpoint<T> add(ulong offset) => throw new PlatformNotSupportedException();
         /// <summary>
         /// <c>(<typeparamref name="T"/>*)(<see langword="ref this"/>) - <paramref name="offset"/></c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref refpoint<T> sub(ulong offset) => throw new PlatformNotSupportedException();
+        public ref Refpoint<T> sub(ulong offset) => throw new PlatformNotSupportedException();
 
         #region extend 'add', 'sub'
         /// <summary>
@@ -159,13 +159,13 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <c>LEA rax, [<see langword="this"/> + <paramref name="offset"/> * <see langword="sizeof"/>(<typeparamref name="T"/>) + <paramref name="displacement"/>]</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref refpoint<T> add(long offset, int displacement) => throw new PlatformNotSupportedException();
+        public ref Refpoint<T> add(long offset, int displacement) => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// <c>(<typeparamref name="TSize"/>*)(<see langword="ref this"/>) + <paramref name="offset"/></c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref refpoint<T> add<TSize>(long offset) => throw new PlatformNotSupportedException();
+        public ref Refpoint<T> add<TSize>(long offset) => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// <c>(<see langword="byte"/>*)((<typeparamref name="TSize"/>*)(<see langword="ref this"/>) + <paramref name="offset"/>) + <paramref name="displacement"/></c>
@@ -173,29 +173,29 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <c>LEA rax, [<see langword="this"/> + <paramref name="offset"/> * <see langword="sizeof"/>(<typeparamref name="TSize"/>) + <paramref name="displacement"/>]</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref refpoint<T> add<TSize>(long offset, int displacement) => throw new PlatformNotSupportedException();
+        public ref Refpoint<T> add<TSize>(long offset, int displacement) => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// <c>(<typeparamref name="TSize"/>*)(<see langword="ref this"/>) - <paramref name="offset"/></c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref refpoint<T> sub<TSize>(long offset) => throw new PlatformNotSupportedException();
+        public ref Refpoint<T> sub<TSize>(long offset) => throw new PlatformNotSupportedException();
         #endregion
 
         /// <summary>
         /// <c>(<see langword="byte"/>*)(<see langword="ref this"/>) - (<see langword="byte"/>*)(<see langword="ref"/> <paramref name="other"/>)</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public long byteOffset(ref refpoint<T> other) => throw new PlatformNotSupportedException();
+        public long byteOffset(ref Refpoint<T> other) => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// <c>(<typeparamref name="T"/>*)(<see langword="ref this"/>) - (<typeparamref name="T"/>*)(<see langword="ref"/> <paramref name="other"/>)</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public long elementOffset(ref refpoint<T> other) => throw new PlatformNotSupportedException();
+        public long elementOffset(ref Refpoint<T> other) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly crefpoint<T> AsReadOnly() => throw new PlatformNotSupportedException();
+        public ref readonly ReadOnlyRefpoint<T> AsReadOnly() => throw new PlatformNotSupportedException();
 
         public override int GetHashCode() => throw new PlatformNotSupportedException();
         public override bool Equals(object obj) => throw new PlatformNotSupportedException();
@@ -205,55 +205,55 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public ref T GetPinnableReference() => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref refpoint<T> As(void* source) => throw new PlatformNotSupportedException();
+        public static ref Refpoint<T> As(void* source) => throw new PlatformNotSupportedException();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref refpoint<T> As(ref T source) => throw new PlatformNotSupportedException();
+        public static ref Refpoint<T> As(ref T source) => throw new PlatformNotSupportedException();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref refpoint<U> As<U>(ref T source) => throw new PlatformNotSupportedException();
+        public static ref Refpoint<U> As<U>(ref T source) => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// <c>(<see langword="void"/>*)(<see langword="ref"/> <paramref name="left"/>) == (<see langword="void"/>*)(<see langword="ref"/> <paramref name="right"/>)</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(in refpoint<T> left, in refpoint<T> right) => throw new PlatformNotSupportedException();
+        public static bool operator ==(in Refpoint<T> left, in Refpoint<T> right) => throw new PlatformNotSupportedException();
         /// <summary>
         /// <c>(<see langword="void"/>*)(<see langword="ref"/> <paramref name="left"/>) &#33;= (<see langword="void"/>*)(<see langword="ref"/> <paramref name="right"/>)</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(in refpoint<T> left, in refpoint<T> right) => throw new PlatformNotSupportedException();
+        public static bool operator !=(in Refpoint<T> left, in Refpoint<T> right) => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// <c>(<see langword="void"/>*)(<see langword="ref"/> <paramref name="left"/>) &lt; (<see langword="void"/>*)(<see langword="ref"/> <paramref name="right"/>)</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <(in refpoint<T> left, in refpoint<T> right) => throw new PlatformNotSupportedException();
+        public static bool operator <(in Refpoint<T> left, in Refpoint<T> right) => throw new PlatformNotSupportedException();
         /// <summary>
         /// <c>(<see langword="void"/>*)(<see langword="ref"/> <paramref name="left"/>) &gt; (<see langword="void"/>*)(<see langword="ref"/> <paramref name="right"/>)</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >(in refpoint<T> left, in refpoint<T> right) => throw new PlatformNotSupportedException();
+        public static bool operator >(in Refpoint<T> left, in Refpoint<T> right) => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// <c>(<see langword="void"/>*)(<see langword="ref"/> <paramref name="left"/>) &lt;= (<see langword="void"/>*)(<see langword="ref"/> <paramref name="right"/>)</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <=(in refpoint<T> left, in refpoint<T> right) => throw new PlatformNotSupportedException();
+        public static bool operator <=(in Refpoint<T> left, in Refpoint<T> right) => throw new PlatformNotSupportedException();
         /// <summary>
         /// <c>(<see langword="void"/>*)(<see langword="ref"/> <paramref name="left"/>) &gt;= (<see langword="void"/>*)(<see langword="ref"/> <paramref name="right"/>)</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >=(in refpoint<T> left, in refpoint<T> right) => throw new PlatformNotSupportedException();
+        public static bool operator >=(in Refpoint<T> left, in Refpoint<T> right) => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// <c>(<typeparamref name="T"/>*)(<see langword="ref"/> <paramref name="left"/>) - (<typeparamref name="T"/>*)(<see langword="ref"/> <paramref name="right"/>)</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static long operator -(in refpoint<T> left, in refpoint<T> right) => throw new PlatformNotSupportedException();
+        public static long operator -(in Refpoint<T> left, in Refpoint<T> right) => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// *(<typeparamref name="T"/>*)(<see langword="ref"/> <paramref name="v"/>)
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T operator +(in refpoint<T> v) => throw new PlatformNotSupportedException();
+        public static T operator +(in Refpoint<T> v) => throw new PlatformNotSupportedException();
     }
 }

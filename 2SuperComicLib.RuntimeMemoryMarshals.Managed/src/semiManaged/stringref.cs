@@ -22,6 +22,8 @@
 // SOFTWARE.
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -30,7 +32,7 @@ using SuperComicLib.CodeContracts;
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
     [StructLayout(LayoutKind.Sequential), MonoRuntimeNotSupported]
-    public readonly unsafe struct stringref : IEquatable<stringref>, IDisposable
+    public readonly unsafe struct stringref : IEnumerable<char>, IEquatable<stringref>, IDisposable
     {
         internal readonly byte* _Ptr;
 
@@ -279,6 +281,11 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public bool Equals(stringref other) => this == other;
         #endregion
 
+        #region enumerable
+        public IEnumerator<char> GetEnumerator() => new Enumerator(this);
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        #endregion
+
         #region override
         public override bool Equals(object obj) => obj is stringref other1 && this == other1;
         public override int GetHashCode() => ToString().GetHashCode();
@@ -367,6 +374,33 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         {
             if (value._Ptr == null)
                 throw new NullReferenceException(nameof(stringref));
+        }
+        #endregion
+
+        #region nested struct (enumerator)
+        public struct Enumerator : IEnumerator<char>
+        {
+            private char* _Last;
+            private readonly char* _End;
+            private readonly char* _First;
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            internal Enumerator(stringref str)
+            {
+                var pchar = str.GetCharPtr();
+                _First = pchar;
+                _Last = pchar - 1;
+                _End = pchar + str.Length;
+            }
+
+            public char Current => *_Last;
+            object IEnumerator.Current => Current;
+
+            public bool MoveNext() => ++_Last != _End;
+
+            public void Reset() => _Last = _First - 1;
+
+            void IDisposable.Dispose() { }
         }
         #endregion
     }

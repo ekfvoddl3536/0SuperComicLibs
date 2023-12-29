@@ -20,13 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using SuperComicLib.CodeContracts;
 using System;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using SuperComicLib.CodeContracts;
 
-namespace SuperComicLib.eTxt
+namespace SuperComicLib.Text
 {
     [StructLayout(LayoutKind.Sequential, Pack = sizeof(long) << 1)]
     public readonly unsafe struct HeaderID : IEquatable<HeaderID>

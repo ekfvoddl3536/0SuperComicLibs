@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace SuperComicLib.eTxt
+namespace SuperComicLib.Text
 {
     public sealed class ETxtReader : IDisposable
     {

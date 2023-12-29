@@ -134,7 +134,7 @@
 		ret
 	}
 
-	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!T>&  refpoint_clr<T>(!!T[] 'array') cil managed aggressiveinlining
+	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.Refpoint`1<!!T>&  refpoint_clr<T>(!!T[] 'array') cil managed aggressiveinlining
 	{
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 )
 		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.AssumeInputsValidAttribute::.ctor() = ( 01 00 00 00 )
@@ -149,7 +149,7 @@
 		ret
 	}
 
-	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!T>&  refpoint_clr<T>(!!T[] 'array', int64 index) cil managed aggressiveinlining
+	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.Refpoint`1<!!T>&  refpoint_clr<T>(!!T[] 'array', int64 index) cil managed aggressiveinlining
 	{
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 )
 		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.AssumeInputsValidAttribute::.ctor() = ( 01 00 00 00 )
@@ -168,7 +168,7 @@
 		ret
 	}
 
-	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!T>&  refpoint_mono<T>(!!T[] 'array') cil managed aggressiveinlining
+	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.Refpoint`1<!!T>&  refpoint_mono<T>(!!T[] 'array') cil managed aggressiveinlining
 	{
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 )
 		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.AssumeInputsValidAttribute::.ctor() = ( 01 00 00 00 )
@@ -183,7 +183,7 @@
 		ret
 	}
 
-	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.refpoint`1<!!T>&  refpoint_mono<T>(!!T[] 'array', int64 index) cil managed aggressiveinlining
+	.method public hidebysig static valuetype SuperComicLib.RuntimeMemoryMarshals.Refpoint`1<!!T>&  refpoint_mono<T>(!!T[] 'array', int64 index) cil managed aggressiveinlining
 	{
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 )
 		.custom instance void ['0SuperComicLib.Core']SuperComicLib.CodeContracts.AssumeInputsValidAttribute::.ctor() = ( 01 00 00 00 )

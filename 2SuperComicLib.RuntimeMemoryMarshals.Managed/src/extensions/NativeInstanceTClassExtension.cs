@@ -33,8 +33,8 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Get class reference
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining), MonoRuntimeNotSupported]
-        public static T Value<T>(this in NativeInstance<T> @this) where T : class =>
-            ILUnsafe.AsClass<T>(@this._Ptr + sizeof(long));
+        public static T GetValue<T>(this NativeInstance<T> @this) where T : class =>
+            ILUnsafe.AsClass<byte, T>(ref @this._Ptr[sizeof(long)]);
 
         /// <summary>
         /// Copy instance data from <paramref name="source"/>

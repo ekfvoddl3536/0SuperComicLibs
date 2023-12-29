@@ -11,8 +11,8 @@ namespace ExampleProject
         {
             int[] sample = MyUtils.RandomInts(20);
 
-            ref refpoint<int> first = ref sample.refpoint();
-            ref refpoint<int> last = ref first.add(sample.Length);
+            ref Refpoint<int> first = ref sample.refpoint();
+            ref Refpoint<int> last = ref first.add(sample.Length);
 
             // forward.
             for (; first != last; first = ref first.inc)

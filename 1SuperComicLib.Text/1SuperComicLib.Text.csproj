@@ -46,6 +46,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\encoding\AutoEncoding.cs" />
+    <Compile Include="src\etxt\ETxtReader.cs" />
+    <Compile Include="src\etxt\ETxtWriter.cs" />
+    <Compile Include="src\etxt\HeaderID.cs" />
+    <Compile Include="src\etxt\HierarchyName.cs" />
     <Compile Include="src\stringMarshals\StringMarshal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\stringMarshals\StringMarshalBuilder.cs" />

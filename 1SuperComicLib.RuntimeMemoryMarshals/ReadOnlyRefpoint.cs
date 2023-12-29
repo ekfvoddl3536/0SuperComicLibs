@@ -32,11 +32,11 @@ using System.Runtime.InteropServices;
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
     /// <summary>
-    /// see: <see cref="refpoint{T}"/> <br/>
-    /// "<c><see langword="readonly"/> <see cref="refpoint{T}"/></c>" (const refpoint&lt;&gt;)
+    /// see: <see cref="Refpoint{T}"/> <br/>
+    /// "<c><see langword="readonly"/> <see cref="Refpoint{T}"/></c>" (const refpoint&lt;&gt;)
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 0, Size = 1)]
-    public readonly unsafe ref struct crefpoint<T>
+    public readonly unsafe ref struct ReadOnlyRefpoint<T>
     {
         public void* address 
         {
@@ -56,64 +56,64 @@ namespace SuperComicLib.RuntimeMemoryMarshals
             get => throw new PlatformNotSupportedException();
         }
 
-        public ref readonly crefpoint<T> inc
+        public ref readonly ReadOnlyRefpoint<T> inc
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => throw new PlatformNotSupportedException();
         }
 
-        public ref readonly crefpoint<T> dec
+        public ref readonly ReadOnlyRefpoint<T> dec
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => throw new PlatformNotSupportedException();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly crefpoint<U> cast<U>() => throw new PlatformNotSupportedException();
+        public ref readonly ReadOnlyRefpoint<U> cast<U>() => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly crefpoint<T> add(int offset) => throw new PlatformNotSupportedException();
+        public ref readonly ReadOnlyRefpoint<T> add(int offset) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly crefpoint<T> sub(int offset) => throw new PlatformNotSupportedException();
+        public ref readonly ReadOnlyRefpoint<T> sub(int offset) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly crefpoint<T> add(uint offset) => throw new PlatformNotSupportedException();
+        public ref readonly ReadOnlyRefpoint<T> add(uint offset) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly crefpoint<T> sub(uint offset) => throw new PlatformNotSupportedException();
+        public ref readonly ReadOnlyRefpoint<T> sub(uint offset) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly crefpoint<T> add(long offset) => throw new PlatformNotSupportedException();
+        public ref readonly ReadOnlyRefpoint<T> add(long offset) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly crefpoint<T> sub(long offset) => throw new PlatformNotSupportedException();
+        public ref readonly ReadOnlyRefpoint<T> sub(long offset) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly crefpoint<T> add(ulong offset) => throw new PlatformNotSupportedException();
+        public ref readonly ReadOnlyRefpoint<T> add(ulong offset) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly crefpoint<T> sub(ulong offset) => throw new PlatformNotSupportedException();
+        public ref readonly ReadOnlyRefpoint<T> sub(ulong offset) => throw new PlatformNotSupportedException();
 
         #region extend 'add', 'sub
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly crefpoint<T> add(long offset, int displacement) => throw new PlatformNotSupportedException();
+        public ref readonly ReadOnlyRefpoint<T> add(long offset, int displacement) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly crefpoint<T> add<TSize>(long offset) => throw new PlatformNotSupportedException();
+        public ref readonly ReadOnlyRefpoint<T> add<TSize>(long offset) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly crefpoint<T> add<TSize>(long offset, int displacement) => throw new PlatformNotSupportedException();
+        public ref readonly ReadOnlyRefpoint<T> add<TSize>(long offset, int displacement) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly crefpoint<T> sub<TSize>(long offset) => throw new PlatformNotSupportedException();
+        public ref readonly ReadOnlyRefpoint<T> sub<TSize>(long offset) => throw new PlatformNotSupportedException();
         #endregion
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public long byteOffset(in crefpoint<T> other) => throw new PlatformNotSupportedException();
+        public long byteOffset(in ReadOnlyRefpoint<T> other) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public long elementOffset(in crefpoint<T> other) => throw new PlatformNotSupportedException();
+        public long elementOffset(in ReadOnlyRefpoint<T> other) => throw new PlatformNotSupportedException();
 
         public override int GetHashCode() => throw new PlatformNotSupportedException();
         public override bool Equals(object obj) => throw new PlatformNotSupportedException();
@@ -123,31 +123,31 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         public ref T GetPinnableReference() => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref readonly crefpoint<T> As(void* source) => throw new PlatformNotSupportedException();
+        public static ref readonly ReadOnlyRefpoint<T> As(void* source) => throw new PlatformNotSupportedException();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref readonly crefpoint<T> As(in T source) => throw new PlatformNotSupportedException();
+        public static ref readonly ReadOnlyRefpoint<T> As(in T source) => throw new PlatformNotSupportedException();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ref readonly crefpoint<U> As<U>(in T source) => throw new PlatformNotSupportedException();
+        public static ref readonly ReadOnlyRefpoint<U> As<U>(in T source) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(in crefpoint<T> left, in crefpoint<T> right) => throw new PlatformNotSupportedException();
+        public static bool operator ==(in ReadOnlyRefpoint<T> left, in ReadOnlyRefpoint<T> right) => throw new PlatformNotSupportedException();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(in crefpoint<T> left, in crefpoint<T> right) => throw new PlatformNotSupportedException();
+        public static bool operator !=(in ReadOnlyRefpoint<T> left, in ReadOnlyRefpoint<T> right) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <(in crefpoint<T> left, in crefpoint<T> right) => throw new PlatformNotSupportedException();
+        public static bool operator <(in ReadOnlyRefpoint<T> left, in ReadOnlyRefpoint<T> right) => throw new PlatformNotSupportedException();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >(in crefpoint<T> left, in crefpoint<T> right) => throw new PlatformNotSupportedException();
+        public static bool operator >(in ReadOnlyRefpoint<T> left, in ReadOnlyRefpoint<T> right) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator <=(in crefpoint<T> left, in crefpoint<T> right) => throw new PlatformNotSupportedException();
+        public static bool operator <=(in ReadOnlyRefpoint<T> left, in ReadOnlyRefpoint<T> right) => throw new PlatformNotSupportedException();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator >=(in crefpoint<T> left, in crefpoint<T> right) => throw new PlatformNotSupportedException();
+        public static bool operator >=(in ReadOnlyRefpoint<T> left, in ReadOnlyRefpoint<T> right) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static long operator -(in crefpoint<T> left, in crefpoint<T> right) => throw new PlatformNotSupportedException();
+        public static long operator -(in ReadOnlyRefpoint<T> left, in ReadOnlyRefpoint<T> right) => throw new PlatformNotSupportedException();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T operator +(in crefpoint<T> v) => throw new PlatformNotSupportedException();
+        public static T operator +(in ReadOnlyRefpoint<T> v) => throw new PlatformNotSupportedException();
     }
 }

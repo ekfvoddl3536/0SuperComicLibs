@@ -22,45 +22,46 @@
 // SOFTWARE.
 
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace SuperComicLib
 {
-    static unsafe partial class SCL_GLOBAL_NativeSpan_NativeConstSpan_MEMORYEXTENSION
+    readonly unsafe ref partial struct NativeConstSpan<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsWhitespace(this NativeSpan<char> span) => IsWhitespace(span.Source, span.end()._ptr);
+        public Enumerator GetEnumerator() => new Enumerator(this);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsWhitespace(this NativeConstSpan<char> span) => IsWhitespace(span._source, span.cend()._ptr);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool SequenceEqual(this NativeSpan<char> span, string value) =>
-            SequenceEqual(span.AsReadOnly(), value);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool SequenceEqual(this NativeConstSpan<char> span, string value)
+        [StructLayout(LayoutKind.Sequential)]
+        public ref struct Enumerator
         {
-            if (span.Length != (uint)value.Length)
-                return false;
+            private T* _Last;
+            private readonly T* _End;
 
-            char* pleft = span._source;
-            for (int i = 0; i < value.Length; ++i)
-                if (pleft[i] != value[i])
-                    return false;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            internal Enumerator(NativeConstSpan<T> span)
+            {
+                _Last = span._source - 1;
+                _End = span._source + span.Length;
+            }
 
-            return true;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            internal Enumerator(T* last, T* end)
+            {
+                _Last = last;
+                _End = end;
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public bool MoveNext() => ++_Last != _End;
+
+            public ref readonly T Current
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get => ref *_Last;
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static implicit operator Enumerator(NativeSpan<T>.Enumerator v) => new Enumerator(v._Last, v._End);
         }
-
-        #region private
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool IsWhitespace(char* iter, char* end)
-        {
-            for (; iter != end; ++iter)
-                if (!char.IsWhiteSpace(*iter))
-                    return false;
-
-            return true;
-        }
-        #endregion
     }
 }

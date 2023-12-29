@@ -1,6 +1,7 @@
 ﻿// MIT License
 //
-// Copyright (c) 2020-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,22 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace SuperComicLib.Runtime
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+namespace SuperComicLib
 {
-    public static unsafe class FnCHAR
+    readonly unsafe ref partial struct NativeSpan<T>
     {
-        public static bool Equals(char* src, int len, string value)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Enumerator GetEnumerator() => new Enumerator(this);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public ref struct Enumerator
         {
-            if (value.Length != len)
-                return false;
+            internal T* _Last;
+            internal readonly T* _End;
 
-            while (--len >= 0)
-                if (src[len] != value[len])
-                    return false;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            internal Enumerator(NativeSpan<T> span)
+            {
+                _Last = span.Source - 1;
+                _End = span.Source + span.Length;
+            }
 
-            return true;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public bool MoveNext() => ++_Last != _End;
+
+            public ref T Current
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get => ref *_Last;
+            }
         }
-
-        public static bool IsNewLine(char value) => value == '\r' || value == '\n';
     }
 }

@@ -15,16 +15,16 @@ namespace ExampleProject
             int[] sample = MyUtils.RandomInts(48);
 
             //  This type of conversion checks the bounds of the array and allows safe access.
-            ref refpoint<int> current = ref ILUnsafe.AsRefpoint(ref sample[0]);
+            ref Refpoint<int> current = ref ILUnsafe.AsRefpoint(ref sample[0]);
 
             //  If you know the target .NET runtime in advance, you can take advantage of the
             //  following APIs for higher execution performance:
 
             //  [ Mono ]
-            ref refpoint<int> mono = ref sample.refpoint_mono();
+            ref Refpoint<int> mono = ref sample.refpoint_mono();
 
             //  [ CoreCLR ]
-            ref refpoint<int> coreclr = ref sample.refpoint_clr();
+            ref Refpoint<int> coreclr = ref sample.refpoint_clr();
 
             fixed (int* ptr = sample)
             {
