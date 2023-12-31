@@ -60,6 +60,7 @@
     <Compile Include="nint_t.cs" />
     <Compile Include="nuint_t.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="X64Math.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -70,6 +71,8 @@
     <None Include="ArrayUnsafeGetElementReferenceExtension.il" />
     <None Include="nuint_t.il" />
     <None Include="nint_t.il" />
+    <None Include="X64Math.il" />
+    <None Include="X64MathAsm.il" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompilerGeneratedClasses.il" />

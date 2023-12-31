@@ -24,7 +24,6 @@
 #pragma warning disable CS1591
 using System;
 using System.Runtime.CompilerServices;
-using System.Security;
 
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
@@ -37,7 +36,6 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     /// Due to frequent errors caused by the version of the <c>System.Runtime.CompilerServices.Unsafe</c> package,<br/>
     /// all features of <c>System.Runtime.CompilerServices.Unsafe 6.0.0</c> are incorporated here to completely eliminate dependencies on it.
     /// </summary>
-    [SuppressUnmanagedCodeSecurity, SecurityCritical]
     public static unsafe class ILUnsafe
     {
         #region Group 1. (CUSTOM, +object, 'readonly' operation)

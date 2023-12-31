@@ -95,7 +95,7 @@
     <Compile Include="src\_dataClasses\_classDataRef.cs" />
     <Compile Include="src\extensions\SUPERCOMICLIB_CORE__MemoryExtension.cs" />
     <Compile Include="src\LowLevel\NativeInstance.cs" />
-    <Compile Include="NativeClass.cs" />
+    <Compile Include="src\LowLevel\NativeClass.cs" />
     <Compile Include="src\extensions\NativeInstanceTClassExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\LowLevel\PubMethodTable.cs" />
