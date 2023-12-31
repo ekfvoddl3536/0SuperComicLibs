@@ -128,7 +128,7 @@
         48 89 f0    //  mov rax, rsi
         48 89 d1    //  mov rcx, rdx
         48 f7 ef    //  imul rdi
-        49 89 01    //  mov [rcx], rax
+        48 89 01    //  mov [rcx], rax
         48 89 d0    //  mov rax, rdx
         c3          //  ret
     )
@@ -136,7 +136,7 @@
         48 89 f0    //  mov rax, rsi
         48 89 d1    //  mov rcx, rdx
         48 f7 e7    //  mul rdi
-        49 89 01    //  mov [rcx], rax
+        48 89 01    //  mov [rcx], rax
         48 89 d0    //  mov rax, rdx
         c3          //  ret
     )

@@ -139,6 +139,7 @@
         ldsfld bool SuperComicLib.X64Math::IsCompiled
         brfalse.s L_001
 
+        // PLEASE, GENERATE --TROLL CODE--
         ldarg.0
         ldarg.1
         call void SuperComicLib.X64Math::__nop(int64, int64)
@@ -162,6 +163,7 @@
         ldsfld bool SuperComicLib.X64Math::IsCompiled
         brfalse.s L_001
 
+        // PLEASE, GENERATE --TROLL CODE--
         ldarg.0
         ldarg.1
         call void SuperComicLib.X64Math::__nop(uint64, uint64)
@@ -185,6 +187,7 @@
         ldsfld bool SuperComicLib.X64Math::IsCompiled
         brfalse.s L_001
 
+        // PLEASE, GENERATE --TROLL CODE--
         ldarg.0
         ldarg.1
         call void SuperComicLib.X64Math::__nop(int64, int64)
@@ -209,6 +212,7 @@
         ldsfld bool SuperComicLib.X64Math::IsCompiled
         brfalse.s L_001
 
+        // PLEASE, GENERATE --TROLL CODE--
         ldarg.0
         ldarg.1
         call void SuperComicLib.X64Math::__nop(uint64, uint64)
