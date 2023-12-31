@@ -55,36 +55,80 @@
         ldtoken method uint64 SuperComicLib.X64Math::BigMul(uint64, uint64, uint64&)
         call void [mscorlib]System.Runtime.CompilerServices.RuntimeHelpers::PrepareMethod(valuetype [mscorlib]System.RuntimeMethodHandle)
 
-
         // step 2.
         //  -- inject codes --
+
+        // CHECK ABI
+        ldsfld valuetype SuperComicLib.X64ABI/CALLCONV SuperComicLib.X64ABI::CallingConvention
+        ldc.i4.1
+        bne.un.s M_SYSVABI
+
+        //  -- MS ABI --
         ldtoken method int64 SuperComicLib.X64Math::Mulhi(int64, int64)
         ldsflda valuetype SuperComicLib.PrivateCore.X64ASM/__staticArraySize10 SuperComicLib.PrivateCore.X64ASM::__mulh
         ldflda uint8 SuperComicLib.PrivateCore.X64ASM/__staticArraySize10::element
         ldc.i4.s 10
-        call void SuperComicLib.X64Math::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+        call void SuperComicLib.PrivateCore.X64ASM::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
 
         ldtoken method uint64 SuperComicLib.X64Math::Mulhi(uint64, uint64)
         ldsflda valuetype SuperComicLib.PrivateCore.X64ASM/__staticArraySize10 SuperComicLib.PrivateCore.X64ASM::__umulh
         ldflda uint8 SuperComicLib.PrivateCore.X64ASM/__staticArraySize10::element
         ldc.i4.s 10
-        call void SuperComicLib.X64Math::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+        call void SuperComicLib.PrivateCore.X64ASM::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
 
         ldtoken method int64 SuperComicLib.X64Math::BigMul(int64, int64, int64&)
         ldsflda valuetype SuperComicLib.PrivateCore.X64ASM/__staticArraySize13 SuperComicLib.PrivateCore.X64ASM::_mul128
-        ldflda uint8 SuperComicLib.PrivateCore.X64ASM/__staticArraySize10::element
+        ldflda uint8 SuperComicLib.PrivateCore.X64ASM/__staticArraySize13::element
         ldc.i4.s 13
-        call void SuperComicLib.X64Math::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+        call void SuperComicLib.PrivateCore.X64ASM::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
 
         ldtoken method uint64 SuperComicLib.X64Math::BigMul(uint64, uint64, uint64&)
         ldsflda valuetype SuperComicLib.PrivateCore.X64ASM/__staticArraySize13 SuperComicLib.PrivateCore.X64ASM::_umul128
-        ldflda uint8 SuperComicLib.PrivateCore.X64ASM/__staticArraySize10::element
+        ldflda uint8 SuperComicLib.PrivateCore.X64ASM/__staticArraySize13::element
         ldc.i4.s 13
-        call void SuperComicLib.X64Math::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+        call void SuperComicLib.PrivateCore.X64ASM::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
 
+        br.s G_RETURN
+
+    M_SYSVABI:
+        ldsfld valuetype SuperComicLib.X64ABI/CALLCONV SuperComicLib.X64ABI::CallingConvention
+        ldc.i4.2
+        bne.un.s M_INVALID
+    
+        //  -- SYS V ABI --
+        ldtoken method int64 SuperComicLib.X64Math::Mulhi(int64, int64)
+        ldsflda valuetype SuperComicLib.PrivateCore.X64ASM/__staticArraySize10 SuperComicLib.PrivateCore.X64ASM::__mulhV
+        ldflda uint8 SuperComicLib.PrivateCore.X64ASM/__staticArraySize10::element
+        ldc.i4.s 10
+        call void SuperComicLib.PrivateCore.X64ASM::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+    
+        ldtoken method uint64 SuperComicLib.X64Math::Mulhi(uint64, uint64)
+        ldsflda valuetype SuperComicLib.PrivateCore.X64ASM/__staticArraySize10 SuperComicLib.PrivateCore.X64ASM::__umulhV
+        ldflda uint8 SuperComicLib.PrivateCore.X64ASM/__staticArraySize10::element
+        ldc.i4.s 10
+        call void SuperComicLib.PrivateCore.X64ASM::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+    
+        ldtoken method int64 SuperComicLib.X64Math::BigMul(int64, int64, int64&)
+        ldsflda valuetype SuperComicLib.PrivateCore.X64ASM/__staticArraySize16 SuperComicLib.PrivateCore.X64ASM::_mul128V
+        ldflda uint8 SuperComicLib.PrivateCore.X64ASM/__staticArraySize16::element
+        ldc.i4.s 16
+        call void SuperComicLib.PrivateCore.X64ASM::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+    
+        ldtoken method uint64 SuperComicLib.X64Math::BigMul(uint64, uint64, uint64&)
+        ldsflda valuetype SuperComicLib.PrivateCore.X64ASM/__staticArraySize16 SuperComicLib.PrivateCore.X64ASM::_umul128V
+        ldflda uint8 SuperComicLib.PrivateCore.X64ASM/__staticArraySize16::element
+        ldc.i4.s 16
+        call void SuperComicLib.PrivateCore.X64ASM::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+
+    G_RETURN:
         // step 3.
         //  -- return 'true' --
         ldc.i4.1
+        ret
+
+    M_INVALID:
+        //  -- FAIL --
+        ldc.i4.0
         ret
     }
 
@@ -94,6 +138,10 @@
 
         ldsfld bool SuperComicLib.X64Math::IsCompiled
         brfalse.s L_001
+
+        ldarg.0
+        ldarg.1
+        call void SuperComicLib.X64Math::__nop(int64, int64)
 
         ldarg.0
         ldarg.1
@@ -116,6 +164,10 @@
 
         ldarg.0
         ldarg.1
+        call void SuperComicLib.X64Math::__nop(uint64, uint64)
+
+        ldarg.0
+        ldarg.1
         tail.
         call uint64 SuperComicLib.X64Math::Mulhi(uint64, uint64)
         ret
@@ -132,6 +184,10 @@
 
         ldsfld bool SuperComicLib.X64Math::IsCompiled
         brfalse.s L_001
+
+        ldarg.0
+        ldarg.1
+        call void SuperComicLib.X64Math::__nop(int64, int64)
 
         ldarg.0
         ldarg.1
@@ -155,6 +211,10 @@
 
         ldarg.0
         ldarg.1
+        call void SuperComicLib.X64Math::__nop(uint64, uint64)
+
+        ldarg.0
+        ldarg.1
         ldarg.2
         tail.
         call uint64 SuperComicLib.X64Math::BigMul(uint64, uint64, uint64&)
@@ -168,55 +228,17 @@
 
 
 
-
-    
-    .method private hidebysig static void  patch(valuetype [mscorlib]System.RuntimeMethodHandle target, [in] uint8& asm, int32 size) cil managed noinlining
+    .method private hidebysig static void  __nop(int64 a, int64 b) cil managed noinlining
     {
-        .param [2]
-        .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
+        .maxstack 1
 
-        .maxstack 8
+        ret
+    }
 
-        .locals (
-            [0] uint8*  ,
-            [1] int32   ,
-            [2] valuetype [mscorlib]System.RuntimeMethodHandle
-        )
+    .method private hidebysig static void  __nop(uint64 a, uint64 b) cil managed noinlining
+    {
+        .maxstack 1
 
-        ldarg.0
-        stloc.2
-        ldloca.s 2
-        call instance native int [mscorlib]System.RuntimeMethodHandle::GetFunctionPointer()
-        call void* [mscorlib]System.IntPtr::op_Explicit(native int)
-        stloc.0
-        ldc.i4.0
-        stloc.1
-
-        // loop
-        br.s L001
-
-        L002:
-            ldloc.0
-            ldloc.1
-            add
-            ldarg.1
-            ldloc.1
-            add
-            ldind.u1
-            stind.i1
-
-            // ++i
-            ldloc.1
-            ldc.i4.1
-            add
-            stloc.1
-
-        L001:
-            ldloc.1
-            ldarg.2
-            blt.s L002
-
-        // end loop
         ret
     }
 }
