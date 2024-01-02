@@ -152,10 +152,10 @@
     // WinNT
     .method private hidebysig static pinvokeimpl("kernel32.dll" as "VirtualProtect" nomangle winapi) 
         int32 '<WinNT>__PInvoke' (
-            [in] void* lpAddress,
-            [in] native int dwSize,
-            [in] int32 flNewProtect,
-            [out] int32* lpflOldProtect
+            void* lpAddress,
+            native int dwSize,
+            int32 flNewProtect,
+            int32* lpflOldProtect
         ) cil managed preservesig
     {
     }
@@ -168,9 +168,9 @@
     
     .method private hidebysig static pinvokeimpl("libc.so.6" as "mprotect" nomangle winapi) 
         int32 '<GNU>mprotect__PInvoke' (
-            [in] void* addr,
-            [in] native int len,
-            [in] int32 prot
+            void* addr,
+            native int len,
+            int32 prot
         ) cil managed preservesig
     {
     }
