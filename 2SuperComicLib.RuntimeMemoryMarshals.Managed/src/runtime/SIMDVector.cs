@@ -26,6 +26,9 @@ using System.Runtime.CompilerServices;
 
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
+    /// <summary>
+    /// (for .NET Framework) Provides hardware acceleration information for the running machine.
+    /// </summary>
     public static class SIMDVector
     {
         [Flags]
@@ -51,6 +54,14 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         }
 
         public static readonly Intrinsics Supports;
+
+        /// <summary>
+        /// <code>
+        /// 0       :   NoHardwareAcceleration (or, not supported)
+        /// 16      :   'xmm' register (128-bit) available
+        /// 32      :   'ymm' register (256-bit) available
+        /// </code>
+        /// </summary>
         public static readonly long ByteCount;
 
         static SIMDVector()

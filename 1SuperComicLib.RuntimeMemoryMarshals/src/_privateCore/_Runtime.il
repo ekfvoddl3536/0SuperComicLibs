@@ -65,6 +65,11 @@
     {
         .maxstack 8
         
+        // NOTE(ko-kr)::
+        //  .NET 7 부터 런타임 버전이 바뀌면서, 코드 영역에 보호가 들어감
+        //  이를 해제해야함
+        //  윈도우에서는 net6.0 net7.0 net8.0이 테스트됐고, net7.0부터 임을 확인
+        //  리눅스(우분투 22.04)는 net6.0 net8.0이 테스트됐고, net8.0에서 메모리 권한 문제가 발생함을 확인
         ldsfld int32 SuperComicLib.PrivateCore._Runtime::version__ 
         ldc.i4.s 7
         blt.un.s G_RETURN
