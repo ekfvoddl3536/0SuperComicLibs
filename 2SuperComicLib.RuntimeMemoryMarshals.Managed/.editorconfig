@@ -1,12 +1,12 @@
-[*.{cs}]
-file_header_template = MIT License\n\nCopyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)\nCopyright (c) .NET Foundation and Contributors\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the "Software"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.
+ï»¿[*.{cs}]
+file_header_template = MIT License\n\nCopyright (c) 2019-2024. SuperComic (ekfvoddl3535@naver.com)\nCopyright (c) .NET Foundation and Contributors\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the "Software"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.
 
 [/Properties/AssemblyInfo.cs]
 file_header_template = unset
 [*.cs]
-#### ¸í¸í ½ºÅ¸ÀÏ ####
+#### ëª…ëª… ìŠ¤íƒ€ì¼ ####
 
-# ¸í¸í ±ÔÄ¢
+# ëª…ëª… ê·œì¹™
 
 dotnet_naming_rule.interface_should_be_begins_with_i.severity = suggestion
 dotnet_naming_rule.interface_should_be_begins_with_i.symbols = interface
@@ -20,7 +20,7 @@ dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = suggestion
 dotnet_naming_rule.non_field_members_should_be_pascal_case.symbols = non_field_members
 dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_case
 
-# ±âÈ£ »ç¾ç
+# ê¸°í˜¸ ì‚¬ì–‘
 
 dotnet_naming_symbols.interface.applicable_kinds = interface
 dotnet_naming_symbols.interface.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
@@ -34,7 +34,7 @@ dotnet_naming_symbols.non_field_members.applicable_kinds = property, event, meth
 dotnet_naming_symbols.non_field_members.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
 dotnet_naming_symbols.non_field_members.required_modifiers = 
 
-# ¸í¸í ½ºÅ¸ÀÏ
+# ëª…ëª… ìŠ¤íƒ€ì¼
 
 dotnet_naming_style.begins_with_i.required_prefix = I
 dotnet_naming_style.begins_with_i.required_suffix = 
@@ -70,52 +70,52 @@ csharp_style_expression_bodied_lambdas = true:silent
 csharp_style_expression_bodied_local_functions = true:silent
 
 [*.vb]
-#### ¸í¸í ½ºÅ¸ÀÏ ####
+#### ëª…ëª… ìŠ¤íƒ€ì¼ ####
 
-# ¸í¸í ±ÔÄ¢
+# ëª…ëª… ê·œì¹™
 
-dotnet_naming_rule.interface_should_be_i·Î_½ÃÀÛ.severity = suggestion
-dotnet_naming_rule.interface_should_be_i·Î_½ÃÀÛ.symbols = interface
-dotnet_naming_rule.interface_should_be_i·Î_½ÃÀÛ.style = i·Î_½ÃÀÛ
+dotnet_naming_rule.interface_should_be_ië¡œ_ì‹œì‘.severity = suggestion
+dotnet_naming_rule.interface_should_be_ië¡œ_ì‹œì‘.symbols = interface
+dotnet_naming_rule.interface_should_be_ië¡œ_ì‹œì‘.style = ië¡œ_ì‹œì‘
 
-dotnet_naming_rule.Çü½Ä_should_be_ÆÄ½ºÄ®½Ä_´ë_¼Ò¹®ÀÚ.severity = suggestion
-dotnet_naming_rule.Çü½Ä_should_be_ÆÄ½ºÄ®½Ä_´ë_¼Ò¹®ÀÚ.symbols = Çü½Ä
-dotnet_naming_rule.Çü½Ä_should_be_ÆÄ½ºÄ®½Ä_´ë_¼Ò¹®ÀÚ.style = ÆÄ½ºÄ®½Ä_´ë_¼Ò¹®ÀÚ
+dotnet_naming_rule.í˜•ì‹_should_be_íŒŒìŠ¤ì¹¼ì‹_ëŒ€_ì†Œë¬¸ì.severity = suggestion
+dotnet_naming_rule.í˜•ì‹_should_be_íŒŒìŠ¤ì¹¼ì‹_ëŒ€_ì†Œë¬¸ì.symbols = í˜•ì‹
+dotnet_naming_rule.í˜•ì‹_should_be_íŒŒìŠ¤ì¹¼ì‹_ëŒ€_ì†Œë¬¸ì.style = íŒŒìŠ¤ì¹¼ì‹_ëŒ€_ì†Œë¬¸ì
 
-dotnet_naming_rule.ÇÊµå°¡_¾Æ´Ñ_¸â¹ö_should_be_ÆÄ½ºÄ®½Ä_´ë_¼Ò¹®ÀÚ.severity = suggestion
-dotnet_naming_rule.ÇÊµå°¡_¾Æ´Ñ_¸â¹ö_should_be_ÆÄ½ºÄ®½Ä_´ë_¼Ò¹®ÀÚ.symbols = ÇÊµå°¡_¾Æ´Ñ_¸â¹ö
-dotnet_naming_rule.ÇÊµå°¡_¾Æ´Ñ_¸â¹ö_should_be_ÆÄ½ºÄ®½Ä_´ë_¼Ò¹®ÀÚ.style = ÆÄ½ºÄ®½Ä_´ë_¼Ò¹®ÀÚ
+dotnet_naming_rule.í•„ë“œê°€_ì•„ë‹Œ_ë©¤ë²„_should_be_íŒŒìŠ¤ì¹¼ì‹_ëŒ€_ì†Œë¬¸ì.severity = suggestion
+dotnet_naming_rule.í•„ë“œê°€_ì•„ë‹Œ_ë©¤ë²„_should_be_íŒŒìŠ¤ì¹¼ì‹_ëŒ€_ì†Œë¬¸ì.symbols = í•„ë“œê°€_ì•„ë‹Œ_ë©¤ë²„
+dotnet_naming_rule.í•„ë“œê°€_ì•„ë‹Œ_ë©¤ë²„_should_be_íŒŒìŠ¤ì¹¼ì‹_ëŒ€_ì†Œë¬¸ì.style = íŒŒìŠ¤ì¹¼ì‹_ëŒ€_ì†Œë¬¸ì
 
-# ±âÈ£ »ç¾ç
+# ê¸°í˜¸ ì‚¬ì–‘
 
 dotnet_naming_symbols.interface.applicable_kinds = interface
 dotnet_naming_symbols.interface.applicable_accessibilities = public, friend, private, protected, protected_friend, private_protected
 dotnet_naming_symbols.interface.required_modifiers = 
 
-dotnet_naming_symbols.Çü½Ä.applicable_kinds = class, struct, interface, enum
-dotnet_naming_symbols.Çü½Ä.applicable_accessibilities = public, friend, private, protected, protected_friend, private_protected
-dotnet_naming_symbols.Çü½Ä.required_modifiers = 
+dotnet_naming_symbols.í˜•ì‹.applicable_kinds = class, struct, interface, enum
+dotnet_naming_symbols.í˜•ì‹.applicable_accessibilities = public, friend, private, protected, protected_friend, private_protected
+dotnet_naming_symbols.í˜•ì‹.required_modifiers = 
 
-dotnet_naming_symbols.ÇÊµå°¡_¾Æ´Ñ_¸â¹ö.applicable_kinds = property, event, method
-dotnet_naming_symbols.ÇÊµå°¡_¾Æ´Ñ_¸â¹ö.applicable_accessibilities = public, friend, private, protected, protected_friend, private_protected
-dotnet_naming_symbols.ÇÊµå°¡_¾Æ´Ñ_¸â¹ö.required_modifiers = 
+dotnet_naming_symbols.í•„ë“œê°€_ì•„ë‹Œ_ë©¤ë²„.applicable_kinds = property, event, method
+dotnet_naming_symbols.í•„ë“œê°€_ì•„ë‹Œ_ë©¤ë²„.applicable_accessibilities = public, friend, private, protected, protected_friend, private_protected
+dotnet_naming_symbols.í•„ë“œê°€_ì•„ë‹Œ_ë©¤ë²„.required_modifiers = 
 
-# ¸í¸í ½ºÅ¸ÀÏ
+# ëª…ëª… ìŠ¤íƒ€ì¼
 
-dotnet_naming_style.i·Î_½ÃÀÛ.required_prefix = I
-dotnet_naming_style.i·Î_½ÃÀÛ.required_suffix = 
-dotnet_naming_style.i·Î_½ÃÀÛ.word_separator = 
-dotnet_naming_style.i·Î_½ÃÀÛ.capitalization = pascal_case
+dotnet_naming_style.ië¡œ_ì‹œì‘.required_prefix = I
+dotnet_naming_style.ië¡œ_ì‹œì‘.required_suffix = 
+dotnet_naming_style.ië¡œ_ì‹œì‘.word_separator = 
+dotnet_naming_style.ië¡œ_ì‹œì‘.capitalization = pascal_case
 
-dotnet_naming_style.ÆÄ½ºÄ®½Ä_´ë_¼Ò¹®ÀÚ.required_prefix = 
-dotnet_naming_style.ÆÄ½ºÄ®½Ä_´ë_¼Ò¹®ÀÚ.required_suffix = 
-dotnet_naming_style.ÆÄ½ºÄ®½Ä_´ë_¼Ò¹®ÀÚ.word_separator = 
-dotnet_naming_style.ÆÄ½ºÄ®½Ä_´ë_¼Ò¹®ÀÚ.capitalization = pascal_case
+dotnet_naming_style.íŒŒìŠ¤ì¹¼ì‹_ëŒ€_ì†Œë¬¸ì.required_prefix = 
+dotnet_naming_style.íŒŒìŠ¤ì¹¼ì‹_ëŒ€_ì†Œë¬¸ì.required_suffix = 
+dotnet_naming_style.íŒŒìŠ¤ì¹¼ì‹_ëŒ€_ì†Œë¬¸ì.word_separator = 
+dotnet_naming_style.íŒŒìŠ¤ì¹¼ì‹_ëŒ€_ì†Œë¬¸ì.capitalization = pascal_case
 
-dotnet_naming_style.ÆÄ½ºÄ®½Ä_´ë_¼Ò¹®ÀÚ.required_prefix = 
-dotnet_naming_style.ÆÄ½ºÄ®½Ä_´ë_¼Ò¹®ÀÚ.required_suffix = 
-dotnet_naming_style.ÆÄ½ºÄ®½Ä_´ë_¼Ò¹®ÀÚ.word_separator = 
-dotnet_naming_style.ÆÄ½ºÄ®½Ä_´ë_¼Ò¹®ÀÚ.capitalization = pascal_case
+dotnet_naming_style.íŒŒìŠ¤ì¹¼ì‹_ëŒ€_ì†Œë¬¸ì.required_prefix = 
+dotnet_naming_style.íŒŒìŠ¤ì¹¼ì‹_ëŒ€_ì†Œë¬¸ì.required_suffix = 
+dotnet_naming_style.íŒŒìŠ¤ì¹¼ì‹_ëŒ€_ì†Œë¬¸ì.word_separator = 
+dotnet_naming_style.íŒŒìŠ¤ì¹¼ì‹_ëŒ€_ì†Œë¬¸ì.capitalization = pascal_case
 
 [*.{cs,vb}]
 tab_width = 4

@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2023-2024. SuperComic (ekfvoddl3535@naver.com)
 // Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -41,7 +41,7 @@
     .method private hidebysig specialname rtspecialname static void  .cctor () cil managed 
     {
         .maxstack 8
-    
+        
         call valuetype SuperComicLib.X64ABI/CALLCONV SuperComicLib.X64ABI::_GetCallConv()
         stsfld valuetype SuperComicLib.X64ABI/CALLCONV SuperComicLib.X64ABI::CallingConvention
         ret
@@ -59,10 +59,10 @@
         call void [mscorlib]System.Runtime.CompilerServices.RuntimeHelpers::PrepareMethod(valuetype [mscorlib]System.RuntimeMethodHandle)
         
         ldtoken method int32 SuperComicLib.X64ABI::__abi_test(int64, int64, int64, int64, int64, int64)
-        ldsflda valuetype SuperComicLib.PrivateCore.X64ASM/__staticArraySize74 SuperComicLib.PrivateCore.X64ASM::_testabi
-        ldflda uint8 SuperComicLib.PrivateCore.X64ASM/__staticArraySize74::element
+        ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize74 SuperComicLib.PrivateCore._NativeImg::_testabi
+        ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize74::element
         ldc.i4.s 74
-        call void SuperComicLib.PrivateCore.X64ASM::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
 
         // Don't tail call (DIRTY 'rcx, rdx')
         ldftn int32 SuperComicLib.X64ABI::__abi_test(int64, int64, int64, int64, int64, int64)
@@ -93,7 +93,7 @@
             int64 t2,
             int64 t3,
             int64 t4,
-            int64 t5) cil managed noinlining nooptimization
+            int64 t5) cil managed preservesig noinlining nooptimization
     {
         .maxstack 8
 
@@ -101,22 +101,33 @@
             [0] int32
         )
 
-        ldarg.0
-        ldarg.1
-        mul.ovf
+        .try
+        {
+            ldarg.0
+            ldarg.1
+            mul.ovf
 
-        ldarg.2
-        mul.ovf
+            ldarg.2
+            mul.ovf
 
-        ldarg.3
-        mul.ovf
+            ldarg.3
+            mul.ovf
 
-        ldarg.s 4
-        mul.ovf
+            ldarg.s 4
+            mul.ovf
 
-        conv.i4
-        stloc.0
+            conv.i4
+            stloc.0
 
+            leave.s G_RETURN
+        }
+        catch [mscorlib]System.Object
+        {
+            pop
+            leave.s G_RETURN
+        }
+
+    G_RETURN:
         ldloc.0
         ret
     }

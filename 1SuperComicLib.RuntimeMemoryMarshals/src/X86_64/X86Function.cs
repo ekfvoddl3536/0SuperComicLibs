@@ -1,6 +1,6 @@
-﻿// MIT License
+﻿// The MIT License (MIT)
 //
-// Copyright (c) 2019-2024. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2023-2024. SuperComic (ekfvoddl3535@naver.com)
 // Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,35 +21,51 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#pragma warning disable IDE1006
+#pragma warning disable CS1591
+
+using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace SuperComicLib.RuntimeMemoryMarshals
 {
     /// <summary>
-    /// <see langword="readonly"/> <see cref="ValueReference{T}"/>
+    /// Provides functions that use special x86 or x64(amd64) instructions.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential), MonoRuntimeNotSupported]
-    public readonly unsafe struct ReadOnlyValueReference<T> where T : struct
+    public static class X86Function
     {
-        internal readonly byte* DataReference;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal ReadOnlyValueReference(byte* DataReference) => this.DataReference = DataReference;
-
-        /// <summary>
-        /// Get a reference to the value. (read only)
-        /// </summary>
-        public ref readonly T Value
+        [StructLayout(LayoutKind.Sequential)]
+        public readonly struct REG
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => ref ILUnsafe.AsRef<T>(DataReference);
+            public readonly long
+                rax, 
+                rbx, 
+                rcx, 
+                rdx;
         }
 
         /// <summary>
-        /// Convert to read only
+        /// <code>
+        /// EAX = $eax
+        /// CPUID
+        /// </code>
+        /// </summary>
+        public static REG _CPUID(int eax) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// <code>
+        /// EAX = $eax
+        /// ECX = $ecx
+        /// CPUID
+        /// </code>
+        /// </summary>
+        public static REG _CPUID(int eax, int ecx) => throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// <c>RAX = RSP - <see langword="sizeof"/>(<see cref="IntPtr"/>)</c>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator ReadOnlyValueReference<T>(ValueReference<T> input) => new ReadOnlyValueReference<T>(input.DataReference);
+        public static IntPtr _STACKPOINTER() => throw new PlatformNotSupportedException();
     }
 }

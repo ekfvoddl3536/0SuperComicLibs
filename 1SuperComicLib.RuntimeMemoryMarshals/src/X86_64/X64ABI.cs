@@ -1,6 +1,6 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2023-2024. SuperComic (ekfvoddl3535@naver.com)
 // Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -52,6 +52,6 @@ namespace SuperComicLib
 
         public static readonly CALLCONV CallingConvention = _GetCallConv();
 
-        private static CALLCONV _GetCallConv() => 0;
+        private static CALLCONV _GetCallConv() => throw new System.PlatformNotSupportedException();
     }
 }

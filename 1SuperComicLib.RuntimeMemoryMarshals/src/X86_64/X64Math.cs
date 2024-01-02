@@ -1,6 +1,6 @@
 ﻿// The MIT License (MIT)
 //
-// Copyright (c) 2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2023-2024. SuperComic (ekfvoddl3535@naver.com)
 // Copyright (c) .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,7 +32,7 @@ namespace SuperComicLib
         public static readonly bool IsCompiled = Init();
 
         // Generate x64 Assembly Code
-        private static bool Init() => false;
+        private static bool Init() => throw new PlatformNotSupportedException();
 
         /// <summary>
         /// Multiply High<para/>

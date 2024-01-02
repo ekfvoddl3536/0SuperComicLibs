@@ -59,6 +59,7 @@
     <Compile Include="src\extensions\SCL_GLOBAL_SafeArrayrefExtension.cs" />
     <Compile Include="src\LowLevel\RuntimeTypedValueInfo.cs" />
     <Compile Include="src\runtime\BitwiseComparer.cs" />
+    <Compile Include="src\runtime\SIMDVector.cs" />
     <Compile Include="src\semiManaged\arrayref_enumerator\arrayref.enumerator.cs" />
     <Compile Include="src\semiManaged\arrayref_iterators\arrayref.const_iterator.cs" />
     <Compile Include="src\semiManaged\arrayref_iterators\arrayref.iterator.cs" />
@@ -116,6 +117,5 @@
   <ItemGroup>
     <None Include=".editorconfig" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
