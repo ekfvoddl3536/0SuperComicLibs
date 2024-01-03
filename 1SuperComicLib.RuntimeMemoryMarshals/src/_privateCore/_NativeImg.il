@@ -315,26 +315,6 @@
         ldloc.0
         ldind.u2
         ldc.i4 0x25FF
-        beq.s L002
-        
-        // test 'mov r10, [...]'
-        ldloc.0
-        ldind.u4
-        ldc.i4 0xFFFFFF
-        and
-        ldc.i4 0x158B4C
-        bne.un.s G_RETURN
-
-        // skip 'mov r10, [m32]'
-        ldloc.0
-        ldc.i4.7
-        add
-        stloc.0
-
-        // re-check
-        ldloc.0
-        ldind.u2
-        ldc.i4 0x25FF
         bne.un.s G_RETURN
         
     L002:
