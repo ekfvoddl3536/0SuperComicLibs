@@ -68,6 +68,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <remarks>
         /// This method does not prepare the provided method, so prepare the method before performing this method.
         /// </remarks>
+        /// <returns>If the address cannot be obtained due to memory protection issues, the return is null.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IntPtr GetActualFunctionAddress(RuntimeMethodHandle handle) =>
             throw new PlatformNotSupportedException();
@@ -76,14 +77,14 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// Removes memory protection for the specified address and marks it as READ/WRITE/EXECUTE.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void MemUnprotect(IntPtr ptr) => 
+        public static bool MemUnprotect(IntPtr ptr) => 
             throw new PlatformNotSupportedException();
 
         /// <summary>
         /// Removes memory protection for the specified address and marks it as READ/WRITE/EXECUTE.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void MemUnprotect(IntPtr ptr, int size) =>
+        public static bool MemUnprotect(IntPtr ptr, int size) =>
             throw new PlatformNotSupportedException();
     }
 }
