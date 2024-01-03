@@ -38,7 +38,7 @@
         ldarg.1
         ldarg.2
         tail.
-        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
         
         ret
     }
@@ -51,7 +51,7 @@
         ldarg.1
         ldarg.2
         tail.
-        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
         
         ret
     }

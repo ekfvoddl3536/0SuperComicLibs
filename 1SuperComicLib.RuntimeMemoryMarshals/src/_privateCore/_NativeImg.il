@@ -402,7 +402,7 @@
         ret
     }
     
-    .method assembly hidebysig static void  patch(native int tok, [in] uint8& asm, int32 size) cil managed noinlining
+    .method assembly hidebysig static void  patch(valuetype [mscorlib]System.RuntimeMethodHandle tok, [in] uint8& asm, int32 size) cil managed noinlining
     {
         .param [2]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -411,10 +411,15 @@
 
         .locals (
             [0] uint8*,
-            [1] int32
+            [1] int32,
+            [2] valuetype [mscorlib]System.RuntimeMethodHandle
         )
         
         ldarg.0
+        stloc.2
+        
+        ldloca.s 2
+        call instance native int [mscorlib]System.RuntimeMethodHandle::GetFunctionPointer()
         ldarg.2
         call void* SuperComicLib.PrivateCore._NativeImg::prologue(native int, int32)
         stloc.0

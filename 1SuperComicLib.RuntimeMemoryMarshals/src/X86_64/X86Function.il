@@ -61,11 +61,11 @@
         call void [mscorlib]System.Runtime.CompilerServices.RuntimeHelpers::PrepareMethod(valuetype [mscorlib]System.RuntimeMethodHandle)
         
         //  no abi dependency
-        ldftn native int SuperComicLib.RuntimeMemoryMarshals.X86Function::impl__stackptr()
+        ldtoken method native int SuperComicLib.RuntimeMemoryMarshals.X86Function::impl__stackptr()
         ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize6 SuperComicLib.PrivateCore._NativeImg::_sp
         ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize6::element
         ldc.i4.s 6
-        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
         
         // CHECK ABI
         ldsfld valuetype SuperComicLib.X64ABI/CALLCONV SuperComicLib.X64ABI::CallingConvention
@@ -73,17 +73,17 @@
         bne.un.s M_SYSVABI
         
         //  -- MS ABI --
-        ldftn void SuperComicLib.RuntimeMemoryMarshals.X86Function::impl__cpuid(int32, void*)
+        ldtoken method void SuperComicLib.RuntimeMemoryMarshals.X86Function::impl__cpuid(int32, void*)
         ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize25 SuperComicLib.PrivateCore._NativeImg::_cpuid
         ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize25::element
         ldc.i4.s 25
-        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
         
-        ldftn void SuperComicLib.RuntimeMemoryMarshals.X86Function::impl__cpuidEx(int32, int32, void*)
+        ldtoken method void SuperComicLib.RuntimeMemoryMarshals.X86Function::impl__cpuidEx(int32, int32, void*)
         ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize27 SuperComicLib.PrivateCore._NativeImg::_cpuidEx
         ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize27::element
         ldc.i4.s 27
-        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
         
         br.s G_RETURN
         
@@ -93,17 +93,17 @@
         bne.un.s M_INVALID
         
         //  -- SYS V ABI --
-        ldftn void SuperComicLib.RuntimeMemoryMarshals.X86Function::impl__cpuid(int32, void*)
+        ldtoken method void SuperComicLib.RuntimeMemoryMarshals.X86Function::impl__cpuid(int32, void*)
         ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize25 SuperComicLib.PrivateCore._NativeImg::_cpuidV
         ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize25::element
         ldc.i4.s 25
-        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
         
-        ldftn void SuperComicLib.RuntimeMemoryMarshals.X86Function::impl__cpuidEx(int32, int32, void*)
+        ldtoken method void SuperComicLib.RuntimeMemoryMarshals.X86Function::impl__cpuidEx(int32, int32, void*)
         ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize27 SuperComicLib.PrivateCore._NativeImg::_cpuidVEx
         ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize27::element
         ldc.i4.s 27
-        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
         
     G_RETURN:
         //  -- DONE! --
