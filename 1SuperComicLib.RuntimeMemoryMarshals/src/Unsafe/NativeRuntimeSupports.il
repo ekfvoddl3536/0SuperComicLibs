@@ -38,7 +38,7 @@
         ldarg.1
         ldarg.2
         tail.
-        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
         
         ret
     }
@@ -51,7 +51,7 @@
         ldarg.1
         ldarg.2
         tail.
-        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
         
         ret
     }
@@ -72,8 +72,21 @@
         
         ldarg.0
         call void* [mscorlib]System.IntPtr::op_Explicit(native int)
+        ldc.i4.1
         tail.
-        call void SuperComicLib.PrivateCore._Runtime::_unprotect(void*)
+        call void SuperComicLib.PrivateCore._Runtime::_unprotect(void*, int32)
+        ret
+    }
+    
+    .method public hidebysig static void  MemUnprotect(native int ptr, int32 size) cil managed aggressiveinlining
+    {
+        .maxstack 3
+        
+        ldarg.0
+        call void* [mscorlib]System.IntPtr::op_Explicit(native int)
+        ldarg.1
+        tail.
+        call void SuperComicLib.PrivateCore._Runtime::_unprotect(void*, int32)
         ret
     }
 }

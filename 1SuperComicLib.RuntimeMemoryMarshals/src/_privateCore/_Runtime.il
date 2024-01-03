@@ -61,7 +61,46 @@
         ret
     }
     
-    .method public hidebysig static void  _unprotect(void* target) cil managed
+    .method public hidebysig static void*  _AOTmaster(void* ptr, int8* mem, int32 size) cil managed noinlining
+    {
+        .maxstack 8
+        
+        .locals (
+            [0] native int
+        )
+        
+        ldarg.0
+        ldc.i4.7
+        call bool SuperComicLib.PrivateCore._Runtime::_unprotect(void*, int32)
+        brfalse.s F_NOTSUPPORT
+        
+        ldarg.2
+        call native int [mscorlib]System.Runtime.InteropServices.Marshal::AllocHGlobal(int32)
+        stloc.0
+        
+        // modify address
+        ldarg.1
+        ldloc.0
+        stind.i
+        
+        ldloc.0
+        ldarg.2
+        call bool SuperComicLib.PrivateCore._Runtime::_unprotect(void*, int32)
+        // why fail???
+        brfalse.s F_NOTSUPPORT
+        
+        // SUCCESS!
+        ldloc.0
+        call void* [mscorlib]System.IntPtr::op_Explicit(native int)
+        ret
+        
+    F_NOTSUPPORT:
+        newobj instance void [mscorlib]System.NotSupportedException::.ctor()
+        throw
+    }
+    
+    // return: if true, success
+    .method public hidebysig static bool  _unprotect(void* target, int32 size) cil managed
     {
         .maxstack 8
         
@@ -72,7 +111,7 @@
         //  리눅스(우분투 22.04)는 net6.0 net8.0이 테스트됐고, net8.0에서 메모리 권한 문제가 발생함을 확인
         ldsfld int32 SuperComicLib.PrivateCore._Runtime::version__ 
         ldc.i4.s 7
-        blt.un.s G_RETURN
+        blt.un.s G_SUCCESS
         
         // is windows?
         ldsfld int32 SuperComicLib.PrivateCore._Runtime::platform__
@@ -80,25 +119,44 @@
         bne.un.s L_001
         
         ldarg.0
-        call void SuperComicLib.PrivateCore._Runtime::impl__unprotectWinNT(void*)
+        ldarg.1
+        call int32 SuperComicLib.PrivateCore._Runtime::impl__unprotectWinNT(void*, int32)
         
-        br.s G_RETURN
+        //  ref.: https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualprotect
+        //  != 0
+        ldc.i4.0
+        cgt.un
+        ret
     
     L_001:
         
         // is unix (Linux)?
         ldsfld int32 SuperComicLib.PrivateCore._Runtime::platform__
         ldc.i4.4
-        bne.un.s G_RETURN
+        bne.un.s G_FAIL
         
         ldarg.0
-        call void SuperComicLib.PrivateCore._Runtime::impl__unprotectUnix(void*)
+        ldarg.1
+        call int32 SuperComicLib.PrivateCore._Runtime::impl__unprotectUnix(void*, int32)
         
-    G_RETURN:
+        //  ref.: https://man7.org/linux/man-pages/man2/mprotect.2.html
+        //  == 0
+        ldc.i4.0
+        ceq
+        ret
+        
+    G_FAIL:
+        //  -- FAIL --
+        ldc.i4.0
+        ret
+        
+    G_SUCCESS:
+        //  -- SUCCESS --
+        ldc.i4.1
         ret
     }
     
-    .method public hidebysig static void  impl__unprotectWinNT(void* target) cil managed noinlining
+    .method public hidebysig static int32  impl__unprotectWinNT(void* target, int32 size) cil managed noinlining
     {
         .maxstack 8
         
@@ -107,44 +165,64 @@
         )
         
         ldarg.0
-        // dwSize = 1 byte
-        ldc.i4.1
+        // set 'dwSize'
+        ldarg.1
         conv.i
         // PAGE_EXECUTE_READWRITE
         ldc.i4.s 0x40
+        // pass 'dummy pointer'
         ldloca.s 0
         conv.u
+        tail.
         call int32 SuperComicLib.PrivateCore._Runtime::'<WinNT>__PInvoke'(void*, native int, int32, int32*)
-        pop
         
         ret
     }
     
-    .method public hidebysig static void  impl__unprotectUnix(void* target) cil managed noinlining
+    .method public hidebysig static int32  impl__unprotectUnix(void* target, int32 size) cil managed noinlining
     {
         .maxstack 8
         
         .locals (
-            [0] native int
+            [0] native int,
+            [1] void*,
+            [2] int32
         )
         
-        // -(nint)getpagesize
-        call int32 SuperComicLib.PrivateCore._Runtime::'<GNU>getpagesize__PInvoke'()
-        conv.i
-        neg
+        // align address AND, re-calc length
+        call int32 [mscorlib]System.Environment::get_SystemPageSize()
+        conv.u
         stloc.0
         
-        // align address
+        //  align = (target & -pg)
         ldarg.0
         ldloc.0
+        neg
         and
-        // len = 1 byte
-        ldc.i4.1
+        stloc.1
+        
+        // set 'len' (re-calc len)
+        //  target & (pg - 1)
+        ldarg.0
+            ldloc.0
+            ldc.i4.1
+            sub
+        and
+        //  + size
+        ldarg.1
+        conv.i
+        add
+        conv.i4
+        stloc.2
+        
+        ldloc.1
+        // set 'len'
+        ldloc.2
         conv.i
         // PROT_READ | PROT_WRITE | PROT_EXECUTE
         ldc.i4.s 7
+        tail.
         call int32 SuperComicLib.PrivateCore._Runtime::'<GNU>mprotect__PInvoke'(void*, native int, int32)
-        pop
         
         ret
     }
@@ -161,11 +239,6 @@
     }
     
     // Unix (Linux)
-    .method private hidebysig static pinvokeimpl("libc.so.6" as "getpagesize" nomangle winapi) 
-        int32 '<GNU>getpagesize__PInvoke' () cil managed preservesig
-    {
-    }
-    
     .method private hidebysig static pinvokeimpl("libc.so.6" as "mprotect" nomangle winapi) 
         int32 '<GNU>mprotect__PInvoke' (
             void* addr,

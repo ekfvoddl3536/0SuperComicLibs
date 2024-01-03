@@ -54,16 +54,16 @@
         .locals (
             [0] method int32 *(int64, int64, int64, int64, int64, int64)
         )
-
+        
         ldtoken method int32 SuperComicLib.X64ABI::__abi_test(int64, int64, int64, int64, int64, int64)
         call void [mscorlib]System.Runtime.CompilerServices.RuntimeHelpers::PrepareMethod(valuetype [mscorlib]System.RuntimeMethodHandle)
         
-        ldtoken method int32 SuperComicLib.X64ABI::__abi_test(int64, int64, int64, int64, int64, int64)
+        ldftn int32 SuperComicLib.X64ABI::__abi_test(int64, int64, int64, int64, int64, int64)
         ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize74 SuperComicLib.PrivateCore._NativeImg::_testabi
         ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize74::element
         ldc.i4.s 74
-        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
-
+        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
+        
         // Don't tail call (DIRTY 'rcx, rdx')
         ldftn int32 SuperComicLib.X64ABI::__abi_test(int64, int64, int64, int64, int64, int64)
         stloc.0

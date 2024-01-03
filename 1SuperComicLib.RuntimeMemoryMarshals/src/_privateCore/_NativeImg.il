@@ -271,7 +271,7 @@
     
     
     // Methods
-    .method assembly hidebysig static void*  prologue(valuetype [mscorlib]System.RuntimeMethodHandle target) cil managed
+    .method assembly hidebysig static void*  prologue(valuetype [mscorlib]System.RuntimeMethodHandle target, int32 size) cil managed
     {
         .maxstack 8
         
@@ -285,12 +285,23 @@
         
         ldloca.s 1
         call instance native int [mscorlib]System.RuntimeMethodHandle::GetFunctionPointer()
+        tail.
+        call void* SuperComicLib.PrivateCore._NativeImg::prologue(native int, int32)
+        ret
+    }
+    
+    .method assembly hidebysig static void*  prologue(native int tok, int32 size) cil managed
+    {
+        .maxstack 8
+        
+        .locals (
+            [0] int8*,
+            [1] int8*
+        )
+        
+        ldarg.0
         call void* [mscorlib]System.IntPtr::op_Explicit(native int)
         stloc.0
-        
-        // unprotect MEMORY
-        ldloc.0
-        call void SuperComicLib.PrivateCore._Runtime::_unprotect(void*)
         
         // NOTE:: .NET Framework, <= .NET 6, Mono
         // test 'jmp' code
@@ -304,8 +315,29 @@
         ldloc.0
         ldind.u2
         ldc.i4 0x25FF
+        beq.s L002
+        
+        // test 'mov r10, [...]'
+        ldloc.0
+        ldind.u4
+        ldc.i4 0xFFFFFF
+        and
+        ldc.i4 0x158B4C
+        bne.un.s G_RETURN
+
+        // skip 'mov r10, [m32]'
+        ldloc.0
+        ldc.i4.7
+        add
+        stloc.0
+
+        // re-check
+        ldloc.0
+        ldind.u2
+        ldc.i4 0x25FF
         bne.un.s G_RETURN
         
+    L002:
         // jump!
         //  r = *(uint*)(x + 2) + 6
         //  x = *(long*)(x + r)        
@@ -318,13 +350,28 @@
         add
         conv.u
         add
+        
+        // back-up
+        dup
+        stloc.1
+        
         ldind.i8
         conv.u
         stloc.0
         
         // unprotect MEMORY
         ldloc.0
-        call void SuperComicLib.PrivateCore._Runtime::_unprotect(void*)
+        ldarg.1
+        call bool SuperComicLib.PrivateCore._Runtime::_unprotect(void*, int32)
+        brtrue.s G_RETURN
+        
+        //  AOT ERROR!!
+        //  need to allocate a data area and use it
+        ldarg.0
+        ldloc.1
+        ldarg.1
+        call void* SuperComicLib.PrivateCore._Runtime::_AOTmaster(void*, int8*, int32)
+        stloc.0
         
         br.s G_RETURN
         
@@ -344,14 +391,18 @@
         
         // unprotect MEMORY
         ldloc.0
-        call void SuperComicLib.PrivateCore._Runtime::_unprotect(void*)
+        ldarg.1
+        call bool SuperComicLib.PrivateCore._Runtime::_unprotect(void*, int32)
+        pop
+        
+        // AOT is supported starting from .NET 7, and .NET 7 does not seem to use this jmp method.
         
     G_RETURN:
         ldloc.0
         ret
     }
     
-    .method assembly hidebysig static void  patch(valuetype [mscorlib]System.RuntimeMethodHandle target, [in] uint8& asm, int32 size) cil managed noinlining
+    .method assembly hidebysig static void  patch(native int tok, [in] uint8& asm, int32 size) cil managed noinlining
     {
         .param [2]
         .custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
@@ -364,7 +415,8 @@
         )
         
         ldarg.0
-        call void* SuperComicLib.PrivateCore._NativeImg::prologue(valuetype [mscorlib]System.RuntimeMethodHandle)
+        ldarg.2
+        call void* SuperComicLib.PrivateCore._NativeImg::prologue(native int, int32)
         stloc.0
         
         ldc.i4.0

@@ -78,5 +78,12 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void MemUnprotect(IntPtr ptr) => 
             throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// Removes memory protection for the specified address and marks it as READ/WRITE/EXECUTE.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void MemUnprotect(IntPtr ptr, int size) =>
+            throw new PlatformNotSupportedException();
     }
 }

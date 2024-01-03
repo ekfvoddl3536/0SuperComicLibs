@@ -64,29 +64,29 @@
         bne.un.s M_SYSVABI
         
         //  -- MS ABI --
-        ldtoken method int64 SuperComicLib.X64Math::Mulhi(int64, int64)
+        ldftn int64 SuperComicLib.X64Math::Mulhi(int64, int64)
         ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize10 SuperComicLib.PrivateCore._NativeImg::__mulh
         ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize10::element
         ldc.i4.s 10
-        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
         
-        ldtoken method uint64 SuperComicLib.X64Math::Mulhi(uint64, uint64)
+        ldftn uint64 SuperComicLib.X64Math::Mulhi(uint64, uint64)
         ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize10 SuperComicLib.PrivateCore._NativeImg::__umulh
         ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize10::element
         ldc.i4.s 10
-        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
         
-        ldtoken method int64 SuperComicLib.X64Math::BigMul(int64, int64, int64&)
+        ldftn int64 SuperComicLib.X64Math::BigMul(int64, int64, int64&)
         ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize13 SuperComicLib.PrivateCore._NativeImg::_mul128
         ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize13::element
         ldc.i4.s 13
-        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
         
-        ldtoken method uint64 SuperComicLib.X64Math::BigMul(uint64, uint64, uint64&)
+        ldftn uint64 SuperComicLib.X64Math::BigMul(uint64, uint64, uint64&)
         ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize13 SuperComicLib.PrivateCore._NativeImg::_umul128
         ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize13::element
         ldc.i4.s 13
-        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
         
         br.s G_RETURN
         
@@ -96,29 +96,29 @@
         bne.un.s M_INVALID
         
         //  -- SYS V ABI --
-        ldtoken method int64 SuperComicLib.X64Math::Mulhi(int64, int64)
+        ldftn int64 SuperComicLib.X64Math::Mulhi(int64, int64)
         ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize10 SuperComicLib.PrivateCore._NativeImg::__mulhV
         ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize10::element
         ldc.i4.s 10
-        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
         
-        ldtoken method uint64 SuperComicLib.X64Math::Mulhi(uint64, uint64)
+        ldftn uint64 SuperComicLib.X64Math::Mulhi(uint64, uint64)
         ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize10 SuperComicLib.PrivateCore._NativeImg::__umulhV
         ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize10::element
         ldc.i4.s 10
-        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
         
-        ldtoken method int64 SuperComicLib.X64Math::BigMul(int64, int64, int64&)
+        ldftn int64 SuperComicLib.X64Math::BigMul(int64, int64, int64&)
         ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize16 SuperComicLib.PrivateCore._NativeImg::_mul128V
         ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize16::element
         ldc.i4.s 16
-        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
         
-        ldtoken method uint64 SuperComicLib.X64Math::BigMul(uint64, uint64, uint64&)
+        ldftn uint64 SuperComicLib.X64Math::BigMul(uint64, uint64, uint64&)
         ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize16 SuperComicLib.PrivateCore._NativeImg::_umul128V
         ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize16::element
         ldc.i4.s 16
-        call void SuperComicLib.PrivateCore._NativeImg::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
+        call void SuperComicLib.PrivateCore._NativeImg::patch(native int, uint8&, int32)
         
     G_RETURN:
         // step 3.
