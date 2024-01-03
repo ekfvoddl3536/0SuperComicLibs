@@ -192,7 +192,7 @@
     
 
     
-    .method private static void  impl__cpuid(int32 a, void* p) cil managed noinlining nooptimization preservesig
+    .method private static void  impl__cpuid(int32 a, void* p) cil managed noinlining nooptimization
     {
         .maxstack 8
         
@@ -222,7 +222,7 @@
         ret
     }
     
-    .method private static void  impl__cpuidEx(int32 a, int32 b, void* p) cil managed noinlining nooptimization preservesig
+    .method private static void  impl__cpuidEx(int32 a, int32 b, void* p) cil managed noinlining nooptimization
     {
         .maxstack 8
         
@@ -252,7 +252,7 @@
         ret
     }
     
-    .method private static native int  impl__stackptr() cil managed noinlining nooptimization preservesig
+    .method private static native int  impl__stackptr() cil managed noinlining nooptimization
     {
         .maxstack 8
         

@@ -93,7 +93,7 @@
             int64 t2,
             int64 t3,
             int64 t4,
-            int64 t5) cil managed preservesig noinlining nooptimization
+            int64 t5) cil managed noinlining nooptimization
     {
         .maxstack 8
 

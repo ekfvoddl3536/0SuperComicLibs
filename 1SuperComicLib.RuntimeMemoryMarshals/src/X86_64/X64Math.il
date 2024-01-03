@@ -132,7 +132,7 @@
         ret
     }
     
-    .method public hidebysig static int64  Mulhi(int64 a, int64 b) cil managed preservesig noinlining nooptimization
+    .method public hidebysig static int64  Mulhi(int64 a, int64 b) cil managed noinlining nooptimization
     {
         .maxstack 8
         
@@ -141,7 +141,9 @@
         
         ldarg.0
         ldarg.1
-        mul
+        ldftn int64 SuperComicLib.X64Math::Mulhi(int64, int64)
+        tail.
+        calli int64(int64, int64)
         ret
         
     L_001:
@@ -150,7 +152,7 @@
         ret
     }
     
-    .method public hidebysig static uint64  Mulhi(uint64 a, uint64 b) cil managed preservesig noinlining nooptimization
+    .method public hidebysig static uint64  Mulhi(uint64 a, uint64 b) cil managed noinlining nooptimization
     {
         .maxstack 8
         
@@ -159,7 +161,9 @@
         
         ldarg.0
         ldarg.1
-        mul
+        ldftn uint64 SuperComicLib.X64Math::Mulhi(uint64, uint64)
+        tail.
+        calli int64(int64, int64)
         ret
         
     L_001:
@@ -168,7 +172,7 @@
         ret
     }
     
-    .method public hidebysig static int64  BigMul(int64 a, int64 b, [out] int64& low) cil managed preservesig noinlining nooptimization
+    .method public hidebysig static int64  BigMul(int64 a, int64 b, [out] int64& low) cil managed noinlining nooptimization
     {
         .maxstack 8
         
@@ -186,7 +190,7 @@
         ret
     }
     
-    .method public hidebysig static uint64  BigMul(uint64 a, uint64 b, [out] uint64& low) cil managed preservesig noinlining nooptimization
+    .method public hidebysig static uint64  BigMul(uint64 a, uint64 b, [out] uint64& low) cil managed noinlining nooptimization
     {
         .maxstack 8
         

@@ -66,15 +66,24 @@
         .maxstack 8
         
         .locals (
-            [0] native int
+            [0] native int,
+            [1] int32
         )
+        
+        // 16-bytes align
+        ldarg.2
+        ldc.i4.s 15
+        add
+        ldc.i4.s -16
+        and
+        stloc.1
         
         ldarg.0
         ldc.i4.7
         call bool SuperComicLib.PrivateCore._Runtime::_unprotect(void*, int32)
         brfalse.s F_NOTSUPPORT
         
-        ldarg.2
+        ldloc.1
         call native int [mscorlib]System.Runtime.InteropServices.Marshal::AllocHGlobal(int32)
         stloc.0
         
@@ -84,7 +93,7 @@
         stind.i
         
         ldloc.0
-        ldarg.2
+        ldloc.1
         call bool SuperComicLib.PrivateCore._Runtime::_unprotect(void*, int32)
         // why fail???
         brfalse.s F_NOTSUPPORT
