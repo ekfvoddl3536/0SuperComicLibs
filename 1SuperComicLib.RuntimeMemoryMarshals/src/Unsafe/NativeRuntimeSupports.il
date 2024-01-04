@@ -60,10 +60,24 @@
     {
         .maxstack 3
         
+        ldarga.s 0
+        call instance native int [mscorlib]System.RuntimeMethodHandle::GetFunctionPointer()
+        ldc.i4.0
+        tail.
+        call void* SuperComicLib.PrivateCore._UnsafeMethods::prologue(native int, int32)
+        
+        ret
+    }
+    
+    .method public hidebysig static void*  GetActualFunctionAddress(void* in_functionPointer) cil managed aggressiveinlining
+    {
+        .maxstack 3
+        
         ldarg.0
         ldc.i4.0
         tail.
         call void* SuperComicLib.PrivateCore._UnsafeMethods::prologue(native int, int32)
+        
         ret
     }
     
@@ -76,6 +90,7 @@
         ldc.i4.1
         tail.
         call bool SuperComicLib.PrivateCore._UnsafeMethods::_unprotect(void*, int32)
+        
         ret
     }
     
@@ -88,6 +103,7 @@
         ldarg.1
         tail.
         call bool SuperComicLib.PrivateCore._UnsafeMethods::_unprotect(void*, int32)
+        
         ret
     }
 }

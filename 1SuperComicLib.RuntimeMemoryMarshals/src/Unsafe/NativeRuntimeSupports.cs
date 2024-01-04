@@ -38,7 +38,7 @@ namespace SuperComicLib.RuntimeMemoryMarshals
     /// the typical runtime environments for its use.<br/>
     /// Improper utilization of these APIs can lead to corruption of process memory or destabilization of the.NET runtime.
     /// </remarks>
-    public static class NativeRuntimeSupports
+    public static unsafe class NativeRuntimeSupports
     {
         /// <summary>
         /// Prepares the method and modifies the code of the compiled method with the provided raw image code.
@@ -71,6 +71,17 @@ namespace SuperComicLib.RuntimeMemoryMarshals
         /// <returns>If the address cannot be obtained due to memory protection issues, the return is null.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IntPtr GetActualFunctionAddress(RuntimeMethodHandle handle) =>
+            throw new PlatformNotSupportedException();
+
+        /// <summary>
+        /// Gets the starting address of the prolog of the provided method procedure.
+        /// </summary>
+        /// <remarks>
+        /// This method does not prepare the provided method, so prepare the method before performing this method.
+        /// </remarks>
+        /// <returns>If the address cannot be obtained due to memory protection issues, the return is null.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void* GetActualFunctionAddress(void* in_functionPointer) =>
             throw new PlatformNotSupportedException();
 
         /// <summary>

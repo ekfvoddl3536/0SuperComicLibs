@@ -30,11 +30,11 @@
 
     // Nested Types
     //  Byte[6]
-    .class nested assembly explicit ansi sealed __staticArraySize6
+    .class nested assembly explicit ansi sealed __staticArraySize5
             extends [mscorlib]System.ValueType
     {
         .pack 1
-        .size 6
+        .size 5
 
         .field [0] public initonly uint8 element
     }
@@ -114,7 +114,7 @@
     .field assembly static initonly valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize27 _cpuidEx at MD_0003
     .field assembly static initonly valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize27 _cpuidVEx at MD_0004
     
-    .field assembly static initonly valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize6 _sp at XE_0001
+    .field assembly static initonly valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize5 _sp at XE_0001
     
 
 
@@ -265,7 +265,7 @@
     )
     
     .data cil XE_0001 = bytearray (
-        48 8d 44 24 10  //  lea    rax,[rsp+0x10]
+        48 8b 04 24     //  mov    rax, [rsp]
         c3              //  ret
     )
 }

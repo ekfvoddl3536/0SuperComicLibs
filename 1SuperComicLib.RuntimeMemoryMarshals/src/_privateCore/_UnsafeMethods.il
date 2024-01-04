@@ -25,62 +25,6 @@
 .class private auto ansi sealed SuperComicLib.PrivateCore._UnsafeMethods
         extends [mscorlib]System.Object
 {
-    .method public hidebysig static void*  _AOTmaster(void* ptr, int8* mem, int32 size) cil managed noinlining
-    {
-        .maxstack 8
-        
-        .locals (
-            [0] native int,
-            [1] int32
-        )
-        
-        ldarg.2
-        ldc.i4.0
-        beq.s G_NOP
-        
-        // 16-bytes align
-        ldarg.2
-        ldc.i4.s 15
-        add
-        ldc.i4.s -16
-        and
-        stloc.1
-        
-        ldarg.0
-        ldc.i4.7
-        call bool SuperComicLib.PrivateCore._UnsafeMethods::_unprotect(void*, int32)
-        brfalse.s F_NOTSUPPORT
-        
-        ldloc.1
-        call native int [mscorlib]System.Runtime.InteropServices.Marshal::AllocHGlobal(int32)
-        stloc.0
-        
-        // modify address
-        ldarg.1
-        ldloc.0
-        stind.i
-        
-        ldloc.0
-        ldloc.1
-        call bool SuperComicLib.PrivateCore._UnsafeMethods::_unprotect(void*, int32)
-        // why fail???
-        brfalse.s F_NOTSUPPORT
-        
-        // SUCCESS!
-        ldloc.0
-        call void* [mscorlib]System.IntPtr::op_Explicit(native int)
-        ret
-        
-    G_NOP:
-        ldc.i4.0
-        conv.i
-        ret
-        
-    F_NOTSUPPORT:
-        newobj instance void [mscorlib]System.NotSupportedException::.ctor()
-        throw
-    }
-    
     // return: if true, success
     .method public hidebysig static bool  _unprotect(void* target, int32 size) cil managed
     {
@@ -209,6 +153,131 @@
         ret
     }
     
+    .method public hidebysig static void*  _AOTmaster(int8* mem, int32 size) cil managed noinlining
+    {
+        .maxstack 8
+        
+        .locals (
+            [0] native int,
+            [1] int32
+        )
+        
+        ldarg.1
+        ldc.i4.0
+        beq.s G_FAST_RETURN
+        
+        // 16-bytes align
+        ldarg.1
+        ldc.i4.s 15
+        add
+        ldc.i4.s -16
+        and
+        stloc.1
+        
+        ldarg.0
+        ldc.i4.8
+        call bool SuperComicLib.PrivateCore._UnsafeMethods::_unprotect(void*, int32)
+        brfalse.s F_NOTSUPPORT
+        
+        ldloc.1
+        call native int [mscorlib]System.Runtime.InteropServices.Marshal::AllocHGlobal(int32)
+        stloc.0
+        
+        // modify address
+        ldarg.0
+        ldloc.0
+        stind.i
+        
+        ldloc.0
+        ldloc.1
+        call bool SuperComicLib.PrivateCore._UnsafeMethods::_unprotect(void*, int32)
+        // why fail???
+        brfalse.s F_NOTSUPPORT
+        
+        // SUCCESS!
+        ldloc.0
+        call void* [mscorlib]System.IntPtr::op_Explicit(native int)
+        ret
+        
+    F_NOTSUPPORT:
+        newobj instance void [mscorlib]System.NotSupportedException::.ctor()
+        throw
+        
+    G_FAST_RETURN:
+        ldarg.0
+        ldind.i
+        ret
+    }
+    
+    .method private hidebysig static void*  'jmp/4'(void* ptr) cil managed aggressiveinlining
+    {
+        .maxstack 3
+        
+        // jump!
+        //  r = *(uint*)(x + 2) + 6
+        //  x = *(long*)(x + r)        
+        ldarg.0
+            ldarg.0
+            ldc.i4.2
+            add
+            ldind.u4
+            ldc.i4.6
+            add
+        add
+        
+        ret
+    }
+    
+    .method private hidebysig static void*  prologue_cplx(void* ptr) cil managed
+    {
+        .maxstack 8
+        
+        .locals (
+            [0] void*,
+            [1] void*
+        )
+        
+        ldarg.0
+        call void* SuperComicLib.PrivateCore._UnsafeMethods::'jmp/4'(void*)
+        // back-up
+        dup
+        stloc.1
+        // read value
+        ldind.i
+        dup
+        stloc.0
+        
+        // NOTE:: >= .NET 7.0 / PGO(?) jmp
+        //  mov rax, [rip+m32]
+        //  dec word [rax]
+        //  je
+        //  jmp /4
+        ldind.i4
+        ldc.i4 0xFFFFFF
+        and
+        ldc.i4 0x058B48
+        bne.un.s G_RETURN
+        
+        ldloc.0
+        ldc.i4.7
+        add
+        ldind.i8
+        ldc.i8 0x00FFFFFFFFFFFFFF
+        and
+        ldc.i8 0x0025FF067408FF66
+        bne.un.s G_RETURN
+        
+        ldloc.0
+        ldc.i4.s 12
+        add
+        tail.
+        call void* SuperComicLib.PrivateCore._UnsafeMethods::'jmp/4'(void*)
+        ret
+        
+    G_RETURN:
+        ldloc.1
+        ret
+    }
     
     // Methods
     .method assembly hidebysig static void*  prologue(native int tok, int32 size) cil managed
@@ -238,40 +307,24 @@
         ldc.i4 0x25FF
         bne.un.s G_RETURN
         
-    L002:
-        // jump!
-        //  r = *(uint*)(x + 2) + 6
-        //  x = *(long*)(x + r)        
         ldloc.0
-        ldloc.0
-        ldc.i4.2
-        add
-        ldind.u4
-        ldc.i4.6
-        add
-        conv.u
-        add
-        
-        // back-up
+        call void* SuperComicLib.PrivateCore._UnsafeMethods::prologue_cplx(void*)
         dup
         stloc.1
-        
-        ldind.i8
-        conv.u
+        ldind.i
+        dup
         stloc.0
-        
+
         // unprotect MEMORY
-        ldloc.0
         ldarg.1
         call bool SuperComicLib.PrivateCore._UnsafeMethods::_unprotect(void*, int32)
         brtrue.s G_RETURN
         
         //  AOT ERROR!!
         //  need to allocate a data area and use it
-        ldarg.0
         ldloc.1
         ldarg.1
-        call void* SuperComicLib.PrivateCore._UnsafeMethods::_AOTmaster(void*, int8*, int32)
+        call void* SuperComicLib.PrivateCore._UnsafeMethods::_AOTmaster(int8*, int32)
         stloc.0
         
         br.s G_RETURN
@@ -280,18 +333,16 @@
         // jump!
         //  x += *(uint*)(x + 1) + 5
         ldloc.0
-        ldloc.0
-        ldc.i4.1
+            ldloc.0
+            ldc.i4.1
+            add
+            ldind.u4
+            ldc.i4.5
+            add
+            conv.u
         add
-        ldind.u4
-        ldc.i4.5
-        add
-        conv.u
-        add
-        stloc.0
         
         // unprotect MEMORY
-        ldloc.0
         ldarg.1
         call bool SuperComicLib.PrivateCore._UnsafeMethods::_unprotect(void*, int32)
         pop
@@ -312,14 +363,10 @@
 
         .locals (
             [0] uint8*,
-            [1] int32,
-            [2] valuetype [mscorlib]System.RuntimeMethodHandle
+            [1] int32
         )
         
-        ldarg.0
-        stloc.2
-        
-        ldloca.s 2
+        ldarga.s 0
         call instance native int [mscorlib]System.RuntimeMethodHandle::GetFunctionPointer()
         ldarg.2
         call void* SuperComicLib.PrivateCore._UnsafeMethods::prologue(native int, int32)

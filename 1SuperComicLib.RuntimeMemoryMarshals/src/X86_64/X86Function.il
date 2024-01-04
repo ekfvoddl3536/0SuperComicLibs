@@ -57,14 +57,14 @@
         ldtoken method void SuperComicLib.RuntimeMemoryMarshals.X86Function::impl__cpuidEx(int32, int32, void*)
         call void [mscorlib]System.Runtime.CompilerServices.RuntimeHelpers::PrepareMethod(valuetype [mscorlib]System.RuntimeMethodHandle)
         
-        ldtoken method native int SuperComicLib.RuntimeMemoryMarshals.X86Function::impl__stackptr()
+        ldtoken method native int SuperComicLib.RuntimeMemoryMarshals.X86Function::_STACKPOINTER()
         call void [mscorlib]System.Runtime.CompilerServices.RuntimeHelpers::PrepareMethod(valuetype [mscorlib]System.RuntimeMethodHandle)
         
         //  no abi dependency
-        ldtoken method native int SuperComicLib.RuntimeMemoryMarshals.X86Function::impl__stackptr()
-        ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize6 SuperComicLib.PrivateCore._NativeImg::_sp
-        ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize6::element
-        ldc.i4.s 6
+        ldtoken method native int SuperComicLib.RuntimeMemoryMarshals.X86Function::_STACKPOINTER()
+        ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize5 SuperComicLib.PrivateCore._NativeImg::_sp
+        ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize5::element
+        ldc.i4.s 5
         call void SuperComicLib.PrivateCore._UnsafeMethods::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
         
         // CHECK ABI
@@ -172,14 +172,14 @@
         ret
     }
     
-    .method public hidebysig static native int  _STACKPOINTER() cil managed aggressiveinlining
+    .method public hidebysig static native int  _STACKPOINTER() cil managed noinlining nooptimization
     {
         .maxstack 8
         
         ldsfld bool SuperComicLib.RuntimeMemoryMarshals.X86Function::IsCompiled
         brfalse.s L_001
         
-        ldftn native int SuperComicLib.RuntimeMemoryMarshals.X86Function::impl__stackptr()
+        ldftn native int SuperComicLib.RuntimeMemoryMarshals.X86Function::_STACKPOINTER()
         tail.
         calli native int()
         ret
@@ -249,15 +249,6 @@
         }
         
     G_RETURN:
-        ret
-    }
-    
-    .method private static native int  impl__stackptr() cil managed noinlining nooptimization
-    {
-        .maxstack 8
-        
-        call int32 [mscorlib]System.Environment::get_TickCount()
-        conv.i
         ret
     }
 }
