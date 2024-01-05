@@ -51,22 +51,16 @@
     {
         .maxstack 8
 
-        .locals (
-            [0] method int32 *(int64, int64, int64, int64, int64, int64)
-        )
-        
         ldtoken method int32 SuperComicLib.X64ABI::__abi_test(int64, int64, int64, int64, int64, int64)
         call void [mscorlib]System.Runtime.CompilerServices.RuntimeHelpers::PrepareMethod(valuetype [mscorlib]System.RuntimeMethodHandle)
         
         ldtoken method int32 SuperComicLib.X64ABI::__abi_test(int64, int64, int64, int64, int64, int64)
-        ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize74 SuperComicLib.PrivateCore._NativeImg::_testabi
-        ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize74::element
-        ldc.i4.s 74
+        ldsflda valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize75 SuperComicLib.PrivateCore._NativeImg::_testabi
+        ldflda uint8 SuperComicLib.PrivateCore._NativeImg/__staticArraySize75::element
+        ldc.i4.s 75
         call void SuperComicLib.PrivateCore._UnsafeMethods::patch(valuetype [mscorlib]System.RuntimeMethodHandle, uint8&, int32)
         
         // Don't tail call (DIRTY 'rcx, rdx')
-        ldftn int32 SuperComicLib.X64ABI::__abi_test(int64, int64, int64, int64, int64, int64)
-        stloc.0
         ldc.i4.1
         conv.i8
         ldc.i4.2
@@ -81,7 +75,7 @@
         conv.i8
         // call rax (.NET)
         // call r11 (MONO)
-        ldloc.0
+        ldftn int32 SuperComicLib.X64ABI::__abi_test(int64, int64, int64, int64, int64, int64)
         calli int32(int64, int64, int64, int64, int64, int64)
 
         ret
@@ -115,6 +109,9 @@
 
             ldarg.s 4
             mul.ovf
+            
+            // ldarg.s 5
+            // mul.ovf
 
             conv.i4
             stloc.0

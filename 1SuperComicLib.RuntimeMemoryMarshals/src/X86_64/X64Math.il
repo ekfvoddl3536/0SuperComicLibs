@@ -163,7 +163,7 @@
         ldarg.1
         ldftn uint64 SuperComicLib.X64Math::Mulhi(uint64, uint64)
         tail.
-        calli int64(int64, int64)
+        calli uint64(uint64, uint64)
         ret
         
     L_001:
@@ -181,7 +181,10 @@
         
         ldarg.0
         ldarg.1
-        mul.ovf
+        ldarg.2
+        ldftn int64 SuperComicLib.X64Math::BigMul(int64, int64, int64&)
+        tail.
+        calli int64(int64, int64, int64&)
         ret
         
     L_001:
@@ -199,7 +202,10 @@
         
         ldarg.0
         ldarg.1
-        mul.ovf
+        ldarg.2
+        ldftn uint64 SuperComicLib.X64Math::BigMul(uint64, uint64, uint64&)
+        tail.
+        calli uint64(uint64, uint64, uint64&)
         ret
         
     L_001:

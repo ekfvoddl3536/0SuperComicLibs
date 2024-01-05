@@ -83,12 +83,12 @@
 
         .field [0] public initonly uint8 element
     }
-    //  Byte[74]
-    .class nested assembly explicit ansi sealed __staticArraySize74
+    //  Byte[75]
+    .class nested assembly explicit ansi sealed __staticArraySize75
             extends [mscorlib]System.ValueType
     {
         .pack 1
-        .size 74
+        .size 75
 
         .field [0] public initonly uint8 element
     }
@@ -106,7 +106,7 @@
     .field assembly static initonly valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize16 _mul128V at VG_BYTEARRAY_0003
     .field assembly static initonly valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize16 _umul128V at VG_BYTEARRAY_0004
 
-    .field assembly static initonly valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize74 _testabi at GG_0001
+    .field assembly static initonly valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize75 _testabi at GG_0001
     
     .field assembly static initonly valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize25 _cpuid at MD_0001
     .field assembly static initonly valuetype SuperComicLib.PrivateCore._NativeImg/__staticArraySize25 _cpuidV at MD_0002

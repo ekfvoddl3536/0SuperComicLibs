@@ -26,7 +26,7 @@
         extends [mscorlib]System.Object
 {
     // return: if true, success
-    .method public hidebysig static bool  _unprotect(void* target, int32 size) cil managed
+    .method public static bool  _unprotect(void* target, int32 size) cil managed
     {
         .maxstack 8
         
@@ -35,9 +35,18 @@
         //  이를 해제해야함
         //  윈도우에서는 net6.0 net7.0 net8.0이 테스트됐고, net7.0부터 임을 확인
         //  리눅스(우분투 22.04)는 net6.0 net8.0이 테스트됐고, net8.0에서 메모리 권한 문제가 발생함을 확인
-        ldsfld int32 SuperComicLib.PrivateCore._Runtime::version__ 
-        ldc.i4.s 7
-        blt.un.s G_SUCCESS
+        //  ---> (RE-WRITE)
+        //  .NET 5/.NET Core 3.0+ ReadyToRun을 포함해야함. ReadyToRun이 있는 경우, 메모리 보호 문제가 생길 수 있음
+        //  .NET Core 3.0+의 Major 버전이 3으로 .NET Framework 4.7.1의 Major 버전인 4보다 작으므로
+        //  이 부분을 판별할 필요가 없어짐
+        
+        // ldsfld int32 SuperComicLib.PrivateCore._Runtime::version__ 
+        // ldc.i4.s 5
+        // blt.un.s G_SUCCESS
+        
+        ldarg.1
+        ldc.i4.0
+        beq.s G_SUCCESS
         
         // is windows?
         ldsfld int32 SuperComicLib.PrivateCore._Runtime::platform__
@@ -82,7 +91,7 @@
         ret
     }
     
-    .method public hidebysig static int32  impl__unprotectWinNT(void* target, int32 size) cil managed noinlining
+    .method public static int32  impl__unprotectWinNT(void* target, int32 size) cil managed
     {
         .maxstack 8
         
@@ -99,13 +108,12 @@
         // pass 'dummy pointer'
         ldloca.s 0
         conv.u
-        tail.
         call int32 SuperComicLib.PrivateCore._UnsafeMethods::'<WinNT>__PInvoke'(void*, native int, int32, int32*)
         
         ret
     }
     
-    .method public hidebysig static int32  impl__unprotectUnix(void* target, int32 size) cil managed noinlining
+    .method public static int32  impl__unprotectUnix(void* target, int32 size) cil managed
     {
         .maxstack 8
         
@@ -147,7 +155,6 @@
         conv.i
         // PROT_READ | PROT_WRITE | PROT_EXECUTE
         ldc.i4.s 7
-        tail.
         call int32 SuperComicLib.PrivateCore._UnsafeMethods::'<GNU>mprotect__PInvoke'(void*, native int, int32)
         
         ret
@@ -161,10 +168,6 @@
             [0] native int,
             [1] int32
         )
-        
-        ldarg.1
-        ldc.i4.0
-        beq.s G_FAST_RETURN
         
         // 16-bytes align
         ldarg.1
@@ -202,11 +205,6 @@
     F_NOTSUPPORT:
         newobj instance void [mscorlib]System.NotSupportedException::.ctor()
         throw
-        
-    G_FAST_RETURN:
-        ldarg.0
-        ldind.i
-        ret
     }
     
     .method private hidebysig static void*  'jmp/4'(void* ptr) cil managed aggressiveinlining
@@ -228,7 +226,7 @@
         ret
     }
     
-    .method private hidebysig static void*  prologue_cplx(void* ptr) cil managed
+    .method private hidebysig static void*  prologue_cplxAOT(void* ptr) cil managed
     {
         .maxstack 8
         
@@ -279,14 +277,139 @@
         ret
     }
     
-    // Methods
-    .method assembly hidebysig static void*  prologue(native int tok, int32 size) cil managed
+    .method private hidebysig static void*  '<>prologue/ff25'(void* ptr, int32 size) cil managed
     {
         .maxstack 8
         
         .locals (
             [0] int8*,
             [1] int8*
+        )
+        
+        ldarg.0
+        call void* SuperComicLib.PrivateCore._UnsafeMethods::prologue_cplxAOT(void*)
+        dup
+        stloc.1
+        ldind.i
+        dup
+        stloc.0
+
+        // unprotect MEMORY
+        ldarg.1
+        call bool SuperComicLib.PrivateCore._UnsafeMethods::_unprotect(void*, int32)
+        brtrue.s G_RETURN
+        
+        //  AOT ERROR!!
+        //  need to allocate a data area and use it
+        ldloc.1
+        ldarg.1
+        tail.
+        call void* SuperComicLib.PrivateCore._UnsafeMethods::_AOTmaster(int8*, int32)
+        
+        ret
+        
+    G_RETURN:
+        ldloc.0
+        ret
+    }
+    
+    .method private hidebysig static void*  prologue_cplxRTR(void* ptr) cil managed
+    {
+        .maxstack 8
+        
+        // movabs rax, imm64
+        ldarg.0
+        ldind.u2
+        ldc.i4 0xB848
+        bne.un.s G_RETURN
+        
+        // jmp rax
+        ldarg.0
+        ldc.i4.s 10
+        add
+        ldind.u2
+        ldc.i4 0xE0FF
+        bne.un.s G_RETURN
+        
+        ldarg.0
+        ldc.i4.2
+        add
+        ldind.i
+        ret
+        
+    G_RETURN:
+        ldarg.0
+        ret
+    }
+    
+    .method private hidebysig static void*  '<>prologue/e9'(void* ptr, int32 size) cil managed
+    {
+        .maxstack 8
+        
+        .locals (
+            [0] int8*,
+            [1] int8*
+        )
+        
+        // jump!
+        //  k = x + *(int*)(x + 1) + 5
+        ldarg.0
+            ldarg.0
+            ldc.i4.1
+            add
+            // must be 'signed'. DON't UINT!
+            ldind.i4
+            conv.i
+            add
+        ldc.i4.5
+        add
+        // back-up
+        dup
+        stloc.1
+        
+        //  Ready-To-Run ERROR!!!
+        call void* SuperComicLib.PrivateCore._UnsafeMethods::prologue_cplxRTR(void*)
+        dup
+        stloc.0
+        
+        // unprotect MEMORY
+        ldarg.1
+        call bool SuperComicLib.PrivateCore._UnsafeMethods::_unprotect(void*, int32)
+        brtrue.s G_RETURN
+        
+        ldloc.0
+        ldloc.1
+        beq.s FAIL_NOTSUPPORT
+        
+        // AOT is supported starting from .NET 7, and .NET 7 does not seem to use this jmp method.
+        //  Ready-To-Run ERROR!!!
+        ldloc.1
+        ldc.i4.2
+        add
+        ldarg.1
+        tail.
+        call void* SuperComicLib.PrivateCore._UnsafeMethods::_AOTmaster(int8*, int32)
+        
+        ret
+        
+    G_RETURN:
+        ldloc.0
+        ret
+    
+    FAIL_NOTSUPPORT:
+        // ldstr "X"
+        // call instance string [mscorlib]System.Int64::ToString(string)
+        newobj instance void [mscorlib]System.NotSupportedException::.ctor()
+        throw
+    }
+    
+    // Methods
+    .method assembly hidebysig static void*  prologue(native int tok, int32 size) cil managed
+    {
+        .maxstack 8
+        
+        .locals (
+            [0] int8*
         )
         
         ldarg.0
@@ -305,51 +428,29 @@
         ldloc.0
         ldind.u2
         ldc.i4 0x25FF
-        bne.un.s G_RETURN
+        bne.un.s L003
         
         ldloc.0
-        call void* SuperComicLib.PrivateCore._UnsafeMethods::prologue_cplx(void*)
-        dup
-        stloc.1
-        ldind.i
-        dup
-        stloc.0
-
-        // unprotect MEMORY
         ldarg.1
-        call bool SuperComicLib.PrivateCore._UnsafeMethods::_unprotect(void*, int32)
-        brtrue.s G_RETURN
+        tail.
+        call void* SuperComicLib.PrivateCore._UnsafeMethods::'<>prologue/ff25'(void*, int32)
         
-        //  AOT ERROR!!
-        //  need to allocate a data area and use it
-        ldloc.1
-        ldarg.1
-        call void* SuperComicLib.PrivateCore._UnsafeMethods::_AOTmaster(int8*, int32)
-        stloc.0
-        
-        br.s G_RETURN
+        ret
         
     L001:
-        // jump!
-        //  x += *(uint*)(x + 1) + 5
         ldloc.0
-            ldloc.0
-            ldc.i4.1
-            add
-            ldind.u4
-            ldc.i4.5
-            add
-            conv.u
-        add
+        ldarg.1
+        tail.
+        call void* SuperComicLib.PrivateCore._UnsafeMethods::'<>prologue/e9'(void*, int32)
         
-        // unprotect MEMORY
+        ret
+        
+    L003:
+        ldloc.0
         ldarg.1
         call bool SuperComicLib.PrivateCore._UnsafeMethods::_unprotect(void*, int32)
         pop
         
-        // AOT is supported starting from .NET 7, and .NET 7 does not seem to use this jmp method.
-        
-    G_RETURN:
         ldloc.0
         ret
     }

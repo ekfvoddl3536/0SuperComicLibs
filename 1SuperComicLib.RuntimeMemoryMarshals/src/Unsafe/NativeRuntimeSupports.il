@@ -29,6 +29,9 @@
     // Methods
     .method public hidebysig static void  CompileMethod(valuetype [mscorlib]System.RuntimeMethodHandle handle, [in] uint8& lpNativeImageCode, int32 dwNativeImageCodeSize) cil managed aggressiveinlining
     {
+        .param [2]
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.IsReadOnlyAttribute::.ctor() = ( 01 00 00 00 )
+		
         .maxstack 3
         
         ldarg.0

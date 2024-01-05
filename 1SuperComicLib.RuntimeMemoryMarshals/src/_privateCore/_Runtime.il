@@ -27,15 +27,15 @@
        extends [mscorlib]System.Object
 {
     // Runtime major version
-    .field public static initonly int32 version__
+    // .field public static initonly int32 version__
     .field public static initonly int32 platform__
     
     .method private hidebysig specialname rtspecialname static void  .cctor () cil managed 
     {
         .maxstack 1
         
-        call int32 SuperComicLib.PrivateCore._Runtime::_GetVersion()
-        stsfld int32 SuperComicLib.PrivateCore._Runtime::version__
+        // call int32 SuperComicLib.PrivateCore._Runtime::_GetVersion()
+        // stsfld int32 SuperComicLib.PrivateCore._Runtime::version__
         
         call int32 SuperComicLib.PrivateCore._Runtime::_GetPlatfromID()
         stsfld int32 SuperComicLib.PrivateCore._Runtime::platform__
@@ -43,14 +43,14 @@
         ret
     }
     
-    .method private hidebysig static int32  _GetVersion() cil managed
-    {
-        .maxstack 1
-        
-        call class [mscorlib]System.Version [mscorlib]System.Environment::get_Version()
-        callvirt instance int32 [mscorlib]System.Version::get_Major()
-        ret
-    }
+    // .method private hidebysig static int32  _GetVersion() cil managed
+    // {
+    //     .maxstack 1
+    //     
+    //     call class [mscorlib]System.Version [mscorlib]System.Environment::get_Version()
+    //     callvirt instance int32 [mscorlib]System.Version::get_Major()
+    //     ret
+    // }
     
     .method private hidebysig static int32  _GetPlatfromID() cil managed
     {
