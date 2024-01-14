@@ -21,7 +21,6 @@
 // SOFTWARE.
 
 using System;
-using SuperComicLib.Core;
 
 namespace SuperComicLib.Arithmetic
 {

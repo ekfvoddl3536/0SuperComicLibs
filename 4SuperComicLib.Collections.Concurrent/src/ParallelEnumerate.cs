@@ -43,7 +43,7 @@ namespace SuperComicLib.Collections.Concurrent
             OnBeginEnumerate(threadCount);
 
             var vs = new ConcurrentEnumerator<T>(origin);
-            var token = new StrongBox<VolatileInt32>(default);
+            var token = new StrongBox<AtomicInt32>(default);
 
             var methods = new Action[threadCount];
             for (int x = 0; x < threadCount; x++)
@@ -96,13 +96,13 @@ namespace SuperComicLib.Collections.Concurrent
         {
             public readonly ParallelEnumerate<T> owner;
             public readonly ConcurrentEnumerator<T> vs;
-            public readonly StrongBox<VolatileInt32> tokenSrc;
+            public readonly StrongBox<AtomicInt32> tokenSrc;
             public readonly int thread_idx;
 
             public Worker(
                 ParallelEnumerate<T> owner,
                 ConcurrentEnumerator<T> vs,
-                StrongBox<VolatileInt32> tokenSrc,
+                StrongBox<AtomicInt32> tokenSrc,
                 int thread_idx)
             {
                 this.owner = owner;
@@ -119,7 +119,7 @@ namespace SuperComicLib.Collections.Concurrent
                 var _idx = thread_idx;
                 ref var _tok = ref tokenSrc.Value;
 
-                while (_iter.MoveNext(out T current_) && _tok == 0)
+                while (_iter.MoveNext(out T current_) && _tok.Value == 0)
                     if (!_inst.OnEnumerate(current_, _idx))
                     {
                         _tok.Value = 1;

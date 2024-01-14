@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2024. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,9 +29,9 @@ namespace SuperComicLib
     public static unsafe class SCL_GLOBAL_SystemIOStreamExtension
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int Read(this Stream stream, in Memory<byte> buffer) => stream.Read(buffer._source, buffer._start, buffer.Length);
+        public static int Read(this Stream stream, Memory<byte> buffer) => stream.Read(buffer._source, buffer._start, buffer.Length);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Write(this Stream stream, in Memory<byte> buffer) => stream.Write(buffer._source, buffer._start, buffer.Length);
+        public static void Write(this Stream stream, ReadOnlyMemory<byte> buffer) => stream.Write(buffer._source, buffer._start, buffer.Length);
     }
 }

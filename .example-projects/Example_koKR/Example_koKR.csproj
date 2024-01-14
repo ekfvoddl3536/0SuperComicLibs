@@ -23,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <PlatformTarget>x64</PlatformTarget>
@@ -57,13 +58,13 @@
       <Project>{1674b047-ca4c-44a1-9d39-211e38c800dc}</Project>
       <Name>0SuperComicLib.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\1SuperComicLib.RuntimeMemoryMarshals\1SuperComicLib.RuntimeMemoryMarshals.csproj">
+    <ProjectReference Include="..\..\1SuperComicLib.Runtime\1SuperComicLib.Runtime.csproj">
       <Project>{9e0aa77b-6756-47c4-98b2-268e42f606d2}</Project>
-      <Name>1SuperComicLib.RuntimeMemoryMarshals</Name>
+      <Name>1SuperComicLib.Runtime</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\2SuperComicLib.RuntimeMemoryMarshals.Managed\2SuperComicLib.RuntimeMemoryMarshals.Managed.csproj">
+    <ProjectReference Include="..\..\2SuperComicLib.Runtime.Managed\2SuperComicLib.Runtime.Managed.csproj">
       <Project>{00d2f710-5ab8-4be5-b698-8dfa7ca930f2}</Project>
-      <Name>2SuperComicLib.RuntimeMemoryMarshals.Managed</Name>
+      <Name>2SuperComicLib.Runtime.Managed</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

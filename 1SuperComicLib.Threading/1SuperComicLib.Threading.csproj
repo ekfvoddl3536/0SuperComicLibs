@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SuperComicLib.Threading</RootNamespace>
     <AssemblyName>1SuperComicLib.Threading</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -49,6 +49,9 @@
   <ItemGroup>
     <Compile Include="parallel\BatchLoopState.cs" />
     <Compile Include="parallel\InvokeCallback.cs" />
+    <Compile Include="src\atomic\AtomicDouble.cs" />
+    <Compile Include="src\atomic\AtomicInt64.cs" />
+    <Compile Include="src\atomic\AtomicSingle.cs" />
     <Compile Include="src_forUnity\managers\MultiSubThreadManager.cs" />
     <Compile Include="src\exceptions\BadThreadEnterExitFlowException.cs" />
     <Compile Include="src\exceptions\SCL_CORE_THREADING_EXCEPTIONS.cs" />
@@ -58,7 +61,7 @@
     <Compile Include="src\spinlock\SpinMultistateLockSlim.cs" />
     <Compile Include="src\extensions\TaskExtension.cs" />
     <Compile Include="src\types.cs" />
-    <Compile Include="src\VolatileInt32.cs" />
+    <Compile Include="src\atomic\AtomicInt32.cs" />
     <Compile Include="src_forUnity\worker\ParallelWorker.cs" />
     <Compile Include="src_forUnity\worker\SimpleThreadWorker.cs" />
     <Compile Include="parallel\CountdownEventSlim.cs" />
@@ -81,14 +84,13 @@
     <Compile Include="src_forWin10\ProcessorCountEx.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".editorconfig" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\0SuperComicLib.Core\0SuperComicLib.Core.csproj">
       <Project>{1674b047-ca4c-44a1-9d39-211e38c800dc}</Project>
       <Name>0SuperComicLib.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include=".editorconfig" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

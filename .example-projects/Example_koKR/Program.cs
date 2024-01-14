@@ -1,12 +1,12 @@
 ﻿//  
 //  다음 라이브러리에 대한 예제가 포함됩니다:
 //      0SuperComicLib.Core
-//      1SuperComicLib.RuntimeMemoryMarshals
-//      2SuperComicLib.RuntimeMemoryMarshals.Managed
+//      1SuperComicLib.Runtime
+//      2SuperComicLib.Runtime.Managed
 
 using System;
 using SuperComicLib;
-using SuperComicLib.RuntimeMemoryMarshals;
+using SuperComicLib.Runtime;
 
 namespace Example_koKR
 {
@@ -28,8 +28,8 @@ namespace Example_koKR
 
 
 
-            // SuperComicLib.RuntimeMemoryMarshals 네임스페이스 #1
-            // 1. 1SuperComicLib.RuntimeMemoryMarshals.dll
+            // SuperComicLib.Runtime 네임스페이스 #1
+            // 1. 1SuperComicLib.Runtime.dll
             //
             //  .NET C# 에서 일반적으로 수행 불가능한 여러가지 특수 행위를 할 수 있도록 돕습니다.
             //
@@ -86,10 +86,10 @@ namespace Example_koKR
 
 
 
-            // SuperComicLib.RuntimeMemoryMarshals 네임스페이스 #2
-            // 2. 2SuperComicLib.RuntimeMemoryMarshals.Managed.dll
+            // SuperComicLib.Runtime 네임스페이스 #2
+            // 2. 2SuperComicLib.Runtime.Managed.dll
             //
-            //  1SuperComicLib.RuntimeMemoryMarshals.dll을 확장하여, 관리되는 코드(C#)에서 개발된 라이브러리.
+            //  1SuperComicLib.Runtime.dll을 확장하여, 관리되는 코드(C#)에서 개발된 라이브러리.
             //  다양한 클래스, 구조체 및 기능이 포함돼있습니다.
             //
             //  대표적으로 '반관리 배열'(semi-managed array)가 있으며, NativeSpan 및 NativeConstSpan,
@@ -140,8 +140,8 @@ namespace Example_koKR
             // 마찬가지로 at 메소드를 사용하면 범위 검사가 수행됩니다.
             span.at(20) = -1024;
 
-            // Cast<,> 확장 메소드를 사용하면 요소 타입을 바꿀 수 있습니다.
-            NativeSpan<byte> byteSpan = span.Cast<int, byte>();
+            // Cast<> 메소드를 사용하면 요소 타입을 바꿀 수 있습니다.
+            NativeSpan<byte> byteSpan = span.Cast<byte>();
 
             Console.WriteLine();
             Console.WriteLine("비관리 배열 변환 후 set 작업 후 ->");
@@ -174,8 +174,8 @@ namespace Example_koKR
 
         public static void PerformanceArray(int[] array)
         {
-            //  1SuperComicLib.RuntimeMemoryMarshals.dll
-            //  2SuperComicLib.RuntimeMemoryMarshals.Managed.dll
+            //  1SuperComicLib.Runtime.dll
+            //  2SuperComicLib.Runtime.Managed.dll
             //  위 두 라이브러리가 모두 참조 추가돼있다면, 다음과 같이 refdata()를 사용할 수 있습니다.
             //
             //  이 확장 메소드는 .NET 구현체 종류에 상관 없이 첫번째 요소의 참조를 반환합니다.

@@ -22,7 +22,6 @@
 
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using SuperComicLib.Core;
 
 namespace SuperComicLib.Collections
 {

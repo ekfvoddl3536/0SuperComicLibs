@@ -30,9 +30,11 @@ namespace SuperComicLib.Collections.Concurrent
 {
     public class ConcurrentSequentialBag<T> : IEnumerable<T>
     {
+        private readonly static Func<int, int, bool> pred_i32max = new Func<int, int, bool>(Maxi32);
+
         private Item[] m_items;
         private SpinCountBarrierLockSlim m_barrierLock;
-        private VolatileInt32 m_lastIndex;
+        private AtomicInt32 m_lastIndex;
         private volatile int m_vCount;
         private volatile int m_version;
         private readonly int m_expandSize;
@@ -101,7 +103,7 @@ namespace SuperComicLib.Collections.Concurrent
 
                 Interlocked.Increment(ref m_version);
                 Interlocked.Increment(ref m_vCount);
-                m_lastIndex.Max(gIndex);
+                m_lastIndex.ExchangeIf(gIndex, pred_i32max);
 
                 block.Exit();
                 return true;
@@ -132,7 +134,7 @@ namespace SuperComicLib.Collections.Concurrent
             item = sample.m_value;
             sample = null;
 
-            m_lastIndex = new VolatileInt32(m_lastIndex.Value - 1);
+            m_lastIndex = new AtomicInt32(m_lastIndex.Value - 1);
             m_version++;
 
             block.Release();
@@ -202,6 +204,8 @@ namespace SuperComicLib.Collections.Concurrent
 
         public IEnumerator<T> GetEnumerator() => new Enumerator(this);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        private static bool Maxi32(int old, int @new) => old < @new;
 
         private sealed class Item
         {

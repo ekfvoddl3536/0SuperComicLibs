@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2024. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -52,6 +52,62 @@ namespace SuperComicLib
                 throw new ArgumentNullException(nameof(startIndex));
 
             return new Memory<T>(source, startIndex, count);
+        }
+
+        /// <summary>
+        /// 배열에서 첫번째로 발견되는 값의 index를 가져옵니다
+        /// </summary>
+        /// <returns>값을 찾지 못한 경우 -1이 반환됩니다</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int FirstIndex<T>(this T[] _arr, T value) where T : class
+        {
+            for (int x = 0; x < _arr.Length; x++)
+                if (_arr[x] == value)
+                    return x;
+
+            return -1;
+        }
+
+        /// <summary>
+        /// 배열에서 첫번째로 발견되는 값의 index를 가져옵니다
+        /// </summary>
+        /// <returns>값을 찾지 못한 경우 -1이 반환됩니다</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int FirstEqualsIndex<T>(this T[] _arr, T value) where T : IEquatable<T>
+        {
+            for (int x = 0; x < _arr.Length; x++)
+                if (_arr[x].Equals(value))
+                    return x;
+
+            return -1;
+        }
+
+        /// <summary>
+        /// 배열에서 가장 마지막으로 발견되는 값의 index를 가져옵니다
+        /// </summary>
+        /// <returns>값을 찾지 못한 경우 -1이 반환됩니다</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int LastIndex<T>(this T[] _arr, T value) where T : class
+        {
+            for (int x = _arr.Length - 1; x >= 0; x--)
+                if (_arr[x] == value)
+                    return x;
+
+            return -1;
+        }
+
+        /// <summary>
+        /// 배열에서 가장 마지막으로 발견되는 값의 index를 가져옵니다
+        /// </summary>
+        /// <returns>값을 찾지 못한 경우 -1이 반환됩니다</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int LastEqualsIndex<T>(this T[] _arr, T value) where T : IEquatable<T>
+        {
+            for (int x = _arr.Length - 1; x >= 0; x--)
+                if (_arr[x].Equals(value))
+                    return x;
+
+            return -1;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2024. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@ namespace SuperComicLib.Threading
     public struct SpinCountBarrierLockSlim : ISpinLockBase
     {
         private SpinBlockLockSlim m_lock;
-        private int m_count;
+        private volatile int m_count;
 
         public bool IsLocked => m_lock.IsLocked;
 

@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2024. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ namespace SuperComicLib.Threading
         internal const int STATE_UNLOCK = 0;
         internal const int STATE_LOCK = 1;
 
-        private int m_state;
+        private volatile int m_state;
 
         public bool IsLocked
         {

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SuperComicLib.Core</RootNamespace>
     <AssemblyName>0SuperComicLib.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -43,6 +43,9 @@
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -57,20 +60,32 @@
     <Compile Include="Public\CodeContracts\FastContractFailException.cs" />
     <Compile Include="Public\CodeContracts\NoExceptAttribute.cs" />
     <Compile Include="Public\CodeContracts\ValidRangeAttribute.cs" />
-    <Compile Include="Public\Core\IntHash.cs" />
+    <Compile Include="Public\__global__\extension\items\FinalizeActionEnumerable.cs" />
+    <Compile Include="Public\__global__\extension\items\PeekWithLocalEnumerable.cs" />
+    <Compile Include="Public\__global__\extension\items\PrepareActionEnumerable.cs" />
+    <Compile Include="Public\__global__\extension\items\ReplaceManyWithIndexEnumerable.cs" />
+    <Compile Include="Public\__global__\extension\items\ReplaceWithIndexEnumerable.cs" />
+    <Compile Include="Public\__global__\extension\items\ValueInit.cs" />
+    <Compile Include="Public\__global__\IntHash.cs" />
     <Compile Include="Public\__global__\BitMath.cs" />
     <Compile Include="Public\__global__\BitArray.cs" />
-    <Compile Include="Public\__global__\collections\ConstMemory.cs" />
+    <Compile Include="Public\__global__\collections\ReadOnlyMemory.cs" />
     <Compile Include="Public\__global__\collections\Memory.cs" />
     <Compile Include="Public\__global__\collections\MemoryElementDebugView.cs" />
     <Compile Include="Public\__global__\collections\MemorySR.cs" />
+    <Compile Include="Public\__global__\extension\items\BatchedEnumerable.cs" />
+    <Compile Include="Public\__global__\extension\items\IndexWithEnumerable.cs" />
+    <Compile Include="Public\__global__\extension\items\PeekEnumerable.cs" />
+    <Compile Include="Public\__global__\extension\items\PeekWithIndexEnumerable.cs" />
+    <Compile Include="Public\__global__\extension\items\ReplaceEnumerable.cs" />
+    <Compile Include="Public\__global__\extension\items\ReplaceManyEnumerable.cs" />
     <Compile Include="Public\__global__\extension\SCL_GLOBAL_ArrayExtension.cs" />
     <Compile Include="Public\__global__\extension\SCL_GLOBAL_SystemIOStreamExtension.cs" />
     <Compile Include="Public\__global__\LongHashedString.cs" />
     <Compile Include="Public\__global__\Range.cs" />
     <Compile Include="Public\__global__\CMath.cs" />
     <Compile Include="Public\__global__\Range64.cs" />
-    <Compile Include="__global\SUPERCOMICLIB_CORE__ArrayExtension__.cs" />
+    <Compile Include="Public\__global__\extension\SCL_GLOBAL_SystemCollectionGenericIEnumerableExtension_Linq.cs" />
     <Compile Include="Public\__global__\extension\SCL_GLOBAL_StringExtension.cs" />
     <Compile Include="Public\__global__\HashedString.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

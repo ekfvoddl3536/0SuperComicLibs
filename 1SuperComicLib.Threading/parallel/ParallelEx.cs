@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2024. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -132,12 +132,15 @@ namespace SuperComicLib.Threading
 
         private sealed class BatchForWorker
         {
+            private readonly static Func<int, int, bool> pred_reqBreak = new Func<int, int, bool>(Min);
+
             public int sidx_cur;
             public int sidx_add;
             public int eidx;
             public int batch_sz;
             public Action<int, BatchLoopState> body;
             public BatchLoopState state;
+
 
             public BatchForWorker(int sidx, int eidx, int add, int bsize, Action<int, BatchLoopState> body, BatchLoopState state)
             {
@@ -156,8 +159,10 @@ namespace SuperComicLib.Threading
             {
                 int sidx = sidx_cur;
                 int add = sidx_add;
-                Action<int, BatchLoopState> body = this.body;
-                BatchLoopState state = this.state;
+                var body = this.body;
+                var state = this.state;
+
+                var pred = pred_reqBreak;
 
                 int bsize = batch_sz;
                 for (int i = eidx; sidx < i && state.NeedBreak(sidx); sidx += add)
@@ -166,9 +171,11 @@ namespace SuperComicLib.Threading
                         body.Invoke(sidx, state);
 
                         if (state.m_state == BatchLoopState.STATE_BREAK)
-                            state.m_lowestBreak.Min(sidx);
+                            state.m_lowestBreak.ExchangeIf(sidx, pred);
                     }
             }
+
+            private static bool Min(int old, int @new) => old > @new;
         }
     }
 }

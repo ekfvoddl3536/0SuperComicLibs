@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2024. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -271,6 +271,22 @@ namespace SuperComicLib
         /// <returns>부분 배열 범위에 상대적인 인덱스, 값을 찾지 못한 경우 -1 보다 작을 수 있습니다.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int LastIndexOf(T item) => Array.LastIndexOf(_source, item, _start, Length) - _start;
+
+        /// <summary>
+        /// 현재 부분 배열 범위의 원소를 대상 부분 배열로 복사하려고 시도합니다.
+        /// </summary>
+        /// <returns>실패하면 false, 성공하면 true 입니다</returns>
+        public bool TryCopyTo(Memory<T> other)
+        {
+            if (_source == null || other._source == null)
+                return false;
+
+            if (IsIndexOutOfRange || other.IsIndexOutOfRange || Length > other.Length)
+                return false;
+
+            Array.Copy(_source, _start, other._source, other._start, Length);
+            return true;
+        }
         #endregion
 
         #region special method

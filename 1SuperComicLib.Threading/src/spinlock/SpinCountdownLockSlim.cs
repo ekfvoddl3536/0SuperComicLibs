@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2024. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -31,11 +31,15 @@ namespace SuperComicLib.Threading
     [StructLayout(LayoutKind.Sequential)]
     public struct SpinCountdownLockSlim : ISpinLockBase
     {
-        private int m_count;
+        private volatile int m_count;
         private readonly int m_initCount;
 
-        public SpinCountdownLockSlim(int initCount) =>
-            m_count = m_initCount = initCount;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public SpinCountdownLockSlim(int initCount)
+        {
+            m_count = initCount;
+            m_initCount = initCount;
+        }
 
         public bool IsLocked => m_count == 0;
 

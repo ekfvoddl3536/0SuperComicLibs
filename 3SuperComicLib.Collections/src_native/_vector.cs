@@ -25,7 +25,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using SuperComicLib.CodeContracts;
-using SuperComicLib.RuntimeMemoryMarshals;
+using SuperComicLib.Runtime;
 
 namespace SuperComicLib.Collections
 {

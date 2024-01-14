@@ -45,10 +45,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="extensions\GLOBAL_SuperComicLib_IO_StreamExtension_MemoryExtension.cs" />
-    <Compile Include="extensions\StreamReaderExtension.cs" />
-    <Compile Include="extensions\GLOBAL_SuperComicLibCore_IO_NativeSpanExtension.cs" />
-    <Compile Include="extensions\GLOBAL_SuperComicLibCore_IO_UnmanagedStreamExtension.cs" />
+    <Compile Include="src\etxt\ETxtReader.cs" />
+    <Compile Include="src\etxt\ETxtWriter.cs" />
+    <Compile Include="src\etxt\HeaderID.cs" />
+    <Compile Include="src\etxt\HierarchyName.cs" />
+    <Compile Include="src\extensions\GLOBAL_SuperComicLib_IO_StreamExtension_MemoryExtension.cs" />
+    <Compile Include="src\extensions\StreamReaderExtension.cs" />
+    <Compile Include="src\extensions\GLOBAL_SuperComicLibCore_IO_NativeSpanExtension.cs" />
+    <Compile Include="src\extensions\GLOBAL_SuperComicLibCore_IO_UnmanagedStreamExtension.cs" />
     <Compile Include="src\NativeMemoryStream.cs" />
     <Compile Include="src\FastReader.cs" />
     <Compile Include="src\FastWriter.cs" />
@@ -63,13 +67,13 @@
       <Project>{1674b047-ca4c-44a1-9d39-211e38c800dc}</Project>
       <Name>0SuperComicLib.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\1SuperComicLib.RuntimeMemoryMarshals\1SuperComicLib.RuntimeMemoryMarshals.csproj">
+    <ProjectReference Include="..\1SuperComicLib.Runtime\1SuperComicLib.Runtime.csproj">
       <Project>{9e0aa77b-6756-47c4-98b2-268e42f606d2}</Project>
-      <Name>1SuperComicLib.RuntimeMemoryMarshals</Name>
+      <Name>1SuperComicLib.Runtime</Name>
     </ProjectReference>
-    <ProjectReference Include="..\2SuperComicLib.RuntimeMemoryMarshals.Managed\2SuperComicLib.RuntimeMemoryMarshals.Managed.csproj">
+    <ProjectReference Include="..\2SuperComicLib.Runtime.Managed\2SuperComicLib.Runtime.Managed.csproj">
       <Project>{00d2f710-5ab8-4be5-b698-8dfa7ca930f2}</Project>
-      <Name>2SuperComicLib.RuntimeMemoryMarshals.Managed</Name>
+      <Name>2SuperComicLib.Runtime.Managed</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

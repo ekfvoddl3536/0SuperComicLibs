@@ -1,6 +1,6 @@
 ﻿// MIT License
 //
-// Copyright (c) 2019-2023. SuperComic (ekfvoddl3535@naver.com)
+// Copyright (c) 2019-2024. SuperComic (ekfvoddl3535@naver.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@ namespace SuperComicLib.Threading
         public const int STATE_BREAK = 1, STATE_STOP = 2;
 
         internal volatile int m_state;
-        internal VolatileInt32 m_lowestBreak;
+        internal AtomicInt32 m_lowestBreak;
 
         public void Stop()
         {
