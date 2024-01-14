@@ -191,19 +191,10 @@ namespace SuperComicLib
         /// Specifies an action that is performed only the first time the enumeration begins.
         /// </summary>
         /// <remarks>
-        /// See also: <see cref="Finalize{T}(IEnumerable{T}, Action{T})">Finalize</see>
+        /// See also: <see cref="Finalize{T}(IEnumerable{T}, Action)">Finalize</see>
         /// </remarks>
-        public static IEnumerable<T> Prepare<T>(this IEnumerable<T> source, Action<T> body) =>
+        public static IEnumerable<T> Prepare<T>(this IEnumerable<T> source, Action body) =>
             new PrepareActionEnumerable<T>(source, body);
-
-        /// <summary>
-        /// Specifies the action performed after enumeration is complete.
-        /// </summary>
-        /// <remarks>
-        /// See also: <see cref="Prepare{T}(IEnumerable{T}, Action{T})">Prepare</see>
-        /// </remarks>
-        public static IEnumerable<T> Finalize<T>(this IEnumerable<T> source, Action<T> body) =>
-            new FinalizeActionEnumerable<T>(source, body);
 
         /// <summary>
         /// Peek at the enumerated value, without consuming it.

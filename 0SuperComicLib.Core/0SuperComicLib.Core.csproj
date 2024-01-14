@@ -60,7 +60,6 @@
     <Compile Include="Public\CodeContracts\FastContractFailException.cs" />
     <Compile Include="Public\CodeContracts\NoExceptAttribute.cs" />
     <Compile Include="Public\CodeContracts\ValidRangeAttribute.cs" />
-    <Compile Include="Public\__global__\extension\items\FinalizeActionEnumerable.cs" />
     <Compile Include="Public\__global__\extension\items\PeekWithLocalEnumerable.cs" />
     <Compile Include="Public\__global__\extension\items\PrepareActionEnumerable.cs" />
     <Compile Include="Public\__global__\extension\items\ReplaceManyWithIndexEnumerable.cs" />

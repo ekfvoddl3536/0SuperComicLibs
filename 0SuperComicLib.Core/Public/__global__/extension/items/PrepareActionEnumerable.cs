@@ -30,10 +30,10 @@ namespace SuperComicLib
     internal readonly struct PrepareActionEnumerable<T> : IEnumerable<T>
     {
         private readonly IEnumerable<T> _source;
-        private readonly Action<T> _body;
+        private readonly Action _body;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public PrepareActionEnumerable(IEnumerable<T> source, Action<T> body)
+        public PrepareActionEnumerable(IEnumerable<T> source, Action body)
         {
             _source = source;
             _body = body;
@@ -46,7 +46,7 @@ namespace SuperComicLib
         private struct Enumerator : IEnumerator<T>
         {
             private readonly IEnumerator<T> _enumerator;
-            private readonly Action<T> _body;
+            private readonly Action _body;
             private long _state;
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -67,7 +67,7 @@ namespace SuperComicLib
                 
                 if (_state == 0 && res)
                 {
-                    _body.Invoke(_enumerator.Current);
+                    _body.Invoke();
                     _state = -1;
                 }
                 
