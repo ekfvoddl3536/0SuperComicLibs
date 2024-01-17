@@ -300,15 +300,10 @@ namespace SuperComicLib.Runtime
             if (_pClass == null)
                 return;
 
-            var pCls = (ulong)_pClass;
-
-            // sub rdx, rcx
-            // sar rdx, 4
-            // lea rax, [rcx+rdx*8-8]
-            var handle = ((ulong)_pLength - pCls) >> 4;
-            handle = pCls + handle * 8 - 8;
-
-            Marshal.FreeHGlobal((IntPtr)handle);
+            if (JITPlatformEnvironment.IsRunningOnMono)
+                Marshal.FreeHGlobal((IntPtr)_pClass);
+            else
+                Marshal.FreeHGlobal((IntPtr)(_pClass - sizeof(long)));
 
             ILUnsafe.AsRef<arrayref<T>, long>(in this) = 0;
         }

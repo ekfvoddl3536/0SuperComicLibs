@@ -113,7 +113,7 @@ namespace SuperComicLib.Threading
         private struct SetWhile
         {
             private readonly Func<bool> body;
-            private int block;
+            private volatile int block;
 
             public SetWhile(Func<bool> body)
             {
