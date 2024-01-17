@@ -55,7 +55,7 @@ namespace SuperComicLib.Threading
         /// <summary>
         /// Exchange value
         /// </summary>
-        /// <param name="predicate">bool(float oldValue, float newValue)</param>
+        /// <param name="predicate"><c>bool(float oldValue, float newValue)</c>. If it returns true, it will attempt to update with the new value.</param>
         /// <returns>Old value</returns>
         public float ExchangeIf(float newValue, Func<float, float, bool> predicate)
         {
